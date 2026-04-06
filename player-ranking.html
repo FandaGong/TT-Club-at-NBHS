@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Table Tennis Club Dashboard</title>
+    <title>Player Rankings - Table Tennis Club</title>
     <style>
         body { font-family: sans-serif; background: #f4f4f4; margin: 0; padding: 0; }
         header { background: #333; color: white; padding: 10px; display: flex; justify-content: space-between; align-items: center; }
@@ -12,8 +12,9 @@
         .search-bar { display: flex; }
         .search-bar input { padding: 5px; }
         .search-bar button { padding: 5px 10px; background: #555; color: white; border: none; }
-        .container { width: 90%; margin: 20px auto; background: white; padding: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.1); text-align: center; }
-        iframe { width: 100%; height: 600px; border: none; }
+        .container { width: 90%; margin: 20px auto; background: white; padding: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        .ranking-list { list-style: none; padding: 0; }
+        .ranking-list li { padding: 10px; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; }
     </style>
 </head>
 <body>
@@ -29,11 +30,13 @@
         </div>
     </header>
     <div class="container">
-        <h1>Table Tennis Club Dashboard</h1>
-        <p>Live data and statistics</p>
-        
-        <div id="viz-container">
-            </div>
-        </div>
+        <h1>Player Rankings</h1>
+        <ul class="ranking-list">
+            <li>1. Player A - 1500 points</li>
+            <li>2. Player B - 1450 points</li>
+            <li>3. Player C - 1400 points</li>
+            <!-- Add more players as needed -->
+        </ul>
+    </div>
 </body>
 </html>
