@@ -51,28 +51,57 @@
     </main>
 
     <script>
-        const players = [
-            { name: "Fanda Gong", elo: 1450, stats: "W: 12 | L: 2" },
-            { name: "Alex Smith", elo: 1320, stats: "W: 8 | L: 5" },
-            { name: "Julian Wong", elo: 1280, stats: "W: 7 | L: 6" }
-        ];
+      // Replace this with your actual "Published to Web" CSV link
+const SHEET_URL = "YOUR_COPIED_CSV_URL_HERE";
 
-        function searchPlayer() {
-            const input = document.getElementById('searchInput').value.toLowerCase();
-            const resultDiv = document.getElementById('searchResult');
-            const found = players.find(p => p.name.toLowerCase().includes(input));
+let players = [];
 
-            if (found && input !== "") {
-                resultDiv.innerHTML = `
-                    <h3 class="text-xl font-bold text-blue-800">${found.name}</h3>
-                    <p class="text-slate-700"><strong>Rating:</strong> ${found.elo}</p>
-                    <p class="text-slate-700"><strong>History:</strong> ${found.stats}</p>
-                `;
-                resultDiv.classList.remove('hidden');
-            } else {
-                alert("Player not found!");
-            }
-        }
+async function loadData() {
+    try {
+        const response = await fetch(SHEET_URL);
+        const data = await response.text();
+        
+        // Parse CSV text into the players array
+        const rows = data.split('\n').slice(1); // Skip header row
+        players = rows.map(row => {
+            const [name, elo, stats] = row.split(',');
+            return { 
+                name: name.trim(), 
+                elo: parseInt(elo.trim()), 
+                stats: stats.trim() 
+            };
+        });
+
+        console.log("Data loaded from Google Sheets:", players);
+        // If you have a leaderboard on the home page, call that function here:
+        // loadLadder(); 
+        
+    } catch (error) {
+        console.error("Error loading sheet data:", error);
+    }
+}
+
+// Run this when the page opens
+window.onload = loadData;
+
+function searchPlayer() {
+    const input = document.getElementById('searchInput').value.toLowerCase();
+    const resultDiv = document.getElementById('searchResult');
+    
+    // The search now works on the dynamic 'players' list from the sheet!
+    const found = players.find(p => p.name.toLowerCase().includes(input));
+
+    if (found && input !== "") {
+        resultDiv.innerHTML = `
+            <h3 class="text-xl font-bold text-blue-800">${found.name}</h3>
+            <p class="text-slate-700"><strong>Rating:</strong> ${found.elo}</p>
+            <p class="text-slate-700"><strong>History:</strong> ${found.stats}</p>
+        `;
+        resultDiv.classList.remove('hidden');
+    } else {
+        alert("Player not found!");
+    }
+}
     </script>
 </body>
 </html>
