@@ -51,8 +51,8 @@
     </main>
 
     <script>
-      // Replace this with your actual "Published to Web" CSV link
-const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_UHoHNgToKV4yCuB_M56029JuMrOYWN-VkyxDiWkwXHJI1hhRnon_GMnvgvmQeHmL4F0gxkVz7IMP/pub?output=csv";
+// Paste your "Published to Web" CSV link for the STATS tab here
+const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_UHoHNgToKV4yCuB_M56029JuMrOYWN-VkyxDiWkwXHJI1hhRnon_GMnvgvmQeHmL4F0gxkVz7IMP/pubhtml?gid=2082256240&single=true";
 
 let players = [];
 
@@ -61,47 +61,79 @@ async function loadData() {
         const response = await fetch(SHEET_URL);
         const data = await response.text();
         
-        // Parse CSV text into the players array
-        const rows = data.split('\n').slice(1); // Skip header row
-        players = rows.map(row => {
-            const [name, elo, stats] = row.split(',');
+        // Split by line and filter out any empty lines
+        const rows = data.split('\n').map(row => row.trim()).filter(row => row.length > 0);
+        
+        // Skip the header row (Name, ELO, Stats)
+        const playerRows = rows.slice(1); 
+
+        players = playerRows.map(row => {
+            // This regex handles CSV splitting even if there are commas inside quotes
+            const columns = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+            
             return { 
-                name: name.trim(), 
-                elo: parseInt(elo.trim()), 
-                stats: stats.trim() 
+                name: columns[0] ? columns[0].replace(/"/g, '').trim() : "Unknown", 
+                elo: columns[1] ? parseInt(columns[1].trim()) : 0, 
+                stats: columns[2] ? columns[2].replace(/"/g, '').trim() : "No data"
             };
         });
 
-        console.log("Data loaded from Google Sheets:", players);
-        // If you have a leaderboard on the home page, call that function here:
-        // loadLadder(); 
+        console.log("Successfully loaded " + players.length + " players.");
+        
+        // If you are on index.html, we don't need to load the table.
+        // If you want to use this same script for player-ranking.html, 
+        // you would call your table-filling function here.
+        if (document.getElementById('ladder-table')) {
+            renderLadder();
+        }
         
     } catch (error) {
-        console.error("Error loading sheet data:", error);
+        console.error("Error loading Google Sheet:", error);
     }
 }
 
-// Run this when the page opens
-window.onload = loadData;
+function renderLadder() {
+    const table = document.getElementById('ladder-table');
+    if (!table) return;
+    
+    table.innerHTML = ""; // Clear existing
+    // Sort by ELO high to low
+    players.sort((a,b) => b.elo - a.elo).forEach((p, i) => {
+        table.innerHTML += `
+            <tr class="border-t">
+                <td class="p-4 font-bold text-slate-400">#${i+1}</td>
+                <td class="p-4 font-semibold">${p.name}</td>
+                <td class="p-4 text-right font-mono text-blue-600 font-bold">${p.elo}</td>
+            </tr>
+        `;
+    });
+}
 
+// Search Function for the Home Page
 function searchPlayer() {
-    const input = document.getElementById('searchInput').value.toLowerCase();
+    const input = document.getElementById('searchInput').value.toLowerCase().trim();
     const resultDiv = document.getElementById('searchResult');
     
-    // The search now works on the dynamic 'players' list from the sheet!
+    if (input === "") {
+        resultDiv.classList.add('hidden');
+        return;
+    }
+
     const found = players.find(p => p.name.toLowerCase().includes(input));
 
-    if (found && input !== "") {
+    if (found) {
         resultDiv.innerHTML = `
             <h3 class="text-xl font-bold text-blue-800">${found.name}</h3>
-            <p class="text-slate-700"><strong>Rating:</strong> ${found.elo}</p>
-            <p class="text-slate-700"><strong>History:</strong> ${found.stats}</p>
+            <p class="text-slate-700"><strong>Current Elo:</strong> ${found.elo}</p>
+            <p class="text-slate-700 italic">"${found.stats}"</p>
         `;
         resultDiv.classList.remove('hidden');
     } else {
-        alert("Player not found!");
+        alert("Player '" + input + "' not found in the club database.");
     }
 }
+
+window.onload = loadData;
     </script>
 </body>
 </html>
