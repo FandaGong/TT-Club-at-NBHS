@@ -3,40 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Player Rankings - Table Tennis Club</title>
-    <style>
-        body { font-family: sans-serif; background: #f4f4f4; margin: 0; padding: 0; }
-        header { background: #333; color: white; padding: 10px; display: flex; justify-content: space-between; align-items: center; }
-        nav { display: flex; gap: 20px; }
-        nav a { color: white; text-decoration: none; }
-        .search-bar { display: flex; }
-        .search-bar input { padding: 5px; }
-        .search-bar button { padding: 5px 10px; background: #555; color: white; border: none; }
-        .container { width: 90%; margin: 20px auto; background: white; padding: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        .ranking-list { list-style: none; padding: 0; }
-        .ranking-list li { padding: 10px; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; }
-    </style>
+    <title>Player Rankings - NBHS Table Tennis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <header>
-        <nav>
-            <a href="index.html">Home</a>
-            <a href="player-ranking.html">Player Rankings</a>
-            <a href="player-matchup-ladder.html">Matchup Ladder</a>
+<body class="bg-slate-50 text-slate-900 font-sans min-h-screen">
+
+    <header class="bg-blue-800 text-white p-4 shadow-md">
+        <nav class="max-w-4xl mx-auto flex gap-6">
+            <a href="index.html" class="hover:underline">Home</a>
+            <a href="player-ranking.html" class="font-bold border-b-2 border-white">Rankings</a>
+            <a href="player-matchup-ladder.html" class="hover:underline">Matchups</a>
         </nav>
-        <div class="search-bar">
-            <input type="text" placeholder="Search players...">
-            <button>Search</button>
-        </div>
     </header>
-    <div class="container">
-        <h1>Player Rankings</h1>
-        <ul class="ranking-list">
-            <li>1. Player A - 1500 points</li>
-            <li>2. Player B - 1450 points</li>
-            <li>3. Player C - 1400 points</li>
-            <!-- Add more players as needed -->
-        </ul>
+
+    <div class="max-w-4xl mx-auto p-6">
+        <h1 class="text-3xl font-bold text-blue-900 mb-6">Official Club Rankings</h1>
+        
+        <div class="bg-white rounded-2xl shadow-sm border overflow-hidden">
+            <table class="w-full text-left">
+                <thead class="bg-slate-100 border-b">
+                    <tr>
+                        <th class="p-4 w-16">Rank</th>
+                        <th class="p-4">Player Name</th>
+                        <th class="p-4">Note/Stats</th>
+                        <th class="p-4 text-right">Elo</th>
+                    </tr>
+                </thead>
+                <tbody id="ladder-table">
+                    <tr><td colspan="4" class="p-10 text-center text-slate-400">Fetching live rankings...</td></tr>
+                </tbody>
+            </table>
+        </div>
     </div>
+
+    <script>
+        // Use your specific CSV link with the GID for the Stats tab
+        const SHEET_URL = "YOUR_CSV_LINK_HERE";
+
+        async function loadRankings() {
+            try {
+                const response = await fetch(SHEET_URL);
+                const data = await response.text();
+                
+                // Parse CSV rows
+                const rows = data.split('\n').map(r => r.trim()).filter(r => r.length > 0);
+                const playerRows = rows.slice(1); // Skip header
+
+                const players = playerRows.map(row => {
+                    const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                    return {
+                        name: cols[0]?.replace(/"/g, '').trim(),
+                        elo: parseInt(cols[1]?.trim()) || 0,
+                        stats: cols[2]?.replace(/"/g, '').trim() || ""
+                    };
+                });
+
+                // Sort High to Low
+                players.sort((a, b) => b.elo - a.elo);
+
+                // Render to table
+                const table = document.getElementById('ladder-table');
+                table.innerHTML = players.map((p, i) => `
+                    <tr class="border-b hover:bg-blue-50 transition-colors">
+                        <td class="p-4 font-bold text-slate-400">#${i + 1}</td>
+                        <td class="p-4 font-bold text-blue-900">${p.name}</td>
+                        <td class="p-4 text-sm text-slate-500">${p.stats}</td>
+                        <td class="p-4 text-right font-mono font-bold text-blue-600">${p.elo}</td>
+                    </tr>
+                `).join('');
+
+            } catch (err) {
+                console.error("Fetch error:", err);
+                document.getElementById('ladder-table').innerHTML = `<tr><td colspan="4" class="p-10 text-center text-red-500">Error loading data. Check CSV link.</td></tr>`;
+            }
+        }
+
+        window.onload = loadRankings;
+    </script>
 </body>
 </html>
