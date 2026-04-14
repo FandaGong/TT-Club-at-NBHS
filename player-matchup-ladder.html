@@ -3,45 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Player Matchup Ladder - Table Tennis Club</title>
-    <style>
-        body { font-family: sans-serif; background: #f4f4f4; margin: 0; padding: 0; }
-        header { background: #333; color: white; padding: 10px; display: flex; justify-content: space-between; align-items: center; }
-        nav { display: flex; gap: 20px; }
-        nav a { color: white; text-decoration: none; }
-        .search-bar { display: flex; }
-        .search-bar input { padding: 5px; }
-        .search-bar button { padding: 5px 10px; background: #555; color: white; border: none; }
-        .container { width: 90%; margin: 20px auto; background: white; padding: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        .ladder { display: flex; flex-direction: column; align-items: center; }
-        .round { display: flex; flex-direction: column; margin: 20px 0; }
-        .match { background: #eee; padding: 10px; margin: 5px; border-radius: 5px; width: 200px; text-align: center; }
-    </style>
+    <title>Matchup Ladder - NBHS Table Tennis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <header>
-        <nav>
-            <a href="index.html">Home</a>
-            <a href="player-ranking.html">Player Rankings</a>
-            <a href="player-matchup-ladder.html">Matchup Ladder</a>
+<body class="bg-slate-50 text-slate-900 font-sans min-h-screen">
+
+    <header class="bg-blue-800 text-white p-4 shadow-md">
+        <nav class="max-w-4xl mx-auto flex gap-6">
+            <a href="index.html" class="hover:underline">Home</a>
+            <a href="player-ranking.html" class="hover:underline">Rankings</a>
+            <a href="player-matchup-ladder.html" class="font-bold border-b-2 border-white">Matchups</a>
         </nav>
-        <div class="search-bar">
-            <input type="text" placeholder="Search players...">
-            <button>Search</button>
-        </div>
     </header>
-    <div class="container">
-        <h1>Player Matchup Ladder</h1>
-        <div class="ladder">
-            <div class="round">
-                <div class="match">Player A vs Player B</div>
-                <div class="match">Player C vs Player D</div>
-            </div>
-            <div class="round">
-                <div class="match">Winner 1 vs Winner 2</div>
-            </div>
-            <!-- Add more rounds as needed -->
+
+    <main class="max-w-4xl mx-auto p-6">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-3xl font-bold text-blue-900">Weekly Matchups</h1>
+            <span class="bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full uppercase">Term 2 - Week 1</span>
         </div>
-    </div>
+
+        <div id="matchup-container" class="grid gap-4 md:grid-cols-2">
+            <div class="col-span-full text-center py-10 text-slate-400 italic">
+                Loading court assignments...
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Use the same URL as before, but CHANGE THE GID to your Matchups tab ID
+        const MATCHUP_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_UHoHNgToKV4yCuB_M56029JuMrOYWN-VkyxDiWkwXHJI1hhRnon_GMnvgvmQeHmL4F0gxkVz7IMP/pub?gid=YOUR_MATCHUP_TAB_GID_HERE&single=true&output=csv";
+
+        async function loadMatchups() {
+            try {
+                const response = await fetch(MATCHUP_SHEET_URL);
+                const data = await response.text();
+                const rows = data.split('\n').map(r => r.trim()).filter(r => r.length > 0);
+                
+                // Assuming Sheet Columns: Court, Player1, Player2, Half
+                const matchups = rows.slice(1).map(row => {
+                    const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                    return {
+                        court: cols[0]?.replace(/"/g, '').trim(),
+                        p1: cols[1]?.replace(/"/g, '').trim(),
+                        p2: cols[2]?.replace(/"/g, '').trim(),
+                        half: cols[3]?.replace(/"/g, '').trim()
+                    };
+                }).filter(m => m.p1 && m.p2); // Only show rows with two players
+
+                const container = document.getElementById('matchup-container');
+                container.innerHTML = matchups.map(m => `
+                    <div class="bg-white p-5 rounded-xl border-l-8 border-blue-600 shadow-sm flex justify-between items-center">
+                        <div>
+                            <span class="text-xs font-bold text-blue-600 uppercase">Court ${m.court} • ${m.half}</span>
+                            <p class="text-lg font-bold text-slate-800 mt-1">${m.p1} <span class="text-slate-400 font-normal mx-2">vs</span> ${m.p2}</p>
+                        </div>
+                        <div class="hidden sm:block">
+                            <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center">
+                                🏓
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+
+            } catch (err) {
+                console.error("Matchup load error:", err);
+                document.getElementById('matchup-container').innerHTML = `<p class="text-red-500">Error loading matchups.</p>`;
+            }
+        }
+
+        window.onload = loadMatchups;
+    </script>
 </body>
 </html>

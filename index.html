@@ -121,15 +121,16 @@ function searchPlayer() {
 
     const found = players.find(p => p.name.toLowerCase().includes(input));
 
-    if (found) {
+if (found) {
         resultDiv.innerHTML = `
             <h3 class="text-xl font-bold text-blue-800">${found.name}</h3>
-            <p class="text-slate-700"><strong>Current Elo:</strong> ${found.elo}</p>
-            <p class="text-slate-700 italic">"${found.stats}"</p>
+            <div class="mt-2 grid grid-cols-3 gap-4 text-sm">
+                <div><p class="text-slate-500 uppercase text-xs font-bold">Elo</p><p class="text-lg font-mono font-bold text-blue-600">${found.elo}</p></div>
+                <div><p class="text-slate-500 uppercase text-xs font-bold">Wins</p><p class="text-lg font-bold text-green-600">${found.wins}</p></div>
+                <div><p class="text-slate-500 uppercase text-xs font-bold">Losses</p><p class="text-lg font-bold text-red-500">${found.losses}</p></div>
+            </div>
         `;
         resultDiv.classList.remove('hidden');
-    } else {
-        alert("Player '" + input + "' not found in the club database.");
     }
 }
 

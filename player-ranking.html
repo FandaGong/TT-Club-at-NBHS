@@ -21,23 +21,32 @@
         
         <div class="bg-white rounded-2xl shadow-sm border overflow-hidden">
             <table class="w-full text-left">
+               <div class="max-w-4xl mx-auto p-6">
+        <h1 class="text-3xl font-bold text-blue-900 mb-6">Official Club Rankings</h1>
+        
+        <div class="bg-white rounded-2xl shadow-sm border overflow-hidden">
+            <table class="w-full text-left">
                 <thead class="bg-slate-100 border-b">
                     <tr>
                         <th class="p-4 w-16">Rank</th>
                         <th class="p-4">Player Name</th>
-                        <th class="p-4">Note/Stats</th>
+                        <th class="p-4 text-center">Wins</th>
+                        <th class="p-4 text-center">Losses</th>
                         <th class="p-4 text-right">Elo</th>
                     </tr>
                 </thead>
                 <tbody id="ladder-table">
-                    <tr><td colspan="4" class="p-10 text-center text-slate-400">Fetching live rankings...</td></tr>
+                    <tr><td colspan="5" class="p-10 text-center text-slate-400">Fetching live rankings...</td></tr>
                 </tbody>
             </table>
         </div>
     </div>
+            </table>
+        </div>
+    </div>
 
-    <script>
-        // Use your specific CSV link with the GID for the Stats tab
+<script>
+        // Ensure this URL points to the CSV output of your PLAYERS tab
         const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_UHoHNgToKV4yCuB_M56029JuMrOYWN-VkyxDiWkwXHJI1hhRnon_GMnvgvmQeHmL4F0gxkVz7IMP/pub?gid=2082256240&single=true&output=csv";
 
         async function loadRankings() {
@@ -45,7 +54,6 @@
                 const response = await fetch(SHEET_URL);
                 const data = await response.text();
                 
-                // Parse CSV rows
                 const rows = data.split('\n').map(r => r.trim()).filter(r => r.length > 0);
                 const playerRows = rows.slice(1); // Skip header
 
@@ -54,27 +62,28 @@
                     return {
                         name: cols[0]?.replace(/"/g, '').trim(),
                         elo: parseInt(cols[1]?.trim()) || 0,
-                        stats: cols[2]?.replace(/"/g, '').trim() || ""
+                        wins: parseInt(cols[2]?.trim()) || 0,
+                        losses: parseInt(cols[3]?.trim()) || 0
                     };
                 });
 
-                // Sort High to Low
+                // Sort High to Low by Elo
                 players.sort((a, b) => b.elo - a.elo);
 
-                // Render to table
                 const table = document.getElementById('ladder-table');
                 table.innerHTML = players.map((p, i) => `
                     <tr class="border-b hover:bg-blue-50 transition-colors">
                         <td class="p-4 font-bold text-slate-400">#${i + 1}</td>
                         <td class="p-4 font-bold text-blue-900">${p.name}</td>
-                        <td class="p-4 text-sm text-slate-500">${p.stats}</td>
+                        <td class="p-4 text-center text-green-600 font-semibold">${p.wins}</td>
+                        <td class="p-4 text-center text-red-500 font-semibold">${p.losses}</td>
                         <td class="p-4 text-right font-mono font-bold text-blue-600">${p.elo}</td>
                     </tr>
                 `).join('');
 
             } catch (err) {
                 console.error("Fetch error:", err);
-                document.getElementById('ladder-table').innerHTML = `<tr><td colspan="4" class="p-10 text-center text-red-500">Error loading data. Check CSV link.</td></tr>`;
+                document.getElementById('ladder-table').innerHTML = `<tr><td colspan="5" class="p-10 text-center text-red-500">Error loading data.</td></tr>`;
             }
         }
 
