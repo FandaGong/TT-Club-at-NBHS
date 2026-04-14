@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NBHS Table Tennis Hub</title>
+    <title>NBHS Table Tennis Club - Home</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="icon" type="image/png" href="favicon.png">
 </head>
@@ -12,86 +12,136 @@
     <nav class="bg-blue-800 text-white p-4 shadow-md">
         <div class="max-w-4xl mx-auto flex justify-between items-center">
             <a href="index.html" class="text-xl font-bold">NBHS TT Hub</a>
-            <div class="space-x-4">
-                <a href="player-ranking.html" class="hover:text-blue-200 uppercase font-semibold text-sm">Ranking</a>
-                <a href="player-matchup-ladder.html" class="hover:text-blue-200 uppercase font-semibold text-sm">Matchups</a>
+            <div class="space-x-4 text-sm md:text-base">
+                <a href="player-ranking.html" class="hover:text-blue-200 uppercase font-semibold">Ranking</a>
+                <a href="player-matchup-ladder.html" class="hover:text-blue-200 uppercase font-semibold">Matchup Ladder</a>
             </div>
         </div>
     </nav>
 
     <main class="max-w-4xl mx-auto p-6">
-        <div class="text-center py-10">
-            <h1 class="text-4xl font-extrabold text-blue-900">Welcome, Players.</h1>
-            <p class="text-slate-600 mt-2">Access the official Normanhurst Boys Table Tennis ranking system.</p>
-        </div>
+        <section class="space-y-8">
+            <div class="text-center py-10">
+                <h1 class="text-4xl font-extrabold text-blue-900">Welcome, Players.</h1>
+                <p class="text-slate-600 mt-2">Access the official Normanhurst Boys Table Tennis ranking system.</p>
+            </div>
 
-        <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 mb-10">
-            <h2 class="text-lg font-bold mb-4 italic text-blue-800 uppercase tracking-wide">Quick Player Search</h2>
-            <form id="searchForm" class="flex gap-2">
-                <input type="text" id="searchInput" placeholder="Enter name (e.g. Fanda)..." 
-                    class="flex-1 p-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500">
-                <button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 transition-colors">Search</button>
-            </form>
-            <div id="searchResult" class="hidden mt-6 p-4 bg-blue-50 border border-blue-100 rounded-xl"></div>
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <h2 class="text-lg font-bold mb-4">🔍 Quick Player Search</h2>
+                <form id="searchForm" class="flex gap-2">
+                    <input type="text" id="searchInput" placeholder="Enter name (e.g. Fanda)..." 
+                        class="flex-1 p-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500">
+                    <button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold">Search</button>
+                </form>
+                <div id="searchResult" class="hidden mt-6 p-4 bg-blue-50 border border-blue-100 rounded-xl"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <a href="player-ranking.html" class="bg-white p-8 rounded-2xl border hover:border-blue-500 transition-all shadow-sm text-center">
+                    <span class="text-3xl mb-2 block">🏆</span>
+                    <h3 class="font-bold text-xl">View Ranking Ladder</h3>
+                    <p class="text-slate-500 text-sm">Check current Elo ratings and club standings.</p>
+                </a>
+                <a href="player-matchup-ladder.html" class="bg-white p-8 rounded-2xl border hover:border-blue-500 transition-all shadow-sm text-center">
+                    <span class="text-3xl mb-2 block">📅</span>
+                    <h3 class="font-bold text-xl">Weekly Matchups</h3>
+                    <p class="text-slate-500 text-sm">See bracket placements for the next session.</p>
+                </a>
+            </div>
         </section>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <a href="player-ranking.html" class="bg-white p-8 rounded-2xl border hover:border-blue-500 transition-all shadow-sm text-center">
-                <span class="text-3xl mb-2 block">🏆</span>
-                <h3 class="font-bold text-xl">View Ranking Ladder</h3>
-                <p class="text-slate-500 text-sm italic">Current Elo ratings and club standings.</p>
-            </a>
-            <a href="player-matchup-ladder.html" class="bg-white p-8 rounded-2xl border hover:border-blue-500 transition-all shadow-sm text-center">
-                <span class="text-3xl mb-2 block">📅</span>
-                <h3 class="font-bold text-xl">Weekly Matchups</h3>
-                <p class="text-slate-500 text-sm italic">Session court placements.</p>
-            </a>
-        </div>
     </main>
 
     <script>
-        const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_UHoHNgToKV4yCuB_M56029JuMrOYWN-VkyxDiWkwXHJI1hhRnon_GMnvgvmQeHmL4F0gxkVz7IMP/pub?output=csv&gid=2082256240";
-        let players = [];
+// Paste your "Published to Web" CSV link for the PLAYERS tab here
+const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_UHoHNgToKV4yCuB_M56029JuMrOYWN-VkyxDiWkwXHJI1hhRnon_GMnvgvmQeHmL4F0gxkVz7IMP/pub?output=csv&gid=2082256240";
 
-        async function loadData() {
-            try {
-                const response = await fetch(SHEET_URL);
-                const data = await response.text();
-                const rows = data.split('\n').map(row => row.trim()).filter(row => row.length > 0);
-                players = rows.slice(1).map(row => {
-                    const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-                    const clean = (v) => (v || "").replace(/"/g, '').replace(/,/g, '').trim();
-                    return {
-                        name: clean(cols[0]),
-                        elo: parseInt(clean(cols[1])) || 0,
-                        wins: parseInt(clean(cols[2])) || 0,
-                        losses: parseInt(clean(cols[3])) || 0
-                    };
-                });
-            } catch (e) { console.error(e); }
-        }
+let players = [];
 
-        function searchPlayer(event) {
-            if (event) event.preventDefault();
-            const input = document.getElementById('searchInput').value.toLowerCase().trim();
-            const resultDiv = document.getElementById('searchResult');
-            const found = players.find(p => p.name.toLowerCase().includes(input));
-            if (found) {
-                resultDiv.innerHTML = `
-                    <h3 class="text-xl font-bold text-blue-800">${found.name}</h3>
-                    <div class="mt-2 grid grid-cols-3 gap-4 text-sm">
-                        <div><p class="text-slate-500 font-bold uppercase text-[10px]">Elo</p><p class="text-lg font-bold text-blue-600">${found.elo}</p></div>
-                        <div><p class="text-slate-500 font-bold uppercase text-[10px]">Wins</p><p class="text-lg font-bold text-green-600">${found.wins}</p></div>
-                        <div><p class="text-slate-500 font-bold uppercase text-[10px]">Losses</p><p class="text-lg font-bold text-red-500">${found.losses}</p></div>
-                    </div>`;
-                resultDiv.classList.remove('hidden');
-            } else { resultDiv.classList.add('hidden'); }
-        }
+async function loadData() {
+    try {
+        const response = await fetch(SHEET_URL);
+        const data = await response.text();
+        
+        // Split by line and filter out any empty lines
+        const rows = data.split('\n').map(row => row.trim()).filter(row => row.length > 0);
+        
+        // Skip the header row
+        const playerRows = rows.slice(1); 
 
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('searchForm').addEventListener('submit', searchPlayer);
-            loadData();
+        players = playerRows.map(row => {
+            // This regex handles CSV splitting even if there are commas inside quotes
+            const columns = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+            
+            // Helper to strip quotes, commas, and whitespace
+            const clean = (val) => (val || "").replace(/"/g, '').replace(/,/g, '').trim();
+
+            return { 
+                name: clean(columns[0]) || "Unknown", 
+                elo: parseInt(clean(columns[1])) || 0,
+                wins: parseInt(clean(columns[2])) || 0,
+                losses: parseInt(clean(columns[3])) || 0
+            };
         });
+
+        console.log("Successfully loaded " + players.length + " players.");
+        
+    } catch (error) {
+        console.error("Error loading Google Sheet:", error);
+    }
+}
+
+// Search Function for the Home Page
+function searchPlayer(event) {
+    if (event) event.preventDefault();
+    const input = document.getElementById('searchInput').value.toLowerCase().trim();
+    const resultDiv = document.getElementById('searchResult');
+    
+    if (input === "") {
+        resultDiv.classList.add('hidden');
+        return;
+    }
+
+    if (!players.length) {
+        resultDiv.innerHTML = `<p class="text-slate-600 italic">Data is still loading from the sheet...</p>`;
+        resultDiv.classList.remove('hidden');
+        return;
+    }
+
+    const found = players.find(p => p.name.toLowerCase().includes(input));
+
+    if (found) {
+        resultDiv.innerHTML = `
+            <h3 class="text-xl font-bold text-blue-800">${found.name}</h3>
+            <div class="mt-4 grid grid-cols-3 gap-4 text-center">
+                <div class="bg-white p-2 rounded-lg shadow-sm border border-blue-100">
+                    <p class="text-slate-500 uppercase text-[10px] font-bold tracking-widest">Elo</p>
+                    <p class="text-lg font-mono font-bold text-blue-600">${found.elo}</p>
+                </div>
+                <div class="bg-white p-2 rounded-lg shadow-sm border border-green-100">
+                    <p class="text-slate-500 uppercase text-[10px] font-bold tracking-widest">Wins</p>
+                    <p class="text-lg font-bold text-green-600">${found.wins}</p>
+                </div>
+                <div class="bg-white p-2 rounded-lg shadow-sm border border-red-100">
+                    <p class="text-slate-500 uppercase text-[10px] font-bold tracking-widest">Losses</p>
+                    <p class="text-lg font-bold text-red-500">${found.losses}</p>
+                </div>
+            </div>
+        `;
+        resultDiv.classList.remove('hidden');
+    } else {
+        resultDiv.innerHTML = `<p class="text-slate-600 p-2">Player "<strong>${input}</strong>" not found.</p>`;
+        resultDiv.classList.remove('hidden');
+    }
+}
+
+// Initialize when page loads
+document.addEventListener('DOMContentLoaded', () => {
+    const searchForm = document.getElementById('searchForm');
+    if (searchForm) {
+        searchForm.addEventListener('submit', searchPlayer);
+    }
+    loadData();
+});
     </script>
 </body>
 </html>

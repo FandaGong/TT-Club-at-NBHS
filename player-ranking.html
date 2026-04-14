@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rankings - NBHS Table Tennis</title>
+    <title>Player Rankings - NBHS Table Tennis</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="icon" type="image/png" href="favicon.png">
 </head>
@@ -19,6 +19,7 @@
 
     <div class="max-w-4xl mx-auto p-6">
         <h1 class="text-3xl font-bold text-blue-900 mb-6">Official Club Rankings</h1>
+        
         <div class="bg-white rounded-2xl shadow-sm border overflow-hidden">
             <table class="w-full text-left">
                 <thead class="bg-slate-100 border-b">
@@ -31,35 +32,60 @@
                     </tr>
                 </thead>
                 <tbody id="ladder-table">
-                    <tr><td colspan="5" class="p-10 text-center text-slate-400">Loading live data...</td></tr>
+                    <tr><td colspan="5" class="p-10 text-center text-slate-400">Fetching live rankings...</td></tr>
                 </tbody>
             </table>
         </div>
     </div>
 
     <script>
+        // Use the CSV output link for your Players tab
         const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_UHoHNgToKV4yCuB_M56029JuMrOYWN-VkyxDiWkwXHJI1hhRnon_GMnvgvmQeHmL4F0gxkVz7IMP/pub?gid=2082256240&single=true&output=csv";
+
         async function loadRankings() {
             try {
                 const response = await fetch(SHEET_URL);
                 const data = await response.text();
+                
+                // Split rows and filter empty lines
                 const rows = data.split('\n').map(r => r.trim()).filter(r => r.length > 0);
-                const players = rows.slice(1).map(row => {
-                    const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-                    const clean = (v) => (v || "").replace(/"/g, '').replace(/,/g, '').trim();
-                    return { name: clean(cols[0]), elo: parseInt(clean(cols[1])) || 0, wins: clean(cols[2]) || 0, losses: clean(cols[3]) || 0 };
-                }).sort((a,b) => b.elo - a.elo);
+                const playerRows = rows.slice(1); // Skip header row
 
-                document.getElementById('ladder-table').innerHTML = players.map((p, i) => `
+const players = playerRows.map(row => {
+    const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+    
+    // Clean the Elo string by removing commas
+    const rawElo = cols[1]?.replace(/"/g, '').replace(/,/g, '').trim();
+    
+    return {
+        name: cols[0]?.replace(/"/g, '').trim() || "Unknown",
+        elo: parseInt(rawElo) || 0, // Now "1,338" becomes 1338
+        wins: parseInt(cols[2]?.trim()) || 0,
+        losses: parseInt(cols[3]?.trim()) || 0
+    };
+});
+
+                // Sort High to Low by Elo
+                players.sort((a, b) => b.elo - a.elo);
+
+                const table = document.getElementById('ladder-table');
+                table.innerHTML = players.map((p, i) => `
                     <tr class="border-b hover:bg-blue-50 transition-colors">
-                        <td class="p-4 text-slate-400 font-bold">#${i + 1}</td>
-                        <td class="p-4 font-semibold text-slate-800">${p.name}</td>
-                        <td class="p-4 text-center text-green-600 font-bold">${p.wins}</td>
-                        <td class="p-4 text-center text-red-500 font-bold">${p.losses}</td>
+                        <td class="p-4 font-bold text-slate-400">#${i + 1}</td>
+                        <td class="p-4 font-bold text-blue-900">${p.name}</td>
+                        <td class="p-4 text-center text-green-600 font-semibold">${p.wins}</td>
+                        <td class="p-4 text-center text-red-500 font-semibold">${p.losses}</td>
                         <td class="p-4 text-right font-mono font-bold text-blue-600">${p.elo}</td>
-                    </tr>`).join('');
-            } catch (e) { console.error(e); }
+                    </tr>
+                `).join('');
+
+            } catch (err) {
+                console.error("Fetch error:", err);
+                document.getElementById('ladder-table').innerHTML = `<tr><td colspan="5" class="p-10 text-center text-red-500">Error loading data. Check your internet or CSV link.</td></tr>`;
+            }
         }
+
+        // Call the function
         loadRankings();
     </script>
 </body>
