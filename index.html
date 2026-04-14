@@ -71,10 +71,14 @@ async function loadData() {
             // This regex handles CSV splitting even if there are commas inside quotes
             const columns = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
             
+            const rawElo = columns[1] ? columns[1].replace(/"/g, '').replace(/,/g, '').trim() : "0";
+            const rawWins = columns[2] ? columns[2].replace(/"/g, '').trim() : "0";
+            const rawLosses = columns[3] ? columns[3].replace(/"/g, '').trim() : "0";
             return { 
                 name: columns[0] ? columns[0].replace(/"/g, '').trim() : "Unknown", 
-                elo: columns[1] ? parseInt(columns[1].trim()) : 0, 
-                stats: columns[2] ? columns[2].replace(/"/g, '').trim() : "No data"
+                elo: parseInt(rawElo) || 0,
+                wins: parseInt(rawWins) || 0,
+                losses: parseInt(rawLosses) || 0
             };
         });
 
