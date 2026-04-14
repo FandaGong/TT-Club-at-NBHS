@@ -84,57 +84,60 @@
             }
         }
 
-        async function loadMatchHistory() {
-            try {
-                const resp = await fetch(BASE_URL + MATCHES_GID);
-                const data = await resp.text();
+async function loadMatchHistory() {
+    try {
+        const resp = await fetch(BASE_URL + MATCHES_GID);
+        if (!resp.ok) throw new Error("Sheet unreachable");
+        
+        const data = await resp.text();
+        const rows = data.split('\n').map(r => r.trim()).filter(r => r.length > 0);
+        
+        // Filter matches for the current player
+        const history = rows.slice(1).map(row => {
+            // This splits by comma but ignores commas inside quotes
+            return row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+        }).filter(cols => {
+            const p1 = (cols[0] || "").toLowerCase();
+            const p2 = (cols[1] || "").toLowerCase();
+            return p1.includes(playerName.toLowerCase()) || p2.includes(playerName.toLowerCase());
+        });
 
-                // Split rows and filter empty ones
-                const rows = data.split('\n').map(r => r.trim()).filter(r => r.length > 0);
-
-                // Extract and filter for the specific player
-                const history = rows.slice(1).map(row => {
-                    // Regex to split CSV while respecting quotes
-                    return row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-                }).filter(cols => {
-                    const p1 = (cols[0] || "").toLowerCase();
-                    const p2 = (cols[1] || "").toLowerCase();
-                    const target = playerName.toLowerCase();
-                    return p1.includes(target) || p2.includes(target);
-                });
-
-                const table = document.getElementById('history-table');
-
-                if (history.length === 0) {
-                    table.innerHTML = `<tr><td colspan="4" class="p-10 text-center text-slate-400">No match records found for this player.</td></tr>`;
-                    return;
-                }
-
-                table.innerHTML = history.map(cols => {
-                    const p1 = (cols[0] || "").replace(/"/g, '').trim();
-                    const p2 = (cols[1] || "").replace(/"/g, '').trim();
-                    const winner = (cols[2] || "").replace(/"/g, '').trim();
-                    const score = (cols[3] || "").replace(/"/g, '').trim();
-                    const division = (cols[4] || "").replace(/"/g, '').trim();
-
-                    const isP1 = p1.toLowerCase().includes(playerName.toLowerCase());
-                    const opponent = isP1 ? p2 : p1;
-                    const hasWon = winner.toLowerCase().includes(playerName.toLowerCase());
-
-                    return `
-        <tr class="border-b">
-            <td class="p-4 font-bold">${opponent} <span class="text-[10px] text-slate-400 ml-2">DIV ${division}</span></td>
-            <td class="p-4 ${hasWon ? 'text-green-600' : 'text-red-500'} font-black italic">${hasWon ? 'WIN' : 'LOSS'}</td>
-            <td class="p-4 text-center font-mono">${score}</td>
-            <td class="p-4 text-right text-slate-400 text-xs">Points Only</td>
-        </tr>`;
-                }).join('');
-
-            } catch (err) {
-                console.error("Match history error:", err);
-                document.getElementById('history-table').innerHTML = `<tr><td colspan="4" class="p-10 text-center text-red-500 italic">Failed to sync match data.</td></tr>`;
-            }
+        const table = document.getElementById('history-table');
+        
+        if (history.length === 0) {
+            table.innerHTML = `<tr><td colspan="4" class="p-10 text-center text-slate-400">No matches found in the database.</td></tr>`;
+            return;
         }
+
+        table.innerHTML = history.map(cols => {
+            const p1 = cols[0].replace(/"/g, '').trim();
+            const p2 = cols[1].replace(/"/g, '').trim();
+            const winner = cols[2].replace(/"/g, '').trim();
+            const score = cols[3].replace(/"/g, '').trim();
+            
+            // Logic for Opponent and Result
+            const isP1 = p1.toLowerCase().includes(playerName.toLowerCase());
+            const opponent = isP1 ? p2 : p1;
+            const hasWon = winner.toLowerCase().includes(playerName.toLowerCase());
+
+            return `
+                <tr class="border-b hover:bg-slate-50 transition-colors">
+                    <td class="p-4 font-bold text-slate-800">${opponent}</td>
+                    <td class="p-4">
+                        <span class="px-2 py-1 rounded text-[10px] font-black ${hasWon ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">
+                            ${hasWon ? 'WIN' : 'LOSS'}
+                        </span>
+                    </td>
+                    <td class="p-4 text-center font-mono font-bold text-slate-600">${score}</td>
+                    <td class="p-4 text-right text-xs text-slate-400 italic">Week Match</td>
+                </tr>`;
+        }).join('');
+
+    } catch (err) {
+        console.error("Match sync error:", err);
+        document.getElementById('history-table').innerHTML = `<tr><td colspan="4" class="p-10 text-center text-red-500 font-bold">Failed to sync match data. Check GID.</td></tr>`;
+    }
+}
 
         function renderChart(historyData) {
             const ctx = document.getElementById('eloChart').getContext('2d');
