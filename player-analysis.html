@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Player Analysis - NBHS TT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body class="bg-slate-50 text-slate-900 min-h-screen">
+    <nav class="bg-blue-800 text-white p-4 shadow-md">
+        <a href="index.html" class="font-bold">← Back to Hub</a>
+    </nav>
+
+    <main class="max-w-4xl mx-auto p-6">
+        <div id="player-header" class="mb-8">
+            <h1 id="player-name" class="text-4xl font-black text-blue-900 uppercase italic">Loading...</h1>
+            <div id="quick-stats" class="flex gap-6 mt-4 font-bold"></div>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl border mb-8 shadow-sm">
+            <h2 class="text-lg font-bold mb-4 uppercase text-slate-500 italic">Elo Progress</h2>
+            <canvas id="eloChart" height="100"></canvas>
+        </div>
+
+        <div class="bg-white rounded-2xl border shadow-sm overflow-hidden">
+            <h2 class="p-4 bg-slate-50 border-b font-bold uppercase text-slate-500">Match History</h2>
+            <table class="w-full text-left">
+                <thead class="bg-slate-50 text-xs uppercase font-bold text-slate-400">
+                    <tr>
+                        <th class="p-4">Opponent</th>
+                        <th class="p-4">Result</th>
+                        <th class="p-4 text-center">Score</th>
+                        <th class="p-4 text-right">Δ Elo</th>
+                    </tr>
+                </thead>
+                <tbody id="history-table">
+                    <tr>
+                        <td colspan="4" class="p-10 text-center italic text-slate-400">Loading matches...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const playerName = urlParams.get('name');
+
+        // GIDs for your specific tabs
+        const STATS_GID = "2082256240";
+        const MATCHES_GID = "859312421";
+        const BASE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_UHoHNgToKV4yCuB_M56029JuMrOYWN-VkyxDiWkwXHJI1hhRnon_GMnvgvmQeHmL4F0gxkVz7IMP/pub?output=csv&gid=";
+
+        async function init() {
+            if (!playerName) return;
+            document.getElementById('player-name').innerText = playerName;
+
+            await loadPlayerStats();
+            await loadMatchHistory();
+        }
+
+        async function loadPlayerStats() {
+            const resp = await fetch(BASE_URL + STATS_GID);
+            const data = await resp.text();
+            const rows = data.split('\n').map(r => r.trim());
+            const found = rows.find(r => r.toLowerCase().includes(playerName.toLowerCase()));
+
+            if (found) {
+                const cols = found.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                const elo = cols[1].replace(/"/g, '');
+                const w = cols[2];
+                const l = cols[3];
+                document.getElementById('quick-stats').innerHTML = `
+                    <span class="text-blue-600">ELO: ${elo}</span>
+                    <span class="text-green-600">WINS: ${w}</span>
+                    <span class="text-red-500">LOSSES: ${l}</span>
+                `;
+
+                // Placeholder for Chart (Usually requires a history of Elos in your sheet)
+                renderChart([1000, 1100, 1050, elo.replace(',', '')]);
+            }
+        }
+
+        async function loadMatchHistory() {
+            try {
+                const resp = await fetch(BASE_URL + MATCHES_GID);
+                const data = await resp.text();
+
+                // Split rows and filter empty ones
+                const rows = data.split('\n').map(r => r.trim()).filter(r => r.length > 0);
+
+                // Extract and filter for the specific player
+                const history = rows.slice(1).map(row => {
+                    // Regex to split CSV while respecting quotes
+                    return row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                }).filter(cols => {
+                    const p1 = (cols[0] || "").toLowerCase();
+                    const p2 = (cols[1] || "").toLowerCase();
+                    const target = playerName.toLowerCase();
+                    return p1.includes(target) || p2.includes(target);
+                });
+
+                const table = document.getElementById('history-table');
+
+                if (history.length === 0) {
+                    table.innerHTML = `<tr><td colspan="4" class="p-10 text-center text-slate-400">No match records found for this player.</td></tr>`;
+                    return;
+                }
+
+                table.innerHTML = history.map(cols => {
+                    const p1 = cols[0].replace(/"/g, '').trim();
+                    const p2 = cols[1].replace(/"/g, '').trim();
+                    const winner = cols[2].replace(/"/g, '').trim();
+                    const score = cols[3].replace(/"/g, '').trim();
+                    const division = cols[4] || "N/A";
+
+                    // Determine if the player being viewed won or lost
+                    const isP1 = p1.toLowerCase().includes(playerName.toLowerCase());
+                    const opponent = isP1 ? p2 : p1;
+                    const hasWon = winner.toLowerCase().includes(playerName.toLowerCase());
+
+                    return `
+                <tr class="border-b hover:bg-slate-50 transition-colors">
+                    <td class="p-4">
+                        <div class="font-bold text-slate-800">${opponent}</div>
+                        <div class="text-[10px] text-slate-400 uppercase tracking-widest font-bold">Div ${division}</div>
+                    </td>
+                    <td class="p-4">
+                        <span class="px-2 py-1 rounded text-xs font-black ${hasWon ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">
+                            ${hasWon ? 'WIN' : 'LOSS'}
+                        </span>
+                    </td>
+                    <td class="p-4 text-center font-mono font-bold text-slate-600">${score}</td>
+                    <td class="p-4 text-right text-xs text-slate-400 italic">Term 2</td>
+                </tr>`;
+                }).join('');
+
+            } catch (err) {
+                console.error("Match history error:", err);
+                document.getElementById('history-table').innerHTML = `<tr><td colspan="4" class="p-10 text-center text-red-500 italic">Failed to sync match data.</td></tr>`;
+            }
+        }
+
+        function renderChart(historyData) {
+            const ctx = document.getElementById('eloChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: historyData.map((_, i) => `Match ${i}`),
+                    datasets: [{
+                        label: 'Elo Rating',
+                        data: historyData,
+                        borderColor: '#1e3a8a',
+                        tension: 0.3,
+                        fill: true,
+                        backgroundColor: 'rgba(30, 58, 138, 0.1)'
+                    }]
+                },
+                options: { plugins: { legend: { display: false } } }
+            });
+        }
+
+        init();
+    </script>
+</body>
+
+</html>

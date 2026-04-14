@@ -111,7 +111,11 @@ function searchPlayer(event) {
 
     if (found) {
         resultDiv.innerHTML = `
-            <h3 class="text-xl font-bold text-blue-800">${found.name}</h3>
+            <h3 class="text-xl font-bold text-blue-800">
+    <a href="player-analysis.html?name=${encodeURIComponent(found.name)}" class="hover:underline hover:text-blue-600">
+        ${found.name} →
+    </a>
+</h3>
             <div class="mt-4 grid grid-cols-3 gap-4 text-center">
                 <div class="bg-white p-2 rounded-lg shadow-sm border border-blue-100">
                     <p class="text-slate-500 uppercase text-[10px] font-bold tracking-widest">Elo</p>
