@@ -1,11 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Matchup Ladder - NBHS Table Tennis</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <style>
+        /* The NBHS TT League Brand Font */
+        h1,
+        h2,
+        h3,
+        .nav-brand {
+            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+            font-weight: 900 !important;
+            /* Extra Bold */
+            font-style: italic !important;
+            text-transform: uppercase !important;
+            letter-spacing: -0.05em !important;
+            line-height: 0.9 !important;
+        }
+
+        /* Specific accent for the search bar and buttons */
+        input,
+        button {
+            font-family: ui-sans-serif, system-ui, sans-serif;
+            text-transform: uppercase;
+            font-weight: 800;
+        }
+    </style>
+    <main class="max-w-4xl mx-auto p-6">
+        <h1 class="text-6xl text-slate-900 mb-2">Weekly Matchups</h1>
+
+        <div class="flex justify-between items-center mb-8">
+            <h2 class="text-2xl text-blue-700 uppercase">Court Assignments</h2>
+            <span class="bg-yellow-400 border-2 border-slate-900 text-slate-900 text-xs font-black px-3 py-1 uppercase">
+                Monday Session
+            </span>
+        </div>
+
+        <div id="matchup-container" class="grid gap-4 md:grid-cols-2">
+        </div>
+    </main>
 </head>
+
 <body class="bg-slate-50 text-slate-900 font-sans min-h-screen">
 
     <header class="bg-blue-800 text-white p-4 shadow-md">
@@ -19,7 +58,8 @@
     <main class="max-w-4xl mx-auto p-6">
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-3xl font-bold text-blue-900">Weekly Matchups</h1>
-            <span class="bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full uppercase">Term 2 - Week 1</span>
+            <span class="bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full uppercase">Term 2 - Week
+                1</span>
         </div>
 
         <div id="matchup-container" class="grid gap-4 md:grid-cols-2">
@@ -38,7 +78,7 @@
                 const response = await fetch(MATCHUP_SHEET_URL);
                 const data = await response.text();
                 const rows = data.split('\n').map(r => r.trim()).filter(r => r.length > 0);
-                
+
                 // Assuming Sheet Columns: Court, Player1, Player2, Half
                 const matchups = rows.slice(1).map(row => {
                     const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
@@ -74,4 +114,5 @@
         window.onload = loadMatchups;
     </script>
 </body>
+
 </html>

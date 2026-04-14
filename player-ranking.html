@@ -1,11 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Player Rankings - NBHS Table Tennis</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <style>
+        /* The NBHS TT League Brand Font */
+        h1,
+        h2,
+        h3,
+        .nav-brand {
+            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+            font-weight: 900 !important;
+            /* Extra Bold */
+            font-style: italic !important;
+            text-transform: uppercase !important;
+            letter-spacing: -0.05em !important;
+            line-height: 0.9 !important;
+        }
+
+        /* Specific accent for the search bar and buttons */
+        input,
+        button {
+            font-family: ui-sans-serif, system-ui, sans-serif;
+            text-transform: uppercase;
+            font-weight: 800;
+        }
+    </style>
+    <main class="max-w-4xl mx-auto p-6">
+        <h1 class="text-6xl text-slate-900 mb-6">Official Rankings</h1>
+
+        <div class="bg-white border-4 border-slate-900 shadow-[10px_10px_0px_0px_rgba(30,58,138,1)] overflow-hidden">
+            <div class="p-4 border-b-4 border-slate-900 bg-slate-100">
+                <h2 class="text-2xl text-slate-900">Leaderboard</h2>
+            </div>
+
+            <table class="w-full text-left">
+            </table>
+        </div>
+    </main>
 </head>
+
 <body class="bg-slate-50 text-slate-900 font-sans min-h-screen">
 
     <header class="bg-blue-800 text-white p-4 shadow-md">
@@ -18,7 +56,7 @@
 
     <div class="max-w-4xl mx-auto p-6">
         <h1 class="text-3xl font-bold text-blue-900 mb-6">Official Club Rankings</h1>
-        
+
         <div class="bg-white rounded-2xl shadow-sm border overflow-hidden">
             <table class="w-full text-left">
                 <thead class="bg-slate-100 border-b">
@@ -31,7 +69,9 @@
                     </tr>
                 </thead>
                 <tbody id="ladder-table">
-                    <tr><td colspan="5" class="p-10 text-center text-slate-400">Fetching live rankings...</td></tr>
+                    <tr>
+                        <td colspan="5" class="p-10 text-center text-slate-400">Fetching live rankings...</td>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -45,24 +85,24 @@
             try {
                 const response = await fetch(SHEET_URL);
                 const data = await response.text();
-                
+
                 // Split rows and filter empty lines
                 const rows = data.split('\n').map(r => r.trim()).filter(r => r.length > 0);
                 const playerRows = rows.slice(1); // Skip header row
 
-const players = playerRows.map(row => {
-    const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-    
-    // Clean the Elo string by removing commas
-    const rawElo = cols[1]?.replace(/"/g, '').replace(/,/g, '').trim();
-    
-    return {
-        name: cols[0]?.replace(/"/g, '').trim() || "Unknown",
-        elo: parseInt(rawElo) || 0, // Now "1,338" becomes 1338
-        wins: parseInt(cols[2]?.trim()) || 0,
-        losses: parseInt(cols[3]?.trim()) || 0
-    };
-});
+                const players = playerRows.map(row => {
+                    const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+
+                    // Clean the Elo string by removing commas
+                    const rawElo = cols[1]?.replace(/"/g, '').replace(/,/g, '').trim();
+
+                    return {
+                        name: cols[0]?.replace(/"/g, '').trim() || "Unknown",
+                        elo: parseInt(rawElo) || 0, // Now "1,338" becomes 1338
+                        wins: parseInt(cols[2]?.trim()) || 0,
+                        losses: parseInt(cols[3]?.trim()) || 0
+                    };
+                });
 
                 // Sort High to Low by Elo
                 players.sort((a, b) => b.elo - a.elo);
@@ -88,4 +128,5 @@ const players = playerRows.map(row => {
         loadRankings();
     </script>
 </body>
+
 </html>
