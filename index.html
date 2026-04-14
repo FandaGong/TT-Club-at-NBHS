@@ -3,81 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NBHS Table Tennis Club - Home</title>
+    <title>NBHS Table Tennis Hub</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="icon" type="image/png" href="favicon.png">
-    <style>
-        h1, h2, h3, .league-font {
-            font-family: ui-sans-serif, system-ui, sans-serif !important;
-            font-weight: 900 !important;
-            font-style: italic !important;
-            text-transform: uppercase !important;
-            letter-spacing: -0.05em !important;
-        }
-        .league-header {
-            background: linear-gradient(90deg, #1e3a8a 0%, #1e40af 100%);
-            border-bottom: 4px solid #fbbf24;
-        }
-        .neo-card {
-            background: white;
-            border: 4px solid #0f172a;
-            box-shadow: 10px 10px 0px 0px #1e3a8a;
-        }
-        .last-updated {
-            font-size: 0.75rem;
-            color: #64748b;
-            text-transform: uppercase;
-            font-weight: 700;
-        }
-    </style>
 </head>
-<body class="bg-slate-50 text-slate-900 min-h-screen">
-    <nav class="league-header text-white p-4 shadow-xl">
+<body class="bg-slate-50 text-slate-900 font-sans min-h-screen">
+
+    <nav class="bg-blue-800 text-white p-4 shadow-md">
         <div class="max-w-4xl mx-auto flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <span class="text-2xl">🏓</span>
-                <a href="index.html" class="text-xl league-font">NBHS TT HUB</a>
-            </div>
-            <div class="space-x-6 text-xs font-bold uppercase tracking-widest">
-                <a href="player-ranking.html" class="hover:text-yellow-400">Rankings</a>
-                <a href="player-matchup-ladder.html" class="hover:text-yellow-400">Matchups</a>
+            <a href="index.html" class="text-xl font-bold">NBHS TT Hub</a>
+            <div class="space-x-4">
+                <a href="player-ranking.html" class="hover:text-blue-200 uppercase font-semibold text-sm">Ranking</a>
+                <a href="player-matchup-ladder.html" class="hover:text-blue-200 uppercase font-semibold text-sm">Matchups</a>
             </div>
         </div>
     </nav>
 
     <main class="max-w-4xl mx-auto p-6">
-        <section class="neo-card p-8 mb-10 mt-6">
-            <h1 class="text-6xl mb-2 leading-none">Player Database</h1>
-            <p class="text-slate-500 font-bold mb-8 tracking-tighter uppercase">Live Elo Engine // Term 2</p>
+        <div class="text-center py-10">
+            <h1 class="text-4xl font-extrabold text-blue-900">Welcome, Players.</h1>
+            <p class="text-slate-600 mt-2">Access the official Normanhurst Boys Table Tennis ranking system.</p>
+        </div>
 
-            <form id="searchForm" class="flex flex-col sm:flex-row">
-                <input type="text" id="searchInput" placeholder="ENTER PLAYER NAME..."
-                    class="flex-1 p-4 border-4 border-slate-900 outline-none focus:bg-yellow-50 font-black uppercase">
-                <button type="submit"
-                    class="bg-blue-800 text-white px-10 py-4 font-black border-4 border-slate-900 sm:border-l-0 hover:bg-yellow-400 hover:text-blue-900 transition-colors">
-                    SEARCH
-                </button>
+        <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 mb-10">
+            <h2 class="text-lg font-bold mb-4 italic text-blue-800 uppercase tracking-wide">Quick Player Search</h2>
+            <form id="searchForm" class="flex gap-2">
+                <input type="text" id="searchInput" placeholder="Enter name (e.g. Fanda)..." 
+                    class="flex-1 p-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500">
+                <button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 transition-colors">Search</button>
             </form>
-            <div id="searchResult" class="hidden mt-8 bg-slate-50 border-4 border-slate-900 p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"></div>
+            <div id="searchResult" class="hidden mt-6 p-4 bg-blue-50 border border-blue-100 rounded-xl"></div>
         </section>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <a href="player-ranking.html" class="neo-card p-6 hover:translate-x-1 hover:-translate-y-1 transition-transform">
-                <h2 class="text-2xl mb-2">View Rankings</h2>
-                <p class="text-slate-500 font-bold text-sm uppercase">Check Elo & Standings</p>
+            <a href="player-ranking.html" class="bg-white p-8 rounded-2xl border hover:border-blue-500 transition-all shadow-sm text-center">
+                <span class="text-3xl mb-2 block">🏆</span>
+                <h3 class="font-bold text-xl">View Ranking Ladder</h3>
+                <p class="text-slate-500 text-sm italic">Current Elo ratings and club standings.</p>
             </a>
-            <a href="player-matchup-ladder.html" class="neo-card p-6 hover:translate-x-1 hover:-translate-y-1 transition-transform">
-                <h2 class="text-2xl mb-2">Weekly Matchups</h2>
-                <p class="text-slate-500 font-bold text-sm uppercase">See Court Brackets</p>
+            <a href="player-matchup-ladder.html" class="bg-white p-8 rounded-2xl border hover:border-blue-500 transition-all shadow-sm text-center">
+                <span class="text-3xl mb-2 block">📅</span>
+                <h3 class="font-bold text-xl">Weekly Matchups</h3>
+                <p class="text-slate-500 text-sm italic">Session court placements.</p>
             </a>
         </div>
-
-        <footer class="mt-20 border-t-4 border-slate-900 pt-6 mb-10">
-            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-                <p class="last-updated uppercase font-black">System: <span class="text-green-600">Operational</span></p>
-                <p id="update-timestamp" class="last-updated">Last Sync: Loading...</p>
-            </div>
-        </footer>
     </main>
 
     <script>
@@ -89,53 +58,34 @@
                 const response = await fetch(SHEET_URL);
                 const data = await response.text();
                 const rows = data.split('\n').map(row => row.trim()).filter(row => row.length > 0);
-                const playerRows = rows.slice(1);
-
-                players = playerRows.map(row => {
+                players = rows.slice(1).map(row => {
                     const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-                    const clean = (val) => (val || "").replace(/"/g, '').replace(/,/g, '').trim();
+                    const clean = (v) => (v || "").replace(/"/g, '').replace(/,/g, '').trim();
                     return {
-                        name: clean(cols[0]) || "Unknown",
+                        name: clean(cols[0]),
                         elo: parseInt(clean(cols[1])) || 0,
                         wins: parseInt(clean(cols[2])) || 0,
                         losses: parseInt(clean(cols[3])) || 0
                     };
                 });
-
-                const now = new Date();
-                document.getElementById('update-timestamp').innerText = "Last Sync: " + now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) + " AEST";
-            } catch (error) { console.error(error); }
+            } catch (e) { console.error(e); }
         }
 
         function searchPlayer(event) {
             if (event) event.preventDefault();
             const input = document.getElementById('searchInput').value.toLowerCase().trim();
             const resultDiv = document.getElementById('searchResult');
-            if (input === "") { resultDiv.classList.add('hidden'); return; }
             const found = players.find(p => p.name.toLowerCase().includes(input));
-
             if (found) {
                 resultDiv.innerHTML = `
-                    <h3 class="text-3xl text-blue-900 mb-4">${found.name}</h3>
-                    <div class="grid grid-cols-3 gap-4">
-                        <div class="bg-white border-2 border-slate-900 p-2 text-center">
-                            <p class="text-[10px] font-black uppercase text-slate-500">Elo</p>
-                            <p class="text-xl font-black text-blue-600">${found.elo}</p>
-                        </div>
-                        <div class="bg-white border-2 border-slate-900 p-2 text-center">
-                            <p class="text-[10px] font-black uppercase text-slate-500">Wins</p>
-                            <p class="text-xl font-black text-green-600">${found.wins}</p>
-                        </div>
-                        <div class="bg-white border-2 border-slate-900 p-2 text-center">
-                            <p class="text-[10px] font-black uppercase text-slate-500">Losses</p>
-                            <p class="text-xl font-black text-red-600">${found.losses}</p>
-                        </div>
+                    <h3 class="text-xl font-bold text-blue-800">${found.name}</h3>
+                    <div class="mt-2 grid grid-cols-3 gap-4 text-sm">
+                        <div><p class="text-slate-500 font-bold uppercase text-[10px]">Elo</p><p class="text-lg font-bold text-blue-600">${found.elo}</p></div>
+                        <div><p class="text-slate-500 font-bold uppercase text-[10px]">Wins</p><p class="text-lg font-bold text-green-600">${found.wins}</p></div>
+                        <div><p class="text-slate-500 font-bold uppercase text-[10px]">Losses</p><p class="text-lg font-bold text-red-500">${found.losses}</p></div>
                     </div>`;
                 resultDiv.classList.remove('hidden');
-            } else {
-                resultDiv.innerHTML = `<p class="font-bold">Player not found.</p>`;
-                resultDiv.classList.remove('hidden');
-            }
+            } else { resultDiv.classList.add('hidden'); }
         }
 
         document.addEventListener('DOMContentLoaded', () => {

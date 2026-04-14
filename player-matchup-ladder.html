@@ -1,50 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Matchup Ladder - NBHS Table Tennis</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="icon" type="image/png" href="favicon.png">
-    <style>
-        /* The NBHS TT League Brand Font */
-        h1,
-        h2,
-        h3,
-        .nav-brand {
-            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
-            font-weight: 900 !important;
-            /* Extra Bold */
-            font-style: italic !important;
-            text-transform: uppercase !important;
-            letter-spacing: -0.05em !important;
-            line-height: 0.9 !important;
-        }
-
-        /* Specific accent for the search bar and buttons */
-        input,
-        button {
-            font-family: ui-sans-serif, system-ui, sans-serif;
-            text-transform: uppercase;
-            font-weight: 800;
-        }
-    </style>
-    <main class="max-w-4xl mx-auto p-6">
-        <h1 class="text-6xl text-slate-900 mb-2">Weekly Matchups</h1>
-
-        <div class="flex justify-between items-center mb-8">
-            <h2 class="text-2xl text-blue-700 uppercase">Court Assignments</h2>
-            <span class="bg-yellow-400 border-2 border-slate-900 text-slate-900 text-xs font-black px-3 py-1 uppercase">
-                Monday Session
-            </span>
-        </div>
-
-        <div id="matchup-container" class="grid gap-4 md:grid-cols-2">
-        </div>
-    </main>
 </head>
-
 <body class="bg-slate-50 text-slate-900 font-sans min-h-screen">
 
     <header class="bg-blue-800 text-white p-4 shadow-md">
@@ -58,19 +20,26 @@
     <main class="max-w-4xl mx-auto p-6">
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-3xl font-bold text-blue-900">Weekly Matchups</h1>
-            <span class="bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full uppercase">Term 2 - Week
-                1</span>
+            <span class="bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full uppercase">
+                Term 2 Session
+            </span>
         </div>
 
         <div id="matchup-container" class="grid gap-4 md:grid-cols-2">
             <div class="col-span-full text-center py-10 text-slate-400 italic">
-                Loading court assignments...
+                Syncing with Google Sheets...
             </div>
         </div>
+
+        <footer class="mt-20 border-t border-slate-200 pt-6 mb-10 text-center">
+            <p id="update-timestamp" class="text-xs text-slate-400 uppercase font-semibold tracking-wider">
+                Last Sync: Loading...
+            </p>
+        </footer>
     </main>
 
     <script>
-        // Use the same URL as before, but CHANGE THE GID to your Matchups tab ID
+        // Make sure the GID matches your 'Matchups' tab exactly
         const MATCHUP_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_UHoHNgToKV4yCuB_M56029JuMrOYWN-VkyxDiWkwXHJI1hhRnon_GMnvgvmQeHmL4F0gxkVz7IMP/pub?gid=YOUR_MATCHUP_TAB_GID_HERE&single=true&output=csv";
 
         async function loadMatchups() {
@@ -79,40 +48,48 @@
                 const data = await response.text();
                 const rows = data.split('\n').map(r => r.trim()).filter(r => r.length > 0);
 
-                // Assuming Sheet Columns: Court, Player1, Player2, Half
+                // Assuming Sheet Columns: Court, Player1, Player2, Half/Group
                 const matchups = rows.slice(1).map(row => {
                     const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                    const clean = (v) => (v || "").replace(/"/g, '').trim();
                     return {
-                        court: cols[0]?.replace(/"/g, '').trim(),
-                        p1: cols[1]?.replace(/"/g, '').trim(),
-                        p2: cols[2]?.replace(/"/g, '').trim(),
-                        half: cols[3]?.replace(/"/g, '').trim()
+                        court: clean(cols[0]),
+                        p1: clean(cols[1]),
+                        p2: clean(cols[2]),
+                        half: clean(cols[3])
                     };
-                }).filter(m => m.p1 && m.p2); // Only show rows with two players
+                }).filter(m => m.p1 && m.p2); 
 
                 const container = document.getElementById('matchup-container');
-                container.innerHTML = matchups.map(m => `
-                    <div class="bg-white p-5 rounded-xl border-l-8 border-blue-600 shadow-sm flex justify-between items-center">
-                        <div>
-                            <span class="text-xs font-bold text-blue-600 uppercase">Court ${m.court} • ${m.half}</span>
-                            <p class="text-lg font-bold text-slate-800 mt-1">${m.p1} <span class="text-slate-400 font-normal mx-2">vs</span> ${m.p2}</p>
-                        </div>
-                        <div class="hidden sm:block">
-                            <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center">
-                                🏓
+                
+                if (matchups.length === 0) {
+                    container.innerHTML = `<p class="col-span-full text-center text-slate-500 py-10">No matchups scheduled for this session yet.</p>`;
+                } else {
+                    container.innerHTML = matchups.map(m => `
+                        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex justify-between items-center hover:border-blue-300 transition-colors">
+                            <div>
+                                <span class="text-[10px] font-bold text-blue-600 uppercase tracking-widest">
+                                    Court ${m.court} ${m.half ? '• ' + m.half : ''}
+                                </span>
+                                <p class="text-lg font-bold text-slate-800 mt-1">
+                                    ${m.p1} <span class="text-slate-400 font-normal mx-1 text-sm italic">vs</span> ${m.p2}
+                                </p>
                             </div>
+                            <div class="bg-slate-50 p-2 rounded-lg text-xl">🏓</div>
                         </div>
-                    </div>
-                `).join('');
+                    `).join('');
+                }
+
+                const now = new Date();
+                document.getElementById('update-timestamp').innerText = "Last Sync: " + now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) + " AEST";
 
             } catch (err) {
                 console.error("Matchup load error:", err);
-                document.getElementById('matchup-container').innerHTML = `<p class="text-red-500">Error loading matchups.</p>`;
+                document.getElementById('matchup-container').innerHTML = `<p class="text-red-500 text-center col-span-full italic">Unable to load matchups. Check sheet GID.</p>`;
             }
         }
 
         window.onload = loadMatchups;
     </script>
 </body>
-
 </html>
