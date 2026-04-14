@@ -51,7 +51,7 @@
     </main>
 
     <script>
-// Paste your "Published to Web" CSV link for the STATS tab here
+// Paste your "Published to Web" CSV link for the PLAYERS tab here
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_UHoHNgToKV4yCuB_M56029JuMrOYWN-VkyxDiWkwXHJI1hhRnon_GMnvgvmQeHmL4F0gxkVz7IMP/pub?output=csv&gid=2082256240";
 
 let players = [];
@@ -64,53 +64,29 @@ async function loadData() {
         // Split by line and filter out any empty lines
         const rows = data.split('\n').map(row => row.trim()).filter(row => row.length > 0);
         
-        // Skip the header row (Name, ELO, Stats)
+        // Skip the header row
         const playerRows = rows.slice(1); 
 
         players = playerRows.map(row => {
             // This regex handles CSV splitting even if there are commas inside quotes
             const columns = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
             
-            const rawElo = columns[1] ? columns[1].replace(/"/g, '').replace(/,/g, '').trim() : "0";
-            const rawWins = columns[2] ? columns[2].replace(/"/g, '').trim() : "0";
-            const rawLosses = columns[3] ? columns[3].replace(/"/g, '').trim() : "0";
+            // Helper to strip quotes, commas, and whitespace
+            const clean = (val) => (val || "").replace(/"/g, '').replace(/,/g, '').trim();
+
             return { 
-                name: columns[0] ? columns[0].replace(/"/g, '').trim() : "Unknown", 
-                elo: parseInt(rawElo) || 0,
-                wins: parseInt(rawWins) || 0,
-                losses: parseInt(rawLosses) || 0
+                name: clean(columns[0]) || "Unknown", 
+                elo: parseInt(clean(columns[1])) || 0,
+                wins: parseInt(clean(columns[2])) || 0,
+                losses: parseInt(clean(columns[3])) || 0
             };
         });
 
         console.log("Successfully loaded " + players.length + " players.");
         
-        // If you are on index.html, we don't need to load the table.
-        // If you want to use this same script for player-ranking.html, 
-        // you would call your table-filling function here.
-        if (document.getElementById('ladder-table')) {
-            renderLadder();
-        }
-        
     } catch (error) {
         console.error("Error loading Google Sheet:", error);
     }
-}
-
-function renderLadder() {
-    const table = document.getElementById('ladder-table');
-    if (!table) return;
-    
-    table.innerHTML = ""; // Clear existing
-    // Sort by ELO high to low
-    players.sort((a,b) => b.elo - a.elo).forEach((p, i) => {
-        table.innerHTML += `
-            <tr class="border-t">
-                <td class="p-4 font-bold text-slate-400">#${i+1}</td>
-                <td class="p-4 font-semibold">${p.name}</td>
-                <td class="p-4 text-right font-mono text-blue-600 font-bold">${p.elo}</td>
-            </tr>
-        `;
-    });
 }
 
 // Search Function for the Home Page
@@ -125,7 +101,7 @@ function searchPlayer(event) {
     }
 
     if (!players.length) {
-        resultDiv.innerHTML = `<p class="text-slate-600">Player data is still loading. Please wait a moment and try again.</p>`;
+        resultDiv.innerHTML = `<p class="text-slate-600 italic">Data is still loading from the sheet...</p>`;
         resultDiv.classList.remove('hidden');
         return;
     }
@@ -135,19 +111,29 @@ function searchPlayer(event) {
     if (found) {
         resultDiv.innerHTML = `
             <h3 class="text-xl font-bold text-blue-800">${found.name}</h3>
-            <div class="mt-2 grid grid-cols-3 gap-4 text-sm">
-                <div><p class="text-slate-500 uppercase text-xs font-bold">Elo</p><p class="text-lg font-mono font-bold text-blue-600">${found.elo}</p></div>
-                <div><p class="text-slate-500 uppercase text-xs font-bold">Wins</p><p class="text-lg font-bold text-green-600">${found.wins ?? 'N/A'}</p></div>
-                <div><p class="text-slate-500 uppercase text-xs font-bold">Losses</p><p class="text-lg font-bold text-red-500">${found.losses ?? 'N/A'}</p></div>
+            <div class="mt-4 grid grid-cols-3 gap-4 text-center">
+                <div class="bg-white p-2 rounded-lg shadow-sm border border-blue-100">
+                    <p class="text-slate-500 uppercase text-[10px] font-bold tracking-widest">Elo</p>
+                    <p class="text-lg font-mono font-bold text-blue-600">${found.elo}</p>
+                </div>
+                <div class="bg-white p-2 rounded-lg shadow-sm border border-green-100">
+                    <p class="text-slate-500 uppercase text-[10px] font-bold tracking-widest">Wins</p>
+                    <p class="text-lg font-bold text-green-600">${found.wins}</p>
+                </div>
+                <div class="bg-white p-2 rounded-lg shadow-sm border border-red-100">
+                    <p class="text-slate-500 uppercase text-[10px] font-bold tracking-widest">Losses</p>
+                    <p class="text-lg font-bold text-red-500">${found.losses}</p>
+                </div>
             </div>
         `;
         resultDiv.classList.remove('hidden');
     } else {
-        resultDiv.innerHTML = `<p class="text-slate-600">No player found. Try another name.</p>`;
+        resultDiv.innerHTML = `<p class="text-slate-600 p-2">Player "<strong>${input}</strong>" not found.</p>`;
         resultDiv.classList.remove('hidden');
     }
 }
 
+// Initialize when page loads
 document.addEventListener('DOMContentLoaded', () => {
     const searchForm = document.getElementById('searchForm');
     if (searchForm) {
