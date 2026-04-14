@@ -62,77 +62,88 @@
             await loadMatchHistory();
         }
 
- async function loadPlayerStats() {
-    try {
-        const resp = await fetch(BASE_URL + STATS_GID);
-        const data = await resp.text();
-        const rows = data.split('\n').map(r => r.trim());
-        
-        // Find the player in the Players Sheet
-        const found = rows.find(r => r.toLowerCase().includes(playerName.toLowerCase()));
-        
-        if (found) {
-            const cols = found.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-            const clean = (val) => (val || "").replace(/"/g, '').replace(/,/g, '').trim();
-            
-            const elo = clean(cols[1]);
-            const wins = clean(cols[2]);
-            const losses = clean(cols[3]);
-            const division = clean(cols[4]) || "N/A"; // Adjust index if needed
-            const half = clean(cols[5]) || "N/A";     // Adjust index if needed
+        async function loadPlayerStats() {
+            try {
+                const resp = await fetch(BASE_URL + STATS_GID);
+                const data = await resp.text();
+                const rows = data.split('\n').map(r => r.trim());
 
-            document.getElementById('quick-stats').innerHTML = `
-                <div class="flex flex-wrap gap-4 text-sm md:text-base">
-                    <span class="text-blue-600">ELO: ${elo}</span>
-                    <span class="text-green-600">WINS: ${wins}</span>
-                    <span class="text-red-500">LOSSES: ${losses}</span>
-                    <span class="text-slate-500 border-l pl-4 font-black italic uppercase">Division ${division}</span>
-                    <span class="text-slate-500 border-l pl-4 font-black italic uppercase">${half} Half</span>
-                </div>
-            `;
-            
-            // Graph placeholder
-            renderChart([1000, parseInt(elo)]); 
-        }
-    } catch (err) {
-        console.error("Stats load error:", err);
-    }
-}
+                // Find the player in the Players Sheet
+                const found = rows.find(r => r.toLowerCase().includes(playerName.toLowerCase()));
 
-async function loadMatchHistory() {
-    try {
-        const resp = await fetch(BASE_URL + MATCHES_GID);
-        if (!resp.ok) throw new Error("Could not reach Google Sheets");
-        
-        const data = await resp.text();
-        const rows = data.split('\n').map(r => r.trim()).filter(r => r.length > 0);
-        
-        const history = rows.slice(1).map(row => {
-            return row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-        }).filter(cols => {
-            const p1 = (cols[0] || "").toLowerCase();
-            const p2 = (cols[1] || "").toLowerCase();
-            return p1.includes(playerName.toLowerCase()) || p2.includes(playerName.toLowerCase());
-        });
+                if (found) {
+                    const cols = found.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                    const cleanStat = (val) => {
+                        // Remove quotes and commas
+                        let cleaned = (val || "").toString().replace(/"/g, '').replace(/,/g, '').trim();
 
-        const table = document.getElementById('history-table');
-        
-        if (history.length === 0) {
-            table.innerHTML = `<tr><td colspan="4" class="p-10 text-center text-slate-400">No recent match history found.</td></tr>`;
-            return;
+                        // If it's an empty string, return "0"
+                        // If it's a number (including 0), return it as is
+                        if (cleaned === "") return "0";
+                        return cleaned;
+                    };
+
+                    // Then apply it like this in your loadPlayerStats function:
+                    const elo = cleanStat(cols[1]);
+                    const wins = cleanStat(cols[2]);
+                    const losses = cleanStat(cols[3]);
+                    const division = (cols[4] || "N/A").trim();
+                    const half = (cols[5] || "N/A").trim();
+
+                    document.getElementById('quick-stats').innerHTML = `
+    <div class="mt-4 flex flex-wrap gap-6 font-black uppercase italic tracking-tighter">
+        <span class="text-blue-700">ELO: ${elo}</span>
+        <span class="text-green-600">WINS: ${wins}</span>
+        <span class="text-red-500">LOSSES: ${losses}</span>
+        <div class="border-l border-slate-300 pl-6 flex gap-4 text-slate-400">
+            <span>${division}</span>
+            <span>${half} HALF</span>
+        </div>
+    </div>
+`;
+
+                    // Graph placeholder
+                    renderChart([1000, parseInt(elo)]);
+                }
+            } catch (err) {
+                console.error("Stats load error:", err);
+            }
         }
 
-        table.innerHTML = history.map(cols => {
-            const p1 = cols[0].replace(/"/g, '').trim();
-            const p2 = cols[1].replace(/"/g, '').trim();
-            const winner = cols[2].replace(/"/g, '').trim();
-            const score = cols[3].replace(/"/g, '').trim();
-            
-            const isP1 = p1.toLowerCase().includes(playerName.toLowerCase());
-            const opponent = isP1 ? p2 : p1;
-            const hasWon = winner.toLowerCase().includes(playerName.toLowerCase());
+        async function loadMatchHistory() {
+            try {
+                const resp = await fetch(BASE_URL + MATCHES_GID);
+                if (!resp.ok) throw new Error("Could not reach Google Sheets");
 
-            return `
+                const data = await resp.text();
+                const rows = data.split('\n').map(r => r.trim()).filter(r => r.length > 0);
+
+                const history = rows.slice(1).map(row => {
+                    return row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                }).filter(cols => {
+                    const p1 = (cols[0] || "").toLowerCase();
+                    const p2 = (cols[1] || "").toLowerCase();
+                    return p1.includes(playerName.toLowerCase()) || p2.includes(playerName.toLowerCase());
+                });
+
+                const table = document.getElementById('history-table');
+
+                if (history.length === 0) {
+                    table.innerHTML = `<tr><td colspan="4" class="p-10 text-center text-slate-400">No recent match history found.</td></tr>`;
+                    return;
+                }
+
+                table.innerHTML = history.map(cols => {
+                    const p1 = cols[0].replace(/"/g, '').trim();
+                    const p2 = cols[1].replace(/"/g, '').trim();
+                    const winner = cols[2].replace(/"/g, '').trim();
+                    const score = cols[3].replace(/"/g, '').trim();
+
+                    const isP1 = p1.toLowerCase().includes(playerName.toLowerCase());
+                    const opponent = isP1 ? p2 : p1;
+                    const hasWon = winner.toLowerCase().includes(playerName.toLowerCase());
+
+                    return `
                 <tr class="border-b hover:bg-slate-50 transition-colors">
                     <td class="p-4">
                         <span class="font-bold text-slate-800">${opponent}</span>
@@ -145,12 +156,12 @@ async function loadMatchHistory() {
                     <td class="p-4 text-center font-mono font-bold text-slate-600">${score}</td>
                     <td class="p-4 text-right text-xs text-slate-400 italic">Week 1</td>
                 </tr>`;
-        }).join('');
+                }).join('');
 
-    } catch (err) {
-        document.getElementById('history-table').innerHTML = `<tr><td colspan="4" class="p-10 text-center text-red-500 font-bold">Failed to sync match data. Verify GID and Publishing.</td></tr>`;
-    }
-}
+            } catch (err) {
+                document.getElementById('history-table').innerHTML = `<tr><td colspan="4" class="p-10 text-center text-red-500 font-bold">Failed to sync match data. Verify GID and Publishing.</td></tr>`;
+            }
+        }
         function renderChart(historyData) {
             const ctx = document.getElementById('eloChart').getContext('2d');
             new Chart(ctx, {
