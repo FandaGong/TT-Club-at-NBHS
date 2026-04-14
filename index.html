@@ -27,7 +27,7 @@
 
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                 <h2 class="text-lg font-bold mb-4">🔍 Quick Player Search</h2>
-                <form id="searchForm" onsubmit="searchPlayer(event)" class="flex gap-2">
+                <form id="searchForm" class="flex gap-2">
                     <input type="text" id="searchInput" placeholder="Enter name (e.g. Fanda)..." 
                         class="flex-1 p-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500">
                     <button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold">Search</button>
@@ -144,7 +144,13 @@ function searchPlayer(event) {
     }
 }
 
-window.onload = loadData;
+document.addEventListener('DOMContentLoaded', () => {
+    const searchForm = document.getElementById('searchForm');
+    if (searchForm) {
+        searchForm.addEventListener('submit', searchPlayer);
+    }
+    loadData();
+});
     </script>
 </body>
 </html>
