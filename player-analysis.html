@@ -62,39 +62,52 @@
             await loadMatchHistory();
         }
 
-        async function loadPlayerStats() {
-            const resp = await fetch(BASE_URL + STATS_GID);
-            const data = await resp.text();
-            const rows = data.split('\n').map(r => r.trim());
-            const found = rows.find(r => r.toLowerCase().includes(playerName.toLowerCase()));
+ async function loadPlayerStats() {
+    try {
+        const resp = await fetch(BASE_URL + STATS_GID);
+        const data = await resp.text();
+        const rows = data.split('\n').map(r => r.trim());
+        
+        // Find the player in the Players Sheet
+        const found = rows.find(r => r.toLowerCase().includes(playerName.toLowerCase()));
+        
+        if (found) {
+            const cols = found.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+            const clean = (val) => (val || "").replace(/"/g, '').replace(/,/g, '').trim();
+            
+            const elo = clean(cols[1]);
+            const wins = clean(cols[2]);
+            const losses = clean(cols[3]);
+            const division = clean(cols[4]) || "N/A"; // Adjust index if needed
+            const half = clean(cols[5]) || "N/A";     // Adjust index if needed
 
-            if (found) {
-                const cols = found.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-                const elo = cols[1].replace(/"/g, '');
-                const w = cols[2];
-                const l = cols[3];
-                document.getElementById('quick-stats').innerHTML = `
+            document.getElementById('quick-stats').innerHTML = `
+                <div class="flex flex-wrap gap-4 text-sm md:text-base">
                     <span class="text-blue-600">ELO: ${elo}</span>
-                    <span class="text-green-600">WINS: ${w}</span>
-                    <span class="text-red-500">LOSSES: ${l}</span>
-                `;
-
-                // Placeholder for Chart (Usually requires a history of Elos in your sheet)
-                renderChart([1000, 1100, 1050, elo.replace(',', '')]);
-            }
+                    <span class="text-green-600">WINS: ${wins}</span>
+                    <span class="text-red-500">LOSSES: ${losses}</span>
+                    <span class="text-slate-500 border-l pl-4 font-black italic uppercase">Division ${division}</span>
+                    <span class="text-slate-500 border-l pl-4 font-black italic uppercase">${half} Half</span>
+                </div>
+            `;
+            
+            // Graph placeholder
+            renderChart([1000, parseInt(elo)]); 
         }
+    } catch (err) {
+        console.error("Stats load error:", err);
+    }
+}
 
 async function loadMatchHistory() {
     try {
         const resp = await fetch(BASE_URL + MATCHES_GID);
-        if (!resp.ok) throw new Error("Sheet unreachable");
+        if (!resp.ok) throw new Error("Could not reach Google Sheets");
         
         const data = await resp.text();
         const rows = data.split('\n').map(r => r.trim()).filter(r => r.length > 0);
         
-        // Filter matches for the current player
         const history = rows.slice(1).map(row => {
-            // This splits by comma but ignores commas inside quotes
             return row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
         }).filter(cols => {
             const p1 = (cols[0] || "").toLowerCase();
@@ -105,7 +118,7 @@ async function loadMatchHistory() {
         const table = document.getElementById('history-table');
         
         if (history.length === 0) {
-            table.innerHTML = `<tr><td colspan="4" class="p-10 text-center text-slate-400">No matches found in the database.</td></tr>`;
+            table.innerHTML = `<tr><td colspan="4" class="p-10 text-center text-slate-400">No recent match history found.</td></tr>`;
             return;
         }
 
@@ -115,30 +128,29 @@ async function loadMatchHistory() {
             const winner = cols[2].replace(/"/g, '').trim();
             const score = cols[3].replace(/"/g, '').trim();
             
-            // Logic for Opponent and Result
             const isP1 = p1.toLowerCase().includes(playerName.toLowerCase());
             const opponent = isP1 ? p2 : p1;
             const hasWon = winner.toLowerCase().includes(playerName.toLowerCase());
 
             return `
                 <tr class="border-b hover:bg-slate-50 transition-colors">
-                    <td class="p-4 font-bold text-slate-800">${opponent}</td>
+                    <td class="p-4">
+                        <span class="font-bold text-slate-800">${opponent}</span>
+                    </td>
                     <td class="p-4">
                         <span class="px-2 py-1 rounded text-[10px] font-black ${hasWon ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">
                             ${hasWon ? 'WIN' : 'LOSS'}
                         </span>
                     </td>
                     <td class="p-4 text-center font-mono font-bold text-slate-600">${score}</td>
-                    <td class="p-4 text-right text-xs text-slate-400 italic">Week Match</td>
+                    <td class="p-4 text-right text-xs text-slate-400 italic">Week 1</td>
                 </tr>`;
         }).join('');
 
     } catch (err) {
-        console.error("Match sync error:", err);
-        document.getElementById('history-table').innerHTML = `<tr><td colspan="4" class="p-10 text-center text-red-500 font-bold">Failed to sync match data. Check GID.</td></tr>`;
+        document.getElementById('history-table').innerHTML = `<tr><td colspan="4" class="p-10 text-center text-red-500 font-bold">Failed to sync match data. Verify GID and Publishing.</td></tr>`;
     }
 }
-
         function renderChart(historyData) {
             const ctx = document.getElementById('eloChart').getContext('2d');
             new Chart(ctx, {
