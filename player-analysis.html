@@ -74,21 +74,23 @@
                 if (found) {
                     const cols = found.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
                     const cleanStat = (val) => {
-                        // Remove quotes and commas
+                        // 1. Remove quotes, commas, and whitespace
                         let cleaned = (val || "").toString().replace(/"/g, '').replace(/,/g, '').trim();
 
-                        // If it's an empty string, return "0"
-                        // If it's a number (including 0), return it as is
-                        if (cleaned === "") return "0";
+                        // 2. If it's empty, "undefined", "null", or just whitespace, return "0"
+                        if (!cleaned || cleaned.toLowerCase() === "undefined" || cleaned.toLowerCase() === "null") {
+                            return "0";
+                        }
+
                         return cleaned;
                     };
 
-                    // Then apply it like this in your loadPlayerStats function:
+                    // Apply to your stats
                     const elo = cleanStat(cols[1]);
                     const wins = cleanStat(cols[2]);
                     const losses = cleanStat(cols[3]);
-                    const division = (cols[4] || "N/A").trim();
-                    const half = (cols[5] || "N/A").trim();
+                    const division = (cols[4] || "N/A").replace(/"/g, '').trim();
+                    const half = (cols[5] || "N/A").replace(/"/g, '').trim();
 
                     document.getElementById('quick-stats').innerHTML = `
     <div class="mt-4 flex flex-wrap gap-6 font-black uppercase italic tracking-tighter">
