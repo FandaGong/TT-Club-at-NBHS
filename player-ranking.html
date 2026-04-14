@@ -50,16 +50,19 @@
                 const rows = data.split('\n').map(r => r.trim()).filter(r => r.length > 0);
                 const playerRows = rows.slice(1); // Skip header row
 
-                const players = playerRows.map(row => {
-                    // Regex to handle potential commas inside names (Enterprise-grade parsing)
-                    const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-                    return {
-                        name: cols[0]?.replace(/"/g, '').trim() || "Unknown",
-                        elo: parseInt(cols[1]?.trim()) || 0,
-                        wins: parseInt(cols[2]?.trim()) || 0,
-                        losses: parseInt(cols[3]?.trim()) || 0
-                    };
-                });
+const players = playerRows.map(row => {
+    const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+    
+    // Clean the Elo string by removing commas
+    const rawElo = cols[1]?.replace(/"/g, '').replace(/,/g, '').trim();
+    
+    return {
+        name: cols[0]?.replace(/"/g, '').trim() || "Unknown",
+        elo: parseInt(rawElo) || 0, // Now "1,338" becomes 1338
+        wins: parseInt(cols[2]?.trim()) || 0,
+        losses: parseInt(cols[3]?.trim()) || 0
+    };
+});
 
                 // Sort High to Low by Elo
                 players.sort((a, b) => b.elo - a.elo);
