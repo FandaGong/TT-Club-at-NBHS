@@ -1,132 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Player Rankings - NBHS Table Tennis</title>
+    <title>Rankings - NBHS Table Tennis</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="icon" type="image/png" href="favicon.png">
     <style>
-        /* The NBHS TT League Brand Font */
-        h1,
-        h2,
-        h3,
-        .nav-brand {
-            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
-            font-weight: 900 !important;
-            /* Extra Bold */
-            font-style: italic !important;
-            text-transform: uppercase !important;
-            letter-spacing: -0.05em !important;
-            line-height: 0.9 !important;
-        }
-
-        /* Specific accent for the search bar and buttons */
-        input,
-        button {
-            font-family: ui-sans-serif, system-ui, sans-serif;
-            text-transform: uppercase;
-            font-weight: 800;
-        }
+        h1, h2, th { font-family: ui-sans-serif, system-ui, sans-serif !important; font-weight: 900 !important; font-style: italic !important; text-transform: uppercase !important; }
+        .league-header { background: linear-gradient(90deg, #1e3a8a 0%, #1e40af 100%); border-bottom: 4px solid #fbbf24; }
+        .neo-card { background: white; border: 4px solid #0f172a; box-shadow: 10px 10px 0px 0px #1e3a8a; }
     </style>
-    <main class="max-w-4xl mx-auto p-6">
-        <h1 class="text-6xl text-slate-900 mb-6">Official Rankings</h1>
-
-        <div class="bg-white border-4 border-slate-900 shadow-[10px_10px_0px_0px_rgba(30,58,138,1)] overflow-hidden">
-            <div class="p-4 border-b-4 border-slate-900 bg-slate-100">
-                <h2 class="text-2xl text-slate-900">Leaderboard</h2>
-            </div>
-
-            <table class="w-full text-left">
-            </table>
-        </div>
-    </main>
 </head>
+<body class="bg-slate-50 text-slate-900 min-h-screen">
+    <nav class="league-header text-white p-4 shadow-xl mb-10">
+        <div class="max-w-4xl mx-auto flex justify-between items-center">
+            <a href="index.html" class="text-xl font-black italic tracking-tighter uppercase">NBHS TT HUB</a>
+            <div class="space-x-6 text-xs font-bold uppercase tracking-widest">
+                <a href="index.html" class="hover:text-yellow-400">Home</a>
+                <a href="player-ranking.html" class="text-yellow-400">Rankings</a>
+                <a href="player-matchup-ladder.html" class="hover:text-yellow-400">Matchups</a>
+            </div>
+        </div>
+    </nav>
 
-<body class="bg-slate-50 text-slate-900 font-sans min-h-screen">
-
-    <header class="bg-blue-800 text-white p-4 shadow-md">
-        <nav class="max-w-4xl mx-auto flex gap-6">
-            <a href="index.html" class="hover:underline">Home</a>
-            <a href="player-ranking.html" class="font-bold border-b-2 border-white">Rankings</a>
-            <a href="player-matchup-ladder.html" class="hover:underline">Matchups</a>
-        </nav>
-    </header>
-
-    <div class="max-w-4xl mx-auto p-6">
-        <h1 class="text-3xl font-bold text-blue-900 mb-6">Official Club Rankings</h1>
-
-        <div class="bg-white rounded-2xl shadow-sm border overflow-hidden">
-            <table class="w-full text-left">
-                <thead class="bg-slate-100 border-b">
-                    <tr>
-                        <th class="p-4 w-16">Rank</th>
-                        <th class="p-4">Player Name</th>
-                        <th class="p-4 text-center">Wins</th>
-                        <th class="p-4 text-center">Losses</th>
+    <main class="max-w-4xl mx-auto p-6">
+        <h1 class="text-6xl mb-6">Official Rankings</h1>
+        <div class="neo-card overflow-hidden">
+            <div class="bg-slate-100 p-4 border-b-4 border-slate-900">
+                <h2 class="text-2xl">Season Leaderboard</h2>
+            </div>
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-slate-200 border-b-4 border-slate-900">
+                        <th class="p-4">Rank</th>
+                        <th class="p-4">Player</th>
+                        <th class="p-4 text-center">W</th>
+                        <th class="p-4 text-center">L</th>
                         <th class="p-4 text-right">Elo</th>
                     </tr>
                 </thead>
-                <tbody id="ladder-table">
-                    <tr>
-                        <td colspan="5" class="p-10 text-center text-slate-400">Fetching live rankings...</td>
-                    </tr>
+                <tbody id="ladder-table" class="font-bold">
+                    <tr><td colspan="5" class="p-10 text-center uppercase">Loading League Data...</td></tr>
                 </tbody>
             </table>
         </div>
-    </div>
+    </main>
 
     <script>
-        // Use the CSV output link for your Players tab
         const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_UHoHNgToKV4yCuB_M56029JuMrOYWN-VkyxDiWkwXHJI1hhRnon_GMnvgvmQeHmL4F0gxkVz7IMP/pub?gid=2082256240&single=true&output=csv";
-
         async function loadRankings() {
             try {
                 const response = await fetch(SHEET_URL);
                 const data = await response.text();
-
-                // Split rows and filter empty lines
                 const rows = data.split('\n').map(r => r.trim()).filter(r => r.length > 0);
-                const playerRows = rows.slice(1); // Skip header row
-
-                const players = playerRows.map(row => {
+                const players = rows.slice(1).map(row => {
                     const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                    const clean = (v) => (v || "").replace(/"/g, '').replace(/,/g, '').trim();
+                    return { name: clean(cols[0]), elo: parseInt(clean(cols[1])) || 0, wins: clean(cols[2]) || 0, losses: clean(cols[3]) || 0 };
+                }).sort((a,b) => b.elo - a.elo);
 
-                    // Clean the Elo string by removing commas
-                    const rawElo = cols[1]?.replace(/"/g, '').replace(/,/g, '').trim();
-
-                    return {
-                        name: cols[0]?.replace(/"/g, '').trim() || "Unknown",
-                        elo: parseInt(rawElo) || 0, // Now "1,338" becomes 1338
-                        wins: parseInt(cols[2]?.trim()) || 0,
-                        losses: parseInt(cols[3]?.trim()) || 0
-                    };
-                });
-
-                // Sort High to Low by Elo
-                players.sort((a, b) => b.elo - a.elo);
-
-                const table = document.getElementById('ladder-table');
-                table.innerHTML = players.map((p, i) => `
-                    <tr class="border-b hover:bg-blue-50 transition-colors">
-                        <td class="p-4 font-bold text-slate-400">#${i + 1}</td>
-                        <td class="p-4 font-bold text-blue-900">${p.name}</td>
-                        <td class="p-4 text-center text-green-600 font-semibold">${p.wins}</td>
-                        <td class="p-4 text-center text-red-500 font-semibold">${p.losses}</td>
-                        <td class="p-4 text-right font-mono font-bold text-blue-600">${p.elo}</td>
-                    </tr>
-                `).join('');
-
-            } catch (err) {
-                console.error("Fetch error:", err);
-                document.getElementById('ladder-table').innerHTML = `<tr><td colspan="5" class="p-10 text-center text-red-500">Error loading data. Check your internet or CSV link.</td></tr>`;
-            }
+                document.getElementById('ladder-table').innerHTML = players.map((p, i) => `
+                    <tr class="border-b-2 border-slate-200 hover:bg-blue-50">
+                        <td class="p-4 text-slate-400">#${i + 1}</td>
+                        <td class="p-4 text-blue-900 uppercase">${p.name}</td>
+                        <td class="p-4 text-center text-green-600">${p.wins}</td>
+                        <td class="p-4 text-center text-red-500">${p.losses}</td>
+                        <td class="p-4 text-right font-mono text-blue-600">${p.elo}</td>
+                    </tr>`).join('');
+            } catch (e) { console.error(e); }
         }
-
-        // Call the function
         loadRankings();
     </script>
 </body>
-
 </html>
