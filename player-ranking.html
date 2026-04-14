@@ -74,19 +74,18 @@
 
                 const table = document.getElementById('ladder-table');
                 table.innerHTML = players.map((p, i) => `
-                    <tr class="border-b hover:bg-blue-50 transition-colors">
-                        <td class="p-4 font-bold text-slate-400">#${i + 1}</td>
-                        // Inside your players.map((p, i) => ...
-<td class="p-4 font-semibold text-slate-800">
-    <a href="player-analysis.html?name=${encodeURIComponent(p.name)}" class="text-blue-600 hover:underline">
-        ${p.name}
-    </a>
-</td>
-                        <td class="p-4 text-center text-green-600 font-semibold">${p.wins}</td>
-                        <td class="p-4 text-center text-red-500 font-semibold">${p.losses}</td>
-                        <td class="p-4 text-right font-mono font-bold text-blue-600">${p.elo}</td>
-                    </tr>
-                `).join('');
+    <tr class="border-b hover:bg-blue-50 transition-colors">
+        <td class="p-4 text-slate-400 font-bold">#${i + 1}</td>
+        <td class="p-4 font-semibold text-slate-800">
+            <a href="player-analysis.html?name=${encodeURIComponent(p.name)}" class="text-blue-600 hover:underline">
+                ${p.name}
+            </a>
+        </td>
+        <td class="p-4 text-center text-green-600 font-bold">${p.wins}</td>
+        <td class="p-4 text-center text-red-500 font-bold">${p.losses}</td>
+        <td class="p-4 text-right font-mono font-bold text-blue-600">${p.elo}</td>
+    </tr>
+`).join('');
 
             } catch (err) {
                 console.error("Fetch error:", err);

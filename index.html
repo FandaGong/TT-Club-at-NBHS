@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="icon" type="image/png" href="favicon.png">
 </head>
+
 <body class="bg-slate-50 text-slate-900 font-sans min-h-screen">
 
     <nav class="bg-blue-800 text-white p-4 shadow-md">
@@ -14,7 +16,8 @@
             <a href="index.html" class="text-xl font-bold">NBHS TT Hub</a>
             <div class="space-x-4 text-sm md:text-base">
                 <a href="player-ranking.html" class="hover:text-blue-200 uppercase font-semibold">Ranking</a>
-                <a href="player-matchup-ladder.html" class="hover:text-blue-200 uppercase font-semibold">Matchup Ladder</a>
+                <a href="player-matchup-ladder.html" class="hover:text-blue-200 uppercase font-semibold">Matchup
+                    Ladder</a>
             </div>
         </div>
     </nav>
@@ -29,7 +32,7 @@
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                 <h2 class="text-lg font-bold mb-4">🔍 Quick Player Search</h2>
                 <form id="searchForm" class="flex gap-2">
-                    <input type="text" id="searchInput" placeholder="Enter name (e.g. Fanda)..." 
+                    <input type="text" id="searchInput" placeholder="Enter name (e.g. Fanda)..."
                         class="flex-1 p-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500">
                     <button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold">Search</button>
                 </form>
@@ -37,12 +40,14 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <a href="player-ranking.html" class="bg-white p-8 rounded-2xl border hover:border-blue-500 transition-all shadow-sm text-center">
+                <a href="player-ranking.html"
+                    class="bg-white p-8 rounded-2xl border hover:border-blue-500 transition-all shadow-sm text-center">
                     <span class="text-3xl mb-2 block">🏆</span>
                     <h3 class="font-bold text-xl">View Ranking Ladder</h3>
                     <p class="text-slate-500 text-sm">Check current Elo ratings and club standings.</p>
                 </a>
-                <a href="player-matchup-ladder.html" class="bg-white p-8 rounded-2xl border hover:border-blue-500 transition-all shadow-sm text-center">
+                <a href="player-matchup-ladder.html"
+                    class="bg-white p-8 rounded-2xl border hover:border-blue-500 transition-all shadow-sm text-center">
                     <span class="text-3xl mb-2 block">📅</span>
                     <h3 class="font-bold text-xl">Weekly Matchups</h3>
                     <p class="text-slate-500 text-sm">See bracket placements for the next session.</p>
@@ -52,65 +57,65 @@
     </main>
 
     <script>
-// Paste your "Published to Web" CSV link for the PLAYERS tab here
-const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_UHoHNgToKV4yCuB_M56029JuMrOYWN-VkyxDiWkwXHJI1hhRnon_GMnvgvmQeHmL4F0gxkVz7IMP/pub?output=csv&gid=2082256240";
+        // Paste your "Published to Web" CSV link for the PLAYERS tab here
+        const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_UHoHNgToKV4yCuB_M56029JuMrOYWN-VkyxDiWkwXHJI1hhRnon_GMnvgvmQeHmL4F0gxkVz7IMP/pub?output=csv&gid=2082256240";
 
-let players = [];
+        let players = [];
 
-async function loadData() {
-    try {
-        const response = await fetch(SHEET_URL);
-        const data = await response.text();
-        
-        // Split by line and filter out any empty lines
-        const rows = data.split('\n').map(row => row.trim()).filter(row => row.length > 0);
-        
-        // Skip the header row
-        const playerRows = rows.slice(1); 
+        async function loadData() {
+            try {
+                const response = await fetch(SHEET_URL);
+                const data = await response.text();
 
-        players = playerRows.map(row => {
-            // This regex handles CSV splitting even if there are commas inside quotes
-            const columns = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-            
-            // Helper to strip quotes, commas, and whitespace
-            const clean = (val) => (val || "").replace(/"/g, '').replace(/,/g, '').trim();
+                // Split by line and filter out any empty lines
+                const rows = data.split('\n').map(row => row.trim()).filter(row => row.length > 0);
 
-            return { 
-                name: clean(columns[0]) || "Unknown", 
-                elo: parseInt(clean(columns[1])) || 0,
-                wins: parseInt(clean(columns[2])) || 0,
-                losses: parseInt(clean(columns[3])) || 0
-            };
-        });
+                // Skip the header row
+                const playerRows = rows.slice(1);
 
-        console.log("Successfully loaded " + players.length + " players.");
-        
-    } catch (error) {
-        console.error("Error loading Google Sheet:", error);
-    }
-}
+                players = playerRows.map(row => {
+                    // This regex handles CSV splitting even if there are commas inside quotes
+                    const columns = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
 
-// Search Function for the Home Page
-function searchPlayer(event) {
-    if (event) event.preventDefault();
-    const input = document.getElementById('searchInput').value.toLowerCase().trim();
-    const resultDiv = document.getElementById('searchResult');
-    
-    if (input === "") {
-        resultDiv.classList.add('hidden');
-        return;
-    }
+                    // Helper to strip quotes, commas, and whitespace
+                    const clean = (val) => (val || "").replace(/"/g, '').replace(/,/g, '').trim();
 
-    if (!players.length) {
-        resultDiv.innerHTML = `<p class="text-slate-600 italic">Data is still loading from the sheet...</p>`;
-        resultDiv.classList.remove('hidden');
-        return;
-    }
+                    return {
+                        name: clean(columns[0]) || "Unknown",
+                        elo: parseInt(clean(columns[1])) || 0,
+                        wins: parseInt(clean(columns[2])) || 0,
+                        losses: parseInt(clean(columns[3])) || 0
+                    };
+                });
 
-    const found = players.find(p => p.name.toLowerCase().includes(input));
+                console.log("Successfully loaded " + players.length + " players.");
 
-    if (found) {
-        resultDiv.innerHTML = `
+            } catch (error) {
+                console.error("Error loading Google Sheet:", error);
+            }
+        }
+
+        // Search Function for the Home Page
+        function searchPlayer(event) {
+            if (event) event.preventDefault();
+            const input = document.getElementById('searchInput').value.toLowerCase().trim();
+            const resultDiv = document.getElementById('searchResult');
+
+            if (input === "") {
+                resultDiv.classList.add('hidden');
+                return;
+            }
+
+            if (!players.length) {
+                resultDiv.innerHTML = `<p class="text-slate-600 italic">Data is still loading from the sheet...</p>`;
+                resultDiv.classList.remove('hidden');
+                return;
+            }
+
+            const found = players.find(p => p.name.toLowerCase().includes(input));
+
+            if (found) {
+                resultDiv.innerHTML = `
             <h3 class="text-xl font-bold text-blue-800">
     <a href="player-analysis.html?name=${encodeURIComponent(found.name)}" class="hover:underline hover:text-blue-600">
         ${found.name} →
@@ -131,21 +136,22 @@ function searchPlayer(event) {
                 </div>
             </div>
         `;
-        resultDiv.classList.remove('hidden');
-    } else {
-        resultDiv.innerHTML = `<p class="text-slate-600 p-2">Player "<strong>${input}</strong>" not found.</p>`;
-        resultDiv.classList.remove('hidden');
-    }
-}
+                resultDiv.classList.remove('hidden');
+            } else {
+                resultDiv.innerHTML = `<p class="text-slate-600 p-2">Player "<strong>${input}</strong>" not found.</p>`;
+                resultDiv.classList.remove('hidden');
+            }
+        }
 
-// Initialize when page loads
-document.addEventListener('DOMContentLoaded', () => {
-    const searchForm = document.getElementById('searchForm');
-    if (searchForm) {
-        searchForm.addEventListener('submit', searchPlayer);
-    }
-    loadData();
-});
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchForm = document.getElementById('searchForm');
+            if (searchForm) {
+                searchForm.addEventListener('submit', searchPlayer);
+            }
+            loadData();
+        });
     </script>
 </body>
+
 </html>
