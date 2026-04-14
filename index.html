@@ -27,11 +27,11 @@
 
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                 <h2 class="text-lg font-bold mb-4">🔍 Quick Player Search</h2>
-                <div class="flex gap-2">
+                <form id="searchForm" onsubmit="searchPlayer(event)" class="flex gap-2">
                     <input type="text" id="searchInput" placeholder="Enter name (e.g. Fanda)..." 
                         class="flex-1 p-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500">
-                    <button onclick="searchPlayer()" class="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold">Search</button>
-                </div>
+                    <button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold">Search</button>
+                </form>
                 <div id="searchResult" class="hidden mt-6 p-4 bg-blue-50 border border-blue-100 rounded-xl"></div>
             </div>
 
@@ -52,7 +52,7 @@
 
     <script>
 // Paste your "Published to Web" CSV link for the STATS tab here
-const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_UHoHNgToKV4yCuB_M56029JuMrOYWN-VkyxDiWkwXHJI1hhRnon_GMnvgvmQeHmL4F0gxkVz7IMP/pubhtml?gid=2082256240&single=true";
+const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_UHoHNgToKV4yCuB_M56029JuMrOYWN-VkyxDiWkwXHJI1hhRnon_GMnvgvmQeHmL4F0gxkVz7IMP/pub?output=csv&gid=2082256240";
 
 let players = [];
 
@@ -110,7 +110,8 @@ function renderLadder() {
 }
 
 // Search Function for the Home Page
-function searchPlayer() {
+function searchPlayer(event) {
+    if (event) event.preventDefault();
     const input = document.getElementById('searchInput').value.toLowerCase().trim();
     const resultDiv = document.getElementById('searchResult');
     
@@ -119,17 +120,26 @@ function searchPlayer() {
         return;
     }
 
+    if (!players.length) {
+        resultDiv.innerHTML = `<p class="text-slate-600">Player data is still loading. Please wait a moment and try again.</p>`;
+        resultDiv.classList.remove('hidden');
+        return;
+    }
+
     const found = players.find(p => p.name.toLowerCase().includes(input));
 
-if (found) {
+    if (found) {
         resultDiv.innerHTML = `
             <h3 class="text-xl font-bold text-blue-800">${found.name}</h3>
             <div class="mt-2 grid grid-cols-3 gap-4 text-sm">
                 <div><p class="text-slate-500 uppercase text-xs font-bold">Elo</p><p class="text-lg font-mono font-bold text-blue-600">${found.elo}</p></div>
-                <div><p class="text-slate-500 uppercase text-xs font-bold">Wins</p><p class="text-lg font-bold text-green-600">${found.wins}</p></div>
-                <div><p class="text-slate-500 uppercase text-xs font-bold">Losses</p><p class="text-lg font-bold text-red-500">${found.losses}</p></div>
+                <div><p class="text-slate-500 uppercase text-xs font-bold">Wins</p><p class="text-lg font-bold text-green-600">${found.wins ?? 'N/A'}</p></div>
+                <div><p class="text-slate-500 uppercase text-xs font-bold">Losses</p><p class="text-lg font-bold text-red-500">${found.losses ?? 'N/A'}</p></div>
             </div>
         `;
+        resultDiv.classList.remove('hidden');
+    } else {
+        resultDiv.innerHTML = `<p class="text-slate-600">No player found. Try another name.</p>`;
         resultDiv.classList.remove('hidden');
     }
 }
