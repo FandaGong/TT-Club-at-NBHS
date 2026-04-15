@@ -10,22 +10,26 @@
 </head>
 
 <body class="bg-slate-50 text-slate-900 min-h-screen">
-<nav class="bg-blue-800 text-white shadow-md">
-    <div class="max-w-4xl mx-auto flex items-center justify-between gap-4 px-4 py-4">
-        <a href="index.html" class="text-xl font-bold">NBHS TT Hub</a>
-        <button id="navToggle" type="button" class="sm:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/20 bg-blue-900/20 text-white hover:bg-blue-900/40" aria-label="Toggle navigation" onclick="document.getElementById('navLinks').classList.toggle('hidden')">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16" />
-            </svg>
-        </button>
-        <div id="navLinks" class="hidden w-full flex-col gap-3 pt-4 sm:flex sm:w-auto sm:flex-row sm:items-center sm:pt-0">
-            <a href="player-ranking.html" class="block hover:underline">Rankings</a>
-            <a href="player-matchup-ladder.html" class="block hover:underline">Matchups</a>
-            <a href="club-analytics.html" class="block hover:underline">Analytics</a>
-            <a href="past-records.html" class="block hover:underline">Past Records</a>
+    <nav class="bg-blue-800 text-white shadow-md">
+        <div class="max-w-4xl mx-auto flex items-center justify-between gap-4 px-4 py-4">
+            <a href="index.html" class="text-xl font-bold">NBHS TT Hub</a>
+            <button id="navToggle" type="button"
+                class="sm:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/20 bg-blue-900/20 text-white hover:bg-blue-900/40"
+                aria-label="Toggle navigation" onclick="document.getElementById('navLinks').classList.toggle('hidden')">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16" />
+                </svg>
+            </button>
+            <div id="navLinks"
+                class="hidden w-full flex-col gap-3 pt-4 sm:flex sm:w-auto sm:flex-row sm:items-center sm:pt-0">
+                <a href="player-ranking.html" class="block hover:underline">Rankings</a>
+                <a href="player-matchup-ladder.html" class="block hover:underline">Matchups</a>
+                <a href="club-analytics.html" class="block hover:underline">Analytics</a>
+                <a href="past-records.html" class="block hover:underline">Past Records</a>
+            </div>
         </div>
-    </div>
-</nav>
+    </nav>
 
     <main class="max-w-4xl mx-auto p-6">
         <div id="player-header" class="mb-8">
@@ -170,10 +174,12 @@
                 const data = await resp.text();
                 const rows = parseCsv(data).filter(row => row.length > 0);
 
+                // Filter for matches involving the player
                 const history = rows.slice(1).filter(cols => {
-                    const p1 = (cols[0] || "").toLowerCase();
-                    const p2 = (cols[1] || "").toLowerCase();
-                    return p1.includes(playerName.toLowerCase()) || p2.includes(playerName.toLowerCase());
+                    const p1 = (cols[0] || "").toLowerCase().trim();
+                    const p2 = (cols[1] || "").toLowerCase().trim();
+                    const target = playerName.toLowerCase().trim();
+                    return p1 === target || p2 === target;
                 });
 
                 const table = document.getElementById('history-table');
@@ -183,33 +189,50 @@
                     return;
                 }
 
-                table.innerHTML = history.map(cols => {
+                // We reverse the history so the most recent matches show at the top
+                table.innerHTML = history.reverse().map(cols => {
                     const p1 = cols[0].replace(/"/g, '').trim();
                     const p2 = cols[1].replace(/"/g, '').trim();
                     const winner = cols[2].replace(/"/g, '').trim();
                     const score = cols[3].replace(/"/g, '').trim();
 
-                    const isP1 = p1.toLowerCase().includes(playerName.toLowerCase());
+                    // Delta Elo columns (I and J -> Index 8 and 9)
+                    const p1Delta = (cols[8] || "").trim();
+                    const p2Delta = (cols[9] || "").trim();
+
+                    const isP1 = p1.toLowerCase() === playerName.toLowerCase();
                     const opponent = isP1 ? p2 : p1;
-                    const hasWon = winner.toLowerCase().includes(playerName.toLowerCase());
+
+                    // Determine result
+                    const hasWon = winner.toLowerCase() === playerName.toLowerCase();
+
+                    // Get the specific delta for this player
+                    const delta = isP1 ? p1Delta : p2Delta;
+
+                    // Styling for the Delta
+                    const isPositive = delta.includes('+');
+                    const deltaColor = isPositive ? 'text-blue-600' : 'text-orange-600';
 
                     return `
-                <tr class="border-b hover:bg-slate-50 transition-colors">
-                    <td class="p-4">
-                        <span class="font-bold text-slate-800">${opponent}</span>
-                    </td>
-                    <td class="p-4">
-                        <span class="px-2 py-1 rounded text-[10px] font-black ${hasWon ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">
-                            ${hasWon ? 'WIN' : 'LOSS'}
-                        </span>
-                    </td>
-                    <td class="p-4 text-center font-mono font-bold text-slate-600">${score}</td>
-                    <td class="p-4 text-right text-xs text-slate-400 italic">Week 1</td>
-                </tr>`;
+        <tr class="border-b hover:bg-slate-50 transition-colors">
+            <td class="p-4">
+                <span class="font-bold text-slate-800">${opponent}</span>
+            </td>
+            <td class="p-4">
+                <span class="px-2 py-1 rounded text-[10px] font-black ${hasWon ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">
+                    ${hasWon ? 'WIN' : 'LOSS'}
+                </span>
+            </td>
+            <td class="p-4 text-center font-mono font-bold text-slate-600">${score}</td>
+            <td class="p-4 text-right font-bold ${deltaColor}">
+                ${delta || '--'}
+            </td>
+        </tr>`;
                 }).join('');
 
             } catch (err) {
-                document.getElementById('history-table').innerHTML = `<tr><td colspan="4" class="p-10 text-center text-red-500 font-bold">Failed to sync match data. Verify GID and Publishing.</td></tr>`;
+                console.error(err);
+                document.getElementById('history-table').innerHTML = `<tr><td colspan="4" class="p-10 text-center text-red-500 font-bold">Failed to sync match data.</td></tr>`;
             }
         }
         function renderChart(historyData) {

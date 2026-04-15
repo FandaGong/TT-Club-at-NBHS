@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,20 +8,26 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="icon" type="image/png" href="favicon.png">
 </head>
+
 <body class="bg-slate-50 text-slate-900 font-sans min-h-screen">
     <header class="bg-blue-800 text-white shadow-md">
         <nav class="max-w-4xl mx-auto flex items-center justify-between gap-4 px-4 py-4">
             <a href="index.html" class="text-xl font-bold">NBHS TT Hub</a>
-            <button id="navToggle" type="button" class="sm:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/20 bg-blue-900/20 text-white hover:bg-blue-900/40" aria-label="Toggle navigation" onclick="document.getElementById('navLinks').classList.toggle('hidden')">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <button id="navToggle" type="button"
+                class="sm:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/20 bg-blue-900/20 text-white hover:bg-blue-900/40"
+                aria-label="Toggle navigation" onclick="document.getElementById('navLinks').classList.toggle('hidden')">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16" />
                 </svg>
             </button>
-            <div id="navLinks" class="hidden w-full flex-col gap-3 pt-4 sm:flex sm:w-auto sm:flex-row sm:items-center sm:pt-0">
+            <div id="navLinks"
+                class="hidden w-full flex-col gap-3 pt-4 sm:flex sm:w-auto sm:flex-row sm:items-center sm:pt-0">
                 <a href="player-ranking.html" class="block hover:underline">Rankings</a>
                 <a href="player-matchup-ladder.html" class="block hover:underline">Matchups</a>
                 <a href="club-analytics.html" class="block hover:underline">Analytics</a>
-                <a href="past-records.html" class="block font-bold border-b-2 border-white sm:border-none">Past Records</a>
+                <a href="past-records.html" class="block font-bold border-b-2 border-white sm:border-none">Past
+                    Records</a>
             </div>
         </nav>
     </header>
@@ -30,15 +37,18 @@
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
                     <h1 class="text-3xl font-bold text-blue-900">Past Season Records</h1>
-                    <p class="text-slate-600 mt-2">Keep an archive of finished seasons so club history is easy to compare.</p>
+                    <p class="text-slate-600 mt-2">Keep an archive of finished seasons so club history is easy to
+                        compare.</p>
                 </div>
-                <span class="bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full uppercase">Season Archive</span>
+                <span class="bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full uppercase">Season
+                    Archive</span>
             </div>
 
             <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6">
                 <h2 class="text-xl font-bold text-slate-900 mb-4">How to use this page</h2>
                 <ul class="list-disc list-inside text-slate-700 space-y-2">
-                    <li>When the season changes, copy the current analytics snapshot from the <a href="club-analytics.html" class="text-blue-700 hover:underline">Analytics</a> page.</li>
+                    <li>When the season changes, copy the current analytics snapshot from the <a
+                            href="club-analytics.html" class="text-blue-700 hover:underline">Analytics</a> page.</li>
                     <li>Paste the final totals into a new row in the table below.</li>
                     <li>Keep one row per season so the club can track highest Elo and most wins over time.</li>
                 </ul>
@@ -62,14 +72,16 @@
                             <td class="p-4 border-b border-slate-200">—</td>
                             <td class="p-4 border-b border-slate-200">—</td>
                             <td class="p-4 border-b border-slate-200">—</td>
-                            <td class="p-4 border-b border-slate-200">Add final season totals here when the term ends.</td>
+                            <td class="p-4 border-b border-slate-200">Add final season totals here when the term ends.
+                            </td>
                         </tr>
                         <tr>
                             <td class="p-4 border-b border-slate-200">2025 Term 1</td>
                             <td class="p-4 border-b border-slate-200">—</td>
                             <td class="p-4 border-b border-slate-200">—</td>
                             <td class="p-4 border-b border-slate-200">—</td>
-                            <td class="p-4 border-b border-slate-200">Use this row for the previous season's final archive.</td>
+                            <td class="p-4 border-b border-slate-200">Use this row for the previous season's final
+                                archive.</td>
                         </tr>
                     </tbody>
                 </table>
@@ -77,9 +89,11 @@
 
             <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6">
                 <h2 class="text-xl font-bold text-slate-900 mb-4">Suggested record fields</h2>
-                <p class="text-slate-700">This page is a simple archive for finished seasons. If you want, add extra columns later for Most Active Player, Biggest Upset, or Best Win Rate.</p>
+                <p class="text-slate-700">This page is a simple archive for finished seasons. If you want, add extra
+                    columns later for Most Active Player, Biggest Upset, or Best Win Rate.</p>
             </div>
         </div>
     </main>
 </body>
+
 </html>

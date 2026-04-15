@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,19 +8,25 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="icon" type="image/png" href="favicon.png">
 </head>
+
 <body class="bg-slate-50 text-slate-900 font-sans min-h-screen">
 
     <header class="bg-blue-800 text-white shadow-md">
         <nav class="max-w-4xl mx-auto flex items-center justify-between gap-4 px-4 py-4">
             <a href="index.html" class="text-xl font-bold">NBHS TT Hub</a>
-            <button id="navToggle" type="button" class="sm:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/20 bg-blue-900/20 text-white hover:bg-blue-900/40" aria-label="Toggle navigation" onclick="document.getElementById('navLinks').classList.toggle('hidden')">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <button id="navToggle" type="button"
+                class="sm:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/20 bg-blue-900/20 text-white hover:bg-blue-900/40"
+                aria-label="Toggle navigation" onclick="document.getElementById('navLinks').classList.toggle('hidden')">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16" />
                 </svg>
             </button>
-            <div id="navLinks" class="hidden w-full flex-col gap-3 pt-4 sm:flex sm:w-auto sm:flex-row sm:items-center sm:pt-0">
+            <div id="navLinks"
+                class="hidden w-full flex-col gap-3 pt-4 sm:flex sm:w-auto sm:flex-row sm:items-center sm:pt-0">
                 <a href="player-ranking.html" class="block hover:underline">Rankings</a>
-                <a href="player-matchup-ladder.html" class="block font-bold border-b-2 border-white sm:border-none">Matchups</a>
+                <a href="player-matchup-ladder.html"
+                    class="block font-bold border-b-2 border-white sm:border-none">Matchups</a>
                 <a href="club-analytics.html" class="block hover:underline">Analytics</a>
                 <a href="past-records.html" class="block hover:underline">Past Records</a>
             </div>
@@ -29,7 +36,8 @@
     <main class="max-w-4xl mx-auto p-6">
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-3xl font-bold text-blue-900">Weekly Matchups</h1>
-            <span class="bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full uppercase">Term 2 - Week 1</span>
+            <span class="bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full uppercase">Term 2 - Week
+                1</span>
         </div>
 
         <div class="flex flex-col gap-4 mb-6">
@@ -37,8 +45,12 @@
                 <div>
                     <p class="text-sm uppercase tracking-[0.18em] text-slate-500 font-bold">View half</p>
                     <div class="inline-flex rounded-full bg-slate-200 p-1 mt-2" role="group" aria-label="Half toggle">
-                        <button id="half2Btn" type="button" class="px-4 py-2 rounded-full text-sm font-semibold text-slate-700 transition-colors">Half 2</button>
-                        <button id="half1Btn" type="button" class="px-4 py-2 rounded-full text-sm font-semibold text-slate-700 transition-colors">Half 1</button>
+                        <button id="half2Btn" type="button"
+                            class="px-4 py-2 rounded-full text-sm font-semibold text-slate-700 transition-colors">Half
+                            2</button>
+                        <button id="half1Btn" type="button"
+                            class="px-4 py-2 rounded-full text-sm font-semibold text-slate-700 transition-colors">Half
+                            1</button>
                     </div>
                 </div>
                 <div class="rounded-2xl bg-slate-100 p-4 text-sm text-slate-600">
@@ -47,7 +59,8 @@
                 </div>
             </div>
 
-            <div id="matchup-summary" class="rounded-2xl bg-white p-5 border border-slate-200 shadow-sm text-slate-700"></div>
+            <div id="matchup-summary" class="rounded-2xl bg-white p-5 border border-slate-200 shadow-sm text-slate-700">
+            </div>
         </div>
 
         <div id="matchup-container" class="grid gap-4 md:grid-cols-2"></div>
@@ -253,4 +266,5 @@
         });
     </script>
 </body>
+
 </html>
