@@ -99,16 +99,55 @@
     </div>
 
     <script>
-        // Navigation Toggle Logic
-        const recordsNavToggle = document.getElementById('recordsNavToggle');
-        const recordsNavLinks = document.getElementById('recordsNavLinks');
-        if (recordsNavToggle && recordsNavLinks) {
-            recordsNavToggle.addEventListener('click', () => {
-                recordsNavLinks.classList.toggle('hidden');
-                const expanded = recordsNavLinks.classList.contains('hidden') ? 'false' : 'true';
-                recordsNavToggle.setAttribute('aria-expanded', expanded);
-            });
+// Replace with the GID of your new 'Seasons' tab
+const SEASONS_URL = "https://docs.google.com/spreadsheets/d/e/YOUR_ID/pub?gid=662509425&output=csv";
+
+async function loadHallOfFame() {
+    const grid = document.getElementById('season-grid');
+    try {
+        const response = await fetch(SEASONS_URL);
+        const text = await response.text();
+        const rows = parseCsv(text).slice(1); // Skip header
+
+        if (rows.length === 0) {
+            grid.innerHTML = "<p class='p-6 text-slate-400'>No seasons archived yet.</p>";
+            return;
         }
+
+        grid.innerHTML = rows.reverse().map(cols => `
+            <div class="bg-white rounded-2xl shadow-sm border overflow-hidden">
+                <div class="bg-slate-50 border-b p-4 flex justify-between items-center">
+                    <span class="font-bold text-blue-900 italic uppercase">${cols[0]}</span>
+                    <span class="bg-blue-100 text-blue-700 text-[10px] px-2 py-1 rounded font-black uppercase">${cols[5]}</span>
+                </div>
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-sm font-semibold text-slate-500">Season Champion</span>
+                        <span class="text-lg font-bold text-blue-800">${cols[1]}</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 text-center border-t border-b py-4 mb-4">
+                        <div>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase">Total Matches</p>
+                            <p class="font-bold text-slate-700">${cols[3]}</p>
+                        </div>
+                        <div>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase">Peak Elo</p>
+                            <p class="font-bold text-slate-700">${cols[2]}</p>
+                        </div>
+                    </div>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase mb-2">Final Top 3</p>
+                    <div class="flex flex-wrap gap-2">
+                        ${cols[4].split(',').map(name => `<span class="bg-slate-100 text-slate-600 px-2 py-1 rounded text-[10px] font-bold">${name.trim()}</span>`).join('')}
+                    </div>
+                </div>
+            </div>
+        `).join('');
+
+    } catch (err) {
+        console.error(err);
+    }
+}
+loadHallOfFame();
     </script>
 </body>
 
