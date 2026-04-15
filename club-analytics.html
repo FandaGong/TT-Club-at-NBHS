@@ -57,7 +57,7 @@
 
     <script>
         const STATS_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_UHoHNgToKV4yCuB_M56029JuMrOYWN-VkyxDiWkwXHJI1hhRnon_GMnvgvmQeHmL4F0gxkVz7IMP/pub?output=csv&gid=2082256240";
-        const MATCHES_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_UHoHNgToKV4yCuB_M56029JuMrOYWN-VkyxDiWkwXHJI1hhRnon_GMnvgvmQeHmL4F0gxkVz7IMP/pub?output=csv&gid=859312421";
+        const MATCHES_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_UHoHNgToKV4yCuB_M56029JuMrOYWN-VkyxDiWkwXHJI1hhRnon_GMnvgvmQeHmL4F0gxkVz7IMP/pub?output=csv&gid=160991986";
 
         function parseCsv(text) {
             const rows = [];
@@ -130,17 +130,16 @@
             const highlights = document.getElementById('analytics-highlights');
             const activeList = document.getElementById('active-player-list');
 
-            summary.innerHTML = '<div class="col-span-full rounded-3xl border border-slate-200 bg-white p-6 text-slate-500">Loading club analytics...</div>';
-            highlights.innerHTML = '';
-            activeList.innerHTML = '';
+            summary.innerHTML = '<div class="col-span-full rounded-3xl border border-slate-200 bg-white p-6 text-slate-500">Loading master analytics...</div>';
 
             try {
                 const [statsResp, matchesResp] = await Promise.all([fetch(STATS_URL), fetch(MATCHES_URL)]);
-                if (!statsResp.ok || !matchesResp.ok) throw new Error('Unable to fetch spreadsheet data.');
+                if (!statsResp.ok || !matchesResp.ok) throw new Error('Unable to fetch data.');
 
                 const statsText = await statsResp.text();
                 const matchesText = await matchesResp.text();
 
+                // 1. Get current player ratings for reference
                 const statsRows = parseCsv(statsText).filter(row => row.length > 0);
                 const players = statsRows.slice(1).map(cols => ({
                     name: clean(cols[0]),
@@ -152,98 +151,78 @@
                     return acc;
                 }, {});
 
-                const matchRows = parseCsv(matchesText).filter(row => row.length > 0).slice(1);
-                const matches = matchRows.map(cols => {
+                // 2. Parse matches from Elo_History
+                // Filter: Row must have at least 11 columns and a winner name
+                const matchRows = parseCsv(matchesText).filter(row => row.length >= 11 && row[2]);
+
+                const matches = matchRows.slice(1).map(cols => {
                     const player1 = clean(cols[0]);
                     const player2 = clean(cols[1]);
                     const winner = clean(cols[2]);
                     const score = clean(cols[3]);
-                    const division = clean(cols[4]);
-                    const table = clean(cols[5]);
-                    const half = clean(cols[6]);
-                    const player1Elo = eloMap[player1] || 0;
-                    const player2Elo = eloMap[player2] || 0;
+
+                    // Logic to find elo at the TIME of match (optional) 
+                    // or just use current elo Map
                     const loser = winner.toLowerCase() === player1.toLowerCase() ? player2 : player1;
-                    const winnerElo = eloMap[winner] || 0;
-                    const loserElo = winner.toLowerCase() === player1.toLowerCase() ? player2Elo : player1Elo;
-                    const diff = parseScoreDiff(score);
+
+                    // For Upset logic: Column J (9) and K (10) contain the new Elos
+                    // We'll use those to see who beat a higher-rated player
+                    const p1Elo = parseNumber(cols[9]);
+                    const p2Elo = parseNumber(cols[10]);
 
                     return {
-                        player1,
-                        player2,
-                        winner,
-                        loser,
-                        score,
-                        division,
-                        table,
-                        half,
-                        player1Elo,
-                        player2Elo,
-                        winnerElo,
-                        loserElo,
-                        eloDiff: Math.abs(player1Elo - player2Elo),
-                        upsetMargin: loserElo - winnerElo,
-                        scoreDiff: diff === null ? 0 : diff
+                        winner, loser, score,
+                        winnerElo: winner.toLowerCase() === player1.toLowerCase() ? p1Elo : p2Elo,
+                        loserElo: winner.toLowerCase() === player1.toLowerCase() ? p2Elo : p1Elo,
+                        scoreDiff: parseScoreDiff(score) || 0
                     };
-                }).filter(m => m.player1 && m.player2 && m.winner);
+                });
 
                 const totalMatches = matches.length;
                 const counts = {};
                 const winCounts = {};
-                matches.forEach(match => {
-                    counts[match.player1] = (counts[match.player1] || 0) + 1;
-                    counts[match.player2] = (counts[match.player2] || 0) + 1;
-                    winCounts[match.winner] = (winCounts[match.winner] || 0) + 1;
+
+                matches.forEach(m => {
+                    counts[m.winner] = (counts[m.winner] || 0) + 1;
+                    counts[m.loser] = (counts[m.loser] || 0) + 1;
+                    winCounts[m.winner] = (winCounts[m.winner] || 0) + 1;
                 });
 
                 const activePlayers = Object.entries(counts)
                     .map(([name, count]) => ({ name, count }))
-                    .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
-
-                const mostActive = activePlayers[0] || { name: 'N/A', count: 0 };
-                const mostWinsEntry = Object.entries(winCounts)
-                    .map(([name, count]) => ({ name, count }))
-                    .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name))[0] || { name: 'N/A', count: 0 };
-                const highestElo = players.length ? Math.max(...players.map(player => player.elo)) : 0;
+                    .sort((a, b) => b.count - a.count);
 
                 const biggestUpset = matches
-                    .filter(match => match.upsetMargin > 0)
-                    .sort((a, b) => b.upsetMargin - a.upsetMargin)[0];
-                const biggestGap = matches
-                    .slice()
-                    .sort((a, b) => b.eloDiff - a.eloDiff)[0];
+                    .filter(m => m.loserElo > m.winnerElo) // Winner had lower Elo BEFORE the change
+                    .sort((a, b) => (b.loserElo - b.winnerElo) - (a.loserElo - a.winnerElo))[0];
 
                 summary.innerHTML = '';
-                addCard(summary, 'Total Matches Played', totalMatches, 'Count of row entries in the Matches sheet.');
-                addCard(summary, 'Highest Elo Recorded', highestElo || 'N/A', 'Top Elo value found in the current roster sheet.');
-                addCard(summary, 'Most Wins', `${mostWinsEntry.name} (${mostWinsEntry.count})`, 'Player with the highest count of match wins.');
-                addCard(summary, 'Most Active Player', `${mostActive.name} (${mostActive.count})`, 'Most appearances across all match rows.');
+                addCard(summary, 'Total Match Records', totalMatches, 'Every match archived in history.');
+                addCard(summary, 'Highest Elo', players.length ? Math.max(...players.map(p => p.elo)) : 'N/A', 'Top rating in the current rankings.');
+
+                const topWinner = Object.entries(winCounts).sort((a, b) => b[1] - a[1])[0];
+                addCard(summary, 'Club Leader', topWinner ? `${topWinner[0]} (${topWinner[1]} wins)` : 'N/A', 'Player with the most total wins recorded.');
+
+                const topActive = activePlayers[0];
+                addCard(summary, 'Most Dedicated', topActive ? `${topActive.name} (${topActive.count})` : 'N/A', 'Most matches played (Win or Loss).');
 
                 highlights.innerHTML = '';
                 if (biggestUpset) {
-                    addCard(highlights, 'Biggest Upset', `${biggestUpset.winner} over ${biggestUpset.loser}`, `Won by ${biggestUpset.upsetMargin} Elo points with score ${biggestUpset.score}.`);
-                } else {
-                    addCard(highlights, 'Biggest Upset', 'None found', 'No match was won by the lower-rated player.');
+                    const margin = Math.abs(biggestUpset.loserElo - biggestUpset.winnerElo);
+                    addCard(highlights, 'Biggest Upset', `${biggestUpset.winner} vs ${biggestUpset.loser}`, `Overcame a ${margin} Elo point gap!`);
                 }
 
-                if (biggestGap) {
-                    const favorite = biggestGap.winnerElo >= biggestGap.loserElo ? biggestGap.winner : biggestGap.loser;
-                    addCard(highlights, 'Largest Elo Gap', `${favorite} vs ${biggestGap.loser}`, `Gap of ${biggestGap.eloDiff} Elo points in Division ${biggestGap.division}.`);
-                }
+                activeList.innerHTML = activePlayers.slice(0, 5).map(p => `
+            <li class="text-slate-700 font-medium">
+                ${p.name} — <span class="text-blue-600 font-bold">${p.count}</span> matches
+            </li>
+        `).join('');
 
-                activeList.innerHTML = activePlayers.slice(0, 5).map((player, index) => `
-                    <li class="text-slate-700">
-                        <span class="font-semibold">${player.name}</span> — ${player.count} match${player.count === 1 ? '' : 'es'}
-                    </li>
-                `).join('');
             } catch (error) {
-                console.error('Analytics load error:', error);
-                summary.innerHTML = '<div class="col-span-full rounded-3xl border border-slate-200 bg-white p-6 text-red-500">Unable to load analytics. Check the spreadsheet link or internet connection.</div>';
-                highlights.innerHTML = '';
-                activeList.innerHTML = '';
+                console.error('Analytics error:', error);
+                summary.innerHTML = '<div class="col-span-full p-6 text-red-500">Sync Error: Verify the History GID is correct.</div>';
             }
         }
-
         loadAnalytics();
     </script>
 </body>
