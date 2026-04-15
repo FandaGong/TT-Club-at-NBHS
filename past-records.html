@@ -16,7 +16,7 @@
             <a href="index.html" class="text-xl font-bold">NBHS TT Hub</a>
             <button id="recordsNavToggle" type="button"
                 class="sm:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/20 bg-blue-900/20 text-white hover:bg-blue-900/40"
-                aria-label="Toggle navigation" aria-controls="recordsNavLinks" aria-expanded="false">
+                aria-label="Toggle navigation">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16" />
@@ -39,13 +39,13 @@
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
             <div class="bg-white p-6 rounded-2xl border shadow-sm border-l-4 border-l-blue-800">
                 <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Highest Ever Elo</p>
-                <p class="text-2xl font-black text-blue-900 mt-1">1,338</p>
-                <p class="text-[10px] text-slate-500 font-bold uppercase mt-1">Zichen Wang (2026)</p>
+                <p id="top-elo-val" class="text-2xl font-black text-blue-900 mt-1">--</p>
+                <p id="top-elo-player" class="text-[10px] text-slate-500 font-bold uppercase mt-1">Loading...</p>
             </div>
             <div class="bg-white p-6 rounded-2xl border shadow-sm border-l-4 border-l-green-600">
                 <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Most Match Wins</p>
-                <p class="text-2xl font-black text-green-700 mt-1">54</p>
-                <p class="text-[10px] text-slate-500 font-bold uppercase mt-1">Ishaan Pansari</p>
+                <p id="top-wins-val" class="text-2xl font-black text-green-700 mt-1">--</p>
+                <p id="top-wins-player" class="text-[10px] text-slate-500 font-bold uppercase mt-1">Loading...</p>
             </div>
             <div class="bg-white p-6 rounded-2xl border shadow-sm border-l-4 border-l-red-500">
                 <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Biggest Upset</p>
@@ -56,99 +56,102 @@
 
         <h2 class="text-xl font-bold text-slate-800 mb-4">Season Archives</h2>
         
-        <div class="grid gap-6 md:grid-cols-2">
-            <div class="bg-white rounded-2xl shadow-sm border overflow-hidden">
-                <div class="bg-slate-50 border-b p-4 flex justify-between items-center">
-                    <span class="font-bold text-blue-900 italic uppercase">2026 Term 1</span>
-                    <span class="bg-blue-100 text-blue-700 text-[10px] px-2 py-1 rounded font-black uppercase">Finalized</span>
-                </div>
-                <div class="p-6">
-                    <div class="flex justify-between items-center mb-4">
-                        <span class="text-sm font-semibold text-slate-500">Season Champion</span>
-                        <span class="text-lg font-bold text-blue-800">Zichen Wang</span>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4 text-center border-t border-b py-4 mb-4">
-                        <div>
-                            <p class="text-[10px] font-bold text-slate-400 uppercase">Total Matches</p>
-                            <p class="font-bold text-slate-700">142</p>
-                        </div>
-                        <div>
-                            <p class="text-[10px] font-bold text-slate-400 uppercase">Peak Elo</p>
-                            <p class="font-bold text-slate-700">1,338</p>
-                        </div>
-                    </div>
-                    <p class="text-[10px] font-bold text-slate-400 uppercase mb-2">Final Top 3</p>
-                    <div class="flex flex-wrap gap-2">
-                        <span class="bg-slate-100 text-slate-600 px-2 py-1 rounded text-[10px] font-bold">1. Zichen Wang</span>
-                        <span class="bg-slate-100 text-slate-600 px-2 py-1 rounded text-[10px] font-bold">2. Lewis Guo</span>
-                        <span class="bg-slate-100 text-slate-600 px-2 py-1 rounded text-[10px] font-bold">3. Sebastian Miletic</span>
-                    </div>
-                </div>
-            </div>
+        <div id="season-grid" class="grid gap-6 md:grid-cols-2">
+            <div class="col-span-full p-10 text-center text-slate-400 italic">Fetching archive records...</div>
+        </div>
 
-            <div class="bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center p-8 text-center">
-                <div class="h-10 w-10 bg-slate-200 rounded-full flex items-center justify-center mb-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                    </svg>
-                </div>
-                <p class="text-sm font-bold text-slate-400 uppercase tracking-widest">Term 2 2026 Archive</p>
-                <p class="text-[10px] text-slate-400 mt-1 italic">Ongoing Season...</p>
-            </div>
+        <div class="mt-6 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center p-8 text-center">
+            <p class="text-sm font-bold text-slate-400 uppercase tracking-widest">Term 2 2026</p>
+            <p class="text-[10px] text-slate-400 mt-1 italic">Season is currently live. Records will be finalized at the end of the term.</p>
         </div>
     </div>
 
     <script>
-// Replace with the GID of your new 'Seasons' tab
-const SEASONS_URL = "https://docs.google.com/spreadsheets/d/e/YOUR_ID/pub?gid=662509425&output=csv";
+        // 1. Update with your actual Seasons Tab GID
+        const SEASONS_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_UHoHNgToKV4yCuB_M56029JuMrOYWN-VkyxDiWkwXHJI1hhRnon_GMnvgvmQeHmL4F0gxkVz7IMP/pub?gid=662509425&output=csv";
 
-async function loadHallOfFame() {
-    const grid = document.getElementById('season-grid');
-    try {
-        const response = await fetch(SEASONS_URL);
-        const text = await response.text();
-        const rows = parseCsv(text).slice(1); // Skip header
-
-        if (rows.length === 0) {
-            grid.innerHTML = "<p class='p-6 text-slate-400'>No seasons archived yet.</p>";
-            return;
+        // 2. CSV Parser (Must be present in every file that uses CSV)
+        function parseCsv(text) {
+            const rows = []; let row = []; let field = ''; let inQuotes = false;
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                if (char === '"') {
+                    if (inQuotes && text[i + 1] === '"') { field += '"'; i++; } 
+                    else { inQuotes = !inQuotes; }
+                } else if (char === ',' && !inQuotes) { row.push(field); field = ''; } 
+                else if ((char === '\n' || char === '\r') && !inQuotes) {
+                    if (char === '\r' && text[i + 1] === '\n') i++;
+                    row.push(field); field = ''; rows.push(row); row = [];
+                } else { field += char; }
+            }
+            if (field !== '' || row.length > 0) { row.push(field); rows.push(row); }
+            return rows;
         }
 
-        grid.innerHTML = rows.reverse().map(cols => `
-            <div class="bg-white rounded-2xl shadow-sm border overflow-hidden">
-                <div class="bg-slate-50 border-b p-4 flex justify-between items-center">
-                    <span class="font-bold text-blue-900 italic uppercase">${cols[0]}</span>
-                    <span class="bg-blue-100 text-blue-700 text-[10px] px-2 py-1 rounded font-black uppercase">${cols[5]}</span>
-                </div>
-                <div class="p-6">
-                    <div class="flex justify-between items-center mb-4">
-                        <span class="text-sm font-semibold text-slate-500">Season Champion</span>
-                        <span class="text-lg font-bold text-blue-800">${cols[1]}</span>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4 text-center border-t border-b py-4 mb-4">
-                        <div>
-                            <p class="text-[10px] font-bold text-slate-400 uppercase">Total Matches</p>
-                            <p class="font-bold text-slate-700">${cols[3]}</p>
-                        </div>
-                        <div>
-                            <p class="text-[10px] font-bold text-slate-400 uppercase">Peak Elo</p>
-                            <p class="font-bold text-slate-700">${cols[2]}</p>
-                        </div>
-                    </div>
-                    <p class="text-[10px] font-bold text-slate-400 uppercase mb-2">Final Top 3</p>
-                    <div class="flex flex-wrap gap-2">
-                        ${cols[4].split(',').map(name => `<span class="bg-slate-100 text-slate-600 px-2 py-1 rounded text-[10px] font-bold">${name.trim()}</span>`).join('')}
-                    </div>
-                </div>
-            </div>
-        `).join('');
+        async function loadHallOfFame() {
+            const grid = document.getElementById('season-grid');
+            try {
+                const response = await fetch(SEASONS_URL);
+                const text = await response.text();
+                const allRows = parseCsv(text).filter(r => r.length >= 6);
+                const rows = allRows.slice(1); // Skip header
 
-    } catch (err) {
-        console.error(err);
-    }
-}
-loadHallOfFame();
+                if (rows.length === 0) {
+                    grid.innerHTML = "<div class='col-span-full bg-white p-10 rounded-2xl border text-center text-slate-400'>No seasons archived yet. Historical data will appear here once finalized.</div>";
+                    return;
+                }
+
+                // Update the Top Records at the top of the page using the latest season data
+                const latest = rows[rows.length - 1];
+                document.getElementById('top-elo-val').innerText = latest[2];
+                document.getElementById('top-elo-player').innerText = `${latest[1]} (${latest[0]})`;
+                
+                // Render the cards
+                grid.innerHTML = rows.reverse().map(cols => `
+                    <div class="bg-white rounded-2xl shadow-sm border overflow-hidden">
+                        <div class="bg-slate-50 border-b p-4 flex justify-between items-center">
+                            <span class="font-bold text-blue-900 italic uppercase">${cols[0]}</span>
+                            <span class="bg-blue-100 text-blue-700 text-[10px] px-2 py-1 rounded font-black uppercase">${cols[5]}</span>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <span class="text-sm font-semibold text-slate-500">Season Champion</span>
+                                <span class="text-lg font-bold text-blue-800">${cols[1]}</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 text-center border-t border-b py-4 mb-4">
+                                <div>
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase">Total Matches</p>
+                                    <p class="font-bold text-slate-700">${cols[3]}</p>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase">Peak Elo</p>
+                                    <p class="font-bold text-slate-700">${cols[2]}</p>
+                                </div>
+                            </div>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase mb-2">Final Top 3</p>
+                            <div class="flex flex-wrap gap-2">
+                                ${cols[4].split(',').map(name => `<span class="bg-slate-100 text-slate-600 px-2 py-1 rounded text-[10px] font-bold">${name.trim()}</span>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+
+            } catch (err) {
+                console.error("Hall of Fame Error:", err);
+                grid.innerHTML = "<p class='p-6 text-red-500'>Error loading archive. Please check the spreadsheet publication.</p>";
+            }
+        }
+
+        loadHallOfFame();
+
+        // Nav Toggle
+        const recordsNavToggle = document.getElementById('recordsNavToggle');
+        const recordsNavLinks = document.getElementById('recordsNavLinks');
+        if (recordsNavToggle && recordsNavLinks) {
+            recordsNavToggle.addEventListener('click', () => {
+                recordsNavLinks.classList.toggle('hidden');
+            });
+        }
     </script>
 </body>
-
 </html>
