@@ -196,9 +196,9 @@
                     const winner = cols[2].replace(/"/g, '').trim();
                     const score = cols[3].replace(/"/g, '').trim();
 
-                    // Delta Elo columns (I and J -> Index 8 and 9)
-                    const p1Delta = (cols[8] || "").trim();
-                    const p2Delta = (cols[9] || "").trim();
+                    // Update these indices in your player-analysis.html script
+                    const p1Delta = (cols[7] || "").trim(); // Was 8 (Column I), now 7 (Column H)
+                    const p2Delta = (cols[8] || "").trim(); // Was 9 (Column J), now 8 (Column I)
 
                     const isP1 = p1.toLowerCase() === playerName.toLowerCase();
                     const opponent = isP1 ? p2 : p1;
