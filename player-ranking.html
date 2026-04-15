@@ -85,6 +85,9 @@
                     return rows;
                 }
 
+                const response = await fetch(SHEET_URL);
+                const data = await response.text();
+
                 const rows = parseCsv(data).filter(r => r.length > 0);
                 const playerRows = rows.slice(1); // Skip header row
 
