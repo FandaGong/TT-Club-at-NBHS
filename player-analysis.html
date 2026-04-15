@@ -54,6 +54,43 @@
         const MATCHES_GID = "859312421";
         const BASE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_UHoHNgToKV4yCuB_M56029JuMrOYWN-VkyxDiWkwXHJI1hhRnon_GMnvgvmQeHmL4F0gxkVz7IMP/pub?output=csv&gid=";
 
+        function parseCsv(text) {
+            const rows = [];
+            let row = [];
+            let field = '';
+            let inQuotes = false;
+
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                if (char === '"') {
+                    if (inQuotes && text[i + 1] === '"') {
+                        field += '"';
+                        i++;
+                    } else {
+                        inQuotes = !inQuotes;
+                    }
+                } else if (char === ',' && !inQuotes) {
+                    row.push(field);
+                    field = '';
+                } else if ((char === '\n' || char === '\r') && !inQuotes) {
+                    if (char === '\r' && text[i + 1] === '\n') i++;
+                    row.push(field);
+                    field = '';
+                    rows.push(row);
+                    row = [];
+                } else {
+                    field += char;
+                }
+            }
+
+            if (field !== '' || row.length > 0) {
+                row.push(field);
+                rows.push(row);
+            }
+
+            return rows;
+        }
+
         async function init() {
             if (!playerName) return;
             document.getElementById('player-name').innerText = playerName;
@@ -66,13 +103,13 @@
             try {
                 const resp = await fetch(BASE_URL + STATS_GID);
                 const data = await resp.text();
-                const rows = data.split('\n').map(r => r.trim());
+                const rows = parseCsv(data).filter(row => row.length > 0);
 
-                // Find the player in the Players Sheet
-                const found = rows.find(r => r.toLowerCase().includes(playerName.toLowerCase()));
+                // Find the player in the Players Sheet by exact name match in column 0
+                const found = rows.find(row => (row[0] || '').toLowerCase() === playerName.toLowerCase());
 
                 if (found) {
-                    const cols = found.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                    const cols = found;
                     const cleanStat = (val) => {
                         // 1. Remove quotes, commas, and whitespace
                         let cleaned = (val || "").toString().replace(/"/g, '').replace(/,/g, '').trim();
@@ -118,11 +155,9 @@
                 if (!resp.ok) throw new Error("Could not reach Google Sheets");
 
                 const data = await resp.text();
-                const rows = data.split('\n').map(r => r.trim()).filter(r => r.length > 0);
+                const rows = parseCsv(data).filter(row => row.length > 0);
 
-                const history = rows.slice(1).map(row => {
-                    return row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-                }).filter(cols => {
+                const history = rows.slice(1).filter(cols => {
                     const p1 = (cols[0] || "").toLowerCase();
                     const p2 = (cols[1] || "").toLowerCase();
                     return p1.includes(playerName.toLowerCase()) || p2.includes(playerName.toLowerCase());

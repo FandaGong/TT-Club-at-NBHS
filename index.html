@@ -67,17 +67,49 @@
                 const response = await fetch(SHEET_URL);
                 const data = await response.text();
 
-                // Split by line and filter out any empty lines
-                const rows = data.split('\n').map(row => row.trim()).filter(row => row.length > 0);
+                function parseCsv(text) {
+                    const rows = [];
+                    let row = [];
+                    let field = '';
+                    let inQuotes = false;
+
+                    for (let i = 0; i < text.length; i++) {
+                        const char = text[i];
+                        if (char === '"') {
+                            if (inQuotes && text[i + 1] === '"') {
+                                field += '"';
+                                i++;
+                            } else {
+                                inQuotes = !inQuotes;
+                            }
+                        } else if (char === ',' && !inQuotes) {
+                            row.push(field);
+                            field = '';
+                        } else if ((char === '\n' || char === '\r') && !inQuotes) {
+                            if (char === '\r' && text[i + 1] === '\n') i++;
+                            row.push(field);
+                            field = '';
+                            rows.push(row);
+                            row = [];
+                        } else {
+                            field += char;
+                        }
+                    }
+
+                    if (field !== '' || row.length > 0) {
+                        row.push(field);
+                        rows.push(row);
+                    }
+
+                    return rows;
+                }
+
+                const rows = parseCsv(data).filter(row => row.length > 0);
 
                 // Skip the header row
                 const playerRows = rows.slice(1);
 
-                players = playerRows.map(row => {
-                    // This regex handles CSV splitting even if there are commas inside quotes
-                    const columns = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-
-                    // Helper to strip quotes, commas, and whitespace
+                players = playerRows.map(columns => {
                     const clean = (val) => (val || "").replace(/"/g, '').replace(/,/g, '').trim();
 
                     return {

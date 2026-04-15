@@ -48,11 +48,40 @@
         const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_UHoHNgToKV4yCuB_M56029JuMrOYWN-VkyxDiWkwXHJI1hhRnon_GMnvgvmQeHmL4F0gxkVz7IMP/pub?gid=2082256240&single=true&output=csv";
 
         function parseCsvRows(text) {
-            return text
-                .split('\n')
-                .map(line => line.trim())
-                .filter(line => line.length > 0)
-                .map(line => line.split(/,(?=(?:(?:[^\"]*"){2})*[^\"]*$)/));
+            const rows = [];
+            let row = [];
+            let field = '';
+            let inQuotes = false;
+
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                if (char === '"') {
+                    if (inQuotes && text[i + 1] === '"') {
+                        field += '"';
+                        i++;
+                    } else {
+                        inQuotes = !inQuotes;
+                    }
+                } else if (char === ',' && !inQuotes) {
+                    row.push(field);
+                    field = '';
+                } else if ((char === '\n' || char === '\r') && !inQuotes) {
+                    if (char === '\r' && text[i + 1] === '\n') i++;
+                    row.push(field);
+                    field = '';
+                    rows.push(row);
+                    row = [];
+                } else {
+                    field += char;
+                }
+            }
+
+            if (field !== '' || row.length > 0) {
+                row.push(field);
+                rows.push(row);
+            }
+
+            return rows;
         }
 
         function normalizePlayer(row) {

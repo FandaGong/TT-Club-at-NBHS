@@ -48,17 +48,47 @@
 
         async function loadRankings() {
             try {
-                const response = await fetch(SHEET_URL);
-                const data = await response.text();
+                function parseCsv(text) {
+                    const rows = [];
+                    let row = [];
+                    let field = '';
+                    let inQuotes = false;
 
-                // Split rows and filter empty lines
-                const rows = data.split('\n').map(r => r.trim()).filter(r => r.length > 0);
+                    for (let i = 0; i < text.length; i++) {
+                        const char = text[i];
+                        if (char === '"') {
+                            if (inQuotes && text[i + 1] === '"') {
+                                field += '"';
+                                i++;
+                            } else {
+                                inQuotes = !inQuotes;
+                            }
+                        } else if (char === ',' && !inQuotes) {
+                            row.push(field);
+                            field = '';
+                        } else if ((char === '\n' || char === '\r') && !inQuotes) {
+                            if (char === '\r' && text[i + 1] === '\n') i++;
+                            row.push(field);
+                            field = '';
+                            rows.push(row);
+                            row = [];
+                        } else {
+                            field += char;
+                        }
+                    }
+
+                    if (field !== '' || row.length > 0) {
+                        row.push(field);
+                        rows.push(row);
+                    }
+
+                    return rows;
+                }
+
+                const rows = parseCsv(data).filter(r => r.length > 0);
                 const playerRows = rows.slice(1); // Skip header row
 
-                const players = playerRows.map(row => {
-                    const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-
-                    // Clean the Elo string by removing commas
+                const players = playerRows.map(cols => {
                     const rawElo = cols[1]?.replace(/"/g, '').replace(/,/g, '').trim();
 
                     return {
