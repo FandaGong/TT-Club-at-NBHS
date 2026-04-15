@@ -45,8 +45,27 @@
     </main>
 
     <script>
-        const matchupData = {
-            half2: {
+        const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_UHoHNgToKV4yCuB_M56029JuMrOYWN-VkyxDiWkwXHJI1hhRnon_GMnvgvmQeHmL4F0gxkVz7IMP/pub?gid=2082256240&single=true&output=csv";
+
+        function parseCsvRows(text) {
+            return text
+                .split('\n')
+                .map(line => line.trim())
+                .filter(line => line.length > 0)
+                .map(line => line.split(/,(?=(?:(?:[^\"]*"){2})*[^\"]*$)/));
+        }
+
+        function normalizePlayer(row) {
+            const name = row[0] ? row[0].replace(/"/g, '').trim() : '';
+            const eloText = row[1] ? row[1].replace(/"/g, '').replace(/,/g, '').trim() : '0';
+            return {
+                name,
+                elo: parseInt(eloText, 10) || 0
+            };
+        }
+
+        function buildHalfData(players) {
+            return {
                 title: 'Half 2 — Better Half',
                 subtitle: 'Top 16 players in descending Elo order.',
                 divisions: [
@@ -54,85 +73,23 @@
                         name: 'Division 1',
                         tableLabel: 'Table 1',
                         description: '4 players compete on Table 1.',
-                        players: [
-                            { name: 'Oliver Tan', elo: 1885 },
-                            { name: 'Maya Chen', elo: 1860 },
-                            { name: 'Lucas Patel', elo: 1840 },
-                            { name: 'Zoe Martin', elo: 1810 }
-                        ]
+                        players: players.slice(0, 4)
                     },
                     {
                         name: 'Division 2',
                         tableLabel: 'Tables 2 & 3',
                         description: '8 players split across Table 2 and Table 3.',
-                        players: [
-                            { name: 'Aria Kim', elo: 1795 },
-                            { name: 'Ethan Lee', elo: 1780 },
-                            { name: 'Nina Wong', elo: 1765 },
-                            { name: 'Liam O\'Connor', elo: 1750 },
-                            { name: 'Chloe Nguyen', elo: 1735 },
-                            { name: 'Mason Parker', elo: 1720 },
-                            { name: 'Isla Brooks', elo: 1705 },
-                            { name: 'Noah Davis', elo: 1690 }
-                        ]
+                        players: players.slice(4, 12)
                     },
                     {
                         name: 'Division 3',
                         tableLabel: 'Table 4',
                         description: '4 players compete on Table 4.',
-                        players: [
-                            { name: 'Ava Singh', elo: 1675 },
-                            { name: 'Leo Carter', elo: 1660 },
-                            { name: 'Mia Roberts', elo: 1645 },
-                            { name: 'Oscar Grant', elo: 1630 }
-                        ]
+                        players: players.slice(12, 16)
                     }
                 ]
-            },
-            half1: {
-                title: 'Half 1 — Lower Half',
-                subtitle: 'Next 16 players in descending Elo order.',
-                divisions: [
-                    {
-                        name: 'Division 1',
-                        tableLabel: 'Table 1',
-                        description: '4 players compete on Table 1.',
-                        players: [
-                            { name: 'Emma Zhao', elo: 1610 },
-                            { name: 'Kai Murphy', elo: 1595 },
-                            { name: 'Sophia Allen', elo: 1580 },
-                            { name: 'Jack Turner', elo: 1565 }
-                        ]
-                    },
-                    {
-                        name: 'Division 2',
-                        tableLabel: 'Tables 2 & 3',
-                        description: '8 players split across Table 2 and Table 3.',
-                        players: [
-                            { name: 'Lily Brown', elo: 1550 },
-                            { name: 'Henry Shaw', elo: 1535 },
-                            { name: 'Ruby Scott', elo: 1520 },
-                            { name: 'Max Harris', elo: 1505 },
-                            { name: 'Ella Ford', elo: 1490 },
-                            { name: 'Finn Hughes', elo: 1475 },
-                            { name: 'Ivy Price', elo: 1460 },
-                            { name: 'Sam Clarke', elo: 1445 }
-                        ]
-                    },
-                    {
-                        name: 'Division 3',
-                        tableLabel: 'Table 4',
-                        description: '4 players compete on Table 4.',
-                        players: [
-                            { name: 'Grace Ellis', elo: 1430 },
-                            { name: 'Theo Bell', elo: 1415 },
-                            { name: 'Chloe Ross', elo: 1400 },
-                            { name: 'Ben Foster', elo: 1385 }
-                        ]
-                    }
-                ]
-            }
-        };
+            };
+        }
 
         function buildPlayerList(players) {
             return players.map(player => `
@@ -143,8 +100,7 @@
             `).join('');
         }
 
-        function renderHalf(halfKey) {
-            const half = matchupData[halfKey];
+        function renderHalfData(halfKey, half) {
             const container = document.getElementById('matchup-container');
             const summary = document.getElementById('matchup-summary');
 
@@ -210,17 +166,52 @@
             });
         }
 
+        async function loadMatchupRoster() {
+            const summary = document.getElementById('matchup-summary');
+            const container = document.getElementById('matchup-container');
+            summary.innerHTML = '<p class="text-slate-600">Loading roster from the club spreadsheet...</p>';
+            container.innerHTML = '<div class="col-span-full text-center py-10 text-slate-400 italic">Loading roster...</div>';
+
+            try {
+                const response = await fetch(SHEET_URL);
+                const csvText = await response.text();
+                const rows = parseCsvRows(csvText);
+                const players = rows.slice(1)
+                    .map(normalizePlayer)
+                    .filter(player => player.name)
+                    .sort((a, b) => b.elo - a.elo);
+
+                const half2 = buildHalfData(players.slice(0, 16));
+                const half1 = buildHalfData(players.slice(16, 32));
+
+                const matchupData = {
+                    half2,
+                    half1: {
+                        ...half1,
+                        title: 'Half 1 — Lower Half',
+                        subtitle: 'Next 16 players in descending Elo order.'
+                    }
+                };
+
+                document.querySelectorAll('[data-half-button]').forEach(button => {
+                    const halfKey = button.dataset.halfButton;
+                    button.addEventListener('click', () => renderHalfData(halfKey, matchupData[halfKey]));
+                });
+
+                renderHalfData('half2', matchupData.half2);
+            } catch (error) {
+                console.error('Roster fetch error:', error);
+                summary.innerHTML = '<p class="text-red-500">Unable to load the roster. Please check the spreadsheet link.</p>';
+                container.innerHTML = '<div class="col-span-full text-center py-10 text-red-500">Failed to load matchup roster.</div>';
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             const half2Btn = document.getElementById('half2Btn');
             const half1Btn = document.getElementById('half1Btn');
-
-            [half2Btn, half1Btn].forEach(button => {
-                const halfKey = button.id === 'half2Btn' ? 'half2' : 'half1';
-                button.setAttribute('data-half-button', halfKey);
-                button.addEventListener('click', () => renderHalf(halfKey));
-            });
-
-            renderHalf('half2');
+            half2Btn.setAttribute('data-half-button', 'half2');
+            half1Btn.setAttribute('data-half-button', 'half1');
+            loadMatchupRoster();
         });
     </script>
 </body>
