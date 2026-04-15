@@ -3,76 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Matchup Ladder - NBHS Table Tennis</title>
+    <title>League Protocol | NBHS Table Tennis</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="icon" type="image/png" href="favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
 </head>
-<body class="bg-slate-50 text-slate-900 font-sans min-h-screen">
+<body class="bg-slate-50 text-slate-900">
 
-    <header class="bg-blue-800 text-white p-4 shadow-md">
-        <nav class="max-w-4xl mx-auto flex gap-6">
-            <a href="index.html" class="hover:underline">Home</a>
-            <a href="player-ranking.html" class="hover:underline">Rankings</a>
-            <a href="player-matchup-ladder.html" class="font-bold border-b-2 border-white">Matchups</a>
-        </nav>
-    </header>
-
-    <main class="max-w-4xl mx-auto p-6">
-        <div class="flex justify-between items-center mb-6">
-            <h1 class="text-3xl font-bold text-blue-900">Weekly Matchups</h1>
-            <span class="bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full uppercase">Term 2 - Week 1</span>
-        </div>
-
-        <div id="matchup-container" class="grid gap-4 md:grid-cols-2">
-            <div class="col-span-full text-center py-10 text-slate-400 italic">
-                Loading court assignments...
+    <nav class="bg-white border-b p-4 mb-8">
+        <div class="max-w-4xl mx-auto flex justify-between items-center">
+            <a href="index.html" class="font-black italic text-xl tracking-tighter text-blue-600">NBHS LEAGUE</a>
+            <div class="space-x-4 text-sm font-bold uppercase tracking-widest text-slate-500">
+                <a href="index.html" class="hover:text-blue-600">Rankings</a>
+                <a href="matchups.html" class="text-blue-600 border-b-2 border-blue-600">Instructions</a>
             </div>
         </div>
+    </nav>
+
+    <main class="max-w-4xl mx-auto px-4 pb-20">
+        
+        <header class="mb-10 text-center">
+            <h1 class="text-5xl font-black italic tracking-tighter uppercase text-slate-900">League Protocol</h1>
+            <p class="text-slate-500 font-medium uppercase tracking-widest mt-2">Season 1: The 5-Week Grind</p>
+        </header>
+
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+            
+            <div class="bg-slate-900 text-white p-6 rounded-2xl shadow-xl border-t-4 border-blue-500">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-black italic uppercase">First Half</h2>
+                    <span class="bg-blue-600 text-[10px] px-2 py-1 rounded">RANKS 1-16</span>
+                </div>
+                <div class="space-y-4">
+                    <div class="flex justify-between border-b border-slate-700 pb-2">
+                        <span class="font-bold text-slate-400">DIV 1 (Top 4)</span>
+                        <span class="text-blue-400 font-mono">TABLES 1-2</span>
+                    </div>
+                    <div class="flex justify-between border-b border-slate-700 pb-2">
+                        <span class="font-bold text-slate-400">DIV 2 (Mid 8)</span>
+                        <span class="text-blue-400 font-mono">TABLES 3-4</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="font-bold text-slate-400">DIV 3 (Low 4)</span>
+                        <span class="text-blue-400 font-mono">TABLE 5</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-xl border-t-4 border-green-500 border border-slate-200">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-black italic uppercase">Second Half</h2>
+                    <span class="bg-green-600 text-white text-[10px] px-2 py-1 rounded">RANKS 17+</span>
+                </div>
+                <div class="space-y-4 text-slate-600">
+                    <div class="flex justify-between border-b border-slate-100 pb-2">
+                        <span class="font-bold">DIV 1 (Top 4)</span>
+                        <span class="text-green-600 font-mono">TABLE 6</span>
+                    </div>
+                    <div class="flex justify-between border-b border-slate-100 pb-2">
+                        <span class="font-bold">DIV 2 (Mid 8)</span>
+                        <span class="text-green-600 font-mono">TABLES 7-8</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="font-bold">DIV 3 (Low 4)</span>
+                        <span class="text-green-600 font-mono">TABLE 9</span>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <section class="bg-blue-50 p-8 rounded-3xl mb-12">
+            <h2 class="text-xl font-black uppercase italic mb-6">The Game Day Flow</h2>
+            <div class="space-y-8">
+                <div class="flex gap-4">
+                    <div class="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0">1</div>
+                    <div>
+                        <h3 class="font-black uppercase text-sm">Check Your Rank</h3>
+                        <p class="text-slate-600 text-sm">Open the site on your phone. If your row number changed after the last sort, your table might have changed. No manual promotions—the Elo is the boss.</p>
+                    </div>
+                </div>
+                <div class="flex gap-4">
+                    <div class="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0">2</div>
+                    <div>
+                        <h3 class="font-black uppercase text-sm">Round Robin Play</h3>
+                        <p class="text-slate-600 text-sm">Play everyone at your table in a Best of 3 sets. If you finish early, challenge someone from the same Division on an adjacent table.</p>
+                    </div>
+                </div>
+                <div class="flex gap-4">
+                    <div class="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold flex-shrink-0">3</div>
+                    <div>
+                        <h3 class="font-black uppercase text-sm">Submit Scores</h3>
+                        <p class="text-slate-600 text-sm">Record your wins/losses on the physical score sheet. Your Elo will be updated tonight via the Pilot script.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="text-center p-8 bg-slate-200 rounded-2xl">
+            <h3 class="font-black italic uppercase text-slate-500">How to Rank Up</h3>
+            <p class="text-slate-600 text-xs mt-2 px-10">You don't wait for permission. Every win increases your Elo. When the rankings sort, if you've earned enough points, you will physically take the spot of the person above you. <span class="text-blue-600 font-bold italic">Win to climb.</span></p>
+        </footer>
+
     </main>
 
-    <script>
-        // Use the same URL as before, but CHANGE THE GID to your Matchups tab ID
-        const MATCHUP_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_UHoHNgToKV4yCuB_M56029JuMrOYWN-VkyxDiWkwXHJI1hhRnon_GMnvgvmQeHmL4F0gxkVz7IMP/pub?gid=YOUR_MATCHUP_TAB_GID_HERE&single=true&output=csv";
-
-        async function loadMatchups() {
-            try {
-                const response = await fetch(MATCHUP_SHEET_URL);
-                const data = await response.text();
-                const rows = data.split('\n').map(r => r.trim()).filter(r => r.length > 0);
-                
-                // Assuming Sheet Columns: Court, Player1, Player2, Half
-                const matchups = rows.slice(1).map(row => {
-                    const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-                    return {
-                        court: cols[0]?.replace(/"/g, '').trim(),
-                        p1: cols[1]?.replace(/"/g, '').trim(),
-                        p2: cols[2]?.replace(/"/g, '').trim(),
-                        half: cols[3]?.replace(/"/g, '').trim()
-                    };
-                }).filter(m => m.p1 && m.p2); // Only show rows with two players
-
-                const container = document.getElementById('matchup-container');
-                container.innerHTML = matchups.map(m => `
-                    <div class="bg-white p-5 rounded-xl border-l-8 border-blue-600 shadow-sm flex justify-between items-center">
-                        <div>
-                            <span class="text-xs font-bold text-blue-600 uppercase">Court ${m.court} • ${m.half}</span>
-                            <p class="text-lg font-bold text-slate-800 mt-1">${m.p1} <span class="text-slate-400 font-normal mx-2">vs</span> ${m.p2}</p>
-                        </div>
-                        <div class="hidden sm:block">
-                            <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center">
-                                🏓
-                            </div>
-                        </div>
-                    </div>
-                `).join('');
-
-            } catch (err) {
-                console.error("Matchup load error:", err);
-                document.getElementById('matchup-container').innerHTML = `<p class="text-red-500">Error loading matchups.</p>`;
-            }
-        }
-
-        window.onload = loadMatchups;
-    </script>
 </body>
 </html>
