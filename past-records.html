@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Past Season Records - NBHS Table Tennis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/png" href="favicon.png">
+</head>
+<body class="bg-slate-50 text-slate-900 font-sans min-h-screen">
+    <header class="bg-blue-800 text-white p-4 shadow-md">
+        <nav class="max-w-4xl mx-auto flex flex-wrap gap-6">
+            <a href="index.html" class="hover:underline">Home</a>
+            <a href="player-ranking.html" class="hover:underline">Rankings</a>
+            <a href="player-matchup-ladder.html" class="hover:underline">Matchups</a>
+            <a href="club-analytics.html" class="hover:underline">Analytics</a>
+            <a href="past-records.html" class="font-bold border-b-2 border-white">Past Records</a>
+        </nav>
+    </header>
+
+    <main class="max-w-4xl mx-auto p-6">
+        <div class="flex flex-col gap-4 mb-6">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                    <h1 class="text-3xl font-bold text-blue-900">Past Season Records</h1>
+                    <p class="text-slate-600 mt-2">Keep an archive of finished seasons so club history is easy to compare.</p>
+                </div>
+                <span class="bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full uppercase">Season Archive</span>
+            </div>
+
+            <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6">
+                <h2 class="text-xl font-bold text-slate-900 mb-4">How to use this page</h2>
+                <ul class="list-disc list-inside text-slate-700 space-y-2">
+                    <li>When the season changes, copy the current analytics snapshot from the <a href="club-analytics.html" class="text-blue-700 hover:underline">Analytics</a> page.</li>
+                    <li>Paste the final totals into a new row in the table below.</li>
+                    <li>Keep one row per season so the club can track highest Elo and most wins over time.</li>
+                </ul>
+            </div>
+
+            <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 overflow-x-auto">
+                <h2 class="text-xl font-bold text-slate-900 mb-4">Season Record Archive</h2>
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-slate-100 text-slate-500 uppercase text-sm tracking-[0.2em]">
+                        <tr>
+                            <th class="p-4 border-b border-slate-200">Season</th>
+                            <th class="p-4 border-b border-slate-200">Total Matches</th>
+                            <th class="p-4 border-b border-slate-200">Highest Elo</th>
+                            <th class="p-4 border-b border-slate-200">Most Wins</th>
+                            <th class="p-4 border-b border-slate-200">Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-slate-700">
+                        <tr class="bg-slate-50">
+                            <td class="p-4 border-b border-slate-200">2025 Term 2</td>
+                            <td class="p-4 border-b border-slate-200">—</td>
+                            <td class="p-4 border-b border-slate-200">—</td>
+                            <td class="p-4 border-b border-slate-200">—</td>
+                            <td class="p-4 border-b border-slate-200">Add final season totals here when the term ends.</td>
+                        </tr>
+                        <tr>
+                            <td class="p-4 border-b border-slate-200">2025 Term 1</td>
+                            <td class="p-4 border-b border-slate-200">—</td>
+                            <td class="p-4 border-b border-slate-200">—</td>
+                            <td class="p-4 border-b border-slate-200">—</td>
+                            <td class="p-4 border-b border-slate-200">Use this row for the previous season's final archive.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6">
+                <h2 class="text-xl font-bold text-slate-900 mb-4">Suggested record fields</h2>
+                <p class="text-slate-700">This page is a simple archive for finished seasons. If you want, add extra columns later for Most Active Player, Biggest Upset, or Best Win Rate.</p>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

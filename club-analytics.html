@@ -15,6 +15,7 @@
             <a href="player-ranking.html" class="hover:underline">Rankings</a>
             <a href="player-matchup-ladder.html" class="hover:underline">Matchups</a>
             <a href="club-analytics.html" class="font-bold border-b-2 border-white">Analytics</a>
+            <a href="past-records.html" class="hover:underline">Past Records</a>
         </nav>
     </header>
 
@@ -173,9 +174,11 @@
 
                 const totalMatches = matches.length;
                 const counts = {};
+                const winCounts = {};
                 matches.forEach(match => {
                     counts[match.player1] = (counts[match.player1] || 0) + 1;
                     counts[match.player2] = (counts[match.player2] || 0) + 1;
+                    winCounts[match.winner] = (winCounts[match.winner] || 0) + 1;
                 });
 
                 const activePlayers = Object.entries(counts)
@@ -183,6 +186,11 @@
                     .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
 
                 const mostActive = activePlayers[0] || { name: 'N/A', count: 0 };
+                const mostWinsEntry = Object.entries(winCounts)
+                    .map(([name, count]) => ({ name, count }))
+                    .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name))[0] || { name: 'N/A', count: 0 };
+                const highestElo = players.length ? Math.max(...players.map(player => player.elo)) : 0;
+
                 const biggestUpset = matches
                     .filter(match => match.upsetMargin > 0)
                     .sort((a, b) => b.upsetMargin - a.upsetMargin)[0];
@@ -196,6 +204,8 @@
 
                 summary.innerHTML = '';
                 addCard(summary, 'Total Matches Played', totalMatches, 'Count of row entries in the Matches sheet.');
+                addCard(summary, 'Highest Elo Recorded', highestElo || 'N/A', 'Top Elo value found in the current roster sheet.');
+                addCard(summary, 'Most Wins', `${mostWinsEntry.name} (${mostWinsEntry.count})`, 'Player with the highest count of match wins.');
                 addCard(summary, 'Most Active Player', `${mostActive.name} (${mostActive.count})`, 'Most appearances across all match rows.');
 
                 highlights.innerHTML = '';
