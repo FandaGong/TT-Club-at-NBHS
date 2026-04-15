@@ -66,9 +66,9 @@
         const urlParams = new URLSearchParams(window.location.search);
         const playerName = urlParams.get('name');
 
-        // GIDs for your specific tabs
+        // GIDs - Ensure these match your specific "Players" and "Elo_History" tabs
         const STATS_GID = "2082256240";
-        const MATCHES_GID = "859312421";
+        const HISTORY_GID = "160991986"; // Point this to your Elo_History tab GID
         const BASE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_UHoHNgToKV4yCuB_M56029JuMrOYWN-VkyxDiWkwXHJI1hhRnon_GMnvgvmQeHmL4F0gxkVz7IMP/pub?output=csv&gid=";
 
         function parseCsv(text) {
@@ -76,44 +76,26 @@
             let row = [];
             let field = '';
             let inQuotes = false;
-
             for (let i = 0; i < text.length; i++) {
                 const char = text[i];
                 if (char === '"') {
-                    if (inQuotes && text[i + 1] === '"') {
-                        field += '"';
-                        i++;
-                    } else {
-                        inQuotes = !inQuotes;
-                    }
-                } else if (char === ',' && !inQuotes) {
-                    row.push(field);
-                    field = '';
-                } else if ((char === '\n' || char === '\r') && !inQuotes) {
+                    if (inQuotes && text[i + 1] === '"') { field += '"'; i++; }
+                    else { inQuotes = !inQuotes; }
+                } else if (char === ',' && !inQuotes) { row.push(field); field = ''; }
+                else if ((char === '\n' || char === '\r') && !inQuotes) {
                     if (char === '\r' && text[i + 1] === '\n') i++;
-                    row.push(field);
-                    field = '';
-                    rows.push(row);
-                    row = [];
-                } else {
-                    field += char;
-                }
+                    row.push(field); field = ''; rows.push(row); row = [];
+                } else { field += char; }
             }
-
-            if (field !== '' || row.length > 0) {
-                row.push(field);
-                rows.push(row);
-            }
-
+            if (field !== '' || row.length > 0) { row.push(field); rows.push(row); }
             return rows;
         }
 
         async function init() {
             if (!playerName) return;
             document.getElementById('player-name').innerText = playerName;
-
             await loadPlayerStats();
-            await loadMatchHistory();
+            await loadCombinedHistory();
         }
 
         async function loadPlayerStats() {
@@ -121,175 +103,119 @@
                 const resp = await fetch(BASE_URL + STATS_GID);
                 const data = await resp.text();
                 const rows = parseCsv(data).filter(row => row.length > 0);
-
-                // Find the player in the Players Sheet by exact name match in column 0
                 const found = rows.find(row => (row[0] || '').toLowerCase() === playerName.toLowerCase());
 
                 if (found) {
-                    const cols = found;
-                    const cleanStat = (val) => {
-                        // 1. Remove quotes, commas, and whitespace
-                        let cleaned = (val || "").toString().replace(/"/g, '').replace(/,/g, '').trim();
-
-                        // 2. If it's empty, "undefined", "null", or just whitespace, return "0"
-                        if (!cleaned || cleaned.toLowerCase() === "undefined" || cleaned.toLowerCase() === "null") {
-                            return "0";
-                        }
-
-                        return cleaned;
-                    };
-
-                    // Apply to your stats
-                    const elo = cleanStat(cols[1]);
-                    const wins = cleanStat(cols[2]);
-                    const losses = cleanStat(cols[3]);
-                    const division = (cols[4] || "N/A").replace(/"/g, '').trim();
-                    const half = (cols[5] || "N/A").replace(/"/g, '').trim();
+                    const cleanStat = (val) => (val || "").toString().replace(/"/g, '').replace(/,/g, '').trim() || "0";
+                    const elo = cleanStat(found[1]);
+                    const wins = cleanStat(found[2]);
+                    const losses = cleanStat(found[3]);
+                    const division = (found[4] || "N/A").trim();
+                    const half = (found[5] || "N/A").trim();
 
                     document.getElementById('quick-stats').innerHTML = `
-    <div class="mt-4 flex flex-wrap gap-6 font-black uppercase italic tracking-tighter">
-        <span class="text-blue-700">ELO: ${elo}</span>
-        <span class="text-green-600">WINS: ${wins}</span>
-        <span class="text-red-500">LOSSES: ${losses}</span>
-        <div class="border-l border-slate-300 pl-6 flex gap-4 text-slate-400">
-            <span>${division}</span>
-            <span>${half} HALF</span>
-        </div>
-    </div>
-`;
-
-                    // Graph placeholder
-                    renderChart([1000, parseInt(elo)]);
+                        <div class="mt-4 flex flex-wrap gap-6 font-black uppercase italic tracking-tighter text-sm sm:text-base">
+                            <span class="text-blue-700">ELO: ${elo}</span>
+                            <span class="text-green-600">WINS: ${wins}</span>
+                            <span class="text-red-500">LOSSES: ${losses}</span>
+                            <div class="border-l border-slate-300 pl-6 flex gap-4 text-slate-400">
+                                <span>${division}</span>
+                                <span>${half} HALF</span>
+                            </div>
+                        </div>`;
                 }
-            } catch (err) {
-                console.error("Stats load error:", err);
-            }
+            } catch (err) { console.error("Stats load error:", err); }
         }
 
-        async function loadMatchHistory() {
-            try {
-                const resp = await fetch(BASE_URL + MATCHES_GID);
-                if (!resp.ok) throw new Error("Could not reach Google Sheets");
-
-                const data = await resp.text();
-                const rows = parseCsv(data).filter(row => row.length > 0);
-
-                // Filter for matches involving the player
-                const history = rows.slice(1).filter(cols => {
-                    const p1 = (cols[0] || "").toLowerCase().trim();
-                    const p2 = (cols[1] || "").toLowerCase().trim();
-                    const target = playerName.toLowerCase().trim();
-                    return p1 === target || p2 === target;
-                });
-
-                const table = document.getElementById('history-table');
-
-                if (history.length === 0) {
-                    table.innerHTML = `<tr><td colspan="4" class="p-10 text-center text-slate-400">No recent match history found.</td></tr>`;
-                    return;
-                }
-
-                // We reverse the history so the most recent matches show at the top
-                table.innerHTML = history.reverse().map(cols => {
-                    const p1 = cols[0].replace(/"/g, '').trim();
-                    const p2 = cols[1].replace(/"/g, '').trim();
-                    const winner = cols[2].replace(/"/g, '').trim();
-                    const score = cols[3].replace(/"/g, '').trim();
-
-                    // Update these indices in your player-analysis.html script
-                    const p1Delta = (cols[7] || "").trim(); // Was 8 (Column I), now 7 (Column H)
-                    const p2Delta = (cols[8] || "").trim(); // Was 9 (Column J), now 8 (Column I)
-
-                    const isP1 = p1.toLowerCase() === playerName.toLowerCase();
-                    const opponent = isP1 ? p2 : p1;
-
-                    // Determine result
-                    const hasWon = winner.toLowerCase() === playerName.toLowerCase();
-
-                    // Get the specific delta for this player
-                    const delta = isP1 ? p1Delta : p2Delta;
-
-                    // Styling for the Delta
-                    const isPositive = delta.includes('+');
-                    const deltaColor = isPositive ? 'text-blue-600' : 'text-orange-600';
-
-                    return `
-        <tr class="border-b hover:bg-slate-50 transition-colors">
-            <td class="p-4">
-                <span class="font-bold text-slate-800">${opponent}</span>
-            </td>
-            <td class="p-4">
-                <span class="px-2 py-1 rounded text-[10px] font-black ${hasWon ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">
-                    ${hasWon ? 'WIN' : 'LOSS'}
-                </span>
-            </td>
-            <td class="p-4 text-center font-mono font-bold text-slate-600">${score}</td>
-            <td class="p-4 text-right font-bold ${deltaColor}">
-                ${delta || '--'}
-            </td>
-        </tr>`;
-                }).join('');
-
-            } catch (err) {
-                console.error(err);
-                document.getElementById('history-table').innerHTML = `<tr><td colspan="4" class="p-10 text-center text-red-500 font-bold">Failed to sync match data.</td></tr>`;
-            }
-        }
-function renderChart(historyData, labels) {
-    const ctx = document.getElementById('eloChart').getContext('2d');
-    
-    // Destroy old chart if it exists to prevent overlap
-    if (window.myChart) { window.myChart.destroy(); }
-
-    window.myChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels, // Now shows "Week 1", "Week 2", etc.
-            datasets: [{
-                label: 'Elo Rating',
-                data: historyData,
-                borderColor: '#1e3a8a',
-                borderWidth: 3,
-                pointBackgroundColor: '#1e3a8a',
-                tension: 0.3,
-                fill: true,
-                backgroundColor: 'rgba(30, 58, 138, 0.1)'
-            }]
-        },
-        options: {
-            scales: {
-                y: { beginAtZero: false } // Makes the progress look more dramatic
-            },
-            plugins: { legend: { display: false } }
-        }
-    });
-}
-        const HISTORY_GID = "160991986"; // Get this from the URL when clicking the tab
-
-        async function loadEloHistory() {
+        async function loadCombinedHistory() {
             try {
                 const resp = await fetch(BASE_URL + HISTORY_GID);
                 const data = await resp.text();
-                const rows = parseCsv(data);
+                const allRows = parseCsv(data).filter(row => row.length >= 11);
 
-                // Filter history for only this player
-                const playerHistory = rows.filter(row =>
-                    (row[1] || "").toLowerCase().trim() === playerName.toLowerCase().trim()
-                );
+                // Filter for matches involving this player
+                const playerMatches = allRows.filter(cols => {
+                    const p1 = (cols[0] || "").toLowerCase().trim();
+                    const p2 = (cols[1] || "").toLowerCase().trim();
+                    return p1 === playerName.toLowerCase() || p2 === playerName.toLowerCase();
+                });
 
-                // Extract the Elo values: e.g., [1000, 1045, 1086]
-                const eloPoints = playerHistory.map(row => parseInt(row[2]));
-                const labels = playerHistory.map(row => row[3]); // Week labels
+                const table = document.getElementById('history-table');
+                const eloProgress = [1000]; // Starting Elo
+                const labels = ["Start"];
 
-                if (eloPoints.length > 0) {
-                    renderChart(eloPoints, labels);
-                } else {
-                    // Fallback if no history yet
-                    renderChart([1000], ["Start"]);
+                if (playerMatches.length === 0) {
+                    table.innerHTML = `<tr><td colspan="4" class="p-10 text-center text-slate-400 font-bold">No matches found in history.</td></tr>`;
+                    renderChart(eloProgress, labels);
+                    return;
                 }
+
+                // 1. Update Table (Most recent at the top)
+                table.innerHTML = playerMatches.slice().reverse().map(cols => {
+                    const isP1 = cols[0].toLowerCase() === playerName.toLowerCase();
+                    const opponent = isP1 ? cols[1] : cols[0];
+                    const winner = cols[2].trim();
+                    const score = cols[3].trim();
+                    const delta = isP1 ? cols[7] : cols[8]; // Columns H & I
+                    const hasWon = winner.toLowerCase() === playerName.toLowerCase();
+                    const deltaColor = (delta || "").includes('+') ? 'text-blue-600' : 'text-orange-600';
+
+                    return `
+                        <tr class="border-b hover:bg-slate-50 transition-colors">
+                            <td class="p-4 font-bold text-slate-800">${opponent}</td>
+                            <td class="p-4">
+                                <span class="px-2 py-1 rounded text-[10px] font-black ${hasWon ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">
+                                    ${hasWon ? 'WIN' : 'LOSS'}
+                                </span>
+                            </td>
+                            <td class="p-4 text-center font-mono font-bold text-slate-600">${score}</td>
+                            <td class="p-4 text-right font-bold ${deltaColor}">${delta || '--'}</td>
+                        </tr>`;
+                }).join('');
+
+                // 2. Update Chart (Chronological order)
+                playerMatches.forEach((cols, index) => {
+                    const isP1 = cols[0].toLowerCase() === playerName.toLowerCase();
+                    const newElo = isP1 ? cols[9] : cols[10]; // Columns J & K
+                    if (newElo) {
+                        eloProgress.push(parseInt(newElo));
+                        labels.push(`Match ${index + 1}`);
+                    }
+                });
+
+                renderChart(eloProgress, labels);
+
             } catch (err) {
-                console.error("History load error:", err);
+                console.error("History error:", err);
+                document.getElementById('history-table').innerHTML = `<tr><td colspan="4" class="p-10 text-center text-red-500 font-bold italic">Error loading master history.</td></tr>`;
             }
+        }
+
+        function renderChart(historyData, labels) {
+            const ctx = document.getElementById('eloChart').getContext('2d');
+            if (window.myChart) { window.myChart.destroy(); }
+            window.myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Elo Rating',
+                        data: historyData,
+                        borderColor: '#1e3a8a',
+                        borderWidth: 3,
+                        pointBackgroundColor: '#1e3a8a',
+                        tension: 0.3,
+                        fill: true,
+                        backgroundColor: 'rgba(30, 58, 138, 0.1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { y: { beginAtZero: false, ticks: { font: { weight: 'bold' } } } },
+                    plugins: { legend: { display: false } }
+                }
+            });
         }
 
         init();
