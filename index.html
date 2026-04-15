@@ -163,30 +163,32 @@
                 return;
             }
 
-            const found = players.find(p => p.name.toLowerCase().includes(input));
+            const matches = players.filter(p => p.name.toLowerCase().includes(input));
 
-            if (found) {
-                resultDiv.innerHTML = `
-            <h3 class="text-xl font-bold text-blue-800">
-    <a href="player-analysis.html?name=${encodeURIComponent(found.name)}" class="hover:underline hover:text-blue-600">
-        ${found.name} →
-    </a>
-</h3>
-            <div class="mt-4 grid grid-cols-3 gap-4 text-center">
-                <div class="bg-white p-2 rounded-lg shadow-sm border border-blue-100">
-                    <p class="text-slate-500 uppercase text-[10px] font-bold tracking-widest">Elo</p>
-                    <p class="text-lg font-mono font-bold text-blue-600">${found.elo}</p>
-                </div>
-                <div class="bg-white p-2 rounded-lg shadow-sm border border-green-100">
-                    <p class="text-slate-500 uppercase text-[10px] font-bold tracking-widest">Wins</p>
-                    <p class="text-lg font-bold text-green-600">${found.wins}</p>
-                </div>
-                <div class="bg-white p-2 rounded-lg shadow-sm border border-red-100">
-                    <p class="text-slate-500 uppercase text-[10px] font-bold tracking-widest">Losses</p>
-                    <p class="text-lg font-bold text-red-500">${found.losses}</p>
-                </div>
-            </div>
-        `;
+            if (matches.length) {
+                resultDiv.innerHTML = matches.map(player => `
+                    <div class="mb-6">
+                        <h3 class="text-xl font-bold text-blue-800">
+                            <a href="player-analysis.html?name=${encodeURIComponent(player.name)}" class="hover:underline hover:text-blue-600">
+                                ${player.name} →
+                            </a>
+                        </h3>
+                        <div class="mt-4 grid grid-cols-3 gap-4 text-center">
+                            <div class="bg-white p-2 rounded-lg shadow-sm border border-blue-100">
+                                <p class="text-slate-500 uppercase text-[10px] font-bold tracking-widest">Elo</p>
+                                <p class="text-lg font-mono font-bold text-blue-600">${player.elo}</p>
+                            </div>
+                            <div class="bg-white p-2 rounded-lg shadow-sm border border-green-100">
+                                <p class="text-slate-500 uppercase text-[10px] font-bold tracking-widest">Wins</p>
+                                <p class="text-lg font-bold text-green-600">${player.wins}</p>
+                            </div>
+                            <div class="bg-white p-2 rounded-lg shadow-sm border border-red-100">
+                                <p class="text-slate-500 uppercase text-[10px] font-bold tracking-widest">Losses</p>
+                                <p class="text-lg font-bold text-red-500">${player.losses}</p>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
                 resultDiv.classList.remove('hidden');
             } else {
                 resultDiv.innerHTML = `<p class="text-slate-600 p-2">Player "<strong>${input}</strong>" not found.</p>`;
