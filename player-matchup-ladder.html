@@ -23,56 +23,205 @@
             <span class="bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full uppercase">Term 2 - Week 1</span>
         </div>
 
-        <div id="matchup-container" class="grid gap-4 md:grid-cols-2">
-            <div class="col-span-full text-center py-10 text-slate-400 italic">
-                Loading court assignments...
+        <div class="flex flex-col gap-4 mb-6">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                <div>
+                    <p class="text-sm uppercase tracking-[0.18em] text-slate-500 font-bold">View half</p>
+                    <div class="inline-flex rounded-full bg-slate-200 p-1 mt-2" role="group" aria-label="Half toggle">
+                        <button id="half2Btn" type="button" class="px-4 py-2 rounded-full text-sm font-semibold text-slate-700 transition-colors">Half 2</button>
+                        <button id="half1Btn" type="button" class="px-4 py-2 rounded-full text-sm font-semibold text-slate-700 transition-colors">Half 1</button>
+                    </div>
+                </div>
+                <div class="rounded-2xl bg-slate-100 p-4 text-sm text-slate-600">
+                    <p class="font-semibold text-slate-800">Table assignments</p>
+                    <p class="mt-1">Div 1 → Table 1 · Div 2 → Tables 2 &amp; 3 · Div 3 → Table 4</p>
+                </div>
             </div>
+
+            <div id="matchup-summary" class="rounded-2xl bg-white p-5 border border-slate-200 shadow-sm text-slate-700"></div>
         </div>
+
+        <div id="matchup-container" class="grid gap-4 md:grid-cols-2"></div>
     </main>
 
     <script>
-        // Use the same URL as before, but CHANGE THE GID to your Matchups tab ID
-        const MATCHUP_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_UHoHNgToKV4yCuB_M56029JuMrOYWN-VkyxDiWkwXHJI1hhRnon_GMnvgvmQeHmL4F0gxkVz7IMP/pub?gid=YOUR_MATCHUP_TAB_GID_HERE&single=true&output=csv";
-
-        async function loadMatchups() {
-            try {
-                const response = await fetch(MATCHUP_SHEET_URL);
-                const data = await response.text();
-                const rows = data.split('\n').map(r => r.trim()).filter(r => r.length > 0);
-                
-                // Assuming Sheet Columns: Court, Player1, Player2, Half
-                const matchups = rows.slice(1).map(row => {
-                    const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-                    return {
-                        court: cols[0]?.replace(/"/g, '').trim(),
-                        p1: cols[1]?.replace(/"/g, '').trim(),
-                        p2: cols[2]?.replace(/"/g, '').trim(),
-                        half: cols[3]?.replace(/"/g, '').trim()
-                    };
-                }).filter(m => m.p1 && m.p2); // Only show rows with two players
-
-                const container = document.getElementById('matchup-container');
-                container.innerHTML = matchups.map(m => `
-                    <div class="bg-white p-5 rounded-xl border-l-8 border-blue-600 shadow-sm flex justify-between items-center">
-                        <div>
-                            <span class="text-xs font-bold text-blue-600 uppercase">Court ${m.court} • ${m.half}</span>
-                            <p class="text-lg font-bold text-slate-800 mt-1">${m.p1} <span class="text-slate-400 font-normal mx-2">vs</span> ${m.p2}</p>
-                        </div>
-                        <div class="hidden sm:block">
-                            <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center">
-                                🏓
-                            </div>
-                        </div>
-                    </div>
-                `).join('');
-
-            } catch (err) {
-                console.error("Matchup load error:", err);
-                document.getElementById('matchup-container').innerHTML = `<p class="text-red-500">Error loading matchups.</p>`;
+        const matchupData = {
+            half2: {
+                title: 'Half 2 — Better Half',
+                subtitle: 'Top 16 players in descending Elo order.',
+                divisions: [
+                    {
+                        name: 'Division 1',
+                        tableLabel: 'Table 1',
+                        description: '4 players compete on Table 1.',
+                        players: [
+                            { name: 'Oliver Tan', elo: 1885 },
+                            { name: 'Maya Chen', elo: 1860 },
+                            { name: 'Lucas Patel', elo: 1840 },
+                            { name: 'Zoe Martin', elo: 1810 }
+                        ]
+                    },
+                    {
+                        name: 'Division 2',
+                        tableLabel: 'Tables 2 & 3',
+                        description: '8 players split across Table 2 and Table 3.',
+                        players: [
+                            { name: 'Aria Kim', elo: 1795 },
+                            { name: 'Ethan Lee', elo: 1780 },
+                            { name: 'Nina Wong', elo: 1765 },
+                            { name: 'Liam O\'Connor', elo: 1750 },
+                            { name: 'Chloe Nguyen', elo: 1735 },
+                            { name: 'Mason Parker', elo: 1720 },
+                            { name: 'Isla Brooks', elo: 1705 },
+                            { name: 'Noah Davis', elo: 1690 }
+                        ]
+                    },
+                    {
+                        name: 'Division 3',
+                        tableLabel: 'Table 4',
+                        description: '4 players compete on Table 4.',
+                        players: [
+                            { name: 'Ava Singh', elo: 1675 },
+                            { name: 'Leo Carter', elo: 1660 },
+                            { name: 'Mia Roberts', elo: 1645 },
+                            { name: 'Oscar Grant', elo: 1630 }
+                        ]
+                    }
+                ]
+            },
+            half1: {
+                title: 'Half 1 — Lower Half',
+                subtitle: 'Next 16 players in descending Elo order.',
+                divisions: [
+                    {
+                        name: 'Division 1',
+                        tableLabel: 'Table 1',
+                        description: '4 players compete on Table 1.',
+                        players: [
+                            { name: 'Emma Zhao', elo: 1610 },
+                            { name: 'Kai Murphy', elo: 1595 },
+                            { name: 'Sophia Allen', elo: 1580 },
+                            { name: 'Jack Turner', elo: 1565 }
+                        ]
+                    },
+                    {
+                        name: 'Division 2',
+                        tableLabel: 'Tables 2 & 3',
+                        description: '8 players split across Table 2 and Table 3.',
+                        players: [
+                            { name: 'Lily Brown', elo: 1550 },
+                            { name: 'Henry Shaw', elo: 1535 },
+                            { name: 'Ruby Scott', elo: 1520 },
+                            { name: 'Max Harris', elo: 1505 },
+                            { name: 'Ella Ford', elo: 1490 },
+                            { name: 'Finn Hughes', elo: 1475 },
+                            { name: 'Ivy Price', elo: 1460 },
+                            { name: 'Sam Clarke', elo: 1445 }
+                        ]
+                    },
+                    {
+                        name: 'Division 3',
+                        tableLabel: 'Table 4',
+                        description: '4 players compete on Table 4.',
+                        players: [
+                            { name: 'Grace Ellis', elo: 1430 },
+                            { name: 'Theo Bell', elo: 1415 },
+                            { name: 'Chloe Ross', elo: 1400 },
+                            { name: 'Ben Foster', elo: 1385 }
+                        ]
+                    }
+                ]
             }
+        };
+
+        function buildPlayerList(players) {
+            return players.map(player => `
+                <li class="py-1 text-sm text-slate-700">
+                    <span class="font-semibold">${player.name}</span>
+                    <span class="text-slate-400">(${player.elo})</span>
+                </li>
+            `).join('');
         }
 
-        window.onload = loadMatchups;
+        function renderHalf(halfKey) {
+            const half = matchupData[halfKey];
+            const container = document.getElementById('matchup-container');
+            const summary = document.getElementById('matchup-summary');
+
+            container.innerHTML = half.divisions.map(division => {
+                if (division.name === 'Division 2') {
+                    const firstGroup = division.players.slice(0, 4);
+                    const secondGroup = division.players.slice(4);
+                    return [
+                        {
+                            divisionName: division.name,
+                            tableLabel: 'Table 2',
+                            description: division.description,
+                            players: firstGroup
+                        },
+                        {
+                            divisionName: division.name,
+                            tableLabel: 'Table 3',
+                            description: division.description,
+                            players: secondGroup
+                        }
+                    ].map(card => `
+                        <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm">
+                            <div class="flex items-start justify-between gap-4 mb-4">
+                                <div>
+                                    <p class="text-xs uppercase tracking-[0.2em] text-slate-500 font-semibold">${card.divisionName}</p>
+                                    <h2 class="text-xl font-bold text-slate-900 mt-2">${card.tableLabel}</h2>
+                                </div>
+                                <span class="inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">${card.description}</span>
+                            </div>
+                            <ul class="space-y-2">
+                                ${buildPlayerList(card.players)}
+                            </ul>
+                        </div>
+                    `).join('');
+                }
+
+                return `
+                    <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm">
+                        <div class="flex items-start justify-between gap-4 mb-4">
+                            <div>
+                                <p class="text-xs uppercase tracking-[0.2em] text-slate-500 font-semibold">${division.name}</p>
+                                <h2 class="text-xl font-bold text-slate-900 mt-2">${division.tableLabel}</h2>
+                            </div>
+                            <span class="inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">${division.description}</span>
+                        </div>
+                        <ul class="space-y-2">
+                            ${buildPlayerList(division.players)}
+                        </ul>
+                    </div>
+                `;
+            }).join('');
+
+            summary.innerHTML = `
+                <h2 class="text-lg font-bold text-slate-900">${half.title}</h2>
+                <p class="mt-2 text-slate-600">${half.subtitle} Each division will play every other player in their division.</p>
+            `;
+
+            document.querySelectorAll('[data-half-button]').forEach(button => {
+                const isActive = button.dataset.halfButton === halfKey;
+                button.classList.toggle('bg-blue-700', isActive);
+                button.classList.toggle('text-white', isActive);
+                button.classList.toggle('text-slate-700', !isActive);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const half2Btn = document.getElementById('half2Btn');
+            const half1Btn = document.getElementById('half1Btn');
+
+            [half2Btn, half1Btn].forEach(button => {
+                const halfKey = button.id === 'half2Btn' ? 'half2' : 'half1';
+                button.setAttribute('data-half-button', halfKey);
+                button.addEventListener('click', () => renderHalf(halfKey));
+            });
+
+            renderHalf('half2');
+        });
     </script>
 </body>
 </html>
