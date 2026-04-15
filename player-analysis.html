@@ -235,23 +235,61 @@
                 document.getElementById('history-table').innerHTML = `<tr><td colspan="4" class="p-10 text-center text-red-500 font-bold">Failed to sync match data.</td></tr>`;
             }
         }
-        function renderChart(historyData) {
-            const ctx = document.getElementById('eloChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: historyData.map((_, i) => `Match ${i}`),
-                    datasets: [{
-                        label: 'Elo Rating',
-                        data: historyData,
-                        borderColor: '#1e3a8a',
-                        tension: 0.3,
-                        fill: true,
-                        backgroundColor: 'rgba(30, 58, 138, 0.1)'
-                    }]
-                },
-                options: { plugins: { legend: { display: false } } }
-            });
+function renderChart(historyData, labels) {
+    const ctx = document.getElementById('eloChart').getContext('2d');
+    
+    // Destroy old chart if it exists to prevent overlap
+    if (window.myChart) { window.myChart.destroy(); }
+
+    window.myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels, // Now shows "Week 1", "Week 2", etc.
+            datasets: [{
+                label: 'Elo Rating',
+                data: historyData,
+                borderColor: '#1e3a8a',
+                borderWidth: 3,
+                pointBackgroundColor: '#1e3a8a',
+                tension: 0.3,
+                fill: true,
+                backgroundColor: 'rgba(30, 58, 138, 0.1)'
+            }]
+        },
+        options: {
+            scales: {
+                y: { beginAtZero: false } // Makes the progress look more dramatic
+            },
+            plugins: { legend: { display: false } }
+        }
+    });
+}
+        const HISTORY_GID = "160991986"; // Get this from the URL when clicking the tab
+
+        async function loadEloHistory() {
+            try {
+                const resp = await fetch(BASE_URL + HISTORY_GID);
+                const data = await resp.text();
+                const rows = parseCsv(data);
+
+                // Filter history for only this player
+                const playerHistory = rows.filter(row =>
+                    (row[1] || "").toLowerCase().trim() === playerName.toLowerCase().trim()
+                );
+
+                // Extract the Elo values: e.g., [1000, 1045, 1086]
+                const eloPoints = playerHistory.map(row => parseInt(row[2]));
+                const labels = playerHistory.map(row => row[3]); // Week labels
+
+                if (eloPoints.length > 0) {
+                    renderChart(eloPoints, labels);
+                } else {
+                    // Fallback if no history yet
+                    renderChart([1000], ["Start"]);
+                }
+            } catch (err) {
+                console.error("History load error:", err);
+            }
         }
 
         init();
