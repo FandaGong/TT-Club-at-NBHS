@@ -197,11 +197,7 @@
                 const biggestGap = matches
                     .slice()
                     .sort((a, b) => b.eloDiff - a.eloDiff)[0];
-                const closestMatch = matches
-                    .slice()
-                    .filter(match => match.scoreDiff !== null)
-                    .sort((a, b) => a.scoreDiff - b.scoreDiff || b.eloDiff - a.eloDiff)[0];
-
+                
                 summary.innerHTML = '';
                 addCard(summary, 'Total Matches Played', totalMatches, 'Count of row entries in the Matches sheet.');
                 addCard(summary, 'Highest Elo Recorded', highestElo || 'N/A', 'Top Elo value found in the current roster sheet.');
@@ -218,10 +214,6 @@
                 if (biggestGap) {
                     const favorite = biggestGap.winnerElo >= biggestGap.loserElo ? biggestGap.winner : biggestGap.loser;
                     addCard(highlights, 'Largest Elo Gap', `${favorite} vs ${biggestGap.loser}`, `Gap of ${biggestGap.eloDiff} Elo points in Division ${biggestGap.division}.`);
-                }
-
-                if (closestMatch) {
-                    addCard(highlights, 'Closest Match', `${closestMatch.winner} vs ${closestMatch.loser}`, `Score ${closestMatch.score} with a ${closestMatch.scoreDiff}-point difference.`);
                 }
 
                 activeList.innerHTML = activePlayers.slice(0, 5).map((player, index) => `
