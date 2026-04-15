@@ -8,13 +8,21 @@
     <link rel="icon" type="image/png" href="favicon.png">
 </head>
 <body class="bg-slate-50 text-slate-900 font-sans min-h-screen">
-    <header class="bg-blue-800 text-white p-4 shadow-md">
-        <nav class="max-w-4xl mx-auto flex flex-wrap gap-6">
-            <a href="index.html" class="hover:underline">Home</a>
-            <a href="player-ranking.html" class="hover:underline">Rankings</a>
-            <a href="player-matchup-ladder.html" class="hover:underline">Matchups</a>
-            <a href="club-analytics.html" class="hover:underline">Analytics</a>
-            <a href="past-records.html" class="font-bold border-b-2 border-white">Past Records</a>
+    <header class="bg-blue-800 text-white shadow-md">
+        <nav class="max-w-4xl mx-auto flex items-center justify-between gap-4 px-4 py-4">
+            <a href="index.html" class="text-xl font-bold">NBHS TT Hub</a>
+            <button id="navToggle" type="button" class="sm:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/20 bg-blue-900/20 text-white hover:bg-blue-900/40" aria-label="Toggle navigation" onclick="document.getElementById('navLinks').classList.toggle('hidden')">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16" />
+                </svg>
+            </button>
+            <div id="navLinks" class="hidden w-full flex-col gap-3 pt-4 sm:flex sm:w-auto sm:flex-row sm:items-center sm:pt-0">
+                <a href="index.html" class="block hover:underline">Home</a>
+                <a href="player-ranking.html" class="block hover:underline">Rankings</a>
+                <a href="player-matchup-ladder.html" class="block hover:underline">Matchups</a>
+                <a href="club-analytics.html" class="block hover:underline">Analytics</a>
+                <a href="past-records.html" class="block font-bold border-b-2 border-white sm:border-none">Past Records</a>
+            </div>
         </nav>
     </header>
 
