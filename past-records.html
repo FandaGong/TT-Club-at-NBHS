@@ -88,70 +88,81 @@
             return rows;
         }
 
-        async function loadHallOfFame() {
-            const grid = document.getElementById('season-grid');
-            try {
-                const response = await fetch(SEASONS_URL);
-                const text = await response.text();
-                const allRows = parseCsv(text).filter(r => r.length >= 6);
-                const rows = allRows.slice(1); // Skip header
+async function loadHallOfFame() {
+    const grid = document.getElementById('season-grid');
+    try {
+        const response = await fetch(SEASONS_URL);
+        const text = await response.text();
+        const allRows = parseCsv(text).filter(r => r.length >= 8); // Now looking for 8 columns
+        const rows = allRows.slice(1); 
 
-                if (rows.length === 0) {
-                    grid.innerHTML = "<div class='col-span-full bg-white p-10 rounded-2xl border text-center text-slate-400'>No seasons archived yet. Historical data will appear here once finalized.</div>";
-                    return;
-                }
+        if (rows.length === 0) {
+            grid.innerHTML = "<div class='col-span-full text-center p-10 text-slate-400'>No seasons archived.</div>";
+            return;
+        }
 
-                // Update the Top Records at the top of the page using the latest season data
-                const latest = rows[rows.length - 1];
-                document.getElementById('top-elo-val').innerText = latest[2];
-                document.getElementById('top-elo-player').innerText = `${latest[1]} (${latest[0]})`;
-                
-                // Render the cards
-                grid.innerHTML = rows.reverse().map(cols => `
-                    <div class="bg-white rounded-2xl shadow-sm border overflow-hidden">
-                        <div class="bg-slate-50 border-b p-4 flex justify-between items-center">
-                            <span class="font-bold text-blue-900 italic uppercase">${cols[0]}</span>
-                            <span class="bg-blue-100 text-blue-700 text-[10px] px-2 py-1 rounded font-black uppercase">${cols[5]}</span>
+        // --- UPDATE TOP CARDS ---
+        // We find the 'All-Time' highs across all finalized seasons
+        let allTimeElo = 0, allTimeEloPlayer = "";
+        let allTimeWins = 0, allTimeWinsPlayer = "";
+        let biggestUpset = "";
+
+        rows.forEach(row => {
+            if (parseInt(row[2]) > allTimeElo) {
+                allTimeElo = row[2];
+                allTimeEloPlayer = `${row[1]} (${row[0]})`;
+            }
+            // Parse most wins (format: Name (Count))
+            const winsMatch = row[6].match(/\((\d+)\)/);
+            if (winsMatch && parseInt(winsMatch[1]) > allTimeWins) {
+                allTimeWins = parseInt(winsMatch[1]);
+                allTimeWinsPlayer = row[6];
+            }
+            // For simplicity, biggest upset from the most recent season
+            biggestUpset = row[7]; 
+        });
+
+        document.getElementById('top-elo-val').innerText = allTimeElo;
+        document.getElementById('top-elo-player').innerText = allTimeEloPlayer;
+        document.getElementById('top-wins-val').innerText = allTimeWins;
+        document.getElementById('top-wins-player').innerText = allTimeWinsPlayer;
+        // Add id="upset-val" and id="upset-desc" to your HTML card to use these:
+        // document.getElementById('upset-val').innerText = biggestUpset.split('(')[1].replace(')','');
+        // document.getElementById('upset-desc').innerText = biggestUpset.split('(')[0];
+
+        // --- RENDER CARDS ---
+        grid.innerHTML = rows.reverse().map(cols => `
+            <div class="bg-white rounded-2xl shadow-sm border overflow-hidden">
+                <div class="bg-slate-50 border-b p-4 flex justify-between items-center">
+                    <span class="font-bold text-blue-900 italic uppercase">${cols[0]}</span>
+                    <span class="bg-blue-100 text-blue-700 text-[10px] px-2 py-1 rounded font-black uppercase">${cols[5]}</span>
+                </div>
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-sm font-semibold text-slate-500">Season Champion</span>
+                        <span class="text-lg font-bold text-blue-800">${cols[1]}</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 text-center border-t border-b py-4 mb-4">
+                        <div>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Most Wins</p>
+                            <p class="text-xs font-bold text-slate-700">${cols[6]}</p>
                         </div>
-                        <div class="p-6">
-                            <div class="flex justify-between items-center mb-4">
-                                <span class="text-sm font-semibold text-slate-500">Season Champion</span>
-                                <span class="text-lg font-bold text-blue-800">${cols[1]}</span>
-                            </div>
-                            <div class="grid grid-cols-2 gap-4 text-center border-t border-b py-4 mb-4">
-                                <div>
-                                    <p class="text-[10px] font-bold text-slate-400 uppercase">Total Matches</p>
-                                    <p class="font-bold text-slate-700">${cols[3]}</p>
-                                </div>
-                                <div>
-                                    <p class="text-[10px] font-bold text-slate-400 uppercase">Peak Elo</p>
-                                    <p class="font-bold text-slate-700">${cols[2]}</p>
-                                </div>
-                            </div>
-                            <p class="text-[10px] font-bold text-slate-400 uppercase mb-2">Final Top 3</p>
-                            <div class="flex flex-wrap gap-2">
-                                ${cols[4].split(',').map(name => `<span class="bg-slate-100 text-slate-600 px-2 py-1 rounded text-[10px] font-bold">${name.trim()}</span>`).join('')}
-                            </div>
+                        <div>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Biggest Upset</p>
+                            <p class="text-xs font-bold text-slate-700">${cols[7]}</p>
                         </div>
                     </div>
-                `).join('');
+                    <p class="text-[10px] font-bold text-slate-400 uppercase mb-2 text-center">Final Top 3</p>
+                    <div class="flex justify-center gap-2">
+                        ${cols[4].split(',').map(name => `<span class="bg-slate-100 text-slate-600 px-2 py-1 rounded text-[10px] font-bold">${name.trim()}</span>`).join('')}
+                    </div>
+                </div>
+            </div>
+        `).join('');
 
-            } catch (err) {
-                console.error("Hall of Fame Error:", err);
-                grid.innerHTML = "<p class='p-6 text-red-500'>Error loading archive. Please check the spreadsheet publication.</p>";
-            }
-        }
-
-        loadHallOfFame();
-
-        // Nav Toggle
-        const recordsNavToggle = document.getElementById('recordsNavToggle');
-        const recordsNavLinks = document.getElementById('recordsNavLinks');
-        if (recordsNavToggle && recordsNavLinks) {
-            recordsNavToggle.addEventListener('click', () => {
-                recordsNavLinks.classList.toggle('hidden');
-            });
-        }
-    </script>
+    } catch (err) {
+        console.error(err);
+    }
+}    </script>
 </body>
 </html>
