@@ -39,7 +39,9 @@
 
         <div class="bg-white p-6 rounded-2xl border mb-8 shadow-sm">
             <h2 class="text-lg font-bold mb-4 uppercase text-slate-500 italic">Elo Progress</h2>
-            <canvas id="eloChart" height="100"></canvas>
+            <div class="relative h-[300px] w-full">
+                <canvas id="eloChart"></canvas>
+            </div>
         </div>
 
         <div class="bg-white rounded-2xl border shadow-sm overflow-x-auto">
@@ -133,7 +135,6 @@
                 const data = await resp.text();
                 const allRows = parseCsv(data).filter(row => row.length >= 11);
 
-                // Filter for matches involving this player
                 const playerMatches = allRows.filter(cols => {
                     const p1 = (cols[0] || "").toLowerCase().trim();
                     const p2 = (cols[1] || "").toLowerCase().trim();
@@ -141,7 +142,7 @@
                 });
 
                 const table = document.getElementById('history-table');
-                const eloProgress = [1000]; // Starting Elo
+                const eloProgress = [1000];
                 const labels = ["Start"];
 
                 if (playerMatches.length === 0) {
@@ -150,33 +151,38 @@
                     return;
                 }
 
-                // 1. Update Table (Most recent at the top)
                 table.innerHTML = playerMatches.slice().reverse().map(cols => {
                     const isP1 = cols[0].toLowerCase() === playerName.toLowerCase();
                     const opponent = isP1 ? cols[1] : cols[0];
                     const winner = cols[2].trim();
                     const score = cols[3].trim();
-                    const delta = isP1 ? cols[7] : cols[8]; // Columns H & I
+
+                    // --- FIX: Force Delta to show signs ---
+                    let delta = isP1 ? cols[7] : cols[8];
+                    delta = delta.toString().trim();
+                    if (!delta.startsWith('+') && !delta.startsWith('-') && delta !== "0") {
+                        delta = parseInt(delta) > 0 ? "+" + delta : delta;
+                    }
+
                     const hasWon = winner.toLowerCase() === playerName.toLowerCase();
-                    const deltaColor = (delta || "").includes('+') ? 'text-blue-600' : 'text-orange-600';
+                    const deltaColor = delta.includes('+') ? 'text-blue-600' : 'text-orange-600';
 
                     return `
-                        <tr class="border-b hover:bg-slate-50 transition-colors">
-                            <td class="p-4 font-bold text-slate-800">${opponent}</td>
-                            <td class="p-4">
-                                <span class="px-2 py-1 rounded text-[10px] font-black ${hasWon ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">
-                                    ${hasWon ? 'WIN' : 'LOSS'}
-                                </span>
-                            </td>
-                            <td class="p-4 text-center font-mono font-bold text-slate-600">${score}</td>
-                            <td class="p-4 text-right font-bold ${deltaColor}">${delta || '--'}</td>
-                        </tr>`;
+                <tr class="border-b hover:bg-slate-50 transition-colors">
+                    <td class="p-4 font-bold text-slate-800">${opponent}</td>
+                    <td class="p-4">
+                        <span class="px-2 py-1 rounded text-[10px] font-black ${hasWon ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">
+                            ${hasWon ? 'WIN' : 'LOSS'}
+                        </span>
+                    </td>
+                    <td class="p-4 text-center font-mono font-bold text-slate-600">${score}</td>
+                    <td class="p-4 text-right font-bold ${deltaColor}">${delta}</td>
+                </tr>`;
                 }).join('');
 
-                // 2. Update Chart (Chronological order)
                 playerMatches.forEach((cols, index) => {
                     const isP1 = cols[0].toLowerCase() === playerName.toLowerCase();
-                    const newElo = isP1 ? cols[9] : cols[10]; // Columns J & K
+                    const newElo = isP1 ? cols[9] : cols[10];
                     if (newElo) {
                         eloProgress.push(parseInt(newElo));
                         labels.push(`Match ${index + 1}`);
@@ -187,13 +193,13 @@
 
             } catch (err) {
                 console.error("History error:", err);
-                document.getElementById('history-table').innerHTML = `<tr><td colspan="4" class="p-10 text-center text-red-500 font-bold italic">Error loading master history.</td></tr>`;
             }
         }
 
         function renderChart(historyData, labels) {
             const ctx = document.getElementById('eloChart').getContext('2d');
             if (window.myChart) { window.myChart.destroy(); }
+
             window.myChart = new Chart(ctx, {
                 type: 'line',
                 data: {
@@ -211,13 +217,17 @@
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: false,
-                    scales: { y: { beginAtZero: false, ticks: { font: { weight: 'bold' } } } },
+                    maintainAspectRatio: false, // This allows the CSS height to take control
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            ticks: { font: { weight: 'bold' } }
+                        }
+                    },
                     plugins: { legend: { display: false } }
                 }
             });
         }
-
         init();
     </script>
 </body>
