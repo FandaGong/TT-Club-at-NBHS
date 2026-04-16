@@ -212,7 +212,7 @@
 
             document.querySelectorAll('[data-half-button]').forEach(button => {
                 const isActive = button.dataset.halfButton === halfKey;
-                button.classList.toggle('bg-red-600', isActive);
+                button.classList.toggle('bg-blue-700', isActive);
                 button.classList.toggle('text-white', isActive);
                 button.classList.toggle('text-slate-200', !isActive);
             });
