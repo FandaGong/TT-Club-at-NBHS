@@ -7,14 +7,15 @@
     <title>Player Analysis - NBHS TT</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="styles.css">
 </head>
 
-<body class="bg-slate-50 text-slate-900 min-h-screen">
-    <nav class="bg-blue-800 text-white shadow-md">
+<body class="font-sans min-h-screen">
+    <nav class="bg-slate-950 text-white shadow-lg border-b border-slate-800">
         <div class="max-w-4xl mx-auto flex items-center justify-between gap-4 px-4 py-4">
             <a href="index.html" class="text-xl font-bold">NBHS TT Hub</a>
             <button id="navToggle" type="button"
-                class="sm:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/20 bg-blue-900/20 text-white hover:bg-blue-900/40"
+                class="sm:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/20 bg-slate-800/60 text-white hover:bg-slate-700/90"
                 aria-label="Toggle navigation" onclick="document.getElementById('navLinks').classList.toggle('hidden')">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
@@ -33,21 +34,21 @@
 
     <main class="max-w-4xl mx-auto p-6">
         <div id="player-header" class="mb-8">
-            <h1 id="player-name" class="text-4xl font-black text-blue-900 uppercase italic">Loading...</h1>
+            <h1 id="player-name" class="text-4xl font-black text-slate-100 uppercase italic">Loading...</h1>
             <div id="quick-stats" class="flex gap-6 mt-4 font-bold"></div>
         </div>
 
-        <div class="bg-white p-6 rounded-2xl border mb-8 shadow-sm">
-            <h2 class="text-lg font-bold mb-4 uppercase text-slate-500 italic">Elo Progress</h2>
+        <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 mb-8 shadow-sm">
+            <h2 class="text-lg font-bold mb-4 uppercase text-slate-400 italic">Elo Progress</h2>
             <div class="relative h-[300px] w-full">
                 <canvas id="eloChart"></canvas>
             </div>
         </div>
 
-        <div class="bg-white rounded-2xl border shadow-sm overflow-x-auto">
-            <h2 class="p-4 bg-slate-50 border-b font-bold uppercase text-slate-500">Match History</h2>
-            <table class="w-full min-w-max text-left">
-                <thead class="bg-slate-50 text-xs uppercase font-bold text-slate-400">
+        <div class="bg-slate-900 rounded-2xl border border-slate-800 shadow-sm overflow-x-auto">
+            <h2 class="p-4 bg-slate-950 border-b border-slate-800 font-bold uppercase text-slate-400">Match History</h2>
+            <table class="w-full min-w-max text-left table-card">
+                <thead class="bg-slate-950 text-xs uppercase font-bold text-slate-400">
                     <tr>
                         <th class="p-4">Opponent</th>
                         <th class="p-4">Result</th>
@@ -117,10 +118,10 @@
 
                     document.getElementById('quick-stats').innerHTML = `
                         <div class="mt-4 flex flex-wrap gap-6 font-black uppercase italic tracking-tighter text-sm sm:text-base">
-                            <span class="text-blue-700">ELO: ${elo}</span>
-                            <span class="text-green-600">WINS: ${wins}</span>
+                            <span class="text-red-400">ELO: ${elo}</span>
+                            <span class="text-emerald-400">WINS: ${wins}</span>
                             <span class="text-red-500">LOSSES: ${losses}</span>
-                            <div class="border-l border-slate-300 pl-6 flex gap-4 text-slate-400">
+                            <div class="border-l border-slate-700 pl-6 flex gap-4 text-slate-400">
                                 <span>${division}</span>
                                 <span>${half} HALF</span>
                             </div>
@@ -165,17 +166,17 @@
                     }
 
                     const hasWon = winner.toLowerCase() === playerName.toLowerCase();
-                    const deltaColor = delta.includes('+') ? 'text-blue-600' : 'text-orange-600';
+                    const deltaColor = delta.includes('+') ? 'text-red-400' : 'text-orange-600';
 
                     return `
-                <tr class="border-b hover:bg-slate-50 transition-colors">
+                <tr class="border-b hover:bg-slate-800 transition-colors">
                     <td class="p-4 font-bold text-slate-800">${opponent}</td>
                     <td class="p-4">
                         <span class="px-2 py-1 rounded text-[10px] font-black ${hasWon ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">
                             ${hasWon ? 'WIN' : 'LOSS'}
                         </span>
                     </td>
-                    <td class="p-4 text-center font-mono font-bold text-slate-600">${score}</td>
+                    <td class="p-4 text-center font-mono font-bold text-slate-200">${score}</td>
                     <td class="p-4 text-right font-bold ${deltaColor}">${delta}</td>
                 </tr>`;
                 }).join('');

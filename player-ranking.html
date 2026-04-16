@@ -6,16 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Player Rankings - NBHS Table Tennis</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css">
     <link rel="icon" type="image/png" href="favicon.png">
 </head>
 
-<body class="bg-slate-50 text-slate-900 font-sans min-h-screen">
+<body class="font-sans min-h-screen">
 
-    <header class="bg-blue-800 text-white shadow-md">
+    <header class="bg-slate-950 text-white shadow-lg border-b border-slate-800">
         <nav class="max-w-4xl mx-auto flex items-center justify-between gap-4 px-4 py-4">
             <a href="index.html" class="text-xl font-bold">NBHS TT Hub</a>
             <button id="rankingNavToggle" type="button"
-                class="sm:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/20 bg-blue-900/20 text-white hover:bg-blue-900/40"
+                class="sm:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/20 bg-slate-800/60 text-white hover:bg-slate-700/90"
                 aria-label="Toggle navigation" aria-controls="rankingNavLinks" aria-expanded="false">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
@@ -34,11 +35,11 @@
     </header>
 
     <div class="max-w-4xl mx-auto p-6">
-        <h1 class="text-3xl font-bold text-blue-900 mb-6">Official Club Rankings</h1>
+        <h1 class="text-3xl font-bold text-slate-100 mb-6">Official Club Rankings</h1>
 
-        <div class="bg-white rounded-2xl shadow-sm border overflow-x-auto">
+        <div class="bg-slate-900 rounded-2xl shadow-sm border border-slate-800 overflow-x-auto">
             <table class="w-full min-w-max text-left">
-                <thead class="bg-slate-100 border-b">
+                <thead class="bg-slate-950 border-b border-slate-800">
                     <tr>
                         <th class="p-4 w-16">Rank</th>
                         <th class="p-4">Player Name</th>
@@ -121,16 +122,16 @@
 
                 const table = document.getElementById('ladder-table');
                 table.innerHTML = players.map((p, i) => `
-    <tr class="border-b hover:bg-blue-50 transition-colors">
+    <tr class="border-b hover:bg-slate-800 transition-colors">
         <td class="p-4 text-slate-400 font-bold">#${i + 1}</td>
         <td class="p-4 font-semibold text-slate-800">
-            <a href="player-analysis.html?name=${encodeURIComponent(p.name)}" class="text-blue-600 hover:underline">
+            <a href="player-analysis.html?name=${encodeURIComponent(p.name)}" class="text-red-400 hover:underline">
                 ${p.name}
             </a>
         </td>
         <td class="p-4 text-center text-green-600 font-bold">${p.wins}</td>
         <td class="p-4 text-center text-red-500 font-bold">${p.losses}</td>
-        <td class="p-4 text-right font-mono font-bold text-blue-600">${p.elo}</td>
+        <td class="p-4 text-right font-mono font-bold text-red-400">${p.elo}</td>
     </tr>
 `).join('');
 
