@@ -6,17 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NBHS Table Tennis Club - Home</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="styles.css">
     <link rel="icon" type="image/png" href="favicon.png">
 </head>
 
-<body class="font-sans min-h-screen">
+<body class="bg-slate-50 text-slate-900 font-sans min-h-screen">
 
-    <header class="bg-slate-950 text-white shadow-lg border-b border-slate-800">
+    <header class="bg-blue-800 text-white shadow-md">
         <nav class="max-w-4xl mx-auto flex items-center justify-between gap-4 px-4 py-4">
             <a href="index.html" class="text-xl font-bold">NBHS TT Hub</a>
             <button id="rankingNavToggle" type="button"
-                class="sm:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/20 bg-slate-800/60 text-white hover:bg-slate-700/90"
+                class="sm:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/20 bg-blue-900/20 text-white hover:bg-blue-900/40"
                 aria-label="Toggle navigation" aria-controls="rankingNavLinks" aria-expanded="false">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
@@ -36,45 +35,45 @@
     <main class="max-w-4xl mx-auto p-6">
         <section class="space-y-8">
             <div class="text-center py-10">
-                <h1 class="text-4xl font-extrabold text-slate-100">Welcome, Players.</h1>
-                <p class="text-slate-400 mt-2">Access the official Normanhurst Boys Table Tennis ranking system.</p>
+                <h1 class="text-4xl font-extrabold text-blue-900">Welcome, Players.</h1>
+                <p class="text-slate-600 mt-2">Access the official Normanhurst Boys Table Tennis ranking system.</p>
             </div>
 
-            <div class="bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-800">
-                <h2 class="text-lg font-bold mb-4 text-slate-100">🔍 Quick Player Search</h2>
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <h2 class="text-lg font-bold mb-4">🔍 Quick Player Search</h2>
                 <form id="searchForm" class="flex flex-col sm:flex-row gap-2">
                     <input type="text" id="searchInput" placeholder="Enter name (e.g. Fanda)..."
-                        class="input-field flex-1 p-3 rounded-xl outline-none focus:ring-2 focus:ring-red-500">
+                        class="flex-1 p-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500">
                     <button type="submit"
-                        class="btn-red w-full sm:w-auto px-6 py-3 rounded-xl font-bold">Search</button>
+                        class="w-full sm:w-auto bg-blue-600 text-white px-6 py-3 rounded-xl font-bold">Search</button>
                 </form>
-                <div id="searchResult" class="hidden mt-6 p-4 bg-slate-950 border border-slate-800 rounded-xl"></div>
+                <div id="searchResult" class="hidden mt-6 p-4 bg-blue-50 border border-blue-100 rounded-xl"></div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <a href="player-ranking.html"
-                    class="bg-slate-900 p-8 rounded-2xl border border-slate-800 hover:border-red-500 transition-all shadow-sm text-center">
+                    class="bg-white p-8 rounded-2xl border hover:border-blue-500 transition-all shadow-sm text-center">
                     <span class="text-3xl mb-2 block">🏆</span>
-                    <h3 class="font-bold text-xl text-slate-100">View Ranking Ladder</h3>
-                    <p class="text-slate-400 text-sm">Check current Elo ratings and club standings.</p>
+                    <h3 class="font-bold text-xl">View Ranking Ladder</h3>
+                    <p class="text-slate-500 text-sm">Check current Elo ratings and club standings.</p>
                 </a>
                 <a href="player-matchup-ladder.html"
-                    class="bg-slate-900 p-8 rounded-2xl border border-slate-800 hover:border-red-500 transition-all shadow-sm text-center">
+                    class="bg-white p-8 rounded-2xl border hover:border-blue-500 transition-all shadow-sm text-center">
                     <span class="text-3xl mb-2 block">📅</span>
-                    <h3 class="font-bold text-xl text-slate-100">Weekly Matchups</h3>
-                    <p class="text-slate-400 text-sm">See bracket placements for the next session.</p>
+                    <h3 class="font-bold text-xl">Weekly Matchups</h3>
+                    <p class="text-slate-500 text-sm">See bracket placements for the next session.</p>
                 </a>
                 <a href="club-analytics.html"
-                    class="bg-slate-900 p-8 rounded-2xl border border-slate-800 hover:border-red-500 transition-all shadow-sm text-center">
+                    class="bg-white p-8 rounded-2xl border hover:border-blue-500 transition-all shadow-sm text-center">
                     <span class="text-3xl mb-2 block">📊</span>
-                    <h3 class="font-bold text-xl text-slate-100">Club Analytics</h3>
-                    <p class="text-slate-400 text-sm">View live club metrics like wins, upsets, and Elo highs.</p>
+                    <h3 class="font-bold text-xl">Club Analytics</h3>
+                    <p class="text-slate-500 text-sm">View live club metrics like wins, upsets, and Elo highs.</p>
                 </a>
                 <a href="past-records.html"
-                    class="bg-slate-900 p-8 rounded-2xl border border-slate-800 hover:border-red-500 transition-all shadow-sm text-center">
+                    class="bg-white p-8 rounded-2xl border hover:border-blue-500 transition-all shadow-sm text-center">
                     <span class="text-3xl mb-2 block">🗂️</span>
-                    <h3 class="font-bold text-xl text-slate-100">Past Records</h3>
-                    <p class="text-slate-400 text-sm">Archive completed season records for easy comparison.</p>
+                    <h3 class="font-bold text-xl">Past Records</h3>
+                    <p class="text-slate-500 text-sm">Archive completed season records for easy comparison.</p>
                 </a>
             </div>
         </section>
@@ -163,7 +162,7 @@
             }
 
             if (!players.length) {
-                resultDiv.innerHTML = `<p class="text-slate-400 italic">Data is still loading from the sheet...</p>`;
+                resultDiv.innerHTML = `<p class="text-slate-600 italic">Data is still loading from the sheet...</p>`;
                 resultDiv.classList.remove('hidden');
                 return;
             }
@@ -174,29 +173,29 @@
                 resultDiv.innerHTML = matches.map(player => `
                     <div class="mb-6">
                         <h3 class="text-xl font-bold text-blue-800">
-                            <a href="player-analysis.html?name=${encodeURIComponent(player.name)}" class="hover:underline hover:text-red-400">
+                            <a href="player-analysis.html?name=${encodeURIComponent(player.name)}" class="hover:underline hover:text-blue-600">
                                 ${player.name} →
                             </a>
                         </h3>
                         <div class="mt-4 grid grid-cols-3 gap-4 text-center">
-                            <div class="bg-slate-950 p-2 rounded-lg shadow-sm border border-slate-800">
-                                <p class="text-slate-400 uppercase text-[10px] font-bold tracking-widest">Elo</p>
-                                <p class="text-lg font-mono font-bold text-red-400">${player.elo}</p>
+                            <div class="bg-white p-2 rounded-lg shadow-sm border border-blue-100">
+                                <p class="text-slate-500 uppercase text-[10px] font-bold tracking-widest">Elo</p>
+                                <p class="text-lg font-mono font-bold text-blue-600">${player.elo}</p>
                             </div>
-                            <div class="bg-slate-950 p-2 rounded-lg shadow-sm border border-slate-800">
-                                <p class="text-slate-400 uppercase text-[10px] font-bold tracking-widest">Wins</p>
-                                <p class="text-lg font-bold text-emerald-400">${player.wins}</p>
+                            <div class="bg-white p-2 rounded-lg shadow-sm border border-green-100">
+                                <p class="text-slate-500 uppercase text-[10px] font-bold tracking-widest">Wins</p>
+                                <p class="text-lg font-bold text-green-600">${player.wins}</p>
                             </div>
-                            <div class="bg-slate-950 p-2 rounded-lg shadow-sm border border-slate-800">
-                                <p class="text-slate-400 uppercase text-[10px] font-bold tracking-widest">Losses</p>
-                                <p class="text-lg font-bold text-red-400">${player.losses}</p>
+                            <div class="bg-white p-2 rounded-lg shadow-sm border border-red-100">
+                                <p class="text-slate-500 uppercase text-[10px] font-bold tracking-widest">Losses</p>
+                                <p class="text-lg font-bold text-red-500">${player.losses}</p>
                             </div>
                         </div>
                     </div>
                 `).join('');
                 resultDiv.classList.remove('hidden');
             } else {
-                resultDiv.innerHTML = `<p class="text-slate-400 p-2">Player "<strong>${input}</strong>" not found.</p>`;
+                resultDiv.innerHTML = `<p class="text-slate-600 p-2">Player "<strong>${input}</strong>" not found.</p>`;
                 resultDiv.classList.remove('hidden');
             }
         }

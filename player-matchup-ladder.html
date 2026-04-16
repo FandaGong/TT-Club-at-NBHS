@@ -6,17 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Matchup Ladder - NBHS Table Tennis</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="styles.css">
     <link rel="icon" type="image/png" href="favicon.png">
 </head>
 
-<body class="font-sans min-h-screen">
+<body class="bg-slate-50 text-slate-900 font-sans min-h-screen">
 
-    <header class="bg-slate-950 text-white shadow-lg border-b border-slate-800">
+    <header class="bg-blue-800 text-white shadow-md">
         <nav class="max-w-4xl mx-auto flex items-center justify-between gap-4 px-4 py-4">
             <a href="index.html" class="text-xl font-bold">NBHS TT Hub</a>
             <button id="navToggle" type="button"
-                class="sm:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/20 bg-slate-800/60 text-white hover:bg-slate-700/90"
+                class="sm:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/20 bg-blue-900/20 text-white hover:bg-blue-900/40"
                 aria-label="Toggle navigation" onclick="document.getElementById('navLinks').classList.toggle('hidden')">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
@@ -36,8 +35,8 @@
 
     <main class="max-w-4xl mx-auto p-6">
         <div class="flex justify-between items-center mb-6">
-            <h1 class="text-3xl font-bold text-slate-100">Weekly Matchups</h1>
-            <span class="bg-slate-950 text-red-300 text-xs font-bold px-3 py-1 rounded-full uppercase">Term 2 - Week
+            <h1 class="text-3xl font-bold text-blue-900">Weekly Matchups</h1>
+            <span class="bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full uppercase">Term 2 - Week
                 1</span>
         </div>
 
@@ -45,22 +44,22 @@
             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
                 <div>
                     <p class="text-sm uppercase tracking-[0.18em] text-slate-500 font-bold">View half</p>
-                    <div class="inline-flex rounded-full bg-slate-800 p-1 mt-2" role="group" aria-label="Half toggle">
+                    <div class="inline-flex rounded-full bg-slate-200 p-1 mt-2" role="group" aria-label="Half toggle">
                         <button id="half2Btn" type="button"
-                            class="px-4 py-2 rounded-full text-sm font-semibold text-slate-200 transition-colors">Half
+                            class="px-4 py-2 rounded-full text-sm font-semibold text-slate-700 transition-colors">Half
                             2</button>
                         <button id="half1Btn" type="button"
-                            class="px-4 py-2 rounded-full text-sm font-semibold text-slate-200 transition-colors">Half
+                            class="px-4 py-2 rounded-full text-sm font-semibold text-slate-700 transition-colors">Half
                             1</button>
                     </div>
                 </div>
-                <div class="rounded-2xl bg-slate-950 p-4 text-sm text-slate-400">
-                    <p class="font-semibold text-slate-100">Table assignments</p>
+                <div class="rounded-2xl bg-slate-100 p-4 text-sm text-slate-600">
+                    <p class="font-semibold text-slate-800">Table assignments</p>
                     <p class="mt-1">Div 1 → Table 1 · Div 2 → Tables 2 &amp; 3 · Div 3 → Table 4</p>
                 </div>
             </div>
 
-            <div id="matchup-summary" class="rounded-2xl bg-slate-900 p-5 border border-slate-800 shadow-sm text-slate-200">
+            <div id="matchup-summary" class="rounded-2xl bg-white p-5 border border-slate-200 shadow-sm text-slate-700">
             </div>
         </div>
 
@@ -145,7 +144,7 @@
 
         function buildPlayerList(players) {
             return players.map(player => `
-                <li class="py-1 text-sm text-slate-200">
+                <li class="py-1 text-sm text-slate-700">
                     <span class="font-semibold">${player.name}</span>
                     <span class="text-slate-400">(${player.elo})</span>
                 </li>
@@ -174,13 +173,13 @@
                             players: secondGroup
                         }
                     ].map(card => `
-                        <div class="bg-slate-900 p-5 rounded-3xl border border-slate-800 shadow-sm">
+                        <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm">
                             <div class="flex items-start justify-between gap-4 mb-4">
                                 <div class="min-w-0">
                                     <p class="text-xs uppercase tracking-[0.2em] text-slate-500 font-semibold whitespace-nowrap">${card.divisionName}</p>
                                     <h2 class="text-xl font-bold text-slate-900 mt-2 whitespace-nowrap">${card.tableLabel}</h2>
                                 </div>
-                                <span class="inline-flex items-center rounded-full bg-slate-950 px-3 py-1 text-xs font-semibold text-red-300">${card.description}</span>
+                                <span class="inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">${card.description}</span>
                             </div>
                             <ul class="space-y-2">
                                 ${buildPlayerList(card.players)}
@@ -190,13 +189,13 @@
                 }
 
                 return `
-                    <div class="bg-slate-900 p-5 rounded-3xl border border-slate-800 shadow-sm">
+                    <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm">
                         <div class="flex items-start justify-between gap-4 mb-4">
                             <div class="min-w-0">
                                 <p class="text-xs uppercase tracking-[0.2em] text-slate-500 font-semibold whitespace-nowrap">${division.name}</p>
-                                <h2 class="text-xl font-bold text-slate-100 mt-2 whitespace-nowrap">${division.tableLabel}</h2>
+                                <h2 class="text-xl font-bold text-slate-900 mt-2 whitespace-nowrap">${division.tableLabel}</h2>
                             </div>
-                            <span class="inline-flex items-center rounded-full bg-slate-950 px-3 py-1 text-xs font-semibold text-red-300">${division.description}</span>
+                            <span class="inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">${division.description}</span>
                         </div>
                         <ul class="space-y-2">
                             ${buildPlayerList(division.players)}
@@ -207,21 +206,21 @@
 
             summary.innerHTML = `
                 <h2 class="text-lg font-bold text-slate-900">${half.title}</h2>
-                <p class="mt-2 text-slate-400">${half.subtitle} Each division will play every other player in their division.</p>
+                <p class="mt-2 text-slate-600">${half.subtitle} Each division will play every other player in their division.</p>
             `;
 
             document.querySelectorAll('[data-half-button]').forEach(button => {
                 const isActive = button.dataset.halfButton === halfKey;
                 button.classList.toggle('bg-blue-700', isActive);
                 button.classList.toggle('text-white', isActive);
-                button.classList.toggle('text-slate-200', !isActive);
+                button.classList.toggle('text-slate-700', !isActive);
             });
         }
 
         async function loadMatchupRoster() {
             const summary = document.getElementById('matchup-summary');
             const container = document.getElementById('matchup-container');
-            summary.innerHTML = '<p class="text-slate-400">Loading roster from the club spreadsheet...</p>';
+            summary.innerHTML = '<p class="text-slate-600">Loading roster from the club spreadsheet...</p>';
             container.innerHTML = '<div class="col-span-full text-center py-10 text-slate-400 italic">Loading roster...</div>';
 
             try {

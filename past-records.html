@@ -6,17 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Past Records - NBHS Table Tennis</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="styles.css">
     <link rel="icon" type="image/png" href="favicon.png">
 </head>
 
-<body class="font-sans min-h-screen">
+<body class="bg-slate-50 text-slate-900 font-sans min-h-screen">
 
-    <header class="bg-slate-950 text-white shadow-lg border-b border-slate-800">
+    <header class="bg-blue-800 text-white shadow-md">
         <nav class="max-w-4xl mx-auto flex items-center justify-between gap-4 px-4 py-4">
             <a href="index.html" class="text-xl font-bold">NBHS TT Hub</a>
             <button id="recordsNavToggle" type="button"
-                class="sm:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/20 bg-slate-800/60 text-white hover:bg-slate-700/90"
+                class="sm:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/20 bg-blue-900/20 text-white hover:bg-blue-900/40"
                 aria-label="Toggle navigation">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
@@ -35,24 +34,24 @@
     </header>
 
     <div class="max-w-4xl mx-auto p-6">
-        <h1 class="text-3xl font-bold text-slate-100 mb-2">Hall of Fame</h1>
-        <p class="text-slate-400 mb-8 font-medium">Historic season winners and club milestones.</p>
+        <h1 class="text-3xl font-bold text-blue-900 mb-2">Hall of Fame</h1>
+        <p class="text-slate-500 mb-8 font-medium">Historic season winners and club milestones.</p>
 
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
-            <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-sm border-l-4 border-l-red-500">
+            <div class="bg-white p-6 rounded-2xl border shadow-sm border-l-4 border-l-blue-800">
                 <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Highest Ever Elo</p>
-                <p id="top-elo-val" class="text-2xl font-black text-slate-100 mt-1">--</p>
-                <p id="top-elo-player" class="text-[10px] text-slate-400 font-bold uppercase mt-1">Loading...</p>
+                <p id="top-elo-val" class="text-2xl font-black text-blue-900 mt-1">--</p>
+                <p id="top-elo-player" class="text-[10px] text-slate-500 font-bold uppercase mt-1">Loading...</p>
             </div>
-            <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-sm border-l-4 border-l-red-500">
+            <div class="bg-white p-6 rounded-2xl border shadow-sm border-l-4 border-l-green-600">
                 <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Most Match Wins</p>
-                <p id="top-wins-val" class="text-2xl font-black text-slate-100 mt-1">--</p>
-                <p id="top-wins-player" class="text-[10px] text-slate-400 font-bold uppercase mt-1">Loading...</p>
+                <p id="top-wins-val" class="text-2xl font-black text-green-700 mt-1">--</p>
+                <p id="top-wins-player" class="text-[10px] text-slate-500 font-bold uppercase mt-1">Loading...</p>
             </div>
-            <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-sm border-l-4 border-l-red-500">
+            <div class="bg-white p-6 rounded-2xl border shadow-sm border-l-4 border-l-red-500">
                 <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Biggest Upset</p>
-                <p id="top-upset-val" class="text-2xl font-black text-red-400 mt-1">--</p>
-                <p id="top-upset-desc" class="text-[10px] text-slate-400 font-bold uppercase mt-1">Loading...</p>
+                <p id="top-upset-val" class="text-2xl font-black text-red-600 mt-1">--</p>
+                <p id="top-upset-desc" class="text-[10px] text-slate-500 font-bold uppercase mt-1">Loading...</p>
             </div>
         </div>
 
@@ -63,7 +62,7 @@
         </div>
 
         <div
-            class="mt-6 bg-slate-950 rounded-2xl border-2 border-dashed border-slate-800 flex flex-col items-center justify-center p-8 text-center">
+            class="mt-6 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center p-8 text-center">
             <p class="text-sm font-bold text-slate-400 uppercase tracking-widest">Term 2 2026</p>
             <p class="text-[10px] text-slate-400 mt-1 italic">Season is currently live. Records will be finalized at the
                 end of the term.</p>
@@ -140,10 +139,10 @@
 
                 // Render Archive Cards
                 grid.innerHTML = rows.reverse().map(cols => `
-            <div class="bg-slate-900 rounded-2xl shadow-sm border border-slate-800 overflow-hidden">
-                <div class="bg-slate-950 border-b border-slate-800 p-4 flex justify-between items-center">
-                    <span class="font-bold text-slate-100 italic uppercase">${cols[0]}</span>
-                    <span class="bg-slate-950 text-red-300 text-[10px] px-2 py-1 rounded font-black uppercase">${cols[5]}</span>
+            <div class="bg-white rounded-2xl shadow-sm border overflow-hidden">
+                <div class="bg-slate-50 border-b p-4 flex justify-between items-center">
+                    <span class="font-bold text-blue-900 italic uppercase">${cols[0]}</span>
+                    <span class="bg-blue-100 text-blue-700 text-[10px] px-2 py-1 rounded font-black uppercase">${cols[5]}</span>
                 </div>
                 <div class="p-6">
                     <div class="flex justify-between items-center mb-4">
@@ -153,11 +152,11 @@
                     <div class="grid grid-cols-2 gap-4 text-center border-t border-b py-4 mb-4">
                         <div>
                             <p class="text-[10px] font-bold text-slate-400 uppercase">Most Wins</p>
-                            <p class="text-[11px] font-bold text-slate-200">${cols[6]}</p>
+                            <p class="text-[11px] font-bold text-slate-700">${cols[6]}</p>
                         </div>
                         <div>
                             <p class="text-[10px] font-bold text-slate-400 uppercase">Biggest Upset</p>
-                            <p class="text-[11px] font-bold text-slate-200">${cols[7]}</p>
+                            <p class="text-[11px] font-bold text-slate-700">${cols[7]}</p>
                         </div>
                     </div>
                     <p class="text-[10px] font-bold text-slate-400 uppercase mb-2 text-center">Top 3 Players</p>
