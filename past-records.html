@@ -122,7 +122,7 @@
                         atWinsP = row[6];
                     }
                     // Upset
-                    const uMatch = row[7].match(/\((\d+)\s*pts\)/i);
+                    const uMatch = row[7].match(/\((\d+)\spts\)/);
                     if (uMatch && parseInt(uMatch[1]) > maxUpsetVal) {
                         maxUpsetVal = parseInt(uMatch[1]);
                         maxUpsetDesc = row[7];
