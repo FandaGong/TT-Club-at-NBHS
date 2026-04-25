@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NBHS Table Tennis Club - Home</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css">
     <link rel="icon" type="image/png" href="favicon.png">
 </head>
 
@@ -209,6 +210,20 @@
             loadData();
         });
     </script>
+        <script>
+            // Navbar toggle for mobile (home page)
+            (function(){
+                const rankingNavToggle = document.getElementById('rankingNavToggle');
+                const rankingNavLinks = document.getElementById('rankingNavLinks');
+                if (rankingNavToggle && rankingNavLinks) {
+                    rankingNavToggle.addEventListener('click', () => {
+                        rankingNavLinks.classList.toggle('hidden');
+                        const expanded = rankingNavLinks.classList.contains('hidden') ? 'false' : 'true';
+                        rankingNavToggle.setAttribute('aria-expanded', expanded);
+                    });
+                }
+            })();
+        </script>
 </body>
 
 </html>

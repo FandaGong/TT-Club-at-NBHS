@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Past Records - NBHS Table Tennis</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css">
     <link rel="icon" type="image/png" href="favicon.png">
 </head>
 
@@ -173,6 +174,20 @@
         // Don't forget to actually call the function at the end of the script!
         loadHallOfFame();
 
+    </script>
+    <script>
+        // Navbar toggle for mobile (past records page)
+        (function(){
+            const recordsNavToggle = document.getElementById('recordsNavToggle');
+            const recordsNavLinks = document.getElementById('recordsNavLinks');
+            if (recordsNavToggle && recordsNavLinks) {
+                recordsNavToggle.addEventListener('click', () => {
+                    recordsNavLinks.classList.toggle('hidden');
+                    const expanded = recordsNavLinks.classList.contains('hidden') ? 'false' : 'true';
+                    recordsNavToggle.setAttribute('aria-expanded', expanded);
+                });
+            }
+        })();
     </script>
 </body>
 

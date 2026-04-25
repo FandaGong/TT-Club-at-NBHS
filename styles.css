@@ -1,0 +1,113 @@
+/* Central theme variables (non-invasive)
+   This file defines CSS variables and optional helper classes.
+   It intentionally avoids broad element selectors to prevent
+   overriding Tailwind or existing hover/toolbar behaviors.
+*/
+
+:root {
+   /* Colors - dark theme */
+   --color-primary: #2563eb; /* primary accent (blue-600) */
+   --color-secondary: #1e293b; /* dark secondary (slate-900-ish) */
+   --color-accent: #60a5fa; /* lighter accent */
+   --color-body-bg: #0b1220; /* deep dark background */
+   --color-body-text: #e6eef8; /* light body text */
+   --color-muted: #94a3b8; /* muted text */
+   --color-border: rgba(255,255,255,0.06); /* subtle border on dark */
+
+   /* Radii - reduced for compact look */
+   --radius-sm: 3px;
+   --radius-md: 8px;
+   --radius-lg: 12px;
+
+   /* Fonts */
+   --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans";
+   --font-heading: var(--font-sans);
+
+   /* Sizes & spacing (compact) */
+   --font-size-base: 15px;
+   --space-sm: 0.4rem; /* ~6px */
+   --space-md: 0.6rem; /* ~10px */
+   --space-lg: 1rem;   /* replaces larger paddings like p-6 */
+}
+
+/* Optional helper classes - use these when you want site-wide consistency
+   They are intentionally namespaced with `site-` / `custom-` to avoid clashing
+   with Tailwind utility classes. */
+
+.site-font-sans { font-family: var(--font-sans); }
+.site-font-heading { font-family: var(--font-heading); }
+
+.site-radius-sm { border-radius: var(--radius-sm); }
+.site-radius-md { border-radius: var(--radius-md); }
+.site-radius-lg { border-radius: var(--radius-lg); }
+
+.site-bg-primary { background-color: var(--color-primary); }
+.site-bg-secondary { background-color: var(--color-secondary); }
+.site-text-accent { color: var(--color-accent); }
+
+/* Example button style you can apply to elements explicitly: */
+.site-btn {
+  background-color: var(--color-accent);
+  color: #fff;
+  border-radius: var(--radius-md);
+  padding: 0.6rem 1rem;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.site-btn:focus { outline: 2px solid rgba(59,130,246,0.3); outline-offset: 2px; }
+.site-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* Small utilities */
+.site-border { border: 1px solid var(--color-border); }
+.site-muted { color: var(--color-muted); }
+
+/* Nothing here targets bare `a`, `button`, or `header` selectors so existing
+   Tailwind hover and toolbar behaviours remain unchanged. */
+
+/* Compatibility overrides: map common Tailwind utility classes to the
+   central CSS variables so changing variables updates the site.
+   These are conservative and limited to the utilities used in your pages. */
+
+/* Radii */
+.rounded-xl { border-radius: var(--radius-md); }
+.rounded-2xl { border-radius: var(--radius-lg); }
+.rounded-3xl { border-radius: calc(var(--radius-lg) + 8px); }
+.rounded-lg { border-radius: calc(var(--radius-md) - 4px); }
+.rounded-full { border-radius: 9999px; }
+
+/* Colors */
+.bg-blue-800 { background-color: var(--color-primary); }
+.bg-blue-900 { background-color: var(--color-secondary); }
+.bg-blue-600 { background-color: var(--color-accent); }
+.text-slate-900 { color: var(--color-body-text); }
+.text-slate-600 { color: var(--color-muted); }
+.border-slate-200 { border-color: var(--color-border); }
+.bg-blue-50 { background-color: rgba(96,165,250,0.06); }
+.bg-blue-100 { background-color: rgba(96,165,250,0.12); }
+.border-blue-100 { border-color: rgba(96,165,250,0.12); }
+.border-l-blue-800 { border-left-color: var(--color-primary); }
+.text-blue-800 { color: var(--color-primary); }
+.text-blue-700 { color: var(--color-primary); }
+
+/* Small badge / pill backgrounds often use blue-50 / blue-100 */
+.bg-blue-50.text-blue-800, .bg-blue-50 { background-color: rgba(96,165,250,0.06); }
+.bg-blue-100.text-blue-800, .bg-blue-100 { background-color: rgba(96,165,250,0.12); }
+
+/* Keep these overrides narrow — if you'd like broader coverage I can
+   expand the mappings or switch to a Tailwind config approach. */
+
+/* Spacing (compact mappings) */
+.p-6 { padding: var(--space-lg) !important; }
+.p-5 { padding: calc(var(--space-lg) - 0.25rem) !important; }
+.p-3 { padding: var(--space-md) !important; }
+.p-2 { padding: var(--space-sm) !important; }
+.px-4 { padding-left: 0.75rem !important; padding-right: 0.75rem !important; }
+.py-4 { padding-top: 0.5rem !important; padding-bottom: 0.5rem !important; }
+.px-6 { padding-left: calc(var(--space-lg)) !important; padding-right: calc(var(--space-lg)) !important; }
+.py-3 { padding-top: var(--space-md) !important; padding-bottom: var(--space-md) !important; }
+
+/* Compact utilities for common layout containers */
+.max-w-4xl.p-6 { padding-left: var(--space-lg); padding-right: var(--space-lg); }
+.mb-8 { margin-bottom: calc(var(--space-lg)); }
