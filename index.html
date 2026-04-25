@@ -25,10 +25,10 @@
             </button>
             <div id="rankingNavLinks"
                 class="hidden w-full flex-col gap-3 pt-4 sm:flex sm:w-auto sm:flex-row sm:items-center sm:pt-0">
-                <a href="player-ranking.html" class="block hover:underline">Rankings</a>
-                <a href="player-matchup-ladder.html" class="block hover:underline">Matchups</a>
-                <a href="club-analytics.html" class="block hover:underline">Analytics</a>
-                <a href="past-records.html" class="block hover:underline">Past Records</a>
+                <a href="player-ranking.html" class="block hover:underline"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v18"/><path d="M17 3v18"/><path d="M7 7h10"/><path d="M7 11h10"/><path d="M7 15h10"/></svg>Rankings</a>
+                <a href="player-matchup-ladder.html" class="block hover:underline"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3M3 11h18M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>Matchups</a>
+                <a href="club-analytics.html" class="block hover:underline"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3v18h18M8 7v10M12 11v6M16 5v12"/></svg>Analytics</a>
+                <a href="past-records.html" class="block hover:underline"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4"/><path d="M12 12l3 2"/></svg>Past Records</a>
             </div>
         </nav>
     </header>
@@ -41,7 +41,7 @@
             </div>
 
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                <h2 class="text-lg font-bold mb-4">🔍 Quick Player Search</h2>
+                <h2 class="text-lg font-bold mb-4"><svg xmlns="http://www.w3.org/2000/svg" class="inline h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"/></svg>Quick Player Search</h2>
                 <form id="searchForm" class="flex flex-col sm:flex-row gap-2">
                     <input type="text" id="searchInput" placeholder="Enter name (e.g. Fanda)..."
                         class="flex-1 p-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500">
@@ -54,25 +54,25 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <a href="player-ranking.html"
                     class="bg-white p-8 rounded-2xl border hover:border-blue-500 transition-all shadow-sm text-center">
-                    <span class="text-3xl mb-2 block">🏆</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-8 w-8 mb-2 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v18"/><path d="M17 3v18"/><path d="M7 7h10"/><path d="M7 11h10"/><path d="M7 15h10"/></svg>
                     <h3 class="font-bold text-xl">View Ranking Ladder</h3>
                     <p class="text-slate-500 text-sm">Check current Elo ratings and club standings.</p>
                 </a>
                 <a href="player-matchup-ladder.html"
                     class="bg-white p-8 rounded-2xl border hover:border-blue-500 transition-all shadow-sm text-center">
-                    <span class="text-3xl mb-2 block">📅</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-8 w-8 mb-2 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3M3 11h18M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                     <h3 class="font-bold text-xl">Weekly Matchups</h3>
                     <p class="text-slate-500 text-sm">See bracket placements for the next session.</p>
                 </a>
                 <a href="club-analytics.html"
                     class="bg-white p-8 rounded-2xl border hover:border-blue-500 transition-all shadow-sm text-center">
-                    <span class="text-3xl mb-2 block">📊</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-8 w-8 mb-2 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3v18h18M8 7v10M12 11v6M16 5v12"/></svg>
                     <h3 class="font-bold text-xl">Club Analytics</h3>
                     <p class="text-slate-500 text-sm">View live club metrics like wins, upsets, and Elo highs.</p>
                 </a>
                 <a href="past-records.html"
                     class="bg-white p-8 rounded-2xl border hover:border-blue-500 transition-all shadow-sm text-center">
-                    <span class="text-3xl mb-2 block">🗂️</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-8 w-8 mb-2 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4"/><path d="M12 12l3 2"/></svg>
                     <h3 class="font-bold text-xl">Past Records</h3>
                     <p class="text-slate-500 text-sm">Archive completed season records for easy comparison.</p>
                 </a>
@@ -175,7 +175,7 @@
                     <div class="mb-6">
                         <h3 class="text-xl font-bold text-blue-800">
                             <a href="player-analysis.html?name=${encodeURIComponent(player.name)}" class="hover:underline hover:text-blue-600">
-                                ${player.name} →
+                                ${player.name} <svg xmlns="http://www.w3.org/2000/svg" class="inline h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                             </a>
                         </h3>
                         <div class="mt-4 grid grid-cols-3 gap-4 text-center">

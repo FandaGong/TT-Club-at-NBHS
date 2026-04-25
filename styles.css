@@ -15,9 +15,9 @@
    --color-border: rgba(255,255,255,0.06); /* subtle border on dark */
 
    /* Radii - reduced for compact look */
-   --radius-sm: 3px;
-   --radius-md: 8px;
-   --radius-lg: 12px;
+   --radius-sm: 2px;
+   --radius-md: 3px;
+   --radius-lg: 4px;
 
    /* Fonts */
    --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans";
@@ -28,6 +28,10 @@
    --space-sm: 0.4rem; /* ~6px */
    --space-md: 0.6rem; /* ~10px */
    --space-lg: 1rem;   /* replaces larger paddings like p-6 */
+   /* Header icon vertical nudge (change this to manually adjust alignment) */
+   --header-icon-nudge: -1px;
+   /* Header icon horizontal offset (positive moves icon right) */
+   --header-icon-offset-x: 2px;
 }
 
 /* Optional helper classes - use these when you want site-wide consistency
@@ -70,12 +74,15 @@
    central CSS variables so changing variables updates the site.
    These are conservative and limited to the utilities used in your pages. */
 
-/* Radii */
-.rounded-xl { border-radius: var(--radius-md); }
-.rounded-2xl { border-radius: var(--radius-lg); }
-.rounded-3xl { border-radius: calc(var(--radius-lg) + 8px); }
-.rounded-lg { border-radius: calc(var(--radius-md) - 4px); }
-.rounded-full { border-radius: 9999px; }
+/* Radii - force mappings to CSS variables so changes apply consistently */
+.rounded { border-radius: var(--radius-md) !important; }
+.rounded-sm { border-radius: var(--radius-sm) !important; }
+.rounded-md { border-radius: var(--radius-md) !important; }
+.rounded-lg { border-radius: var(--radius-lg) !important; }
+.rounded-xl { border-radius: calc(var(--radius-lg) + 2px) !important; }
+.rounded-2xl { border-radius: calc(var(--radius-lg) + 4px) !important; }
+.rounded-3xl { border-radius: calc(var(--radius-lg) + 8px) !important; }
+.rounded-full { border-radius: 9999px !important; }
 
 /* Colors */
 .bg-blue-800 { background-color: var(--color-primary); }
@@ -111,3 +118,11 @@
 /* Compact utilities for common layout containers */
 .max-w-4xl.p-6 { padding-left: var(--space-lg); padding-right: var(--space-lg); }
 .mb-8 { margin-bottom: calc(var(--space-lg)); }
+
+/* Header icon alignment: nudge small inline SVGs to vertically center with text */
+header nav a svg, header nav svg {
+   vertical-align: middle;
+   display: inline-block;
+   /* Nudge icons slightly upward for visual centering with text. Edit --header-icon-nudge in styles.css to fine-tune. */
+   transform: translate(var(--header-icon-offset-x), var(--header-icon-nudge));
+}
