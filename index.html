@@ -40,6 +40,27 @@
                 <p class="text-slate-600 mt-2">Access the official Normanhurst Boys Table Tennis ranking system.</p>
             </div>
 
+            <div id="countdown-container" class="hidden bg-gradient-to-br from-blue-900 to-blue-700 p-8 rounded-2xl shadow-lg text-white text-center mb-8">
+    <h2 class="text-sm uppercase tracking-widest font-bold opacity-80 mb-2">Next Session In</h2>
+    <div class="flex justify-center gap-4 text-center">
+        <div>
+            <span id="days" class="text-4xl font-black block">00</span>
+            <span class="text-[10px] uppercase opacity-70">Days</span>
+        </div>
+        <div class="text-4xl font-black opacity-30">:</div>
+        <div>
+            <span id="hours" class="text-4xl font-black block">00</span>
+            <span class="text-[10px] uppercase opacity-70">Hours</span>
+        </div>
+        <div class="text-4xl font-black opacity-30">:</div>
+        <div>
+            <span id="minutes" class="text-4xl font-black block">00</span>
+            <span class="text-[10px] uppercase opacity-70">Mins</span>
+        </div>
+    </div>
+    <p id="next-date-label" class="mt-4 text-blue-200 text-xs font-medium"></p>
+</div>
+
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                 <h2 class="text-lg font-bold mb-4"><svg xmlns="http://www.w3.org/2000/svg" class="inline h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"/></svg>Quick Player Search</h2>
                 <form id="searchForm" class="flex flex-col sm:flex-row gap-2">
@@ -209,6 +230,67 @@
             }
             loadData();
         });
+
+    // Change this to your Schedule Tab's GID
+const SCHEDULE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_UHoHNgToKV4yCuB_M56029JuMrOYWN-VkyxDiWkwXHJI1hhRnon_GMnvgvmQeHmL4F0gxkVz7IMP/pub?output=csv&gid=1897930093";
+
+async function initCountdown() {
+    try {
+        const response = await fetch(SCHEDULE_URL);
+        const csvData = await response.text();
+        
+        // Clean the data: Split by any newline, trim whitespace, and remove empty entries
+        const rows = csvData.split(/\r?\n/).map(row => row.trim()).filter(row => row !== "");
+        
+        const now = new Date();
+        const upcomingDates = rows
+            .map(dateStr => {
+                // Force the date to be local time (Sydney) at 9:00 AM to avoid UTC shift
+                // Matches "YYYY-MM-DD"
+                const parts = dateStr.split('-');
+                if (parts.length !== 3) return null;
+                
+                // Note: Month is 0-indexed in JS (Jan = 0)
+                return new Date(parts[0], parts[1] - 1, parts[2], 9, 0, 0);
+            })
+            .filter(d => d !== null && d > now) // Only future dates
+            .sort((a, b) => a - b); // Sort closest to furthest
+
+        if (upcomingDates.length > 0) {
+            const targetDate = upcomingDates[0];
+            const container = document.getElementById('countdown-container');
+            if (container) container.classList.remove('hidden');
+            
+            const label = document.getElementById('next-date-label');
+            if (label) label.innerText = "Scheduled for: " + targetDate.toDateString();
+            
+            // Initial call and start interval
+            updateTimer(targetDate);
+            setInterval(() => updateTimer(targetDate), 1000); // Update every second for a live feel
+        }
+    } catch (e) {
+        console.error("Countdown error:", e);
+    }
+}
+
+function updateTimer(targetDate) {
+    const now = new Date();
+    const diff = targetDate - now;
+
+    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+    document.getElementById('days').innerText = d.toString().padStart(2, '0');
+    document.getElementById('hours').innerText = h.toString().padStart(2, '0');
+    document.getElementById('minutes').innerText = m.toString().padStart(2, '0');
+}
+
+// Call this inside your existing DOMContentLoaded event
+document.addEventListener('DOMContentLoaded', () => {
+    initCountdown();
+    // ... your existing code
+});
     </script>
         <script>
             // Navbar toggle for mobile (home page)
