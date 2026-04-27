@@ -15,8 +15,7 @@
         <nav class="max-w-4xl mx-auto flex items-center justify-between gap-4 px-4 py-4">
             <a href="index.html" class="text-xl font-bold">NBHS TT Hub</a>
             <button id="rankingNavToggle" type="button"
-                class="sm:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/20 bg-blue-900/20 text-white hover:bg-blue-900/40"
-                aria-label="Toggle navigation" aria-controls="rankingNavLinks" aria-expanded="false">
+                class="sm:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/40 bg-white/10 text-white hover:bg-white/20"                aria-label="Toggle navigation" aria-controls="rankingNavLinks" aria-expanded="false">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16" />
@@ -231,6 +230,23 @@
         }
         init();
     </script>
+    <script>
+    // Navbar toggle logic for Player Analysis page
+    (function(){
+        const rankingNavToggle = document.getElementById('rankingNavToggle');
+        const rankingNavLinks = document.getElementById('rankingNavLinks');
+        if (rankingNavToggle && rankingNavLinks) {
+            rankingNavToggle.addEventListener('click', () => {
+                // Toggle the 'hidden' class
+                rankingNavLinks.classList.toggle('hidden');
+                
+                // Update accessibility attributes
+                const isExpanded = !rankingNavLinks.classList.contains('hidden');
+                rankingNavToggle.setAttribute('aria-expanded', isExpanded);
+            });
+        }
+    })();
+</script>
 </body>
 
 </html>
