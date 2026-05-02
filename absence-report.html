@@ -52,7 +52,7 @@
             </form>
 
             <div class="mt-8 border-t border-slate-200 pt-5">
-                <button id="showAdminLoginBtn" type="button" class="text-sm font-semibold text-slate-700 hover:text-red-700 transition-colors">Admin Login to View Reports</button>
+                <button id="showAdminLoginBtn" type="button" onclick="document.getElementById('adminLoginForm').classList.toggle('hidden')" class="text-sm font-semibold text-slate-700 hover:text-red-700 transition-colors">Admin Login to View Reports</button>
                 <form id="adminLoginForm" class="hidden mt-3 flex flex-col sm:flex-row gap-2">
                     <input id="adminEmail" type="email" placeholder="Admin email"
                         class="flex-1 p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500">
