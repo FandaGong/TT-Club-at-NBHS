@@ -16,10 +16,10 @@
    --color-muted: #6b7280;
    --color-border: rgba(0,0,0,0.1);
 
-   /* Radii - reduced for compact look */
-   --radius-sm: 4px;
-   --radius-md: 4px;
-   --radius-lg: 4px;
+    /* Radii - increased for a softer, rounded look */
+    --radius-sm: 6px;
+    --radius-md: 12px;
+    --radius-lg: 18px;
 
    /* Fonts */
 /* Professional Sans-Serif for readability */
@@ -208,18 +208,20 @@ body, .bg-slate-50 {
     .png-transparent { mix-blend-mode: normal; }
 }
 
-/* Update headings (Welcome, Players) */
-.text-blue-900 { 
-    color: var(--color-primary) !important; 
+/* Navbar spacing consistency across all pages */
+.navbar-inner {
+  max-width: 60rem;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
 }
-
-/* Update sub-headings and search icons */
-.text-blue-800 { 
-    color: var(--color-primary) !important; 
-}
-
-/* Update the large icons in the grid and search button text */
-.text-blue-600 { 
     color: var(--color-accent) !important; 
 }
 
