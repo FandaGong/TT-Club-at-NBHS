@@ -16,6 +16,7 @@ create table public.absence_reports (
 	name text not null,
 	email text not null,
 	reason text not null,
+	status text not null default 'pending',
 	created_at timestamptz not null default now()
 );
 ```
@@ -34,6 +35,12 @@ with check (true);
 create policy "Authenticated users can read absence reports"
 on public.absence_reports
 for select
+to authenticated
+using (true);
+
+create policy "Authenticated users can update absence reports"
+on public.absence_reports
+for update
 to authenticated
 using (true);
 ```

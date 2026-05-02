@@ -7,6 +7,14 @@
     <title>Absence Report - NBHS Table Tennis</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function() {
+            emailjs.init({
+              publicKey: "e5NumK8MWzpAArS95",
+            });
+        })();
+    </script>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="animations.css">
     <link rel="icon" type="image/png" href="favicon.png">
@@ -153,6 +161,39 @@
                 .replace(/'/g, '&#39;');
         }
 
+        async function updateReportStatus(id, status, name, email) {
+            if (!confirm(`Are you sure you want to mark ${name}'s report as ${status.toUpperCase()}?`)) return;
+
+            const { error } = await supabaseClient
+                .from(ABSENCE_TABLE)
+                .update({ status: status })
+                .eq('id', id);
+
+            if (error) {
+                alert('Failed to update status: ' + error.message);
+                return;
+            }
+
+            // Send email via EmailJS automatically in the background
+            const statusWord = status === 'accepted' ? 'APPROVED' : 'DECLINED';
+            
+            try {
+                const templateId = status === 'accepted' ? 'template_1g3bzms' : 'template_cll4zbl';
+                await emailjs.send('service_r3qup2c', templateId, {
+                    user_name: name,
+                    user_email: email,
+                    status_word: statusWord
+                });
+                alert('Status updated and email sent to ' + email + '!');
+            } catch (err) {
+                console.error('Failed to send email:', err);
+                alert('Status updated, but failed to send email. Check console.');
+            }
+
+            // Refresh panel
+            refreshAdminPanel();
+        }
+
         function renderAdminReports(reports) {
             const list = document.getElementById('adminReportsList');
             if (!list) return;
@@ -163,19 +204,37 @@
             }
 
             list.innerHTML = reports
-                .slice()
-                .reverse()
                 .map((report) => {
-                    const submittedAt = new Date(report.submittedAt).toLocaleString();
+                    const submittedAt = new Date(report.created_at).toLocaleString();
                     const safeName = escapeHtml(report.name);
                     const safeEmail = escapeHtml(report.email);
                     const safeReason = escapeHtml(report.reason);
+                    const status = report.status || 'pending';
+                    
+                    let statusColor = 'bg-yellow-100 text-yellow-800';
+                    if (status === 'accepted') statusColor = 'bg-green-100 text-green-800';
+                    if (status === 'rejected') statusColor = 'bg-red-100 text-red-800';
+
+                    let actionsHtml = '';
+                    if (status === 'pending') {
+                        actionsHtml = `
+                            <div class="mt-3 flex gap-2">
+                                <button onclick="updateReportStatus('${report.id}', 'accepted', '${safeName.replace(/'/g, "\'")}', '${safeEmail.replace(/'/g, "\'")}')" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded text-sm font-semibold transition-colors">Accept</button>
+                                <button onclick="updateReportStatus('${report.id}', 'rejected', '${safeName.replace(/'/g, "\'")}', '${safeEmail.replace(/'/g, "\'")}')" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded text-sm font-semibold transition-colors">Decline</button>
+                            </div>
+                        `;
+                    }
+
                     return `
-                        <div class="bg-white border border-slate-200 rounded-lg p-3">
-                            <p><span class="font-semibold">Name:</span> ${safeName}</p>
-                            <p><span class="font-semibold">Email:</span> ${safeEmail}</p>
-                            <p><span class="font-semibold">Reason:</span> ${safeReason}</p>
-                            <p class="text-xs text-slate-500 mt-1">Submitted: ${submittedAt}</p>
+                        <div class="bg-white border border-slate-200 rounded-lg p-4 relative">
+                            <div class="absolute top-4 right-4">
+                                <span class="px-2 py-1 rounded text-xs font-bold uppercase ${statusColor}">${status}</span>
+                            </div>
+                            <p class="pr-20"><span class="font-semibold text-slate-800">Name:</span> ${safeName}</p>
+                            <p><span class="font-semibold text-slate-800">Email:</span> <a href="mailto:${safeEmail}" class="text-blue-600 hover:underline">${safeEmail}</a></p>
+                            <p class="mt-2 text-slate-700"><span class="font-semibold text-slate-800">Reason:</span> ${safeReason}</p>
+                            <p class="text-xs text-slate-500 mt-3">Submitted: ${submittedAt}</p>
+                            ${actionsHtml}
                         </div>
                     `;
                 })
@@ -203,7 +262,7 @@
 
             const { data, error } = await supabaseClient
                 .from(ABSENCE_TABLE)
-                .select('id, name, email, reason, created_at')
+                .select('id, name, email, reason, created_at, status')
                 .order('created_at', { ascending: false });
 
             if (error) {
@@ -231,15 +290,10 @@
             const loginStatus = document.getElementById('adminLoginStatus');
             try {
                 const reports = await loadAdminReports();
-                renderAdminReports(reports.map((report) => ({
-                    name: report.name,
-                    email: report.email,
-                    reason: report.reason,
-                    submittedAt: report.created_at
-                })));
+                renderAdminReports(reports);
             } catch (error) {
                 console.error('Failed to load admin reports:', error);
-                setStatus(loginStatus, 'Could not load reports from Supabase.', 'text-red-600');
+                setStatus(loginStatus, 'Could not load reports: ' + error.message, 'text-red-600');
             }
         }
 
