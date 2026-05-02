@@ -44,6 +44,21 @@
     </header>
 
     <main class="max-w-4xl mx-auto p-6">
+    <!-- Admin Controls Top -->
+    <div class="flex flex-col items-end mb-4 relative z-40">
+        <div class="flex items-center gap-2">
+            <button id="showAdminLoginBtn" type="button" class="text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors" onclick="document.getElementById('adminLoginForm').classList.toggle('hidden')">Admin Login</button>
+            <button id="adminShowReportsBtn" type="button" class="hidden text-sm font-bold bg-blue-600 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700 transition-colors shadow-sm" onclick="document.getElementById('adminReportsModal').classList.remove('hidden')">View Reports</button>
+            <button id="adminLogoutBtn" type="button" class="hidden text-sm font-bold text-slate-500 hover:text-red-700 transition-colors">Log Out</button>
+        </div>
+
+        <form id="adminLoginForm" class="hidden absolute top-8 right-0 bg-white p-4 rounded-xl shadow-lg border border-slate-200 flex flex-col gap-2 w-64" action="javascript:void(0)" onsubmit="return false;">
+            <input id="adminEmail" type="email" placeholder="Admin email" class="w-full p-2 border rounded-lg outline-none focus:ring-2 focus:ring-red-500 text-sm">
+            <input id="adminPassword" type="password" placeholder="Admin password" class="w-full p-2 border rounded-lg outline-none focus:ring-2 focus:ring-red-500 text-sm">
+            <button id="adminLoginBtn" type="button" class="bg-slate-800 text-white w-full py-2 rounded-lg font-semibold hover:bg-slate-900 transition-colors text-sm" onclick="handleAdminLogin(event)">Log In</button>
+            <p id="adminLoginStatus" class="hidden text-xs font-medium"></p>
+        </form>
+    </div>
         <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 fade-up-d1 card-hover">
             <h1 class="text-3xl font-bold text-blue-900 mb-2">Club Absence Report</h1>
             <p class="text-sm text-slate-600 mb-6">If you did not show up to club, submit your details so the team can review your note.</p>
@@ -58,32 +73,28 @@
                 <button type="submit" class="bg-red-600 text-white px-5 py-3 rounded-xl font-bold hover:bg-red-700 transition-colors">Submit Absence</button>
                 <p id="absenceSubmitStatus" class="hidden text-sm font-medium"></p>
             </form>
-
-            <div class="mt-8 border-t border-slate-200 pt-5">
-                <button id="showAdminLoginBtn" type="button" class="text-sm font-semibold text-slate-700 hover:text-red-700 transition-colors">Admin Login to View Reports</button>
-                <form id="adminLoginForm" class="hidden mt-3 flex flex-col sm:flex-row gap-2" action="javascript:void(0)" onsubmit="return false;">
-                    <input id="adminEmail" type="email" placeholder="Admin email"
-                        class="flex-1 p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500">
-                    <input id="adminPassword" type="password" placeholder="Admin password"
-                        class="flex-1 p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500">
-                    <button id="adminLoginBtn" type="button" class="bg-slate-800 text-white px-4 py-3 rounded-xl font-semibold hover:bg-slate-900 transition-colors" onclick="handleAdminLogin(event)">Log In</button>
-                </form>
-                <p id="adminLoginStatus" class="hidden mt-2 text-sm font-medium"></p>
-
-                <div id="adminReportsPanel" class="hidden mt-4 bg-slate-50 rounded-xl border border-slate-200 p-4">
-                    <div class="flex items-center justify-between gap-3 mb-3">
-                        <h2 class="font-bold text-slate-800">Submitted Absence Reports</h2>
-                        <button id="adminLogoutBtn" type="button" class="text-xs font-semibold text-slate-600 hover:text-red-700">Log Out</button>
-                    </div>
-                    <div id="adminReportsList" class="space-y-2 text-sm text-slate-700">
-                        <p>No reports submitted yet.</p>
-                    </div>
-                </div>
-            </div>
         </section>
     </main>
 
-    <script>
+
+    <!-- Admin Reports Modal (Overlay) -->
+    <div id="adminReportsModal" class="hidden fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-slate-50 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[85vh] flex flex-col overflow-hidden border border-slate-200/60">
+            <div class="flex items-center justify-between p-5 border-b border-slate-200 bg-white">
+                <h2 class="text-xl font-bold text-slate-800">Absence Reports Management</h2>
+                <button type="button" onclick="document.getElementById('adminReportsModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-700 transition-colors p-1 bg-slate-100 hover:bg-slate-200 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div id="adminReportsList" class="p-6 overflow-y-auto flex-1 space-y-4 text-sm text-slate-700">
+                <p>No reports submitted yet.</p>
+            </div>
+        </div>
+    </div>
+
+        <script>
         const SUPABASE_URL = "https://ngnkbfazhdedaqvxcphw.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbmtiZmF6aGRlZGFxdnhjcGh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTE5NDksImV4cCI6MjA5MzI4Nzk0OX0.F_S6ORkFe-SuJPybs7FEFH94E6U2hZ5ern4vrg4kMOk";
         const ABSENCE_TABLE = "absence_reports";
@@ -260,17 +271,24 @@
 
         function updateAdminPanelVisibility(session) {
             const isAuthed = Boolean(session);
-            const panel = document.getElementById('adminReportsPanel');
             const loginForm = document.getElementById('adminLoginForm');
             const loginStatus = document.getElementById('adminLoginStatus');
-            if (!panel || !loginForm || !loginStatus) return;
+            const showReportsBtn = document.getElementById('adminShowReportsBtn');
+            const logoutBtn = document.getElementById('adminLogoutBtn');
+            const toggleLoginBtn = document.getElementById('showAdminLoginBtn');
 
             if (isAuthed) {
-                panel.classList.remove('hidden');
-                loginForm.classList.add('hidden');
-                loginStatus.classList.add('hidden');
+                if (loginForm) loginForm.classList.add('hidden');
+                if (loginStatus) loginStatus.classList.add('hidden');
+                if (toggleLoginBtn) toggleLoginBtn.classList.add('hidden');
+                
+                if (showReportsBtn) showReportsBtn.classList.remove('hidden');
+                if (logoutBtn) logoutBtn.classList.remove('hidden');
             } else {
-                panel.classList.add('hidden');
+                if (showReportsBtn) showReportsBtn.classList.add('hidden');
+                if (logoutBtn) logoutBtn.classList.add('hidden');
+                if (toggleLoginBtn) toggleLoginBtn.classList.remove('hidden');
+                document.getElementById('adminReportsModal')?.classList.add('hidden');
             }
         }
 
@@ -358,12 +376,7 @@
 
             
             
-            if (showAdminLoginBtn && adminLoginForm) {
-                showAdminLoginBtn.addEventListener('click', () => {
-                    adminLoginForm.classList.toggle('hidden');
-                });
-            }
-
+            
             if (adminLoginForm && adminEmail && adminPassword && adminLoginStatus) {
                 adminLoginForm.addEventListener('submit', handleAdminLogin);
             }
@@ -376,7 +389,6 @@
                     if (isSupabaseConfigured()) {
                         await supabaseClient.auth.signOut();
                     }
-
                     updateAdminPanelVisibility(null);
                 });
             }
