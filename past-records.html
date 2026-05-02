@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Past Records - NBHS Table Tennis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="animations.css">
+    <link rel="icon" type="image/png" href="favicon.png">
+</head>
+
+<body class="bg-white text-slate-900 font-sans min-h-screen">
+
+    <header class="bg-blue-800 text-white shadow-md">
+        <nav class="max-w-4xl mx-auto flex items-center justify-between gap-4 px-4 py-4">
+            <a href="index.html" class="text-xl font-bold">NBHS TT Hub</a>
+            <button id="rankingNavToggle" type="button"
+                class="sm:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/40 bg-white/10 text-white hover:bg-white/20"                aria-label="Toggle navigation" aria-controls="rankingNavLinks" aria-expanded="false">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16" />
+                </svg>
+            </button>
+            <div id="rankingNavLinks"
+                class="hidden w-full flex-col gap-3 pt-4 sm:flex sm:w-auto sm:flex-row sm:items-center sm:pt-0">
+                <a href="player-ranking.html" class="block hover:underline"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v18"/><path d="M17 3v18"/><path d="M7 7h10"/><path d="M7 11h10"/><path d="M7 15h10"/></svg>Rankings</a>
+                <a href="player-matchup-ladder.html" class="block hover:underline"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3M3 11h18M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>Matchups</a>
+                <a href="club-analytics.html" class="block hover:underline"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3v18h18M8 7v10M12 11v6M16 5v12"/></svg>Analytics</a>
+                <a href="past-records.html" class="block font-bold border-b-2 border-white sm:border-none"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4"/><path d="M12 12l3 2"/></svg>Past Records</a>
+            </div>
+        </nav>
+    </header>
+
+    <div class="max-w-4xl mx-auto p-6">
+        <h1 class="text-3xl font-bold text-blue-900 mb-2">Hall of Fame</h1>
+        <p class="text-slate-500 mb-8 font-medium">Historic season winners and club milestones.</p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
+            <div class="bg-white p-6 rounded-2xl border shadow-sm border-l-4 border-l-blue-800">
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Highest Ever Elo</p>
+                <p id="top-elo-val" class="text-2xl font-black text-blue-900 mt-1">--</p>
+                <p id="top-elo-player" class="text-[10px] text-slate-500 font-bold uppercase mt-1">Loading...</p>
+            </div>
+            <div class="bg-white p-6 rounded-2xl border shadow-sm border-l-4 border-l-green-600">
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Most Match Wins</p>
+                <p id="top-wins-val" class="text-2xl font-black text-green-700 mt-1">--</p>
+                <p id="top-wins-player" class="text-[10px] text-slate-500 font-bold uppercase mt-1">Loading...</p>
+            </div>
+            <div class="bg-white p-6 rounded-2xl border shadow-sm border-l-4 border-l-red-500">
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Biggest Upset</p>
+                <p id="top-upset-val" class="text-2xl font-black text-red-600 mt-1">--</p>
+                <p id="top-upset-desc" class="text-[10px] text-slate-500 font-bold uppercase mt-1">Loading...</p>
+            </div>
+        </div>
+
+        <h2 class="text-xl font-bold text-slate-800 mb-4">Season Archives</h2>
+
+        <div id="season-grid" class="grid gap-6 md:grid-cols-2">
+            <div class="col-span-full p-10 text-center text-slate-400 italic">Fetching archive records...</div>
+        </div>
+
+        <div
+            class="mt-6 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center p-8 text-center">
+            <p class="text-sm font-bold text-slate-400 uppercase tracking-widest">Term 2 2026</p>
+            <p class="text-[10px] text-slate-400 mt-1 italic">Season is currently live. Records will be finalized at the
+                end of the term.</p>
+        </div>
+    </div>
+
+    <script>
+        // 1. Update with your actual Seasons Tab GID
+        const SEASONS_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_UHoHNgToKV4yCuB_M56029JuMrOYWN-VkyxDiWkwXHJI1hhRnon_GMnvgvmQeHmL4F0gxkVz7IMP/pub?gid=662509425&output=csv";
+
+        // 2. CSV Parser (Must be present in every file that uses CSV)
+        function parseCsv(text) {
+            const rows = []; let row = []; let field = ''; let inQuotes = false;
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                if (char === '"') {
+                    if (inQuotes && text[i + 1] === '"') { field += '"'; i++; }
+                    else { inQuotes = !inQuotes; }
+                } else if (char === ',' && !inQuotes) { row.push(field); field = ''; }
+                else if ((char === '\n' || char === '\r') && !inQuotes) {
+                    if (char === '\r' && text[i + 1] === '\n') i++;
+                    row.push(field); field = ''; rows.push(row); row = [];
+                } else { field += char; }
+            }
+            if (field !== '' || row.length > 0) { row.push(field); rows.push(row); }
+            return rows;
+        }
+
+        async function loadHallOfFame() {
+            const grid = document.getElementById('season-grid');
+            try {
+                const response = await fetch(SEASONS_URL);
+                const text = await response.text();
+                const allRows = parseCsv(text).filter(r => r.length >= 8);
+                const rows = allRows.slice(1);
+
+                if (rows.length === 0) {
+                    grid.innerHTML = "<div class='col-span-full text-center p-10 text-slate-400'>No records found.</div>";
+                    return;
+                }
+
+                // Calculate All-Time Highs
+                let allTimeElo = 0, atEloP = "";
+                let allTimeWins = 0, atWinsP = "";
+                let maxUpsetVal = 0, maxUpsetDesc = "";
+
+                rows.forEach(row => {
+                    // Elo
+                    if (parseInt(row[2]) > allTimeElo) {
+                        allTimeElo = row[2];
+                        atEloP = `${row[1]} (${row[0]})`;
+                    }
+                    // Wins
+                    const wMatch = row[6].match(/\((\d+)\)/);
+                    if (wMatch && parseInt(wMatch[1]) > allTimeWins) {
+                        allTimeWins = parseInt(wMatch[1]);
+                        atWinsP = row[6];
+                    }
+                    // Upset
+                    const uMatch = row[7].match(/\((\d+)\spts\)/);
+                    if (uMatch && parseInt(uMatch[1]) > maxUpsetVal) {
+                        maxUpsetVal = parseInt(uMatch[1]);
+                        maxUpsetDesc = row[7];
+                    }
+                });
+
+                // Update Top Cards
+                document.getElementById('top-elo-val').innerText = allTimeElo;
+                document.getElementById('top-elo-player').innerText = atEloP;
+                document.getElementById('top-wins-val').innerText = allTimeWins;
+                document.getElementById('top-wins-player').innerText = atWinsP;
+                document.getElementById('top-upset-val').innerText = `${maxUpsetVal} pts`;
+                document.getElementById('top-upset-desc').innerText = maxUpsetDesc.split('(')[0];
+
+                // Render Archive Cards
+                grid.innerHTML = rows.reverse().filter(cols => cols[0] && cols[0].trim()).map(cols => `
+            <div class="bg-white rounded-2xl shadow-sm border overflow-hidden">
+                <div class="bg-slate-50 border-b p-4 flex justify-between items-center">
+                    <span class="font-bold text-blue-900 italic uppercase">${cols[0]}</span>
+                    <span class="bg-blue-100 text-blue-700 text-[10px] px-2 py-1 rounded font-black uppercase">${cols[5]}</span>
+                </div>
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-sm font-semibold text-slate-500">Champion</span>
+                        <span class="text-lg font-bold text-blue-800">${cols[1]}</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 text-center border-t border-b py-4 mb-4">
+                        <div>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase">Most Wins</p>
+                            <p class="text-[11px] font-bold text-slate-700">${cols[6]}</p>
+                        </div>
+                        <div>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase">Biggest Upset</p>
+                            <p class="text-[11px] font-bold text-slate-700">${cols[7]}</p>
+                        </div>
+                    </div>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase mb-2 text-center">Top 3 Players</p>
+                    <div class="flex flex-wrap justify-center gap-1">
+                        ${cols[4].split(',').map(n => `<span class="bg-slate-100 px-2 py-0.5 rounded text-[10px] font-bold">${n.trim()}</span>`).join('')}
+                    </div>
+                </div>
+            </div>
+        `).join('');
+
+            } catch (e) { console.error(e); }
+        }
+
+        // Don't forget to actually call the function at the end of the script!
+        loadHallOfFame();
+
+    </script>
+    <script>
+        // Navbar toggle for mobile (past records page)
+        (function(){
+            const rankingNavToggle = document.getElementById('rankingNavToggle');
+            const rankingNavLinks = document.getElementById('rankingNavLinks');
+            if (rankingNavToggle && rankingNavLinks) {
+                rankingNavToggle.addEventListener('click', () => {
+                    rankingNavLinks.classList.toggle('hidden');
+                    const expanded = rankingNavLinks.classList.contains('hidden') ? 'false' : 'true';
+                    rankingNavToggle.setAttribute('aria-expanded', expanded);
+                });
+            }
+        })();
+    </script>
+</body>
+
+</html>

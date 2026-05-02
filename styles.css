@@ -1,0 +1,233 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=JetBrains+Mono:wght@500;700&display=swap');
+
+/* Central theme variables (non-invasive)
+   This file defines CSS variables and optional helper classes.
+   It intentionally avoids broad element selectors to prevent
+   overriding Tailwind or existing hover/toolbar behaviors.
+*/
+
+:root {
+   /* Colors - dark theme */
+   --color-primary: #991b1b;    /* Deep Red */
+   --color-secondary: #111827;  /* Near Black */
+   --color-accent: #ef4444;     /* Bright Red */
+   --color-body-bg: #fdf2f2;    /* Very light red tint */
+   --color-body-text: #1f2937;  /* Dark Gray */
+   --color-muted: #6b7280;
+   --color-border: rgba(0,0,0,0.1);
+
+   /* Radii - reduced for compact look */
+   --radius-sm: 4px;
+   --radius-md: 4px;
+   --radius-lg: 4px;
+
+   /* Fonts */
+/* Professional Sans-Serif for readability */
+   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+   
+   /* Bold, impactful font for headings */
+   --font-heading: 'Inter', sans-serif;
+
+   /* Sharp, technical font for Elo and match stats */
+   --font-mono: 'JetBrains Mono', monospace;
+
+   /* Sizes & spacing (compact) */
+   --font-size-base: 15px;
+   --space-sm: 0.4rem; /* ~6px */
+   --space-md: 0.6rem; /* ~10px */
+   --space-lg: 1rem;   /* replaces larger paddings like p-6 */
+   /* Header icon vertical nudge (change this to manually adjust alignment) */
+   --header-icon-nudge: -1px;
+   /* Header icon horizontal offset (positive moves icon right) */
+   --header-icon-offset-x: 0px;
+}
+
+.font-sans {
+    font-family: var(--font-sans) !important;
+}
+
+html, body { 
+    font-family: var(--font-sans) !important; 
+}
+
+/* Apply fonts globally */
+body { font-family: var(--font-sans); }
+h1, h2, h3, .font-bold { 
+    font-family: var(--font-heading) !important; 
+    font-weight: 800; 
+    letter-spacing: -0.025em !important; /* Fixed property name */
+}
+/* Create a utility for your numbers */
+.font-mono { 
+    font-family: var(--font-mono) !important; 
+    letter-spacing: -0.05em; /* Tighter mono looks more modern */
+}
+
+/* Optional helper classes - use these when you want site-wide consistency
+   They are intentionally namespaced with `site-` / `custom-` to avoid clashing
+   with Tailwind utility classes. */
+
+.site-font-sans { font-family: var(--font-sans); }
+.site-font-heading { font-family: var(--font-heading); }
+
+.site-radius-sm { border-radius: var(--radius-sm); }
+.site-radius-md { border-radius: var(--radius-md); }
+.site-radius-lg { border-radius: var(--radius-lg); }
+
+.site-bg-primary { background-color: var(--color-primary); }
+.site-bg-secondary { background-color: var(--color-secondary); }
+.site-text-accent { color: var(--color-accent); }
+
+/* Example button style you can apply to elements explicitly: */
+.site-btn {
+  background-color: var(--color-accent);
+  color: #fff;
+  border-radius: var(--radius-md);
+  padding: 0.6rem 1rem;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.site-btn:focus { outline: 2px solid rgba(59,130,246,0.3); outline-offset: 2px; }
+.site-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* Small utilities */
+.site-border { border: 1px solid var(--color-border); }
+.site-muted { color: var(--color-muted); }
+
+/* Nothing here targets bare `a`, `button`, or `header` selectors so existing
+   Tailwind hover and toolbar behaviours remain unchanged. */
+
+/* Compatibility overrides: map common Tailwind utility classes to the
+   central CSS variables so changing variables updates the site.
+   These are conservative and limited to the utilities used in your pages. */
+
+/* Radii - force mappings to CSS variables so changes apply consistently */
+.rounded { border-radius: var(--radius-md) !important; }
+.rounded-sm { border-radius: var(--radius-sm) !important; }
+.rounded-md { border-radius: var(--radius-md) !important; }
+.rounded-lg { border-radius: var(--radius-lg) !important; }
+.rounded-xl { border-radius: calc(var(--radius-lg) + 2px) !important; }
+.rounded-2xl { border-radius: calc(var(--radius-lg) + 4px) !important; }
+.rounded-3xl { border-radius: calc(var(--radius-lg) + 8px) !important; }
+.rounded-full { border-radius: 9999px !important; }
+
+/* Colors */
+.bg-blue-800 { background-color: var(--color-primary) !important; }
+.bg-blue-900 { background-color: var(--color-secondary) !important; }
+.bg-blue-600 { background-color: var(--color-accent) !important; }
+.text-slate-900 { color: var(--color-body-text) !important; }
+.text-slate-600 { color: var(--color-muted) !important; }
+.border-slate-200 { border-color: var(--color-border) !important; }
+.bg-blue-50 { background-color: rgba(96,165,250,0.06) !important; }
+.bg-blue-100 { background-color: rgba(96,165,250,0.12) !important; }
+.border-blue-100 { border-color: rgba(96,165,250,0.12) !important; }
+.border-l-blue-800 { border-left-color: var(--color-primary) !important; }
+.text-blue-800 { color: var(--color-primary) !important; }
+.text-blue-700 { color: var(--color-primary) !important; }
+
+/* Small badge / pill backgrounds often use blue-50 / blue-100 */
+.bg-blue-50.text-blue-800, .bg-blue-50 { background-color: rgba(96,165,250,0.06); }
+.bg-blue-100.text-blue-800, .bg-blue-100 { background-color: rgba(96,165,250,0.12); }
+
+/* Keep these overrides narrow — if you'd like broader coverage I can
+   expand the mappings or switch to a Tailwind config approach. */
+
+/* Spacing (compact mappings) */
+.p-6 { padding: var(--space-lg) !important; }
+.p-5 { padding: calc(var(--space-lg) - 0.25rem) !important; }
+.p-3 { padding: var(--space-md) !important; }
+.p-2 { padding: var(--space-sm) !important; }
+.px-4 { padding-left: 0.75rem !important; padding-right: 0.75rem !important; }
+.py-4 { padding-top: 0.5rem !important; padding-bottom: 0.5rem !important; }
+.px-6 { padding-left: calc(var(--space-lg)) !important; padding-right: calc(var(--space-lg)) !important; }
+.py-3 { padding-top: var(--space-md) !important; padding-bottom: var(--space-md) !important; }
+
+/* Compact utilities for common layout containers */
+.max-w-4xl.p-6 { padding-left: var(--space-lg); padding-right: var(--space-lg); }
+.mb-8 { margin-bottom: calc(var(--space-lg)); }
+
+/* Header icon alignment: nudge small inline SVGs to vertically center with text */
+header nav a svg, header nav svg {
+   vertical-align: middle;
+   display: inline-block;
+   /* Nudge icons slightly upward for visual centering with text. Edit --header-icon-nudge in styles.css to fine-tune. */
+   transform: translate(var(--header-icon-offset-x), var(--header-icon-nudge));
+
+}
+
+/* --- THE BACKGROUND FIXES (OUTSIDE THE BRACKETS) --- */
+
+/* 1. Global Body Background Fix */
+body, .bg-slate-50 { 
+    background-color: var(--color-body-bg) !important; 
+}
+
+/* 2. Primary Header Background */
+.bg-blue-800 { 
+    --tw-bg-opacity: 1 !important;
+    background-color: var(--color-primary) !important; 
+}
+
+/* 3. Secondary/Mobile Nav Background */
+.bg-blue-900 { 
+    --tw-bg-opacity: 1 !important;
+    background-color: var(--color-secondary) !important; 
+}
+
+/* 4. Accent/Search Button Background */
+.bg-blue-600 { 
+    --tw-bg-opacity: 1 !important;
+    background-color: var(--color-accent) !important; 
+}
+
+/* 5. Handling the Nav Toggle Transparency */
+.bg-blue-900\/20 {
+    background-color: var(--color-secondary) !important;
+    opacity: 0.2 !important;
+}
+
+/* 6. Fix for the Search Result Box background */
+.bg-blue-50 {
+    background-color: var(--color-body-bg) !important;
+    border-color: var(--color-primary) !important;
+}
+
+/* Update headings (Welcome, Players) */
+.text-blue-900 { 
+    color: var(--color-primary) !important; 
+}
+
+/* Update sub-headings and search icons */
+.text-blue-800 { 
+    color: var(--color-primary) !important; 
+}
+
+/* Update the large icons in the grid and search button text */
+.text-blue-600 { 
+    color: var(--color-accent) !important; 
+}
+
+/* Fix for the hover state on the search result names */
+.hover\:text-blue-600:hover {
+    color: var(--color-accent) !important;
+}
+
+/* Ensure the dynamically injected cards obey your variables */
+.rounded-3xl { 
+    border-radius: calc(var(--radius-lg) + 8px) !important; 
+}
+
+/* If the "Term 2" badge is too round, override rounded-full 
+   OR change the HTML class to rounded-lg */
+.rounded-full { 
+    border-radius: var(--radius-md) !important; 
+}
+
+/* Specifically target the cards created by the addCard function */
+#analytics-summary div, 
+#analytics-highlights div,
+.bg-white.rounded-3xl {
+    border-radius: calc(var(--radius-lg) + 4px) !important;
+}

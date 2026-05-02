@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Player Analysis - NBHS TT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="animations.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body class="bg-white text-slate-900 min-h-screen">
+    <nav class="bg-blue-800 text-white shadow-md">
+        <nav class="max-w-4xl mx-auto flex items-center justify-between gap-4 px-4 py-4">
+            <a href="index.html" class="text-xl font-bold">NBHS TT Hub</a>
+            <button id="rankingNavToggle" type="button"
+                class="sm:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/40 bg-white/10 text-white hover:bg-white/20"                aria-label="Toggle navigation" aria-controls="rankingNavLinks" aria-expanded="false">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16" />
+                </svg>
+            </button>
+            <div id="rankingNavLinks"
+                class="hidden w-full flex-col gap-3 pt-4 sm:flex sm:w-auto sm:flex-row sm:items-center sm:pt-0">
+                <a href="player-ranking.html" class="block hover:underline"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v18"/><path d="M17 3v18"/><path d="M7 7h10"/><path d="M7 11h10"/><path d="M7 15h10"/></svg>Rankings</a>
+                <a href="player-matchup-ladder.html" class="block hover:underline"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3M3 11h18M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>Matchups</a>
+                <a href="club-analytics.html" class="block hover:underline"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3v18h18M8 7v10M12 11v6M16 5v12"/></svg>Analytics</a>
+                <a href="past-records.html" class="block hover:underline"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4"/><path d="M12 12l3 2"/></svg>Past Records</a>
+            </div>
+        </nav>
+    </nav>
+
+    <main class="max-w-4xl mx-auto p-6">
+        <div id="player-header" class="mb-8">
+            <h1 id="player-name" class="text-4xl font-black text-blue-900 uppercase italic">Loading...</h1>
+            <div id="quick-stats" class="flex gap-6 mt-4 font-bold"></div>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl border mb-8 shadow-sm">
+            <h2 class="text-lg font-bold mb-4 uppercase text-slate-500 italic">Elo Progress</h2>
+            <div class="relative h-[300px] w-full">
+                <canvas id="eloChart"></canvas>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl border shadow-sm overflow-x-auto">
+            <h2 class="p-4 bg-slate-50 border-b font-bold uppercase text-slate-500">Match History</h2>
+            <table class="w-full min-w-max text-left">
+                <thead class="bg-slate-50 text-xs uppercase font-bold text-slate-400">
+                    <tr>
+                        <th class="p-4">Opponent</th>
+                        <th class="p-4">Result</th>
+                        <th class="p-4 text-center">Score</th>
+                        <th class="p-4 text-right">Δ Elo</th>
+                    </tr>
+                </thead>
+                <tbody id="history-table">
+                    <tr>
+                        <td colspan="4" class="p-10 text-center italic text-slate-400">Loading matches...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const playerName = urlParams.get('name');
+
+        // GIDs - Ensure these match your specific "Players" and "Elo_History" tabs
+        const STATS_GID = "2082256240";
+        const HISTORY_GID = "160991986"; // Point this to your Elo_History tab GID
+        const BASE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_UHoHNgToKV4yCuB_M56029JuMrOYWN-VkyxDiWkwXHJI1hhRnon_GMnvgvmQeHmL4F0gxkVz7IMP/pub?output=csv&gid=";
+
+        function parseCsv(text) {
+            const rows = [];
+            let row = [];
+            let field = '';
+            let inQuotes = false;
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                if (char === '"') {
+                    if (inQuotes && text[i + 1] === '"') { field += '"'; i++; }
+                    else { inQuotes = !inQuotes; }
+                } else if (char === ',' && !inQuotes) { row.push(field); field = ''; }
+                else if ((char === '\n' || char === '\r') && !inQuotes) {
+                    if (char === '\r' && text[i + 1] === '\n') i++;
+                    row.push(field); field = ''; rows.push(row); row = [];
+                } else { field += char; }
+            }
+            if (field !== '' || row.length > 0) { row.push(field); rows.push(row); }
+            return rows;
+        }
+
+        async function init() {
+            if (!playerName) return;
+            document.getElementById('player-name').innerText = playerName;
+            await loadPlayerStats();
+            await loadCombinedHistory();
+        }
+
+        async function loadPlayerStats() {
+            try {
+                const resp = await fetch(BASE_URL + STATS_GID);
+                const data = await resp.text();
+                const rows = parseCsv(data).filter(row => row.length > 0);
+                const found = rows.find(row => (row[0] || '').toLowerCase() === playerName.toLowerCase());
+
+                if (found) {
+                    const cleanStat = (val) => (val || "").toString().replace(/"/g, '').replace(/,/g, '').trim() || "0";
+                    const elo = cleanStat(found[1]);
+                    const wins = cleanStat(found[2]);
+                    const losses = cleanStat(found[3]);
+                    const division = (found[4] || "N/A").trim();
+                    const half = (found[5] || "N/A").trim();
+
+                    document.getElementById('quick-stats').innerHTML = `
+                        <div class="mt-4 flex flex-wrap gap-6 font-black uppercase italic tracking-tighter text-sm sm:text-base">
+                            <span class="text-blue-700">ELO: ${elo}</span>
+                            <span class="text-green-600">WINS: ${wins}</span>
+                            <span class="text-red-500">LOSSES: ${losses}</span>
+                            <div class="border-l border-slate-300 pl-6 flex gap-4 text-slate-400">
+                                <span>${division}</span>
+                                <span>${half} HALF</span>
+                            </div>
+                        </div>`;
+                }
+            } catch (err) { console.error("Stats load error:", err); }
+        }
+
+        async function loadCombinedHistory() {
+            try {
+                const resp = await fetch(BASE_URL + HISTORY_GID);
+                const data = await resp.text();
+                const allRows = parseCsv(data).filter(row => row.length >= 11);
+
+                const playerMatches = allRows.filter(cols => {
+                    const p1 = (cols[0] || "").toLowerCase().trim();
+                    const p2 = (cols[1] || "").toLowerCase().trim();
+                    return p1 === playerName.toLowerCase() || p2 === playerName.toLowerCase();
+                });
+
+                const table = document.getElementById('history-table');
+                const eloProgress = [1000];
+                const labels = ["Start"];
+
+                if (playerMatches.length === 0) {
+                    table.innerHTML = `<tr><td colspan="4" class="p-10 text-center text-slate-400 font-bold">No matches found in history.</td></tr>`;
+                    renderChart(eloProgress, labels);
+                    return;
+                }
+
+                table.innerHTML = playerMatches.slice().reverse().map(cols => {
+                    const isP1 = cols[0].toLowerCase() === playerName.toLowerCase();
+                    const opponent = isP1 ? cols[1] : cols[0];
+                    const winner = cols[2].trim();
+                    const score = cols[3].trim();
+
+                    // --- FIX: Force Delta to show signs ---
+                    let delta = isP1 ? cols[7] : cols[8];
+                    delta = delta.toString().trim();
+                    if (!delta.startsWith('+') && !delta.startsWith('-') && delta !== "0") {
+                        delta = parseInt(delta) > 0 ? "+" + delta : delta;
+                    }
+
+                    const hasWon = winner.toLowerCase() === playerName.toLowerCase();
+                    const deltaColor = delta.includes('+') ? 'text-blue-600' : 'text-orange-600';
+
+                    return `
+                <tr class="border-b hover:bg-slate-50 transition-colors">
+                    <td class="p-4 font-bold text-slate-800">${opponent}</td>
+                    <td class="p-4">
+                        <span class="px-2 py-1 rounded text-[10px] font-black ${hasWon ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">
+                            ${hasWon ? 'WIN' : 'LOSS'}
+                        </span>
+                    </td>
+                    <td class="p-4 text-center font-mono font-bold text-slate-600">${score}</td>
+                    <td class="p-4 text-right font-bold ${deltaColor}">${delta}</td>
+                </tr>`;
+                }).join('');
+
+                playerMatches.forEach((cols, index) => {
+                    const isP1 = cols[0].toLowerCase() === playerName.toLowerCase();
+                    const newElo = isP1 ? cols[9] : cols[10];
+                    if (newElo) {
+                        eloProgress.push(parseInt(newElo));
+                        labels.push(`Match ${index + 1}`);
+                    }
+                });
+
+                renderChart(eloProgress, labels);
+
+            } catch (err) {
+                console.error("History error:", err);
+            }
+        }
+
+        function renderChart(historyData, labels) {
+            const ctx = document.getElementById('eloChart').getContext('2d');
+            if (window.myChart) { window.myChart.destroy(); }
+
+            window.myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Elo Rating',
+                        data: historyData,
+                        borderColor: '#1e3a8a',
+                        borderWidth: 3,
+                        pointBackgroundColor: '#1e3a8a',
+                        tension: 0.3,
+                        fill: true,
+                        backgroundColor: 'rgba(30, 58, 138, 0.1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false, // This allows the CSS height to take control
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            ticks: { font: { weight: 'bold' } }
+                        }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+        init();
+    </script>
+    <script>
+    // Navbar toggle logic for Player Analysis page
+    (function(){
+        const rankingNavToggle = document.getElementById('rankingNavToggle');
+        const rankingNavLinks = document.getElementById('rankingNavLinks');
+        if (rankingNavToggle && rankingNavLinks) {
+            rankingNavToggle.addEventListener('click', () => {
+                // Toggle the 'hidden' class
+                rankingNavLinks.classList.toggle('hidden');
+                
+                // Update accessibility attributes
+                const isExpanded = !rankingNavLinks.classList.contains('hidden');
+                rankingNavToggle.setAttribute('aria-expanded', isExpanded);
+            });
+        }
+    })();
+</script>
+</body>
+
+</html>
