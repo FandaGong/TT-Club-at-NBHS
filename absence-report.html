@@ -80,10 +80,10 @@
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbmtiZmF6aGRlZGFxdnhjcGh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTE5NDksImV4cCI6MjA5MzI4Nzk0OX0.F_S6ORkFe-SuJPybs7FEFH94E6U2hZ5ern4vrg4kMOk";
         const ABSENCE_TABLE = "absence_reports";
 
-        const supabase = window.supabase?.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const supabaseClient = window.supabase?.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         function isSupabaseConfigured() {
-            return Boolean(supabase) && SUPABASE_URL !== "YOUR_SUPABASE_URL" && SUPABASE_ANON_KEY !== "YOUR_SUPABASE_ANON_KEY";
+            return Boolean(supabaseClient) && SUPABASE_URL !== "YOUR_SUPABASE_URL" && SUPABASE_ANON_KEY !== "YOUR_SUPABASE_ANON_KEY";
         }
 
         function setStatus(element, message, tone) {
@@ -267,7 +267,7 @@
                 setStatus(adminLoginStatus, 'Signing in...', 'text-slate-600');
 
                 try {
-                    const { data, error } = await supabase.auth.signInWithPassword({
+                    const { data, error } = await supabaseClient.auth.signInWithPassword({
                         email: emailValue,
                         password: passwordValue
                     });
@@ -287,18 +287,17 @@
                 }
             }
 
-            if (adminLoginBtn) {
-                adminLoginBtn.addEventListener('click', handleAdminLogin);
-            }
-
             if (adminLoginForm && adminEmail && adminPassword && adminLoginStatus) {
                 adminLoginForm.addEventListener('submit', handleAdminLogin);
+            }
+            if (adminLoginBtn) {
+                adminLoginBtn.addEventListener('click', handleAdminLogin);
             }
 
             if (adminLogoutBtn) {
                 adminLogoutBtn.addEventListener('click', async () => {
                     if (isSupabaseConfigured()) {
-                        await supabase.auth.signOut();
+                        await supabaseClient.auth.signOut();
                     }
 
                     updateAdminPanelVisibility(null);
@@ -314,14 +313,14 @@
             }
 
             if (isSupabaseConfigured()) {
-                supabase.auth.getSession().then(({ data }) => {
+                supabaseClient.auth.getSession().then(({ data }) => {
                     updateAdminPanelVisibility(data.session);
                     if (data.session) {
                         refreshAdminPanel();
                     }
                 });
 
-                supabase.auth.onAuthStateChange((_event, session) => {
+                supabaseClient.auth.onAuthStateChange((_event, session) => {
                     updateAdminPanelVisibility(session);
                     if (session) {
                         refreshAdminPanel();
