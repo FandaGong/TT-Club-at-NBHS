@@ -194,6 +194,20 @@ body, .bg-slate-50 {
     border-color: var(--color-primary) !important;
 }
 
+/* PNG visual helper: remove white background appearance by blending
+     Note: this is a visual workaround. For perfect transparency, supply an actual transparent PNG. */
+.png-transparent {
+    background: transparent !important;
+    display: inline-block;
+    -webkit-font-smoothing: antialiased;
+    /* Multiply makes white pixels become transparent over lighter backgrounds */
+    mix-blend-mode: multiply;
+}
+
+@supports not (mix-blend-mode: multiply) {
+    .png-transparent { mix-blend-mode: normal; }
+}
+
 /* Update headings (Welcome, Players) */
 .text-blue-900 { 
     color: var(--color-primary) !important; 
