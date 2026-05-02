@@ -87,8 +87,11 @@
         }
 
         async function handleAdminLogin(event) {
+<<<<<<< HEAD
     alert('Log In button pressed!');
                 
+=======
+>>>>>>> 68af3266f870e920ac331e8e9bce4d7dd9e1ac78
                 if (event) {
                     event.preventDefault();
                     event.stopPropagation();
@@ -99,7 +102,6 @@
                     return;
                 }
 
-                
             const adminEmailInput = document.getElementById('adminEmail');
             const adminPasswordInput = document.getElementById('adminPassword');
             const adminLoginStatusEl = document.getElementById('adminLoginStatus');
@@ -113,7 +115,6 @@
             }
 
             setStatus(adminLoginStatusEl, 'Signing in...', 'text-slate-600');
-
 
                 try {
                     const { data, error } = await supabaseClient.auth.signInWithPassword({
@@ -205,7 +206,7 @@
         async function loadAdminReports() {
             if (!isSupabaseConfigured()) return [];
 
-            const { data, error } = await supabase
+            const { data, error } = await supabaseClient
                 .from(ABSENCE_TABLE)
                 .select('id, name, email, reason, created_at')
                 .order('created_at', { ascending: false });
@@ -222,7 +223,7 @@
                 throw new Error('Supabase is not configured yet.');
             }
 
-            const { error } = await supabase
+            const { error } = await supabaseClient
                 .from(ABSENCE_TABLE)
                 .insert([{ name, email, reason }]);
 
@@ -289,8 +290,16 @@
                 });
             }
 
+<<<<<<< HEAD
             
             
+=======
+            if (showAdminLoginBtn && adminLoginForm) {
+                showAdminLoginBtn.addEventListener('click', () => {
+                    adminLoginForm.classList.toggle('hidden');
+                });
+            }
+>>>>>>> 68af3266f870e920ac331e8e9bce4d7dd9e1ac78
 
             if (adminLoginForm && adminEmail && adminPassword && adminLoginStatus) {
                 adminLoginForm.addEventListener('submit', handleAdminLogin);
