@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Absence Report - NBHS Table Tennis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="animations.css">
+    <link rel="icon" type="image/png" href="favicon.png">
+</head>
+
+<body class="bg-white text-slate-900 font-sans min-h-screen">
+    <header class="bg-blue-800 text-white shadow-md fade-in">
+        <nav class="max-w-4xl mx-auto flex items-center justify-between gap-4 px-4 py-4">
+            <a href="index.html" class="text-xl font-bold">NBHS TT Hub</a>
+            <button id="rankingNavToggle" type="button"
+                class="sm:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/40 bg-white/10 text-white hover:bg-white/20"
+                aria-label="Toggle navigation" aria-controls="rankingNavLinks" aria-expanded="false">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16" />
+                </svg>
+            </button>
+            <div id="rankingNavLinks"
+                class="hidden w-full flex-col gap-3 pt-4 sm:flex sm:w-auto sm:flex-row sm:items-center sm:pt-0">
+                <a href="player-ranking.html" class="block nav-link-hover px-2 py-1"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v18"/><path d="M17 3v18"/><path d="M7 7h10"/><path d="M7 11h10"/><path d="M7 15h10"/></svg>Rankings</a>
+                <a href="player-matchup-ladder.html" class="block nav-link-hover px-2 py-1"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3M3 11h18M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>Matchups</a>
+                <a href="club-analytics.html" class="block nav-link-hover px-2 py-1"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3v18h18M8 7v10M12 11v6M16 5v12"/></svg>Analytics</a>
+                <a href="past-records.html" class="block nav-link-hover px-2 py-1"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4"/><path d="M12 12l3 2"/></svg>Past Records</a>
+                <a href="absence-report.html" class="block font-bold border-b-2 border-white sm:border-none nav-link-hover px-2 py-1"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h8M8 11h8M8 15h5"/><rect x="4" y="3" width="16" height="18" rx="2" ry="2"/></svg>Absence</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="max-w-4xl mx-auto p-6">
+        <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 fade-up-d1 card-hover">
+            <h1 class="text-3xl font-bold text-blue-900 mb-2">Club Absence Report</h1>
+            <p class="text-sm text-slate-600 mb-6">If you did not show up to club, submit your details so the team can review your note.</p>
+
+            <form id="absenceForm" class="grid grid-cols-1 gap-3">
+                <input id="absenceName" type="text" placeholder="Your name" required
+                    class="p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500">
+                <input id="absenceEmail" type="email" placeholder="Your email" required
+                    class="p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500">
+                <textarea id="absenceReason" rows="5" placeholder="Reason for absence" required
+                    class="p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500"></textarea>
+                <button type="submit" class="bg-red-600 text-white px-5 py-3 rounded-xl font-bold hover:bg-red-700 transition-colors">Submit Absence</button>
+                <p id="absenceSubmitStatus" class="hidden text-sm font-medium"></p>
+            </form>
+
+            <div class="mt-8 border-t border-slate-200 pt-5">
+                <button id="showAdminLoginBtn" type="button" class="text-sm font-semibold text-slate-700 hover:text-red-700 transition-colors">Admin Login to View Reports</button>
+                <form id="adminLoginForm" class="hidden mt-3 flex flex-col sm:flex-row gap-2">
+                    <input id="adminEmail" type="email" placeholder="Admin email"
+                        class="flex-1 p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500">
+                    <input id="adminPassword" type="password" placeholder="Admin password"
+                        class="flex-1 p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500">
+                    <button type="submit" class="bg-slate-800 text-white px-4 py-3 rounded-xl font-semibold hover:bg-slate-900 transition-colors">Log In</button>
+                </form>
+                <p id="adminLoginStatus" class="hidden mt-2 text-sm font-medium"></p>
+
+                <div id="adminReportsPanel" class="hidden mt-4 bg-slate-50 rounded-xl border border-slate-200 p-4">
+                    <div class="flex items-center justify-between gap-3 mb-3">
+                        <h2 class="font-bold text-slate-800">Submitted Absence Reports</h2>
+                        <button id="adminLogoutBtn" type="button" class="text-xs font-semibold text-slate-600 hover:text-red-700">Log Out</button>
+                    </div>
+                    <div id="adminReportsList" class="space-y-2 text-sm text-slate-700">
+                        <p>No reports submitted yet.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const SUPABASE_URL = "https://ngnkbfazhdedaqvxcphw.supabase.co";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbmtiZmF6aGRlZGFxdnhjcGh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTE5NDksImV4cCI6MjA5MzI4Nzk0OX0.F_S6ORkFe-SuJPybs7FEFH94E6U2hZ5ern4vrg4kMOk";
+        const ABSENCE_TABLE = "absence_reports";
+
+        const supabase = window.supabase?.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        function isSupabaseConfigured() {
+            return Boolean(supabase) && SUPABASE_URL !== "YOUR_SUPABASE_URL" && SUPABASE_ANON_KEY !== "YOUR_SUPABASE_ANON_KEY";
+        }
+
+        function setStatus(element, message, tone) {
+            if (!element) return;
+            element.textContent = message;
+            element.className = `mt-2 text-sm font-medium ${tone}`;
+            element.classList.remove('hidden');
+        }
+
+        function hideStatus(element) {
+            if (!element) return;
+            element.classList.add('hidden');
+        }
+
+        function escapeHtml(value) {
+            return String(value)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/\"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function renderAdminReports(reports) {
+            const list = document.getElementById('adminReportsList');
+            if (!list) return;
+
+            if (!reports.length) {
+                list.innerHTML = '<p>No reports submitted yet.</p>';
+                return;
+            }
+
+            list.innerHTML = reports
+                .slice()
+                .reverse()
+                .map((report) => {
+                    const submittedAt = new Date(report.submittedAt).toLocaleString();
+                    const safeName = escapeHtml(report.name);
+                    const safeEmail = escapeHtml(report.email);
+                    const safeReason = escapeHtml(report.reason);
+                    return `
+                        <div class="bg-white border border-slate-200 rounded-lg p-3">
+                            <p><span class="font-semibold">Name:</span> ${safeName}</p>
+                            <p><span class="font-semibold">Email:</span> ${safeEmail}</p>
+                            <p><span class="font-semibold">Reason:</span> ${safeReason}</p>
+                            <p class="text-xs text-slate-500 mt-1">Submitted: ${submittedAt}</p>
+                        </div>
+                    `;
+                })
+                .join('');
+        }
+
+        function updateAdminPanelVisibility(session) {
+            const isAuthed = Boolean(session);
+            const panel = document.getElementById('adminReportsPanel');
+            const loginForm = document.getElementById('adminLoginForm');
+            const loginStatus = document.getElementById('adminLoginStatus');
+            if (!panel || !loginForm || !loginStatus) return;
+
+            if (isAuthed) {
+                panel.classList.remove('hidden');
+                loginForm.classList.add('hidden');
+                loginStatus.classList.add('hidden');
+            } else {
+                panel.classList.add('hidden');
+            }
+        }
+
+        async function loadAdminReports() {
+            if (!isSupabaseConfigured()) return [];
+
+            const { data, error } = await supabase
+                .from(ABSENCE_TABLE)
+                .select('id, name, email, reason, created_at')
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                throw error;
+            }
+
+            return data || [];
+        }
+
+        async function submitAbsenceReport(name, email, reason) {
+            if (!isSupabaseConfigured()) {
+                throw new Error('Supabase is not configured yet.');
+            }
+
+            const { error } = await supabase
+                .from(ABSENCE_TABLE)
+                .insert([{ name, email, reason }]);
+
+            if (error) {
+                throw error;
+            }
+        }
+
+        async function refreshAdminPanel() {
+            const loginStatus = document.getElementById('adminLoginStatus');
+            try {
+                const reports = await loadAdminReports();
+                renderAdminReports(reports.map((report) => ({
+                    name: report.name,
+                    email: report.email,
+                    reason: report.reason,
+                    submittedAt: report.created_at
+                })));
+            } catch (error) {
+                console.error('Failed to load admin reports:', error);
+                setStatus(loginStatus, 'Could not load reports from Supabase.', 'text-red-600');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const absenceForm = document.getElementById('absenceForm');
+            const absenceStatus = document.getElementById('absenceSubmitStatus');
+            const showAdminLoginBtn = document.getElementById('showAdminLoginBtn');
+            const adminLoginForm = document.getElementById('adminLoginForm');
+            const adminEmail = document.getElementById('adminEmail');
+            const adminPassword = document.getElementById('adminPassword');
+            const adminLoginStatus = document.getElementById('adminLoginStatus');
+            const adminLogoutBtn = document.getElementById('adminLogoutBtn');
+            const rankingNavToggle = document.getElementById('rankingNavToggle');
+            const rankingNavLinks = document.getElementById('rankingNavLinks');
+
+            if (!isSupabaseConfigured()) {
+                setStatus(absenceStatus, 'Add your Supabase URL and anon key in this file before using the form.', 'text-amber-600');
+            }
+
+            if (absenceForm && absenceStatus) {
+                absenceForm.addEventListener('submit', (event) => {
+                    event.preventDefault();
+
+                    const name = document.getElementById('absenceName')?.value.trim() || '';
+                    const email = document.getElementById('absenceEmail')?.value.trim() || '';
+                    const reason = document.getElementById('absenceReason')?.value.trim() || '';
+
+                    if (!name || !email || !reason) {
+                        setStatus(absenceStatus, 'Please fill in all fields.', 'text-red-600');
+                        return;
+                    }
+
+                    submitAbsenceReport(name, email, reason)
+                        .then(() => {
+                            absenceForm.reset();
+                            setStatus(absenceStatus, 'Absence submitted successfully.', 'text-green-600');
+                        })
+                        .catch((error) => {
+                            console.error('Failed to submit absence report:', error);
+                            setStatus(absenceStatus, 'Could not submit report. Check Supabase setup.', 'text-red-600');
+                        });
+                });
+            }
+
+            if (showAdminLoginBtn && adminLoginForm) {
+                showAdminLoginBtn.addEventListener('click', () => {
+                    adminLoginForm.classList.toggle('hidden');
+                });
+            }
+
+            if (adminLoginForm && adminEmail && adminPassword && adminLoginStatus) {
+                adminLoginForm.addEventListener('submit', async (event) => {
+                    event.preventDefault();
+
+                    if (!isSupabaseConfigured()) {
+                        setStatus(adminLoginStatus, 'Add your Supabase URL and anon key first.', 'text-red-600');
+                        return;
+                    }
+
+                    const emailValue = adminEmail.value.trim();
+                    const passwordValue = adminPassword.value;
+
+                    if (!emailValue || !passwordValue) {
+                        setStatus(adminLoginStatus, 'Enter your admin email and password.', 'text-red-600');
+                        return;
+                    }
+
+                    const { data, error } = await supabase.auth.signInWithPassword({
+                        email: emailValue,
+                        password: passwordValue
+                    });
+
+                    if (error) {
+                        console.error('Supabase sign-in failed:', error);
+                        setStatus(adminLoginStatus, 'Incorrect login or Supabase auth is not ready.', 'text-red-600');
+                        return;
+                    }
+
+                    adminPassword.value = '';
+                    hideStatus(adminLoginStatus);
+                    updateAdminPanelVisibility(data.session);
+                    await refreshAdminPanel();
+                });
+            }
+
+            if (adminLogoutBtn) {
+                adminLogoutBtn.addEventListener('click', async () => {
+                    if (isSupabaseConfigured()) {
+                        await supabase.auth.signOut();
+                    }
+
+                    updateAdminPanelVisibility(null);
+                });
+            }
+
+            if (rankingNavToggle && rankingNavLinks) {
+                rankingNavToggle.addEventListener('click', () => {
+                    rankingNavLinks.classList.toggle('hidden');
+                    const expanded = rankingNavLinks.classList.contains('hidden') ? 'false' : 'true';
+                    rankingNavToggle.setAttribute('aria-expanded', expanded);
+                });
+            }
+
+            if (isSupabaseConfigured()) {
+                supabase.auth.getSession().then(({ data }) => {
+                    updateAdminPanelVisibility(data.session);
+                    if (data.session) {
+                        refreshAdminPanel();
+                    }
+                });
+
+                supabase.auth.onAuthStateChange((_event, session) => {
+                    updateAdminPanelVisibility(session);
+                    if (session) {
+                        refreshAdminPanel();
+                    }
+                });
+            }
+
+            updateAdminPanelVisibility(null);
+        });
+    </script>
+</body>
+
+</html>
