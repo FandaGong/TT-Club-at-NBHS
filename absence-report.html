@@ -58,7 +58,7 @@
                         class="flex-1 p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500">
                     <input id="adminPassword" type="password" placeholder="Admin password"
                         class="flex-1 p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500">
-                    <button id="adminLoginBtn" type="button" class="bg-slate-800 text-white px-4 py-3 rounded-xl font-semibold hover:bg-slate-900 transition-colors">Log In</button>
+                    <button id="adminLoginBtn" type="button" class="bg-slate-800 text-white px-4 py-3 rounded-xl font-semibold hover:bg-slate-900 transition-colors" onclick="handleAdminLogin(event)">Log In</button>
                 </form>
                 <p id="adminLoginStatus" class="hidden mt-2 text-sm font-medium"></p>
 
@@ -85,6 +85,55 @@
         function isSupabaseConfigured() {
             return Boolean(supabaseClient) && SUPABASE_URL !== "YOUR_SUPABASE_URL" && SUPABASE_ANON_KEY !== "YOUR_SUPABASE_ANON_KEY";
         }
+
+        async function handleAdminLogin(event) {
+                console.log('handleAdminLogin clicked'); alert('Button clicked! Calling Supabase...');
+                if (event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+
+                if (!isSupabaseConfigured()) {
+                    setStatus(document.getElementById('adminLoginStatus'), 'Add your Supabase URL and anon key first.', 'text-red-600');
+                    return;
+                }
+
+                
+            const adminEmailInput = document.getElementById('adminEmail');
+            const adminPasswordInput = document.getElementById('adminPassword');
+            const adminLoginStatusEl = document.getElementById('adminLoginStatus');
+
+            const emailValue = adminEmailInput?.value.trim() || '';
+            const passwordValue = adminPasswordInput?.value || '';
+
+            if (!emailValue || !passwordValue) {
+                setStatus(adminLoginStatusEl, 'Enter your admin email and password.', 'text-red-600');
+                return;
+            }
+
+            setStatus(adminLoginStatusEl, 'Signing in...', 'text-slate-600');
+
+
+                try {
+                    const { data, error } = await supabaseClient.auth.signInWithPassword({
+                        email: emailValue,
+                        password: passwordValue
+                    });
+
+                    if (error) {
+                        throw error;
+                    }
+
+                    adminPasswordInput.value = '';
+                    updateAdminPanelVisibility(data.session);
+                    await refreshAdminPanel();
+                } catch (error) {
+                    console.error('Supabase sign-in failed:', error);
+                    const message = error?.message || 'Login failed. Check the email, password, and Supabase Auth settings.';
+                    setStatus(document.getElementById('adminLoginStatus'), message, 'text-red-600');
+                    return;
+                }
+            }
 
         function setStatus(element, message, tone) {
             if (!element) return;
@@ -245,47 +294,7 @@
                 });
             }
 
-            async function handleAdminLogin(event) {
-                if (event) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                }
-
-                if (!isSupabaseConfigured()) {
-                    setStatus(adminLoginStatus, 'Add your Supabase URL and anon key first.', 'text-red-600');
-                    return;
-                }
-
-                const emailValue = adminEmail?.value.trim() || '';
-                const passwordValue = adminPassword?.value || '';
-
-                if (!emailValue || !passwordValue) {
-                    setStatus(adminLoginStatus, 'Enter your admin email and password.', 'text-red-600');
-                    return;
-                }
-
-                setStatus(adminLoginStatus, 'Signing in...', 'text-slate-600');
-
-                try {
-                    const { data, error } = await supabaseClient.auth.signInWithPassword({
-                        email: emailValue,
-                        password: passwordValue
-                    });
-
-                    if (error) {
-                        throw error;
-                    }
-
-                    adminPassword.value = '';
-                    updateAdminPanelVisibility(data.session);
-                    await refreshAdminPanel();
-                } catch (error) {
-                    console.error('Supabase sign-in failed:', error);
-                    const message = error?.message || 'Login failed. Check the email, password, and Supabase Auth settings.';
-                    setStatus(adminLoginStatus, message, 'text-red-600');
-                    return;
-                }
-            }
+            
 
             if (adminLoginForm && adminEmail && adminPassword && adminLoginStatus) {
                 adminLoginForm.addEventListener('submit', handleAdminLogin);
