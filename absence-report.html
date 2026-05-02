@@ -53,12 +53,12 @@
 
             <div class="mt-8 border-t border-slate-200 pt-5">
                 <button id="showAdminLoginBtn" type="button" onclick="document.getElementById('adminLoginForm').classList.toggle('hidden')" class="text-sm font-semibold text-slate-700 hover:text-red-700 transition-colors">Admin Login to View Reports</button>
-                <form id="adminLoginForm" class="hidden mt-3 flex flex-col sm:flex-row gap-2">
+                <form id="adminLoginForm" class="hidden mt-3 flex flex-col sm:flex-row gap-2" action="javascript:void(0)" onsubmit="return false;">
                     <input id="adminEmail" type="email" placeholder="Admin email"
                         class="flex-1 p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500">
                     <input id="adminPassword" type="password" placeholder="Admin password"
                         class="flex-1 p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500">
-                    <button type="submit" class="bg-slate-800 text-white px-4 py-3 rounded-xl font-semibold hover:bg-slate-900 transition-colors">Log In</button>
+                    <button id="adminLoginBtn" type="button" class="bg-slate-800 text-white px-4 py-3 rounded-xl font-semibold hover:bg-slate-900 transition-colors">Log In</button>
                 </form>
                 <p id="adminLoginStatus" class="hidden mt-2 text-sm font-medium"></p>
 
@@ -202,6 +202,7 @@
             const absenceStatus = document.getElementById('absenceSubmitStatus');
             const showAdminLoginBtn = document.getElementById('showAdminLoginBtn');
             const adminLoginForm = document.getElementById('adminLoginForm');
+            const adminLoginBtn = document.getElementById('adminLoginBtn');
             const adminEmail = document.getElementById('adminEmail');
             const adminPassword = document.getElementById('adminPassword');
             const adminLoginStatus = document.getElementById('adminLoginStatus');
@@ -244,45 +245,54 @@
                 });
             }
 
-            if (adminLoginForm && adminEmail && adminPassword && adminLoginStatus) {
-                adminLoginForm.addEventListener('submit', async (event) => {
+            async function handleAdminLogin(event) {
+                if (event) {
                     event.preventDefault();
+                    event.stopPropagation();
+                }
 
-                    if (!isSupabaseConfigured()) {
-                        setStatus(adminLoginStatus, 'Add your Supabase URL and anon key first.', 'text-red-600');
-                        return;
+                if (!isSupabaseConfigured()) {
+                    setStatus(adminLoginStatus, 'Add your Supabase URL and anon key first.', 'text-red-600');
+                    return;
+                }
+
+                const emailValue = adminEmail?.value.trim() || '';
+                const passwordValue = adminPassword?.value || '';
+
+                if (!emailValue || !passwordValue) {
+                    setStatus(adminLoginStatus, 'Enter your admin email and password.', 'text-red-600');
+                    return;
+                }
+
+                setStatus(adminLoginStatus, 'Signing in...', 'text-slate-600');
+
+                try {
+                    const { data, error } = await supabase.auth.signInWithPassword({
+                        email: emailValue,
+                        password: passwordValue
+                    });
+
+                    if (error) {
+                        throw error;
                     }
 
-                    const emailValue = adminEmail.value.trim();
-                    const passwordValue = adminPassword.value;
+                    adminPassword.value = '';
+                    updateAdminPanelVisibility(data.session);
+                    await refreshAdminPanel();
+                } catch (error) {
+                    console.error('Supabase sign-in failed:', error);
+                    const message = error?.message || 'Login failed. Check the email, password, and Supabase Auth settings.';
+                    setStatus(adminLoginStatus, message, 'text-red-600');
+                    return;
+                }
+            }
 
-                    if (!emailValue || !passwordValue) {
-                        setStatus(adminLoginStatus, 'Enter your admin email and password.', 'text-red-600');
-                        return;
-                    }
+            if (adminLoginBtn) {
+                adminLoginBtn.addEventListener('click', handleAdminLogin);
+            }
 
-                    setStatus(adminLoginStatus, 'Signing in...', 'text-slate-600');
-
-                    try {
-                        const { data, error } = await supabase.auth.signInWithPassword({
-                            email: emailValue,
-                            password: passwordValue
-                        });
-
-                        if (error) {
-                            throw error;
-                        }
-
-                        adminPassword.value = '';
-                        updateAdminPanelVisibility(data.session);
-                        await refreshAdminPanel();
-                    } catch (error) {
-                        console.error('Supabase sign-in failed:', error);
-                        const message = error?.message || 'Login failed. Check the email, password, and Supabase Auth settings.';
-                        setStatus(adminLoginStatus, message, 'text-red-600');
-                        return;
-                    }
-                });
+            if (adminLoginForm && adminEmail && adminPassword && adminLoginStatus) {
+                adminLoginForm.addEventListener('submit', handleAdminLogin);
             }
 
             if (adminLogoutBtn) {
