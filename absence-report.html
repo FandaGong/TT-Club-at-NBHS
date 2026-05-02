@@ -87,7 +87,8 @@
         }
 
         async function handleAdminLogin(event) {
-                console.log('handleAdminLogin clicked'); alert('Button clicked! Calling Supabase...');
+    alert('Log In button pressed!');
+                
                 if (event) {
                     event.preventDefault();
                     event.stopPropagation();
@@ -288,12 +289,7 @@
                 });
             }
 
-            if (showAdminLoginBtn && adminLoginForm) {
-                showAdminLoginBtn.addEventListener('click', () => {
-                    adminLoginForm.classList.toggle('hidden');
-                });
-            }
-
+            
             
 
             if (adminLoginForm && adminEmail && adminPassword && adminLoginStatus) {
