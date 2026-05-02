@@ -146,10 +146,10 @@
 
                 const table = document.getElementById('ladder-table');
                 table.innerHTML = players.map((p, i) => `
-    <tr class="border-b hover:bg-blue-50 transition-colors">
+    <tr class="border-b hover:bg-slate-50 transition-colors">
         <td class="p-4 text-slate-400 font-bold">#${i + 1}</td>
         <td class="p-4 font-semibold text-slate-800">
-            <a href="player-analysis.html?name=${encodeURIComponent(p.name)}" class="text-blue-600 hover:underline">
+            <a href="player-analysis.html?name=${encodeURIComponent(p.name)}" class="text-red-600 hover:underline">
                 ${p.name}
             </a>
         </td>
