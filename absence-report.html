@@ -161,6 +161,22 @@
                 .replace(/'/g, '&#39;');
         }
 
+        async function deleteReport(id, name) {
+            if (!confirm(`Are you sure you want to permanently delete the absence report for ${name}?`)) return;
+
+            const { error } = await supabaseClient
+                .from(ABSENCE_TABLE)
+                .delete()
+                .eq('id', id);
+
+            if (error) {
+                alert('Failed to delete report: ' + error.message);
+                return;
+            }
+
+            refreshAdminPanel();
+        }
+
         async function updateReportStatus(id, status, name, email) {
             if (!confirm(`Are you sure you want to mark ${name}'s report as ${status.toUpperCase()}?`)) return;
 
@@ -235,6 +251,7 @@
                             <p class="mt-2 text-slate-700"><span class="font-semibold text-slate-800">Reason:</span> ${safeReason}</p>
                             <p class="text-xs text-slate-500 mt-3">Submitted: ${submittedAt}</p>
                             ${actionsHtml}
+                            <button onclick="deleteReport('${report.id}', '${safeName.replace(/'/g, "\'")}')" class="absolute bottom-4 right-4 text-xs font-semibold text-slate-400 hover:text-red-600 transition-colors">Delete</button>
                         </div>
                     `;
                 })

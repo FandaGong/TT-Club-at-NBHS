@@ -43,6 +43,12 @@ on public.absence_reports
 for update
 to authenticated
 using (true);
+
+create policy "Authenticated users can delete absence reports"
+on public.absence_reports
+for delete
+to authenticated
+using (true);
 ```
 
 If you want tighter admin control later, we can switch the read policy to an email allowlist or a custom admin claim.
