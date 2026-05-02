@@ -44,21 +44,7 @@
     </header>
 
     <main class="max-w-4xl mx-auto p-6">
-    <!-- Admin Controls Top -->
-    <div class="flex flex-col items-end mb-4 relative z-40">
-        <div class="flex items-center gap-2">
-            <button id="showAdminLoginBtn" type="button" class="text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors" onclick="document.getElementById('adminLoginForm').classList.toggle('hidden')">Admin Login</button>
-            <button id="adminShowReportsBtn" type="button" class="hidden text-sm font-bold bg-blue-600 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700 transition-colors shadow-sm" onclick="document.getElementById('adminReportsModal').classList.remove('hidden')">View Reports</button>
-            <button id="adminLogoutBtn" type="button" class="hidden text-sm font-bold text-slate-500 hover:text-red-700 transition-colors">Log Out</button>
-        </div>
 
-        <form id="adminLoginForm" class="hidden absolute top-8 right-0 bg-white p-4 rounded-xl shadow-lg border border-slate-200 flex flex-col gap-2 w-64" action="javascript:void(0)" onsubmit="return false;">
-            <input id="adminEmail" type="email" placeholder="Admin email" class="w-full p-2 border rounded-lg outline-none focus:ring-2 focus:ring-red-500 text-sm">
-            <input id="adminPassword" type="password" placeholder="Admin password" class="w-full p-2 border rounded-lg outline-none focus:ring-2 focus:ring-red-500 text-sm">
-            <button id="adminLoginBtn" type="button" class="bg-slate-800 text-white w-full py-2 rounded-lg font-semibold hover:bg-slate-900 transition-colors text-sm" onclick="handleAdminLogin(event)">Log In</button>
-            <p id="adminLoginStatus" class="hidden text-xs font-medium"></p>
-        </form>
-    </div>
         <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 fade-up-d1 card-hover">
             <h1 class="text-3xl font-bold text-blue-900 mb-2">Club Absence Report</h1>
             <p class="text-sm text-slate-600 mb-6">If you did not show up to club, submit your details so the team can review your note.</p>
@@ -73,7 +59,22 @@
                 <button type="submit" class="bg-red-600 text-white px-5 py-3 rounded-xl font-bold hover:bg-red-700 transition-colors">Submit Absence</button>
                 <p id="absenceSubmitStatus" class="hidden text-sm font-medium"></p>
             </form>
-        </section>
+                <div class="mt-8 border-t border-slate-200 pt-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <button id="showAdminLoginBtn" type="button" class="text-sm font-semibold text-slate-700 hover:text-red-700 transition-colors self-start" onclick="document.getElementById('adminLoginForm').classList.toggle('hidden')">Admin Login to View Reports</button>
+                    
+                    <div class="flex items-center gap-2">
+                        <button id="adminShowReportsBtn" type="button" class="hidden text-sm font-bold bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700 transition-colors shadow-sm" onclick="document.getElementById('adminReportsModal').classList.remove('hidden')">View Reports</button>
+                        <button id="adminLogoutBtn" type="button" class="hidden text-sm font-bold text-slate-500 hover:text-red-700 transition-colors px-2 py-2">Log Out</button>
+                    </div>
+                </div>
+                
+                <form id="adminLoginForm" class="hidden mt-3 flex flex-col sm:flex-row gap-2" action="javascript:void(0)" onsubmit="return false;">
+                    <input id="adminEmail" type="email" placeholder="Admin email" class="flex-1 p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500 text-sm">
+                    <input id="adminPassword" type="password" placeholder="Admin password" class="flex-1 p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500 text-sm">
+                    <button id="adminLoginBtn" type="button" class="bg-slate-800 text-white px-4 py-3 rounded-xl font-semibold hover:bg-slate-900 transition-colors text-sm" onclick="handleAdminLogin(event)">Log In</button>
+                </form>
+                <p id="adminLoginStatus" class="hidden mt-2 text-sm font-medium"></p>
+            </section>
     </main>
 
 
