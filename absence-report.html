@@ -87,11 +87,6 @@
         }
 
         async function handleAdminLogin(event) {
-<<<<<<< HEAD
-    alert('Log In button pressed!');
-                
-=======
->>>>>>> 68af3266f870e920ac331e8e9bce4d7dd9e1ac78
                 if (event) {
                     event.preventDefault();
                     event.stopPropagation();
@@ -290,16 +285,13 @@
                 });
             }
 
-<<<<<<< HEAD
             
             
-=======
             if (showAdminLoginBtn && adminLoginForm) {
                 showAdminLoginBtn.addEventListener('click', () => {
                     adminLoginForm.classList.toggle('hidden');
                 });
             }
->>>>>>> 68af3266f870e920ac331e8e9bce4d7dd9e1ac78
 
             if (adminLoginForm && adminEmail && adminPassword && adminLoginStatus) {
                 adminLoginForm.addEventListener('submit', handleAdminLogin);
