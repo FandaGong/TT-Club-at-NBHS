@@ -261,21 +261,27 @@
                         return;
                     }
 
-                    const { data, error } = await supabase.auth.signInWithPassword({
-                        email: emailValue,
-                        password: passwordValue
-                    });
+                    setStatus(adminLoginStatus, 'Signing in...', 'text-slate-600');
 
-                    if (error) {
+                    try {
+                        const { data, error } = await supabase.auth.signInWithPassword({
+                            email: emailValue,
+                            password: passwordValue
+                        });
+
+                        if (error) {
+                            throw error;
+                        }
+
+                        adminPassword.value = '';
+                        updateAdminPanelVisibility(data.session);
+                        await refreshAdminPanel();
+                    } catch (error) {
                         console.error('Supabase sign-in failed:', error);
-                        setStatus(adminLoginStatus, 'Incorrect login or Supabase auth is not ready.', 'text-red-600');
+                        const message = error?.message || 'Login failed. Check the email, password, and Supabase Auth settings.';
+                        setStatus(adminLoginStatus, message, 'text-red-600');
                         return;
                     }
-
-                    adminPassword.value = '';
-                    hideStatus(adminLoginStatus);
-                    updateAdminPanelVisibility(data.session);
-                    await refreshAdminPanel();
                 });
             }
 
