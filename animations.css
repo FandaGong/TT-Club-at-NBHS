@@ -59,12 +59,11 @@ header {
     transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
 .card-hover:hover {
-    transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(30, 64, 175, 0.08);
     border-color: #3b82f6;
 }
 .card-hover:active {
-    transform: translateY(-1px);
+    transform: none;
 }
 .btn-hover {
     transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
@@ -95,12 +94,11 @@ a[class*="rounded"], div[class*="rounded"] {
     transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
 a[class*="rounded"]:hover, div[class*="rounded"]:hover {
-    transform: translateY(-2px);
     box-shadow: 0 6px 16px rgba(30, 64, 175, 0.09);
     border-color: #3b82f6;
 }
 a[class*="rounded"]:active, div[class*="rounded"]:active {
-    transform: translateY(-1px);
+    transform: none;
 }
 
 /* ── Table row hover ── */
