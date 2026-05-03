@@ -22,10 +22,10 @@
 
 <body class="bg-white text-slate-900 font-sans min-h-screen">
     <header class="bg-blue-800 text-white shadow-md fade-in">
-        <nav class="max-w-4xl mx-auto flex items-center justify-between gap-4 px-4 py-4">
+        <nav class="max-w-6xl mx-auto flex items-center justify-between gap-4 px-4 py-4">
             <a href="index.html" class="text-xl font-bold">NBHS TT Hub</a>
             <button id="rankingNavToggle" type="button"
-                class="sm:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/40 bg-white/10 text-white hover:bg-white/20"
+                class="sm:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl border border-blue-600 bg-blue-700 text-white hover:bg-blue-600 transition-colors duration-200"
                 aria-label="Toggle navigation" aria-controls="rankingNavLinks" aria-expanded="false">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
@@ -38,7 +38,9 @@
                 <a href="player-matchup-ladder.html" class="block nav-link-hover px-2 py-1"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3M3 11h18M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>Matchups</a>
                 <a href="club-analytics.html" class="block nav-link-hover px-2 py-1"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3v18h18M8 7v10M12 11v6M16 5v12"/></svg>Analytics</a>
                 <a href="past-records.html" class="block nav-link-hover px-2 py-1"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4"/><path d="M12 12l3 2"/></svg>Past Records</a>
-                <a href="absence-report.html" class="block font-bold border-b-2 border-white sm:border-none nav-link-hover px-2 py-1"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h8M8 11h8M8 15h5"/><rect x="4" y="3" width="16" height="18" rx="2" ry="2"/></svg>Absence</a>
+                <a href="absence-report.html" class="block nav-link-hover px-2 py-1"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h8M8 11h8M8 15h5"/><rect x="4" y="3" width="16" height="18" rx="2" ry="2"/></svg>Absence</a>
+                <a href="rules.html" class="block nav-link-hover px-2 py-1"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>Rules</a>
+                <a href="admin.html" class="block nav-link-hover px-2 py-1 bg-white/20 rounded-md hover:bg-white/30"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>Admin Portal</a>
             </div>
         </nav>
     </header>
@@ -60,20 +62,12 @@
                 <p id="absenceSubmitStatus" class="hidden text-sm font-medium"></p>
             </form>
                 <div class="mt-8 border-t border-slate-200 pt-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <button id="showAdminLoginBtn" type="button" class="text-sm font-semibold text-slate-700 hover:text-red-700 transition-colors self-start" onclick="document.getElementById('adminLoginForm').classList.toggle('hidden')">Admin Login to View Reports</button>
+                    <p class="text-sm font-medium text-slate-500">Only club admins can view submitted reports.</p>
                     
                     <div class="flex items-center gap-2">
                         <button id="adminShowReportsBtn" type="button" class="hidden text-sm font-bold bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700 transition-colors shadow-sm" onclick="document.getElementById('adminReportsModal').classList.remove('hidden')">View Reports</button>
-                        <button id="adminLogoutBtn" type="button" class="hidden text-sm font-bold text-slate-500 hover:text-red-700 transition-colors px-2 py-2">Log Out</button>
                     </div>
                 </div>
-                
-                <form id="adminLoginForm" class="hidden mt-3 flex flex-col sm:flex-row gap-2" action="javascript:void(0)" onsubmit="return false;">
-                    <input id="adminEmail" type="email" placeholder="Admin email" class="flex-1 p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500 text-sm">
-                    <input id="adminPassword" type="password" placeholder="Admin password" class="flex-1 p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500 text-sm">
-                    <button id="adminLoginBtn" type="button" class="bg-slate-800 text-white px-4 py-3 rounded-xl font-semibold hover:bg-slate-900 transition-colors text-sm" onclick="handleAdminLogin(event)">Log In</button>
-                </form>
-                <p id="adminLoginStatus" class="hidden mt-2 text-sm font-medium"></p>
             </section>
     </main>
 
@@ -105,52 +99,6 @@
         function isSupabaseConfigured() {
             return Boolean(supabaseClient) && SUPABASE_URL !== "YOUR_SUPABASE_URL" && SUPABASE_ANON_KEY !== "YOUR_SUPABASE_ANON_KEY";
         }
-
-        async function handleAdminLogin(event) {
-                if (event) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                }
-
-                if (!isSupabaseConfigured()) {
-                    setStatus(document.getElementById('adminLoginStatus'), 'Add your Supabase URL and anon key first.', 'text-red-600');
-                    return;
-                }
-
-            const adminEmailInput = document.getElementById('adminEmail');
-            const adminPasswordInput = document.getElementById('adminPassword');
-            const adminLoginStatusEl = document.getElementById('adminLoginStatus');
-
-            const emailValue = adminEmailInput?.value.trim() || '';
-            const passwordValue = adminPasswordInput?.value || '';
-
-            if (!emailValue || !passwordValue) {
-                setStatus(adminLoginStatusEl, 'Enter your admin email and password.', 'text-red-600');
-                return;
-            }
-
-            setStatus(adminLoginStatusEl, 'Signing in...', 'text-slate-600');
-
-                try {
-                    const { data, error } = await supabaseClient.auth.signInWithPassword({
-                        email: emailValue,
-                        password: passwordValue
-                    });
-
-                    if (error) {
-                        throw error;
-                    }
-
-                    adminPasswordInput.value = '';
-                    updateAdminPanelVisibility(data.session);
-                    await refreshAdminPanel();
-                } catch (error) {
-                    console.error('Supabase sign-in failed:', error);
-                    const message = error?.message || 'Login failed. Check the email, password, and Supabase Auth settings.';
-                    setStatus(document.getElementById('adminLoginStatus'), message, 'text-red-600');
-                    return;
-                }
-            }
 
         function setStatus(element, message, tone) {
             if (!element) return;
@@ -295,23 +243,12 @@
 
         function updateAdminPanelVisibility(session) {
             const isAuthed = Boolean(session);
-            const loginForm = document.getElementById('adminLoginForm');
-            const loginStatus = document.getElementById('adminLoginStatus');
             const showReportsBtn = document.getElementById('adminShowReportsBtn');
-            const logoutBtn = document.getElementById('adminLogoutBtn');
-            const toggleLoginBtn = document.getElementById('showAdminLoginBtn');
 
             if (isAuthed) {
-                if (loginForm) loginForm.classList.add('hidden');
-                if (loginStatus) loginStatus.classList.add('hidden');
-                if (toggleLoginBtn) toggleLoginBtn.classList.add('hidden');
-                
                 if (showReportsBtn) showReportsBtn.classList.remove('hidden');
-                if (logoutBtn) logoutBtn.classList.remove('hidden');
             } else {
                 if (showReportsBtn) showReportsBtn.classList.add('hidden');
-                if (logoutBtn) logoutBtn.classList.add('hidden');
-                if (toggleLoginBtn) toggleLoginBtn.classList.remove('hidden');
                 document.getElementById('adminReportsModal')?.classList.add('hidden');
             }
         }
@@ -359,13 +296,6 @@
         document.addEventListener('DOMContentLoaded', () => {
             const absenceForm = document.getElementById('absenceForm');
             const absenceStatus = document.getElementById('absenceSubmitStatus');
-            const showAdminLoginBtn = document.getElementById('showAdminLoginBtn');
-            const adminLoginForm = document.getElementById('adminLoginForm');
-            const adminLoginBtn = document.getElementById('adminLoginBtn');
-            const adminEmail = document.getElementById('adminEmail');
-            const adminPassword = document.getElementById('adminPassword');
-            const adminLoginStatus = document.getElementById('adminLoginStatus');
-            const adminLogoutBtn = document.getElementById('adminLogoutBtn');
             const rankingNavToggle = document.getElementById('rankingNavToggle');
             const rankingNavLinks = document.getElementById('rankingNavLinks');
 
@@ -399,24 +329,6 @@
             }
 
             
-            
-            
-            if (adminLoginForm && adminEmail && adminPassword && adminLoginStatus) {
-                adminLoginForm.addEventListener('submit', handleAdminLogin);
-            }
-            if (adminLoginBtn) {
-                adminLoginBtn.addEventListener('click', handleAdminLogin);
-            }
-
-            if (adminLogoutBtn) {
-                adminLogoutBtn.addEventListener('click', async () => {
-                    if (isSupabaseConfigured()) {
-                        await supabaseClient.auth.signOut();
-                    }
-                    updateAdminPanelVisibility(null);
-                });
-            }
-
             if (rankingNavToggle && rankingNavLinks) {
                 rankingNavToggle.addEventListener('click', () => {
                     rankingNavLinks.classList.toggle('hidden');
