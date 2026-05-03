@@ -44,7 +44,10 @@
 
     <main class="max-w-4xl mx-auto p-6">
         <div id="player-header" class="mb-8">
-            <h1 id="player-name" class="text-4xl font-black text-blue-900 uppercase italic">Loading...</h1>
+            <div class="flex flex-wrap items-center gap-3">
+                <h1 id="player-name" class="text-4xl font-black text-blue-900 uppercase italic">Loading...</h1>
+                <div id="player-tags" class="flex flex-wrap gap-2"></div>
+            </div>
             <div id="quick-stats" class="flex gap-6 mt-4 font-bold"></div>
         </div>
 
@@ -83,6 +86,12 @@
         const STATS_GID = "2082256240";
         const HISTORY_GID = "160991986"; // Point this to your Elo_History tab GID
         const BASE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_UHoHNgToKV4yCuB_M56029JuMrOYWN-VkyxDiWkwXHJI1hhRnon_GMnvgvmQeHmL4F0gxkVz7IMP/pub?output=csv&gid=";
+        const PLAYER_TAGS = {
+            'jonathan zhao': ['Website Feature Dev', 'Club Runner'],
+            'damon yuan': ['Club Runner'],
+            'fanda gong': ['Club Runner', 'Main Owner'],
+            'mr siu': ['Teacher Supervisor']
+        };
 
         function parseCsv(text) {
             const rows = [];
@@ -104,9 +113,22 @@
             return rows;
         }
 
+        function getPlayerTags(name) {
+            return PLAYER_TAGS[(name || '').trim().toLowerCase()] || [];
+        }
+
+        function renderPlayerTags(name) {
+            return getPlayerTags(name).map(tag => `
+                <span class="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-blue-700">
+                    ${tag}
+                </span>
+            `).join('');
+        }
+
         async function init() {
             if (!playerName) return;
             document.getElementById('player-name').innerText = playerName;
+            document.getElementById('player-tags').innerHTML = renderPlayerTags(playerName);
             await loadPlayerStats();
             await loadCombinedHistory();
         }

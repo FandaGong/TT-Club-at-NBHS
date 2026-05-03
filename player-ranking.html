@@ -63,6 +63,24 @@
     <script>
         // Use the CSV output link for your Players tab
         const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_UHoHNgToKV4yCuB_M56029JuMrOYWN-VkyxDiWkwXHJI1hhRnon_GMnvgvmQeHmL4F0gxkVz7IMP/pub?gid=2082256240&single=true&output=csv";
+        const PLAYER_TAGS = {
+            'jonathan zhao': ['Website Feature Dev', 'Club Runner'],
+            'damon yuan': ['Club Runner'],
+            'fanda gong': ['Club Runner', 'Main Owner'],
+            'mr siu': ['Teacher Supervisor']
+        };
+
+        function getPlayerTags(name) {
+            return PLAYER_TAGS[(name || '').trim().toLowerCase()] || [];
+        }
+
+        function renderPlayerTags(name) {
+            return getPlayerTags(name).map(tag => `
+                <span class="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-blue-700">
+                    ${tag}
+                </span>
+            `).join('');
+        }
 
         async function loadRankings() {
             try {
@@ -128,9 +146,12 @@
     <tr class="border-b hover:bg-slate-50 transition-colors">
         <td class="p-4 text-slate-400 font-bold">#${i + 1}</td>
         <td class="p-4 font-semibold text-slate-800">
-            <a href="player-analysis.html?name=${encodeURIComponent(p.name)}" class="text-red-600 hover:underline">
-                ${p.name}
-            </a>
+            <div class="flex flex-wrap items-center gap-2">
+                <a href="player-analysis.html?name=${encodeURIComponent(p.name)}" class="text-red-600 hover:underline">
+                    ${p.name}
+                </a>
+                ${renderPlayerTags(p.name)}
+            </div>
         </td>
         <td class="p-4 text-center text-green-600 font-bold">${p.wins}</td>
         <td class="p-4 text-center text-red-500 font-bold">${p.losses}</td>
