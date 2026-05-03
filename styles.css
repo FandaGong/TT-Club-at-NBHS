@@ -159,7 +159,7 @@ header nav a svg {
 
 /* Mobile nav toggle: keep the hamburger neutral and centered across pages */
 #rankingNavToggle {
-    display: inline-grid !important;
+    display: inline-grid;
     place-items: center;
     padding: 0 !important;
     background-color: rgba(255, 255, 255, 0.1) !important;
