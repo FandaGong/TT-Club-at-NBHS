@@ -34,6 +34,10 @@
 .fade-up-d2 { animation: fadeUp 0.5s ease 0.2s both; }
 .fade-up-d3 { animation: fadeUp 0.5s ease 0.3s both; }
 .fade-up-d4 { animation: fadeUp 0.5s ease 0.4s both; }
+.fade-up-d5 { animation: fadeUp 0.5s ease 0.5s both; }
+.fade-up-d6 { animation: fadeUp 0.5s ease 0.6s both; }
+.fade-up-d7 { animation: fadeUp 0.5s ease 0.7s both; }
+.fade-up-d8 { animation: fadeUp 0.5s ease 0.8s both; }
 .fade-in { animation: fadeIn 0.4s ease both; }
 .slide-down { animation: slideDown 0.3s ease both; }
 .bounce { animation: bounce 1s ease both; }
@@ -82,11 +86,11 @@ header {
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 .nav-link-hover {
-    transition: background-color 0.2s ease, color 0.2s ease;
+    border-radius: 8px;
+    transition: background-color 0.2s ease, color 0.2s ease, border-radius 0.2s ease;
 }
 .nav-link-hover:hover {
     background-color: rgba(255,255,255,0.1);
-    border-radius: 8px;
 }
 
 /* ── Card hover effects (any link/div card with rounded corners) ── */
@@ -131,11 +135,13 @@ input[type="text"]:focus, input[type="search"]:focus, input:not([type]):focus {
 
 /* ── Nav link hover ── */
 nav a {
-    transition: background-color 0.2s ease, color 0.2s ease;
-}
-nav a:hover {
-    background-color: rgba(255,255,255,0.1);
     border-radius: 8px;
+    transition: background-color 0.2s ease, color 0.2s ease, border-radius 0.2s ease;
+}
+@media (hover: hover) and (pointer: fine) {
+    nav a:hover {
+        background-color: rgba(255,255,255,0.1);
+    }
 }
 
 /* Search result animation */

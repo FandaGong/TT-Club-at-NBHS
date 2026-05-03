@@ -148,8 +148,8 @@ h1, h2, h3, .font-bold {
 .max-w-4xl.p-6 { padding-left: var(--space-lg); padding-right: var(--space-lg); }
 .mb-8 { margin-bottom: calc(var(--space-lg)); }
 
-/* Header icon alignment: nudge small inline SVGs to vertically center with text */
-header nav a svg, header nav svg {
+/* Header icon alignment: nudge small inline SVGs in text links to vertically center with text */
+header nav a svg {
    vertical-align: middle;
    display: inline-block;
    /* Nudge icons slightly upward for visual centering with text. Edit --header-icon-nudge in styles.css to fine-tune. */
@@ -157,6 +157,72 @@ header nav a svg, header nav svg {
 
 }
 
+<<<<<<< HEAD
+=======
+/* Mobile nav toggle: keep the hamburger neutral and centered across pages */
+#rankingNavToggle {
+    display: inline-grid;
+    place-items: center;
+    padding: 0 !important;
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.18) !important;
+}
+
+#rankingNavToggle:hover,
+#rankingNavToggle:focus-visible {
+    background-color: rgba(255, 255, 255, 0.18) !important;
+}
+
+#rankingNavToggle svg {
+    display: block;
+    transform: none !important;
+}
+
+/* Hide on desktop (sm breakpoint and above) */
+@media (min-width: 640px) {
+    #rankingNavToggle {
+        display: none !important;
+    }
+}
+
+/* --- THE BACKGROUND FIXES (OUTSIDE THE BRACKETS) --- */
+
+/* 1. Global Body Background Fix */
+body, .bg-slate-50 { 
+    background-color: var(--color-body-bg) !important; 
+}
+
+/* 2. Primary Header Background */
+.bg-blue-800 { 
+    --tw-bg-opacity: 1 !important;
+    background-color: var(--color-primary) !important; 
+}
+
+/* 3. Secondary/Mobile Nav Background */
+.bg-blue-900 { 
+    --tw-bg-opacity: 1 !important;
+    background-color: var(--color-secondary) !important; 
+}
+
+/* 4. Accent/Search Button Background */
+.bg-blue-600 { 
+    --tw-bg-opacity: 1 !important;
+    background-color: var(--color-accent) !important; 
+}
+
+/* 5. Handling the Nav Toggle Transparency */
+.bg-blue-900\/20 {
+    background-color: var(--color-secondary) !important;
+    opacity: 0.2 !important;
+}
+
+/* 6. Fix for the Search Result Box background */
+.bg-blue-50 {
+    background-color: var(--color-body-bg) !important;
+    border-color: var(--color-primary) !important;
+}
+
+>>>>>>> origin/old-main
 /* PNG visual helper: remove white background appearance by blending
      Note: this is a visual workaround. For perfect transparency, supply an actual transparent PNG. */
 .png-transparent {
@@ -185,6 +251,7 @@ header nav a svg, header nav svg {
   padding-top: 1rem;
   padding-bottom: 1rem;
 }
+<<<<<<< HEAD
 
 /* --- THE NAV HOVER GLITCH FIX --- */
 .nav-link-hover {
@@ -195,6 +262,8 @@ header nav a svg, header nav svg {
 .nav-link-hover:hover {
     background-color: rgba(255, 255, 255, 0.2) !important;
 }
+=======
+>>>>>>> origin/old-main
 
 /* Fix for the hover state on the search result names */
 .hover\:text-blue-600:hover {
