@@ -176,6 +176,13 @@ header nav a svg {
     transform: none !important;
 }
 
+/* Hide on desktop (sm breakpoint and above) */
+@media (min-width: 640px) {
+    #rankingNavToggle {
+        display: none !important;
+    }
+}
+
 /* --- THE BACKGROUND FIXES (OUTSIDE THE BRACKETS) --- */
 
 /* 1. Global Body Background Fix */
