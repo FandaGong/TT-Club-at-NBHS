@@ -82,11 +82,11 @@ header {
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 .nav-link-hover {
-    transition: background-color 0.2s ease, color 0.2s ease;
+    border-radius: 8px;
+    transition: background-color 0.2s ease, color 0.2s ease, border-radius 0.2s ease;
 }
 .nav-link-hover:hover {
     background-color: rgba(255,255,255,0.1);
-    border-radius: 8px;
 }
 
 /* ── Card hover effects (any link/div card with rounded corners) ── */
@@ -131,11 +131,13 @@ input[type="text"]:focus, input[type="search"]:focus, input:not([type]):focus {
 
 /* ── Nav link hover ── */
 nav a {
-    transition: background-color 0.2s ease, color 0.2s ease;
-}
-nav a:hover {
-    background-color: rgba(255,255,255,0.1);
     border-radius: 8px;
+    transition: background-color 0.2s ease, color 0.2s ease, border-radius 0.2s ease;
+}
+@media (hover: hover) and (pointer: fine) {
+    nav a:hover {
+        background-color: rgba(255,255,255,0.1);
+    }
 }
 
 /* Search result animation */

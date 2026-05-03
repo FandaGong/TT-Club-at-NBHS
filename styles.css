@@ -148,13 +148,32 @@ h1, h2, h3, .font-bold {
 .max-w-4xl.p-6 { padding-left: var(--space-lg); padding-right: var(--space-lg); }
 .mb-8 { margin-bottom: calc(var(--space-lg)); }
 
-/* Header icon alignment: nudge small inline SVGs to vertically center with text */
-header nav a svg, header nav svg {
+/* Header icon alignment: nudge small inline SVGs in text links to vertically center with text */
+header nav a svg {
    vertical-align: middle;
    display: inline-block;
    /* Nudge icons slightly upward for visual centering with text. Edit --header-icon-nudge in styles.css to fine-tune. */
    transform: translate(var(--header-icon-offset-x), var(--header-icon-nudge));
 
+}
+
+/* Mobile nav toggle: keep the hamburger neutral and centered across pages */
+#rankingNavToggle {
+    display: inline-grid !important;
+    place-items: center;
+    padding: 0 !important;
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.18) !important;
+}
+
+#rankingNavToggle:hover,
+#rankingNavToggle:focus-visible {
+    background-color: rgba(255, 255, 255, 0.18) !important;
+}
+
+#rankingNavToggle svg {
+    display: block;
+    transform: none !important;
 }
 
 /* --- THE BACKGROUND FIXES (OUTSIDE THE BRACKETS) --- */
@@ -221,8 +240,6 @@ body, .bg-slate-50 {
   padding-right: 1rem;
   padding-top: 1rem;
   padding-bottom: 1rem;
-}
-    color: var(--color-accent) !important; 
 }
 
 /* Fix for the hover state on the search result names */
