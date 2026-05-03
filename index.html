@@ -5,46 +5,82 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NBHS Table Tennis Club - Home</title>
+    <!-- Just the default Tailwind script, no custom config needed! -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="animations.css">
     <link rel="icon" type="image/png" href="favicon.png">
 </head>
 
-<body class="bg-white text-slate-900 font-sans min-h-screen">
+<body class="bg-red-50 text-slate-900 font-sans min-h-screen">
 
-    <header class="bg-blue-800 text-white shadow-md fade-in">
-        <nav class="max-w-6xl mx-auto flex items-center justify-between gap-4 px-4 py-4">
-            <a href="index.html" class="text-xl font-bold">NBHS TT Hub</a>
-            <button id="rankingNavToggle" type="button"
-                class="sm:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl border border-blue-600 bg-blue-700 text-white hover:bg-blue-600 transition-colors duration-200"
-                aria-label="Toggle navigation" aria-controls="rankingNavLinks" aria-expanded="false">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16" />
-                </svg>
-            </button>
-            <div id="rankingNavLinks"
-                class="hidden w-full flex-col gap-3 pt-4 sm:flex sm:w-auto sm:flex-row sm:items-center sm:pt-0">
-                <a href="player-ranking.html" class="block nav-link-hover px-2 py-1"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v18"/><path d="M17 3v18"/><path d="M7 7h10"/><path d="M7 11h10"/><path d="M7 15h10"/></svg>Rankings</a>
-                <a href="player-matchup-ladder.html" class="block nav-link-hover px-2 py-1"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3M3 11h18M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>Matchups</a>
-                <a href="club-analytics.html" class="block nav-link-hover px-2 py-1"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3v18h18M8 7v10M12 11v6M16 5v12"/></svg>Analytics</a>
-                <a href="past-records.html" class="block nav-link-hover px-2 py-1"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4"/><path d="M12 12l3 2"/></svg>Past Records</a>
-                <a href="absence-report.html" class="block nav-link-hover px-2 py-1"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h8M8 11h8M8 15h5"/><rect x="4" y="3" width="16" height="18" rx="2" ry="2"/></svg>Absence</a>
-                <a href="rules.html" class="block nav-link-hover px-2 py-1"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>Rules</a>
-                <a href="admin.html" class="block nav-link-hover px-2 py-1 bg-white/20 rounded-md hover:bg-white/30"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>Admin Portal</a>
-            </div>
-        </nav>
-    </header>
+<header class="bg-red-800 text-white shadow-md fade-in">
+    <nav class="max-w-6xl mx-auto flex flex-wrap items-center justify-between px-4 py-4">
+        
+        <!-- The Homepage Logo -->
+        <a href="index.html" class="text-xl font-bold transition-opacity duration-200 hover:opacity-80">NBHS TT Hub</a>
+        
+        <!-- The Hamburger Toggle Button (Hardware Accelerated to prevent shape flash) -->
+        <button id="rankingNavToggle" type="button"
+            class="sm:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl border border-red-600 bg-red-700 text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 transition-colors duration-200 overflow-hidden transform-gpu"
+            style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);"
+            aria-label="Toggle navigation" aria-controls="rankingNavLinks" aria-expanded="false">
+            
+            <!-- Hamburger Icon (Visible by default) -->
+            <svg id="menu-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+            
+            <!-- Close 'X' Icon (Hidden by default) -->
+            <svg id="close-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+
+        <!-- Nav Links inside Hamburger Menu -->
+        <div id="rankingNavLinks" class="hidden w-full flex-col gap-1 mt-4 pt-4 border-t border-red-700/50 sm:flex sm:w-auto sm:flex-row sm:items-center sm:gap-2 sm:mt-0 sm:pt-0 sm:border-0">
+            
+            <!-- Link Fix: Added bg-transparent, transform-gpu, and translateZ(0) to every button -->
+            <a href="player-ranking.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">
+                <svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v18"/><path d="M17 3v18"/><path d="M7 7h10"/><path d="M7 11h10"/><path d="M7 15h10"/></svg>Rankings
+            </a>
+            
+            <a href="player-matchup-ladder.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">
+                <svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3M3 11h18M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>Matchups
+            </a>
+            
+            <a href="club-analytics.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">
+                <svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3v18h18M8 7v10M12 11v6M16 5v12"/></svg>Analytics
+            </a>
+            
+            <a href="past-records.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">
+                <svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4"/><path d="M12 12l3 2"/></svg>Past Records
+            </a>
+            
+            <a href="absence-report.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">
+                <svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h8M8 11h8M8 15h5"/><rect x="4" y="3" width="16" height="18" rx="2" ry="2"/></svg>Absence
+            </a>
+            
+            <a href="rules.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">
+                <svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>Rules
+            </a>
+            
+            <a href="admin.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-white/10 hover:bg-white/20 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">
+                <svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>Admin Portal
+            </a>
+        </div>
+    </nav>
+</header>
 
     <main class="max-w-4xl mx-auto p-6">
         <section class="space-y-8">
             <div class="text-center py-10 fade-up">
-                <h1 class="text-4xl font-extrabold text-blue-900">Welcome, Players</h1>
+                <h1 class="text-4xl font-extrabold text-red-900">Welcome, Players</h1>
                 <p class="text-slate-600 mt-2">Access the official Normanhurst Boys Table Tennis ranking system.</p>
             </div>
 
-            <div id="countdown-container" class="hidden bg-gradient-to-br from-blue-900 to-blue-700 p-8 rounded-2xl shadow-lg text-white text-center mb-8 fade-up-d1">
+            <!-- Changed from blue-900 to slate-900 (near black) for contrast -->
+            <div id="countdown-container" class="hidden bg-gradient-to-br from-slate-900 to-red-900 p-8 rounded-2xl shadow-lg text-white text-center mb-8 fade-up-d1">
                 <h2 class="text-sm uppercase tracking-widest font-bold opacity-80 mb-2">Next Session In</h2>
                 <div class="flex justify-center gap-4 text-center">
                     <div>
@@ -62,47 +98,43 @@
                         <span class="text-[10px] uppercase opacity-70">Mins</span>
                     </div>
                 </div>
-                <p id="next-date-label" class="mt-4 text-blue-200 text-xs font-medium"></p>
+                <p id="next-date-label" class="mt-4 text-red-200 text-xs font-medium"></p>
             </div>
 
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 fade-up-d2 card-hover">
                 <h2 class="text-lg font-bold mb-4"><svg xmlns="http://www.w3.org/2000/svg" class="inline h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"/></svg>Quick Player Search</h2>
                 <form id="searchForm" class="flex flex-col sm:flex-row gap-2">
                     <input type="text" id="searchInput" placeholder="Enter name (e.g. Fanda)..."
-                        class="flex-1 p-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 input-focus">
+                        class="flex-1 p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500 input-focus">
                     <button type="submit"
-                        class="w-full sm:w-auto bg-blue-600 text-white px-6 py-3 rounded-xl font-bold btn-hover">Search</button>
+                        class="w-full sm:w-auto bg-red-600 text-white px-6 py-3 rounded-xl font-bold btn-hover">Search</button>
                 </form>
-                <div id="searchResult" class="hidden mt-6 p-4 bg-blue-50 border border-blue-100 rounded-xl"></div>
+                <div id="searchResult" class="hidden mt-6 p-4 bg-red-50 border border-red-100 rounded-xl"></div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <a href="player-ranking.html"
-                    class="bg-white p-8 rounded-2xl border hover:border-red-500 shadow-sm text-center card-hover fade-up-d1">
+                <!-- Links unchanged, kept the red hover border -->
+                <a href="player-ranking.html" class="bg-white p-8 rounded-2xl border hover:border-red-500 shadow-sm text-center card-hover fade-up-d1">
                     <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-8 w-8 mb-2 text-red-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v18"/><path d="M17 3v18"/><path d="M7 7h10"/><path d="M7 11h10"/><path d="M7 15h10"/></svg>
                     <h3 class="font-bold text-xl">View Ranking Ladder</h3>
                     <p class="text-slate-500 text-sm">Check current Elo ratings and club standings.</p>
                 </a>
-                <a href="player-matchup-ladder.html"
-                    class="bg-white p-8 rounded-2xl border hover:border-red-500 shadow-sm text-center card-hover fade-up-d2">
+                <a href="player-matchup-ladder.html" class="bg-white p-8 rounded-2xl border hover:border-red-500 shadow-sm text-center card-hover fade-up-d2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-8 w-8 mb-2 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3M3 11h18M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                     <h3 class="font-bold text-xl">Weekly Matchups</h3>
                     <p class="text-slate-500 text-sm">See bracket placements for the next session.</p>
                 </a>
-                <a href="club-analytics.html"
-                    class="bg-white p-8 rounded-2xl border hover:border-red-500 shadow-sm text-center card-hover fade-up-d3">
+                <a href="club-analytics.html" class="bg-white p-8 rounded-2xl border hover:border-red-500 shadow-sm text-center card-hover fade-up-d3">
                     <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-8 w-8 mb-2 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3v18h18M8 7v10M12 11v6M16 5v12"/></svg>
                     <h3 class="font-bold text-xl">Club Analytics</h3>
                     <p class="text-slate-500 text-sm">View live club metrics like wins, upsets, and Elo highs.</p>
                 </a>
-                <a href="past-records.html"
-                    class="bg-white p-8 rounded-2xl border hover:border-red-500 shadow-sm text-center card-hover fade-up-d4">
+                <a href="past-records.html" class="bg-white p-8 rounded-2xl border hover:border-red-500 shadow-sm text-center card-hover fade-up-d4">
                     <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-8 w-8 mb-2 text-red-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4"/><path d="M12 12l3 2"/></svg>
                     <h3 class="font-bold text-xl">Past Records</h3>
                     <p class="text-slate-500 text-sm">Archive completed season records for easy comparison.</p>
                 </a>
-                <a href="absence-report.html"
-                    class="bg-white p-8 rounded-2xl border hover:border-red-500 shadow-sm text-center card-hover fade-up-d3">
+                <a href="absence-report.html" class="bg-white p-8 rounded-2xl border hover:border-red-500 shadow-sm text-center card-hover fade-up-d3">
                     <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-8 w-8 mb-2 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h8M8 11h8M8 15h5"/><rect x="4" y="3" width="16" height="18" rx="2" ry="2"/></svg>
                     <h3 class="font-bold text-xl">Absence Report</h3>
                     <p class="text-slate-500 text-sm">Submit a missed-session note and let admins review it.</p>
@@ -112,10 +144,8 @@
     </main>
 
     <script>
-        // Paste your "Published to Web" CSV link for the PLAYERS tab here
         const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_UHoHNgToKV4yCuB_M56029JuMrOYWN-VkyxDiWkwXHJI1hhRnon_GMnvgvmQeHmL4F0gxkVz7IMP/pub?output=csv&gid=2082256240";
-
-        let players = [];
+        let players =[];
 
         async function loadData() {
             try {
@@ -124,49 +154,30 @@
 
                 function parseCsv(text) {
                     const rows = [];
-                    let row = [];
+                    let row =[];
                     let field = '';
                     let inQuotes = false;
-
                     for (let i = 0; i < text.length; i++) {
                         const char = text[i];
                         if (char === '"') {
-                            if (inQuotes && text[i + 1] === '"') {
-                                field += '"';
-                                i++;
-                            } else {
-                                inQuotes = !inQuotes;
-                            }
+                            if (inQuotes && text[i + 1] === '"') { field += '"'; i++; } 
+                            else { inQuotes = !inQuotes; }
                         } else if (char === ',' && !inQuotes) {
-                            row.push(field);
-                            field = '';
+                            row.push(field); field = '';
                         } else if ((char === '\n' || char === '\r') && !inQuotes) {
                             if (char === '\r' && text[i + 1] === '\n') i++;
-                            row.push(field);
-                            field = '';
-                            rows.push(row);
-                            row = [];
-                        } else {
-                            field += char;
-                        }
+                            row.push(field); field = ''; rows.push(row); row =[];
+                        } else { field += char; }
                     }
-
-                    if (field !== '' || row.length > 0) {
-                        row.push(field);
-                        rows.push(row);
-                    }
-
+                    if (field !== '' || row.length > 0) { row.push(field); rows.push(row); }
                     return rows;
                 }
 
                 const rows = parseCsv(data).filter(row => row.length > 0);
-
-                // Skip the header row
                 const playerRows = rows.slice(1);
 
                 players = playerRows.map(columns => {
                     const clean = (val) => (val || "").replace(/"/g, '').replace(/,/g, '').trim();
-
                     return {
                         name: clean(columns[0]) || "Unknown",
                         elo: parseInt(clean(columns[1])) || 0,
@@ -174,53 +185,43 @@
                         losses: parseInt(clean(columns[3])) || 0
                     };
                 });
-
-                console.log("Successfully loaded " + players.length + " players.");
-
-            } catch (error) {
-                console.error("Error loading Google Sheet:", error);
-            }
+            } catch (error) { console.error("Error loading Google Sheet:", error); }
         }
 
-        // Search Function for the Home Page
         function searchPlayer(event) {
             if (event) event.preventDefault();
             const input = document.getElementById('searchInput').value.toLowerCase().trim();
             const resultDiv = document.getElementById('searchResult');
 
-            if (input === "") {
-                resultDiv.classList.add('hidden');
-                return;
-            }
-
+            if (input === "") { resultDiv.classList.add('hidden'); return; }
             if (!players.length) {
                 resultDiv.innerHTML = `<p class="text-slate-600 italic">Data is still loading from the sheet...</p>`;
-                resultDiv.classList.remove('hidden');
-                return;
+                resultDiv.classList.remove('hidden'); return;
             }
 
             const matches = players.filter(p => p.name.toLowerCase().includes(input));
 
             if (matches.length) {
+                // CHANGED JS RENDER TO RED CLASSES
                 resultDiv.innerHTML = matches.map(player => `
                     <div class="mb-6">
-                        <h3 class="text-xl font-bold text-blue-800">
-                            <a href="player-analysis.html?name=${encodeURIComponent(player.name)}" class="hover:underline hover:text-blue-600">
+                        <h3 class="text-xl font-bold text-red-800">
+                            <a href="player-analysis.html?name=${encodeURIComponent(player.name)}" class="hover:underline hover:text-red-600">
                                 ${player.name} <svg xmlns="http://www.w3.org/2000/svg" class="inline h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                             </a>
                         </h3>
                         <div class="mt-4 grid grid-cols-3 gap-4 text-center">
-                            <div class="bg-white p-2 rounded-lg shadow-sm border border-blue-100">
+                            <div class="bg-white p-2 rounded-lg shadow-sm border border-red-100">
                                 <p class="text-slate-500 uppercase text-[10px] font-bold tracking-widest">Elo</p>
-                                <p class="text-lg font-mono font-bold text-blue-600">${player.elo}</p>
+                                <p class="text-lg font-mono font-bold text-red-600">${player.elo}</p>
                             </div>
                             <div class="bg-white p-2 rounded-lg shadow-sm border border-green-100">
                                 <p class="text-slate-500 uppercase text-[10px] font-bold tracking-widest">Wins</p>
                                 <p class="text-lg font-bold text-green-600">${player.wins}</p>
                             </div>
-                            <div class="bg-white p-2 rounded-lg shadow-sm border border-red-100">
+                            <div class="bg-white p-2 rounded-lg shadow-sm border border-gray-100">
                                 <p class="text-slate-500 uppercase text-[10px] font-bold tracking-widest">Losses</p>
-                                <p class="text-lg font-bold text-red-500">${player.losses}</p>
+                                <p class="text-lg font-bold text-slate-500">${player.losses}</p>
                             </div>
                         </div>
                     </div>
@@ -232,82 +233,87 @@
             }
         }
 
-        // Initialize when page loads
         document.addEventListener('DOMContentLoaded', () => {
             const searchForm = document.getElementById('searchForm');
-            if (searchForm) {
-                searchForm.addEventListener('submit', searchPlayer);
-            }
+            if (searchForm) { searchForm.addEventListener('submit', searchPlayer); }
             loadData();
         });
 
-    // Change this to your Schedule Tab's GID
-const SCHEDULE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_UHoHNgToKV4yCuB_M56029JuMrOYWN-VkyxDiWkwXHJI1hhRnon_GMnvgvmQeHmL4F0gxkVz7IMP/pub?output=csv&gid=1897930093";
+        const SCHEDULE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_UHoHNgToKV4yCuB_M56029JuMrOYWN-VkyxDiWkwXHJI1hhRnon_GMnvgvmQeHmL4F0gxkVz7IMP/pub?output=csv&gid=1897930093";
 
-async function initCountdown() {
-    try {
-        const response = await fetch(SCHEDULE_URL);
-        const csvData = await response.text();
+        async function initCountdown() {
+            try {
+                const response = await fetch(SCHEDULE_URL);
+                const csvData = await response.text();
+                const rows = csvData.split(/\r?\n/).map(row => row.trim()).filter(row => row !== "");
+                const now = new Date();
+                const upcomingDates = rows.map(dateStr => {
+                    const parts = dateStr.split('-');
+                    if (parts.length !== 3) return null;
+                    return new Date(parts[0], parts[1] - 1, parts[2], 9, 0, 0);
+                }).filter(d => d !== null && d > now).sort((a, b) => a - b);
 
-        const rows = csvData.split(/\r?\n/).map(row => row.trim()).filter(row => row !== "");
-
-        const now = new Date();
-        const upcomingDates = rows
-            .map(dateStr => {
-                const parts = dateStr.split('-');
-                if (parts.length !== 3) return null;
-                return new Date(parts[0], parts[1] - 1, parts[2], 9, 0, 0);
-            })
-            .filter(d => d !== null && d > now)
-            .sort((a, b) => a - b);
-
-        if (upcomingDates.length > 0) {
-            const targetDate = upcomingDates[0];
-            const container = document.getElementById('countdown-container');
-            if (container) container.classList.remove('hidden');
-
-            const label = document.getElementById('next-date-label');
-            if (label) label.innerText = "Scheduled for: " + targetDate.toDateString();
-
-            updateTimer(targetDate);
-            setInterval(() => updateTimer(targetDate), 1000);
+                if (upcomingDates.length > 0) {
+                    const targetDate = upcomingDates[0];
+                    const container = document.getElementById('countdown-container');
+                    if (container) container.classList.remove('hidden');
+                    const label = document.getElementById('next-date-label');
+                    if (label) label.innerText = "Scheduled for: " + targetDate.toDateString();
+                    updateTimer(targetDate);
+                    setInterval(() => updateTimer(targetDate), 1000);
+                }
+            } catch (e) { console.error("Countdown error:", e); }
         }
-    } catch (e) {
-        console.error("Countdown error:", e);
-    }
-}
 
-function updateTimer(targetDate) {
-    const now = new Date();
-    const diff = targetDate - now;
+        function updateTimer(targetDate) {
+            const now = new Date();
+            const diff = targetDate - now;
+            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            document.getElementById('days').innerText = d.toString().padStart(2, '0');
+            document.getElementById('hours').innerText = h.toString().padStart(2, '0');
+            document.getElementById('minutes').innerText = m.toString().padStart(2, '0');
+        }
 
-    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        document.addEventListener('DOMContentLoaded', initCountdown);
 
-    document.getElementById('days').innerText = d.toString().padStart(2, '0');
-    document.getElementById('hours').innerText = h.toString().padStart(2, '0');
-    document.getElementById('minutes').innerText = m.toString().padStart(2, '0');
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    initCountdown();
-});
-    </script>
-    <script>
-        // Navbar toggle for mobile (home page)
+// Navbar toggle for mobile (home page)
         (function(){
             const rankingNavToggle = document.getElementById('rankingNavToggle');
             const rankingNavLinks = document.getElementById('rankingNavLinks');
+            const menuIcon = document.getElementById('menu-icon');
+            const closeIcon = document.getElementById('close-icon');
+
             if (rankingNavToggle && rankingNavLinks) {
                 rankingNavToggle.addEventListener('click', () => {
-                    rankingNavLinks.classList.toggle('hidden');
-                    const expanded = rankingNavLinks.classList.contains('hidden') ? 'false' : 'true';
-                    rankingNavToggle.setAttribute('aria-expanded', expanded);
+                    const isHidden = rankingNavLinks.classList.contains('hidden');
+                    
+                    if (isHidden) {
+                        // Open Menu
+                        rankingNavLinks.classList.remove('hidden');
+                        rankingNavLinks.classList.add('flex', 'animate-[fadeIn_0.2s_ease-in-out]');
+                        
+                        // Swap Icons
+                        menuIcon.classList.add('hidden');
+                        closeIcon.classList.remove('hidden');
+                        
+                        // Update ARIA for screen readers
+                        rankingNavToggle.setAttribute('aria-expanded', 'true');
+                    } else {
+                        // Close Menu
+                        rankingNavLinks.classList.add('hidden');
+                        rankingNavLinks.classList.remove('flex', 'animate-[fadeIn_0.2s_ease-in-out]');
+                        
+                        // Swap Icons
+                        menuIcon.classList.remove('hidden');
+                        closeIcon.classList.add('hidden');
+                        
+                        rankingNavToggle.setAttribute('aria-expanded', 'false');
+                    }
                 });
             }
         })();
     </script>
 </body>
-
 </html>

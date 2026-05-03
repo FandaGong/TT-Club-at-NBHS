@@ -11,36 +11,71 @@
     <link rel="icon" type="image/png" href="favicon.png">
 </head>
 
-<body class="bg-white text-slate-900 font-sans min-h-screen">
+<body class="bg-red-50 text-slate-900 font-sans min-h-screen">
 
-    <header class="bg-blue-800 text-white shadow-md fade-in">
-        <nav class="max-w-6xl mx-auto flex items-center justify-between gap-4 px-4 py-4">
-            <a href="index.html" class="text-xl font-bold">NBHS TT Hub</a>
-            <button id="rankingNavToggle" type="button"
-                class="sm:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl border border-blue-600 bg-blue-700 text-white hover:bg-blue-600 transition-colors duration-200"
-                aria-label="Toggle navigation" aria-controls="rankingNavLinks" aria-expanded="false">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16" />
-                </svg>
-            </button>
-            <div id="rankingNavLinks"
-                class="hidden w-full flex-col gap-3 pt-4 sm:flex sm:w-auto sm:flex-row sm:items-center sm:pt-0">
-                <a href="player-ranking.html" class="block nav-link-hover px-2 py-1"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v18"/><path d="M17 3v18"/><path d="M7 7h10"/><path d="M7 11h10"/><path d="M7 15h10"/></svg>Rankings</a>
-                <a href="player-matchup-ladder.html" class="block nav-link-hover px-2 py-1"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3M3 11h18M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>Matchups</a>
-                <a href="club-analytics.html" class="block nav-link-hover px-2 py-1"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3v18h18M8 7v10M12 11v6M16 5v12"/></svg>Analytics</a>
-                <a href="past-records.html" class="block nav-link-hover px-2 py-1"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4"/><path d="M12 12l3 2"/></svg>Past Records</a>
-                <a href="absence-report.html" class="block nav-link-hover px-2 py-1"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h8M8 11h8M8 15h5"/><rect x="4" y="3" width="16" height="18" rx="2" ry="2"/></svg>Absence</a>
-                <a href="rules.html" class="block nav-link-hover px-2 py-1"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>Rules</a>
-                <a href="admin.html" class="block nav-link-hover px-2 py-1 bg-white/20 rounded-md hover:bg-white/30"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>Admin Portal</a>
-            </div>
-        </nav>
-    </header>
+<header class="bg-red-800 text-white shadow-md fade-in">
+    <nav class="max-w-6xl mx-auto flex flex-wrap items-center justify-between px-4 py-4">
+        
+        <!-- The Homepage Logo -->
+        <a href="index.html" class="text-xl font-bold transition-opacity duration-200 hover:opacity-80">NBHS TT Hub</a>
+        
+        <!-- The Hamburger Toggle Button (Hardware Accelerated to prevent shape flash) -->
+        <button id="rankingNavToggle" type="button"
+            class="sm:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl border border-red-600 bg-red-700 text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 transition-colors duration-200 overflow-hidden transform-gpu"
+            style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);"
+            aria-label="Toggle navigation" aria-controls="rankingNavLinks" aria-expanded="false">
+            
+            <!-- Hamburger Icon (Visible by default) -->
+            <svg id="menu-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+            
+            <!-- Close 'X' Icon (Hidden by default) -->
+            <svg id="close-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+
+        <!-- Nav Links inside Hamburger Menu -->
+        <div id="rankingNavLinks" class="hidden w-full flex-col gap-1 mt-4 pt-4 border-t border-red-700/50 sm:flex sm:w-auto sm:flex-row sm:items-center sm:gap-2 sm:mt-0 sm:pt-0 sm:border-0">
+            
+            <!-- Link Fix: Added bg-transparent, transform-gpu, and translateZ(0) to every button -->
+            <a href="player-ranking.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">
+                <svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v18"/><path d="M17 3v18"/><path d="M7 7h10"/><path d="M7 11h10"/><path d="M7 15h10"/></svg>Rankings
+            </a>
+            
+            <a href="player-matchup-ladder.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">
+                <svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3M3 11h18M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>Matchups
+            </a>
+            
+            <a href="club-analytics.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">
+                <svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3v18h18M8 7v10M12 11v6M16 5v12"/></svg>Analytics
+            </a>
+            
+            <a href="past-records.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">
+                <svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4"/><path d="M12 12l3 2"/></svg>Past Records
+            </a>
+            
+            <a href="absence-report.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">
+                <svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h8M8 11h8M8 15h5"/><rect x="4" y="3" width="16" height="18" rx="2" ry="2"/></svg>Absence
+            </a>
+            
+            <a href="rules.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">
+                <svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>Rules
+            </a>
+            
+            <a href="admin.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-white/10 hover:bg-white/20 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">
+                <svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>Admin Portal
+            </a>
+        </div>
+    </nav>
+</header>
+
 
     <main class="max-w-4xl mx-auto p-6">
         <section class="space-y-8">
             <div class="text-center py-10 fade-up">
-                <h1 class="text-4xl font-extrabold text-blue-900">Table Tennis Rules & Regulations</h1>
+                <h1 class="text-4xl font-extrabold text-red-900">Table Tennis Rules & Regulations</h1>
                 <p class="text-slate-600 mt-2">Essential rules for official club play and casual spars.</p>
             </div>
 
@@ -123,13 +158,41 @@ Try not to lose any balls."></textarea>
         // Navbar Toggle Logic
         const rankingNavToggle = document.getElementById('rankingNavToggle');
         const rankingNavLinks = document.getElementById('rankingNavLinks');
-        if (rankingNavToggle && rankingNavLinks) {
-            rankingNavToggle.addEventListener('click', () => {
-                rankingNavLinks.classList.toggle('hidden');
-                const expanded = rankingNavLinks.classList.contains('hidden') ? 'false' : 'true';
-                rankingNavToggle.setAttribute('aria-expanded', expanded);
-            });
-        }
+        (function(){
+            const rankingNavToggle = document.getElementById('rankingNavToggle');
+            const rankingNavLinks = document.getElementById('rankingNavLinks');
+            const menuIcon = document.getElementById('menu-icon');
+            const closeIcon = document.getElementById('close-icon');
+
+            if (rankingNavToggle && rankingNavLinks) {
+                rankingNavToggle.addEventListener('click', () => {
+                    const isHidden = rankingNavLinks.classList.contains('hidden');
+                    
+                    if (isHidden) {
+                        // Open Menu
+                        rankingNavLinks.classList.remove('hidden');
+                        rankingNavLinks.classList.add('flex', 'animate-[fadeIn_0.2s_ease-in-out]');
+                        
+                        // Swap Icons
+                        menuIcon.classList.add('hidden');
+                        closeIcon.classList.remove('hidden');
+                        
+                        // Update ARIA for screen readers
+                        rankingNavToggle.setAttribute('aria-expanded', 'true');
+                    } else {
+                        // Close Menu
+                        rankingNavLinks.classList.add('hidden');
+                        rankingNavLinks.classList.remove('flex', 'animate-[fadeIn_0.2s_ease-in-out]');
+                        
+                        // Swap Icons
+                        menuIcon.classList.remove('hidden');
+                        closeIcon.classList.add('hidden');
+                        
+                        rankingNavToggle.setAttribute('aria-expanded', 'false');
+                    }
+                });
+            }
+        })();
 
         // Custom Rules Logic
         const form = document.getElementById('add-rule-form');
@@ -356,7 +419,7 @@ Try not to lose any balls."></textarea>
                     const h = section.heading;
                     html += `<div>`;
                     html += `<div class="flex items-center justify-between">`;
-                    html += `<h2 class="text-2xl font-extrabold text-blue-900">${escapeHTML(h.outlineNumber)}. ${escapeHTML(h.title)}</h2>`;
+                    html += `<h2 class="text-2xl font-extrabold text-red-900">${escapeHTML(h.outlineNumber)}. ${escapeHTML(h.title)}</h2>`;
                     if (isAdmin) {
                         html += `<div class="flex gap-2">`;
                         html += `<button onclick="editRule(${h.id})" class="text-blue-400 hover:text-blue-600" title="Edit"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg></button>`;

@@ -157,43 +157,6 @@ header nav a svg, header nav svg {
 
 }
 
-/* --- THE BACKGROUND FIXES (OUTSIDE THE BRACKETS) --- */
-
-/* 1. Global Body Background Fix */
-body, .bg-slate-50 { 
-    background-color: var(--color-body-bg) !important; 
-}
-
-/* 2. Primary Header Background */
-.bg-blue-800 { 
-    --tw-bg-opacity: 1 !important;
-    background-color: var(--color-primary) !important; 
-}
-
-/* 3. Secondary/Mobile Nav Background */
-.bg-blue-900 { 
-    --tw-bg-opacity: 1 !important;
-    background-color: var(--color-secondary) !important; 
-}
-
-/* 4. Accent/Search Button Background */
-.bg-blue-600 { 
-    --tw-bg-opacity: 1 !important;
-    background-color: var(--color-accent) !important; 
-}
-
-/* 5. Handling the Nav Toggle Transparency */
-.bg-blue-900\/20 {
-    background-color: var(--color-secondary) !important;
-    opacity: 0.2 !important;
-}
-
-/* 6. Fix for the Search Result Box background */
-.bg-blue-50 {
-    background-color: var(--color-body-bg) !important;
-    border-color: var(--color-primary) !important;
-}
-
 /* PNG visual helper: remove white background appearance by blending
      Note: this is a visual workaround. For perfect transparency, supply an actual transparent PNG. */
 .png-transparent {
@@ -222,7 +185,15 @@ body, .bg-slate-50 {
   padding-top: 1rem;
   padding-bottom: 1rem;
 }
-    color: var(--color-accent) !important; 
+
+/* --- THE NAV HOVER GLITCH FIX --- */
+.nav-link-hover {
+    border-radius: var(--radius-md) !important; /* Locks the shape to match other buttons */
+    transition: background-color 0.2s ease !important; /* STRICTLY animates color, never the shape */
+}
+
+.nav-link-hover:hover {
+    background-color: rgba(255, 255, 255, 0.2) !important;
 }
 
 /* Fix for the hover state on the search result names */

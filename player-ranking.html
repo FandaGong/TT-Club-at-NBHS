@@ -5,40 +5,76 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Player Rankings - NBHS Table Tennis</title>
+    <script src="tailwind-theme.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="animations.css">
     <link rel="icon" type="image/png" href="favicon.png">
 </head>
 
-<body class="bg-white text-slate-900 font-sans min-h-screen">
+<body class="bg-red-50 text-slate-900 font-sans min-h-screen">
 
-    <header class="bg-blue-800 text-white shadow-md">
-        <nav class="max-w-6xl mx-auto flex items-center justify-between gap-4 px-4 py-4">
-            <a href="index.html" class="text-xl font-bold">NBHS TT Hub</a>
-            <button id="rankingNavToggle" type="button"
-                class="sm:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl border border-blue-600 bg-blue-700 text-white hover:bg-blue-600 transition-colors duration-200"
-                aria-label="Toggle navigation" aria-controls="rankingNavLinks" aria-expanded="false">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16" />
-                </svg>
-            </button>
-            <div id="rankingNavLinks"
-                class="hidden w-full flex-col gap-3 pt-4 sm:flex sm:w-auto sm:flex-row sm:items-center sm:pt-0">
-                <a href="player-ranking.html" class="block nav-link-hover px-2 py-1"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v18"/><path d="M17 3v18"/><path d="M7 7h10"/><path d="M7 11h10"/><path d="M7 15h10"/></svg>Rankings</a>
-                <a href="player-matchup-ladder.html" class="block nav-link-hover px-2 py-1"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3M3 11h18M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>Matchups</a>
-                <a href="club-analytics.html" class="block nav-link-hover px-2 py-1"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3v18h18M8 7v10M12 11v6M16 5v12"/></svg>Analytics</a>
-                <a href="past-records.html" class="block nav-link-hover px-2 py-1"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4"/><path d="M12 12l3 2"/></svg>Past Records</a>
-                <a href="absence-report.html" class="block nav-link-hover px-2 py-1"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h8M8 11h8M8 15h5"/><rect x="4" y="3" width="16" height="18" rx="2" ry="2"/></svg>Absence</a>
-                <a href="rules.html" class="block nav-link-hover px-2 py-1"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>Rules</a>
-                <a href="admin.html" class="block nav-link-hover px-2 py-1 bg-white/20 rounded-md hover:bg-white/30"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>Admin Portal</a>
-            </div>
-        </nav>
-    </header>
+<header class="bg-red-800 text-white shadow-md fade-in">
+    <nav class="max-w-6xl mx-auto flex flex-wrap items-center justify-between px-4 py-4">
+        
+        <!-- The Homepage Logo -->
+        <a href="index.html" class="text-xl font-bold transition-opacity duration-200 hover:opacity-80">NBHS TT Hub</a>
+        
+        <!-- The Hamburger Toggle Button (Hardware Accelerated to prevent shape flash) -->
+        <button id="rankingNavToggle" type="button"
+            class="sm:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl border border-red-600 bg-red-700 text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 transition-colors duration-200 overflow-hidden transform-gpu"
+            style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);"
+            aria-label="Toggle navigation" aria-controls="rankingNavLinks" aria-expanded="false">
+            
+            <!-- Hamburger Icon (Visible by default) -->
+            <svg id="menu-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+            
+            <!-- Close 'X' Icon (Hidden by default) -->
+            <svg id="close-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+
+        <!-- Nav Links inside Hamburger Menu -->
+        <div id="rankingNavLinks" class="hidden w-full flex-col gap-1 mt-4 pt-4 border-t border-red-700/50 sm:flex sm:w-auto sm:flex-row sm:items-center sm:gap-2 sm:mt-0 sm:pt-0 sm:border-0">
+            
+            <!-- Link Fix: Added bg-transparent, transform-gpu, and translateZ(0) to every button -->
+            <a href="player-ranking.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">
+                <svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v18"/><path d="M17 3v18"/><path d="M7 7h10"/><path d="M7 11h10"/><path d="M7 15h10"/></svg>Rankings
+            </a>
+            
+            <a href="player-matchup-ladder.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">
+                <svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3M3 11h18M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>Matchups
+            </a>
+            
+            <a href="club-analytics.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">
+                <svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3v18h18M8 7v10M12 11v6M16 5v12"/></svg>Analytics
+            </a>
+            
+            <a href="past-records.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">
+                <svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4"/><path d="M12 12l3 2"/></svg>Past Records
+            </a>
+            
+            <a href="absence-report.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">
+                <svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h8M8 11h8M8 15h5"/><rect x="4" y="3" width="16" height="18" rx="2" ry="2"/></svg>Absence
+            </a>
+            
+            <a href="rules.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">
+                <svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>Rules
+            </a>
+            
+            <a href="admin.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-white/10 hover:bg-white/20 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">
+                <svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>Admin Portal
+            </a>
+        </div>
+    </nav>
+</header>
+
 
     <div class="max-w-4xl mx-auto p-6">
-        <h1 class="text-3xl font-bold text-blue-900 mb-6">Official Club Rankings</h1>
+        <h1 class="text-3xl font-bold text-red-900 mb-6">Official Club Rankings</h1>
 
         <div class="bg-white rounded-2xl shadow-md overflow-x-auto">
             <table class="w-full min-w-max text-left">
@@ -60,103 +96,131 @@
         </div>
     </div>
 
-    <script>
-        // Use the CSV output link for your Players tab
-        const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_UHoHNgToKV4yCuB_M56029JuMrOYWN-VkyxDiWkwXHJI1hhRnon_GMnvgvmQeHmL4F0gxkVz7IMP/pub?gid=2082256240&single=true&output=csv";
+<script>
+    // Use the CSV output link for your Players tab
+    const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_UHoHNgToKV4yCuB_M56029JuMrOYWN-VkyxDiWkwXHJI1hhRnon_GMnvgvmQeHmL4F0gxkVz7IMP/pub?gid=2082256240&single=true&output=csv";
 
-        async function loadRankings() {
-            try {
-                function parseCsv(text) {
-                    const rows = [];
-                    let row = [];
-                    let field = '';
-                    let inQuotes = false;
+    async function loadRankings() {
+        try {
+            function parseCsv(text) {
+                const rows = [];
+                let row =[];
+                let field = '';
+                let inQuotes = false;
 
-                    for (let i = 0; i < text.length; i++) {
-                        const char = text[i];
-                        if (char === '"') {
-                            if (inQuotes && text[i + 1] === '"') {
-                                field += '"';
-                                i++;
-                            } else {
-                                inQuotes = !inQuotes;
-                            }
-                        } else if (char === ',' && !inQuotes) {
-                            row.push(field);
-                            field = '';
-                        } else if ((char === '\n' || char === '\r') && !inQuotes) {
-                            if (char === '\r' && text[i + 1] === '\n') i++;
-                            row.push(field);
-                            field = '';
-                            rows.push(row);
-                            row = [];
+                for (let i = 0; i < text.length; i++) {
+                    const char = text[i];
+                    if (char === '"') {
+                        if (inQuotes && text[i + 1] === '"') {
+                            field += '"';
+                            i++;
                         } else {
-                            field += char;
+                            inQuotes = !inQuotes;
                         }
-                    }
-
-                    if (field !== '' || row.length > 0) {
+                    } else if (char === ',' && !inQuotes) {
                         row.push(field);
+                        field = '';
+                    } else if ((char === '\n' || char === '\r') && !inQuotes) {
+                        if (char === '\r' && text[i + 1] === '\n') i++;
+                        row.push(field);
+                        field = '';
                         rows.push(row);
+                        row =[];
+                    } else {
+                        field += char;
                     }
-
-                    return rows;
                 }
 
-                const response = await fetch(SHEET_URL);
-                const data = await response.text();
+                if (field !== '' || row.length > 0) {
+                    row.push(field);
+                    rows.push(row);
+                }
 
-                const rows = parseCsv(data).filter(r => r.length > 0);
-                const playerRows = rows.slice(1); // Skip header row
-
-                const players = playerRows.map(cols => {
-                    const rawElo = cols[1]?.replace(/"/g, '').replace(/,/g, '').trim();
-
-                    return {
-                        name: cols[0]?.replace(/"/g, '').trim() || "Unknown",
-                        elo: parseInt(rawElo) || 0, // Now "1,338" becomes 1338
-                        wins: parseInt(cols[2]?.trim()) || 0,
-                        losses: parseInt(cols[3]?.trim()) || 0
-                    };
-                });
-
-                // Sort High to Low by Elo
-                players.sort((a, b) => b.elo - a.elo);
-
-                const table = document.getElementById('ladder-table');
-                table.innerHTML = players.map((p, i) => `
-    <tr class="border-b hover:bg-slate-50 transition-colors">
-        <td class="p-4 text-slate-400 font-bold">#${i + 1}</td>
-        <td class="p-4 font-semibold text-slate-800">
-            <a href="player-analysis.html?name=${encodeURIComponent(p.name)}" class="text-red-600 hover:underline">
-                ${p.name}
-            </a>
-        </td>
-        <td class="p-4 text-center text-green-600 font-bold">${p.wins}</td>
-        <td class="p-4 text-center text-red-500 font-bold">${p.losses}</td>
-        <td class="p-4 text-right font-mono font-bold text-blue-600">${p.elo}</td>
-    </tr>
-`).join('');
-
-            } catch (err) {
-                console.error("Fetch error:", err);
-                document.getElementById('ladder-table').innerHTML = `<tr><td colspan="5" class="p-10 text-center text-red-500">Error loading data. Check your internet or CSV link.</td></tr>`;
+                return rows;
             }
+
+            const response = await fetch(SHEET_URL);
+            const data = await response.text();
+
+            const rows = parseCsv(data).filter(r => r.length > 0);
+            const playerRows = rows.slice(1); // Skip header row
+
+            const players = playerRows.map(cols => {
+                const rawElo = cols[1]?.replace(/"/g, '').replace(/,/g, '').trim();
+
+                return {
+                    name: cols[0]?.replace(/"/g, '').trim() || "Unknown",
+                    elo: parseInt(rawElo) || 0, // Now "1,338" becomes 1338
+                    wins: parseInt(cols[2]?.trim()) || 0,
+                    losses: parseInt(cols[3]?.trim()) || 0
+                };
+            });
+
+            // Sort High to Low by Elo
+            players.sort((a, b) => b.elo - a.elo);
+
+            const table = document.getElementById('ladder-table');
+            // Fixed the text-blue-600 to text-red-600 here for your new theme!
+            table.innerHTML = players.map((p, i) => `
+                <tr class="border-b hover:bg-slate-50 transition-colors">
+                    <td class="p-4 text-slate-400 font-bold">#${i + 1}</td>
+                    <td class="p-4 font-semibold text-slate-800">
+                        <a href="player-analysis.html?name=${encodeURIComponent(p.name)}" class="text-red-600 hover:underline">
+                            ${p.name}
+                        </a>
+                    </td>
+                    <td class="p-4 text-center text-green-600 font-bold">${p.wins}</td>
+                    <td class="p-4 text-center text-red-500 font-bold">${p.losses}</td>
+                    <td class="p-4 text-right font-mono font-bold text-red-600">${p.elo}</td>
+                </tr>
+            `).join('');
+
+        } catch (err) {
+            console.error("Fetch error:", err);
+            document.getElementById('ladder-table').innerHTML = `<tr><td colspan="5" class="p-10 text-center text-red-500">Error loading data. Check your internet or CSV link.</td></tr>`;
         }
+    }
 
-        // Call the function
-        loadRankings();
+    // Call the data fetching function
+    loadRankings();
 
+    // The single, correct Hamburger Menu Script
+    (function(){
         const rankingNavToggle = document.getElementById('rankingNavToggle');
         const rankingNavLinks = document.getElementById('rankingNavLinks');
+        const menuIcon = document.getElementById('menu-icon');
+        const closeIcon = document.getElementById('close-icon');
+
         if (rankingNavToggle && rankingNavLinks) {
             rankingNavToggle.addEventListener('click', () => {
-                rankingNavLinks.classList.toggle('hidden');
-                const expanded = rankingNavLinks.classList.contains('hidden') ? 'false' : 'true';
-                rankingNavToggle.setAttribute('aria-expanded', expanded);
+                const isHidden = rankingNavLinks.classList.contains('hidden');
+                
+                if (isHidden) {
+                    // Open Menu
+                    rankingNavLinks.classList.remove('hidden');
+                    rankingNavLinks.classList.add('flex', 'animate-[fadeIn_0.2s_ease-in-out]');
+                    
+                    // Swap Icons
+                    menuIcon.classList.add('hidden');
+                    closeIcon.classList.remove('hidden');
+                    
+                    // Update ARIA for screen readers
+                    rankingNavToggle.setAttribute('aria-expanded', 'true');
+                } else {
+                    // Close Menu
+                    rankingNavLinks.classList.add('hidden');
+                    rankingNavLinks.classList.remove('flex', 'animate-[fadeIn_0.2s_ease-in-out]');
+                    
+                    // Swap Icons
+                    menuIcon.classList.remove('hidden');
+                    closeIcon.classList.add('hidden');
+                    
+                    rankingNavToggle.setAttribute('aria-expanded', 'false');
+                }
             });
         }
-    </script>
+    })();
+</script>
 </body>
 
 </html>
