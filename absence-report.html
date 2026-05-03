@@ -9,9 +9,9 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script type="text/javascript">
-        (function() {
+        (function () {
             emailjs.init({
-              publicKey: "e5NumK8MWzpAArS95",
+                publicKey: "e5NumK8MWzpAArS95",
             });
         })();
     </script>
@@ -21,115 +21,206 @@
 </head>
 
 <!-- CHANGE 1: Added flex flex-col for sticky footer -->
+
 <body class="bg-red-50 text-slate-900 font-sans min-h-screen flex flex-col">
 
-<!-- CHANGE 2: Replaced old header with the new, consistent one -->
-<header class="bg-red-800 text-white shadow-md fade-in">
-    <nav class="max-w-6xl mx-auto flex flex-wrap items-center justify-between px-4 py-4">
-        <a href="index.html" class="text-xl font-bold transition-opacity duration-200 hover:opacity-80">NBHS TT Hub</a>
-        <button id="rankingNavToggle" type="button"
-            class="sm:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl border border-red-600 bg-red-700 text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 transition-colors duration-200 overflow-hidden transform-gpu"
-            style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);"
-            aria-label="Toggle navigation" aria-controls="rankingNavLinks" aria-expanded="false">
-            <svg id="menu-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
-            <svg id="close-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
-        </button>
-        <div id="rankingNavLinks" class="hidden w-full flex-col gap-1 mt-4 pt-4 border-t border-red-700/50 sm:flex sm:w-auto sm:flex-row sm:items-center sm:gap-2 sm:mt-0 sm:pt-0 sm:border-0">
-            <a href="player-ranking.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v18"/><path d="M17 3v18"/><path d="M7 7h10"/><path d="M7 11h10"/><path d="M7 15h10"/></svg>Rankings</a>
-            <a href="player-matchup-ladder.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3M3 11h18M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>Matchups</a>
-            <a href="club-analytics.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3v18h18M8 7v10M12 11v6M16 5v12"/></svg>Analytics</a>
-            <a href="past-records.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4"/><path d="M12 12l3 2"/></svg>Past Records</a>
-            <a href="absence-report.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h8M8 11h8M8 15h5"/><rect x="4" y="3" width="16" height="18" rx="2" ry="2"/></svg>Absence</a>
-            <a href="rules.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>Rules</a>
-            <a href="admin.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-white/10 hover:bg-white/20 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>Admin Portal</a>
-        </div>
-    </nav>
-</header>
+    <!-- CHANGE 2: Replaced old header with the new, consistent one -->
+    <header class="bg-red-800 text-white shadow-md fade-in">
+        <nav class="max-w-6xl mx-auto flex flex-wrap items-center justify-between px-4 py-4">
+            <a href="index.html" class="text-xl font-bold transition-opacity duration-200 hover:opacity-80">NBHS TT
+                Hub</a>
+            <button id="rankingNavToggle" type="button"
+                class="sm:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl border border-red-600 bg-red-700 text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 transition-colors duration-200 overflow-hidden transform-gpu"
+                style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);"
+                aria-label="Toggle navigation" aria-controls="rankingNavLinks" aria-expanded="false">
+                <svg id="menu-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transition-transform duration-300"
+                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+                <svg id="close-icon" xmlns="http://www.w3.org/2000/svg"
+                    class="h-6 w-6 hidden transition-transform duration-300" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+            <div id="rankingNavLinks"
+                class="hidden w-full flex-col gap-1 mt-4 pt-4 border-t border-red-700/50 sm:flex sm:w-auto sm:flex-row sm:items-center sm:gap-2 sm:mt-0 sm:pt-0 sm:border-0">
+                <a href="player-ranking.html"
+                    class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu"
+                    style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);"><svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M7 3v18" />
+                        <path d="M17 3v18" />
+                        <path d="M7 7h10" />
+                        <path d="M7 11h10" />
+                        <path d="M7 15h10" />
+                    </svg>Rankings</a>
+                <a href="player-matchup-ladder.html"
+                    class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu"
+                    style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);"><svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8 7V3m8 4V3M3 11h18M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>Matchups</a>
+                <a href="club-analytics.html"
+                    class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu"
+                    style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);"><svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 3v18h18M8 7v10M12 11v6M16 5v12" />
+                    </svg>Analytics</a>
+                <a href="past-records.html"
+                    class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu"
+                    style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);"><svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        aria-hidden="true">
+                        <circle cx="12" cy="12" r="8" />
+                        <path d="M12 8v4" />
+                        <path d="M12 12l3 2" />
+                    </svg>Past Records</a>
+                <a href="absence-report.html"
+                    class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu"
+                    style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);"><svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8 7h8M8 11h8M8 15h5" />
+                        <rect x="4" y="3" width="16" height="18" rx="2" ry="2" />
+                    </svg>Absence</a>
+                <a href="rules.html"
+                    class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu"
+                    style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);"><svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>Rules</a>
+                <a href="admin.html"
+                    class="block rounded-lg px-3 py-3 sm:py-2 bg-white/10 hover:bg-white/20 transition-colors duration-200 overflow-hidden transform-gpu"
+                    style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);"><svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>Admin Portal</a>
+            </div>
+        </nav>
+    </header>
 
-<!-- CHANGE 3: Added flex-grow -->
-<main class="max-w-4xl mx-auto p-6 flex-grow">
-    <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 fade-up-d1 card-hover">
-        <h1 class="text-3xl font-bold text-red-900 mb-2">Club Absence Report</h1>
-        <p class="text-sm text-slate-600 mb-6">If you did not show up to club, submit your details so the team can review your note. You can also submit your absence in response. Just make sure to label which day (dd/mm/yy).</p>
+    <!-- CHANGE 3: Added flex-grow -->
+    <main class="max-w-4xl mx-auto p-6 flex-grow">
+        <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 fade-up-d1 card-hover">
+            <h1 class="text-3xl font-bold text-red-900 mb-2">Club Absence Report</h1>
+            <p class="text-sm text-slate-600 mb-6">If you did not show up to club, submit your details so the team can
+                review your note. You can also submit your absence in response. Just make sure to label which day
+                (dd/mm/yy).</p>
 
-        <form id="absenceForm" class="grid grid-cols-1 gap-3">
-            <input id="absenceName" type="text" placeholder="Your name" required class="p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500">
-            <input id="absenceEmail" type="email" placeholder="Your email" required class="p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500">
-            <textarea id="absenceReason" rows="5" placeholder="Reason for absence" required class="p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500"></textarea>
-            <button type="submit" class="bg-red-600 text-white px-5 py-3 rounded-xl font-bold hover:bg-red-700 transition-colors">Submit Absence</button>
-            <p id="absenceSubmitStatus" class="hidden text-sm font-medium"></p>
-        </form>
-        <div class="mt-8 border-t border-slate-200 pt-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <p class="text-sm font-medium text-slate-500">Only club admins can view submitted reports.</p>
-            
-            <div class="flex items-center gap-2">
-                <!-- CHANGE 4: Themed the admin button to red -->
-                <button id="adminShowReportsBtn" type="button" class="hidden text-sm font-bold bg-red-600 text-white px-4 py-2 rounded-xl hover:bg-red-700 transition-colors shadow-sm" onclick="document.getElementById('adminReportsModal').classList.remove('hidden')">View Reports</button>
+            <form id="absenceForm" class="grid grid-cols-1 gap-3">
+                <input id="absenceName" type="text" placeholder="Your name" required
+                    class="p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500">
+                <input id="absenceEmail" type="email" placeholder="Your email" required
+                    class="p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500">
+                <textarea id="absenceReason" rows="5" placeholder="Reason for absence" required
+                    class="p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500"></textarea>
+                <button type="submit"
+                    class="bg-red-600 text-white px-5 py-3 rounded-xl font-bold hover:bg-red-700 transition-colors">Submit
+                    Absence</button>
+                <p id="absenceSubmitStatus" class="hidden text-sm font-medium"></p>
+            </form>
+            <div
+                class="mt-8 border-t border-slate-200 pt-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <p class="text-sm font-medium text-slate-500">Only club admins can view submitted reports.</p>
+
+                <div class="flex items-center gap-2">
+                    <!-- CHANGE 4: Themed the admin button to red -->
+                    <button id="adminShowReportsBtn" type="button"
+                        class="hidden text-sm font-bold bg-red-600 text-white px-4 py-2 rounded-xl hover:bg-red-700 transition-colors shadow-sm"
+                        onclick="document.getElementById('adminReportsModal').classList.remove('hidden')">View
+                        Reports</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Admin Reports Modal (Overlay) - Unchanged -->
+    <div id="adminReportsModal"
+        class="hidden fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+        <div
+            class="bg-slate-50 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[85vh] flex flex-col overflow-hidden border border-slate-200/60">
+            <div class="flex items-center justify-between p-5 border-b border-slate-200 bg-white">
+                <h2 class="text-xl font-bold text-slate-800">Absence Reports Management</h2>
+                <button type="button" onclick="document.getElementById('adminReportsModal').classList.add('hidden')"
+                    class="text-slate-400 hover:text-slate-700 transition-colors p-1 bg-slate-100 hover:bg-slate-200 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div id="adminReportsList" class="p-6 overflow-y-auto flex-1 space-y-4 text-sm text-slate-700">
+                <p>No reports submitted yet.</p>
             </div>
         </div>
-    </section>
-</main>
-
-<!-- Admin Reports Modal (Overlay) - Unchanged -->
-<div id="adminReportsModal" class="hidden fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-slate-50 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[85vh] flex flex-col overflow-hidden border border-slate-200/60">
-        <div class="flex items-center justify-between p-5 border-b border-slate-200 bg-white">
-            <h2 class="text-xl font-bold text-slate-800">Absence Reports Management</h2>
-            <button type="button" onclick="document.getElementById('adminReportsModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-700 transition-colors p-1 bg-slate-100 hover:bg-slate-200 rounded-lg">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
-            </button>
-        </div>
-        <div id="adminReportsList" class="p-6 overflow-y-auto flex-1 space-y-4 text-sm text-slate-700">
-            <p>No reports submitted yet.</p>
-        </div>
     </div>
-</div>
 
-<!-- CHANGE 5: Added mt-auto to push footer down -->
-<footer class="bg-slate-800 text-slate-400 mt-auto">
-    <div class="max-w-6xl mx-auto flex items-center justify-between p-4 text-sm">
-        <p>&copy; <span id="current-year">2024</span> NBHS Table Tennis Hub. All Rights Reserved.</p>
-        <a href="#" class="hover:text-white transition-colors">Back to Top &uarr;</a>
-    </div>
-</footer>
+    <!-- CHANGE 5: Added mt-auto to push footer down -->
+    <footer class="bg-slate-800 text-slate-400 mt-auto">
+        <div class="max-w-6xl mx-auto flex items-center justify-between p-4 text-sm">
+            <p>&copy; <span id="current-year">2024</span> NBHS Table Tennis Hub. All Rights Reserved.</p>
+            <a href="#" class="hover:text-white transition-colors">Back to Top &uarr;</a>
+        </div>
+    </footer>
 
-<script>
-    // ... Supabase and EmailJS setup is unchanged ...
-    const SUPABASE_URL = "https://ngnkbfazhdedaqvxcphw.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbmtiZmF6aGRlZGFxdnhjcGh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTE5NDksImV4cCI6MjA5MzI4Nzk0OX0.F_S6ORkFe-SuJPybs7FEFH94E6U2hZ5ern4vrg4kMOk";
-    const ABSENCE_TABLE = "absence_reports";
-    const supabaseClient = window.supabase?.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    
-    // ... All other JavaScript functions (isSupabaseConfigured, setStatus, deleteReport, etc.) are perfect and unchanged ...
-    function isSupabaseConfigured(){return Boolean(supabaseClient)&&"YOUR_SUPABASE_URL"!==SUPABASE_URL&&"YOUR_SUPABASE_ANON_KEY"!==SUPABASE_ANON_KEY}function setStatus(t,e,s){t&&(t.textContent=e,t.className=`mt-2 text-sm font-medium ${s}`,t.classList.remove("hidden"))}function hideStatus(t){t&&t.classList.add("hidden")}function escapeHtml(t){return String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;")}async function deleteReport(t,e){if(!confirm(`Are you sure you want to permanently delete the absence report for ${e}?`))return;const{error:s}=await supabaseClient.from(ABSENCE_TABLE).delete().eq("id",t);if(s)return void alert("Failed to delete report: "+s.message);refreshAdminPanel()}async function updateReportStatus(t,e,s,a){if(!confirm(`Are you sure you want to mark ${s}'s report as ${e.toUpperCase()}?`))return;const{error:n}=await supabaseClient.from(ABSENCE_TABLE).update({status:e}).eq("id",t);if(n)return void alert("Failed to update status: "+n.message);const o="accepted"===e?"APPROVED":"DECLINED";try{const i="accepted"===e?"template_1g3bzms":"template_cll4zbl";await emailjs.send("service_r3qup2c",i,{user_name:s,user_email:a,status_word:o}),alert("Status updated and email sent to "+a+"!")}catch(r){console.error("Failed to send email:",r),alert("Status updated, but failed to send email. Check console.")}refreshAdminPanel()}function renderAdminReports(t){const e=document.getElementById("adminReportsList");if(!e)return;if(!t.length)return void(e.innerHTML="<p>No reports submitted yet.</p>");e.innerHTML=t.map(s=>{const a=new Date(s.created_at).toLocaleString(),n=escapeHtml(s.name),o=escapeHtml(s.email),i=escapeHtml(s.reason),r=s.status||"pending";let l="bg-white border-slate-200",c="bg-yellow-500 text-slate-900 border border-yellow-600",d="text-slate-800",p="text-slate-500";"accepted"===r?(c="bg-green-600 text-white shadow-sm shadow-green-200",l="bg-green-50 border-green-300",d="text-green-900",p="text-green-700"):"rejected"===r&&(c="bg-red-600 text-white shadow-sm shadow-red-200",l="bg-red-50 border-red-300",d="text-red-900",p="text-red-700");let m="";"accepted"===r?m='<svg xmlns="http://www.w3.org/2000/svg" class="inline w-3.5 h-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>':"rejected"===r?m='<svg xmlns="http://www.w3.org/2000/svg" class="inline w-3.5 h-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>':m='<svg xmlns="http://www.w3.org/2000/svg" class="inline w-3.5 h-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>';let u="";return"pending"===r&&(u=`\n                            <div class="mt-3 flex gap-2">\n                                <button onclick="updateReportStatus('${s.id}', 'accepted', '${n.replace(/'/g,"\\'")}', '${o.replace(/'/g,"\\'")}')" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded text-sm font-semibold transition-colors shadow-sm">Accept</button>\n                                <button onclick="updateReportStatus('${s.id}', 'rejected', '${n.replace(/'/g,"\\'")}', '${o.replace(/'/g,"\\'")}')" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded text-sm font-semibold transition-colors shadow-sm">Decline</button>\n                            </div>\n                        `),`\n                        <div class="border rounded-lg p-4 relative transition-colors ${l}">\n                            <div class="absolute top-4 right-4">\n                                <span class="inline-flex items-center px-2 py-1 rounded text-xs font-bold uppercase ${c}">${m}${r}</span>\n                            </div>\n                            <p class="pr-20 ${d}"><span class="font-bold">Name:</span> ${n}</p>\n                            <p class="${d}"><span class="font-bold">Email:</span> <a href="mailto:${o}" class="text-blue-600 hover:underline">${o}</a></p>\n                            <p class="mt-2 ${d}"><span class="font-bold">Reason:</span> ${i}</p>\n                            <p class="text-xs mt-3 ${p}">Submitted: ${a}</p>\n                            ${u}\n                            <button onclick="deleteReport('${s.id}', '${n.replace(/'/g,"\\'")}')" class="absolute bottom-4 right-4 text-xs font-semibold text-slate-400 hover:text-red-600 transition-colors">Delete</button>\n                        </div>\n                    `}).join("")}function updateAdminPanelVisibility(t){const e=Boolean(t),s=document.getElementById("adminShowReportsBtn");e?s&&s.classList.remove("hidden"):(s&&s.classList.add("hidden"),document.getElementById("adminReportsModal")?.classList.add("hidden"))}async function loadAdminReports(){if(!isSupabaseConfigured())return[];const{data:t,error:e}=await supabaseClient.from(ABSENCE_TABLE).select("id, name, email, reason, created_at, status").order("created_at",{ascending:!1});if(e)throw e;return t||[]}async function submitAbsenceReport(t,e,s){if(!isSupabaseConfigured())throw new Error("Supabase is not configured yet.");const{error:a}=await supabaseClient.from(ABSENCE_TABLE).insert([{name:t,email:e,reason:s}]);if(a)throw a}async function refreshAdminPanel(){const t=document.getElementById("adminLoginStatus");try{const e=await loadAdminReports();renderAdminReports(e)}catch(s){console.error("Failed to load admin reports:",s),setStatus(t,"Could not load reports: "+s.message,"text-red-600")}}document.addEventListener("DOMContentLoaded",()=>{const t=document.getElementById("absenceForm"),e=document.getElementById("absenceSubmitStatus"),s=document.getElementById("rankingNavToggle"),a=document.getElementById("rankingNavLinks");isSupabaseConfigured()||setStatus(e,"Add your Supabase URL and anon key in this file before using the form.","text-amber-600"),t&&e&&t.addEventListener("submit",t=>{t.preventDefault();const s=document.getElementById("absenceName")?.value.trim()||"",a=document.getElementById("absenceEmail")?.value.trim()||"",n=document.getElementById("absenceReason")?.value.trim()||"";s&&a&&n?submitAbsenceReport(s,a,n).then(()=>{t.target.reset(),setStatus(e,"Absence submitted successfully.","text-green-600")}).catch(t=>{console.error("Failed to submit absence report:",t),setStatus(e,"Could not submit report. Check Supabase setup.","text-red-600")}):setStatus(e,"Please fill in all fields.","text-red-600")}),isSupabaseConfigured()&&(supabaseClient.auth.getSession().then(({data:t})=>{updateAdminPanelVisibility(t.session),t.session&&refreshAdminPanel()}),supabaseClient.auth.onAuthStateChange((t,e)=>{updateAdminPanelVisibility(e),e&&refreshAdminPanel()})),updateAdminPanelVisibility(null)});
+    <script>
+        // ... Supabase and EmailJS setup is unchanged ...
+        const SUPABASE_URL = "https://ngnkbfazhdedaqvxcphw.supabase.co";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbmtiZmF6aGRlZGFxdnhjcGh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTE5NDksImV4cCI6MjA5MzI4Nzk0OX0.F_S6ORkFe-SuJPybs7FEFH94E6U2hZ5ern4vrg4kMOk";
+        const ABSENCE_TABLE = "absence_reports";
+        const supabaseClient = window.supabase?.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Navbar toggle for mobile (shared with other pages)
-    (function(){
-        const rankingNavToggle = document.getElementById('rankingNavToggle');
-        const rankingNavLinks = document.getElementById('rankingNavLinks');
-        const menuIcon = document.getElementById('menu-icon');
-        const closeIcon = document.getElementById('close-icon');
+        // ... All other JavaScript functions (isSupabaseConfigured, setStatus, deleteReport, etc.) are perfect and unchanged ...
+        function isSupabaseConfigured() { return Boolean(supabaseClient) && "YOUR_SUPABASE_URL" !== SUPABASE_URL && "YOUR_SUPABASE_ANON_KEY" !== SUPABASE_ANON_KEY } function setStatus(t, e, s) { t && (t.textContent = e, t.className = `mt-2 text-sm font-medium ${s}`, t.classList.remove("hidden")) } function hideStatus(t) { t && t.classList.add("hidden") } function escapeHtml(t) { return String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;") } async function deleteReport(t, e) { if (!confirm(`Are you sure you want to permanently delete the absence report for ${e}?`)) return; const { error: s } = await supabaseClient.from(ABSENCE_TABLE).delete().eq("id", t); if (s) return void alert("Failed to delete report: " + s.message); refreshAdminPanel() } async function updateReportStatus(t, e, s, a) { if (!confirm(`Are you sure you want to mark ${s}'s report as ${e.toUpperCase()}?`)) return; const { error: n } = await supabaseClient.from(ABSENCE_TABLE).update({ status: e }).eq("id", t); if (n) return void alert("Failed to update status: " + n.message); const o = "accepted" === e ? "APPROVED" : "DECLINED"; try { const i = "accepted" === e ? "template_1g3bzms" : "template_cll4zbl"; await emailjs.send("service_r3qup2c", i, { user_name: s, user_email: a, status_word: o }), alert("Status updated and email sent to " + a + "!") } catch (r) { console.error("Failed to send email:", r), alert("Status updated, but failed to send email. Check console.") } refreshAdminPanel() } function renderAdminReports(t) { const e = document.getElementById("adminReportsList"); if (!e) return; if (!t.length) return void (e.innerHTML = "<p>No reports submitted yet.</p>"); e.innerHTML = t.map(s => { const a = new Date(s.created_at).toLocaleString(), n = escapeHtml(s.name), o = escapeHtml(s.email), i = escapeHtml(s.reason), r = s.status || "pending"; let l = "bg-white border-slate-200", c = "bg-yellow-500 text-slate-900 border border-yellow-600", d = "text-slate-800", p = "text-slate-500"; "accepted" === r ? (c = "bg-green-600 text-white shadow-sm shadow-green-200", l = "bg-green-50 border-green-300", d = "text-green-900", p = "text-green-700") : "rejected" === r && (c = "bg-red-600 text-white shadow-sm shadow-red-200", l = "bg-red-50 border-red-300", d = "text-red-900", p = "text-red-700"); let m = ""; "accepted" === r ? m = '<svg xmlns="http://www.w3.org/2000/svg" class="inline w-3.5 h-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>' : "rejected" === r ? m = '<svg xmlns="http://www.w3.org/2000/svg" class="inline w-3.5 h-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>' : m = '<svg xmlns="http://www.w3.org/2000/svg" class="inline w-3.5 h-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>'; let u = ""; return "pending" === r && (u = `\n                            <div class="mt-3 flex gap-2">\n                                <button onclick="updateReportStatus('${s.id}', 'accepted', '${n.replace(/'/g, "\\'")}', '${o.replace(/'/g, "\\'")}')" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded text-sm font-semibold transition-colors shadow-sm">Accept</button>\n                                <button onclick="updateReportStatus('${s.id}', 'rejected', '${n.replace(/'/g, "\\'")}', '${o.replace(/'/g, "\\'")}')" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded text-sm font-semibold transition-colors shadow-sm">Decline</button>\n                            </div>\n                        `), `\n                        <div class="border rounded-lg p-4 relative transition-colors ${l}">\n                            <div class="absolute top-4 right-4">\n                                <span class="inline-flex items-center px-2 py-1 rounded text-xs font-bold uppercase ${c}">${m}${r}</span>\n                            </div>\n                            <p class="pr-20 ${d}"><span class="font-bold">Name:</span> ${n}</p>\n                            <p class="${d}"><span class="font-bold">Email:</span> <a href="mailto:${o}" class="text-blue-600 hover:underline">${o}</a></p>\n                            <p class="mt-2 ${d}"><span class="font-bold">Reason:</span> ${i}</p>\n                            <p class="text-xs mt-3 ${p}">Submitted: ${a}</p>\n                            ${u}\n                            <button onclick="deleteReport('${s.id}', '${n.replace(/'/g, "\\'")}')" class="absolute bottom-4 right-4 text-xs font-semibold text-slate-400 hover:text-red-600 transition-colors">Delete</button>\n                        </div>\n                    ` }).join("") } function updateAdminPanelVisibility(t) { const e = Boolean(t), s = document.getElementById("adminShowReportsBtn"); e ? s && s.classList.remove("hidden") : (s && s.classList.add("hidden"), document.getElementById("adminReportsModal")?.classList.add("hidden")) } async function loadAdminReports() { if (!isSupabaseConfigured()) return []; const { data: t, error: e } = await supabaseClient.from(ABSENCE_TABLE).select("id, name, email, reason, created_at, status").order("created_at", { ascending: !1 }); if (e) throw e; return t || [] } async function submitAbsenceReport(t, e, s) { if (!isSupabaseConfigured()) throw new Error("Supabase is not configured yet."); const { error: a } = await supabaseClient.from(ABSENCE_TABLE).insert([{ name: t, email: e, reason: s }]); if (a) throw a } async function refreshAdminPanel() { const t = document.getElementById("adminLoginStatus"); try { const e = await loadAdminReports(); renderAdminReports(e) } catch (s) { console.error("Failed to load admin reports:", s), setStatus(t, "Could not load reports: " + s.message, "text-red-600") } } document.addEventListener("DOMContentLoaded", () => { const t = document.getElementById("absenceForm"), e = document.getElementById("absenceSubmitStatus"), s = document.getElementById("rankingNavToggle"), a = document.getElementById("rankingNavLinks"); isSupabaseConfigured() || setStatus(e, "Add your Supabase URL and anon key in this file before using the form.", "text-amber-600"), t && e && t.addEventListener("submit", t => { t.preventDefault(); const s = document.getElementById("absenceName")?.value.trim() || "", a = document.getElementById("absenceEmail")?.value.trim() || "", n = document.getElementById("absenceReason")?.value.trim() || ""; s && a && n ? submitAbsenceReport(s, a, n).then(() => { t.target.reset(), setStatus(e, "Absence submitted successfully.", "text-green-600") }).catch(t => { console.error("Failed to submit absence report:", t), setStatus(e, "Could not submit report. Check Supabase setup.", "text-red-600") }) : setStatus(e, "Please fill in all fields.", "text-red-600") }), isSupabaseConfigured() && (supabaseClient.auth.getSession().then(({ data: t }) => { updateAdminPanelVisibility(t.session), t.session && refreshAdminPanel() }), supabaseClient.auth.onAuthStateChange((t, e) => { updateAdminPanelVisibility(e), e && refreshAdminPanel() })), updateAdminPanelVisibility(null) });
 
-        if (rankingNavToggle && rankingNavLinks) {
-            rankingNavToggle.addEventListener('click', () => {
-                const isHidden = rankingNavLinks.classList.contains('hidden');
-                if (isHidden) {
-                    rankingNavLinks.classList.remove('hidden'); rankingNavLinks.classList.add('flex', 'animate-[fadeIn_0.2s_ease-in-out]'); menuIcon.classList.add('hidden'); closeIcon.classList.remove('hidden'); rankingNavToggle.setAttribute('aria-expanded', 'true');
-                } else {
-                    rankingNavLinks.classList.add('hidden'); rankingNavLinks.classList.remove('flex', 'animate-[fadeIn_0.2s_ease-in-out]'); menuIcon.classList.remove('hidden'); closeIcon.classList.add('hidden'); rankingNavToggle.setAttribute('aria-expanded', 'false');
-                }
-            });
-        }
-    })();
-    
-    // Update footer year (shared with other pages)
-    (function () {
-        const yearEl = document.getElementById('current-year');
-        if (yearEl) {
-            yearEl.textContent = new Date().getFullYear();
-        }
-    })();
-</script>
+        // Navbar toggle for mobile (shared with other pages)
+        (function () {
+            const rankingNavToggle = document.getElementById('rankingNavToggle');
+            const rankingNavLinks = document.getElementById('rankingNavLinks');
+            const menuIcon = document.getElementById('menu-icon');
+            const closeIcon = document.getElementById('close-icon');
+
+            if (rankingNavToggle && rankingNavLinks) {
+                rankingNavToggle.addEventListener('click', () => {
+                    const isHidden = rankingNavLinks.classList.contains('hidden');
+                    if (isHidden) {
+                        rankingNavLinks.classList.remove('hidden'); rankingNavLinks.classList.add('flex', 'animate-[fadeIn_0.2s_ease-in-out]'); menuIcon.classList.add('hidden'); closeIcon.classList.remove('hidden'); rankingNavToggle.setAttribute('aria-expanded', 'true');
+                    } else {
+                        rankingNavLinks.classList.add('hidden'); rankingNavLinks.classList.remove('flex', 'animate-[fadeIn_0.2s_ease-in-out]'); menuIcon.classList.remove('hidden'); closeIcon.classList.add('hidden'); rankingNavToggle.setAttribute('aria-expanded', 'false');
+                    }
+                });
+            }
+        })();
+
+        // Update footer year (shared with other pages)
+        (function () {
+            const yearEl = document.getElementById('current-year');
+            if (yearEl) {
+                yearEl.textContent = new Date().getFullYear();
+            }
+        })();
+    </script>
 
 </body>
+
 </html>
