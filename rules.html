@@ -141,8 +141,11 @@ Try not to lose any balls."></textarea>
         </section>
     </main>
 
-    <footer class="mt-12 py-8 text-center text-slate-500 border-t border-slate-200">
-        <p>&copy; 2026 NBHS Table Tennis Club.</p>
+    <footer class="bg-slate-800 text-slate-400 mt-16">
+        <div class="max-w-6xl mx-auto flex items-center justify-between p-4 text-sm">
+            <p>&copy; <span id="current-year">2024</span> NBHS Table Tennis Hub. All Rights Reserved.</p>
+            <a href="#" class="hover:text-white transition-colors">Back to Top &uarr;</a>
+        </div>
     </footer>
 
     <!-- Supabase CDN -->
@@ -591,6 +594,12 @@ Try not to lose any balls."></textarea>
 
 
         loadRules();
+                (function () {
+            const yearEl = document.getElementById('current-year');
+            if (yearEl) {
+                yearEl.textContent = new Date().getFullYear();
+            }
+        })();
     </script>
 </body>
 </html>

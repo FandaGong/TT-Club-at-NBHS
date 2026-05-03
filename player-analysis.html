@@ -117,7 +117,12 @@
             </table>
         </div>
     </main>
-
+    <footer class="bg-slate-800 text-slate-400 mt-16">
+        <div class="max-w-6xl mx-auto flex items-center justify-between p-4 text-sm">
+            <p>&copy; <span id="current-year">2024</span> NBHS Table Tennis Hub. All Rights Reserved.</p>
+            <a href="#" class="hover:text-white transition-colors">Back to Top &uarr;</a>
+        </div>
+    </footer>
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const playerName = urlParams.get('name');
@@ -338,6 +343,12 @@
                         rankingNavToggle.setAttribute('aria-expanded', 'false');
                     }
                 });
+            }
+        })();
+                (function () {
+            const yearEl = document.getElementById('current-year');
+            if (yearEl) {
+                yearEl.textContent = new Date().getFullYear();
             }
         })();
 </script>
