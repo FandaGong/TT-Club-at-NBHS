@@ -24,8 +24,7 @@
 
     <header class="bg-red-800 text-white shadow-md fade-in">
         <nav class="max-w-6xl mx-auto flex flex-wrap items-center justify-between px-4 py-4">
-            <a href="index.html" class="text-xl font-bold transition-opacity duration-200 hover:opacity-80">NBHS TT
-                Hub</a>
+            <a href="index.html" class="text-xl font-bold transition-opacity duration-200 hover:opacity-80 shrink-0">NBHS TT Hub</a>
             <button id="rankingNavToggle" type="button"
                 class="sm:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl border border-red-600 bg-red-700 text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 transition-colors duration-200 overflow-hidden transform-gpu"
                 style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);"
@@ -48,7 +47,7 @@
                 <a href="past-records.html" class="block nav-link-hover px-2 py-1"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4"/><path d="M12 12l3 2"/></svg>Past Records</a>
                 <a href="absence-report.html" class="block nav-link-hover px-2 py-1"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h8M8 11h8M8 15h5"/><rect x="4" y="3" width="16" height="18" rx="2" ry="2"/></svg>Absence</a>
                 <a href="rules.html" class="block nav-link-hover px-2 py-1"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>Rules</a>
-                <a href="admin.html" class="block nav-link-hover px-2 py-1 bg-white/20 rounded-md hover:bg-white/30"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>Login</a>
+                <a id="navLoginLink" href="admin.html" class="block nav-link-hover px-2 py-1 bg-white/20 rounded-md hover:bg-white/30"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg><span id="navLoginLinkText">Login</span></a>
             </div>
         </nav>
     </header>
@@ -215,6 +214,63 @@
             }
         })();
     </script>
+
+<script>
+(function() {
+    if (window.__nbhsNavLoginTextInit__) return;
+    window.__nbhsNavLoginTextInit__ = true;
+
+    const defaultLabel = 'Login';
+    const profileLabel = 'Profile';
+    const adminLabel = 'Admin Portal';
+    const adminAllowlist = ['nbhsttclub@gmail.com'];
+    const supabaseUrl = 'https://ngnkbfazhdedaqvxcphw.supabase.co';
+    const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbmtiZmF6aGRlZGFxdnhjcGh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTE5NDksImV4cCI6MjA5MzI4Nzk0OX0.F_S6ORkFe-SuJPybs7FEFH94E6U2hZ5ern4vrg4kMOk';
+
+    const loginLink = document.getElementById('navLoginLink');
+    if (!loginLink) return;
+    let loginText = document.getElementById('navLoginLinkText');
+    if (!loginText) {
+        loginText = document.createElement('span');
+        loginText.id = 'navLoginLinkText';
+        loginText.textContent = defaultLabel;
+        loginLink.appendChild(loginText);
+    }
+
+    function setLabel(label) {
+        loginText.textContent = label;
+    }
+
+    function updateLabel(session) {
+        const email = session?.user?.email?.toLowerCase();
+        if (!email) {
+            setLabel(defaultLabel);
+            return;
+        }
+        setLabel(adminAllowlist.includes(email) ? adminLabel : profileLabel);
+    }
+
+    function initializeSupabase() {
+        if (!window.supabase) {
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+            script.onload = initializeSupabase;
+            document.head.appendChild(script);
+            return;
+        }
+
+        const client = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+        client.auth.getSession().then(({ data }) => updateLabel(data?.session)).catch(() => setLabel(defaultLabel));
+        client.auth.onAuthStateChange((_event, session) => updateLabel(session));
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeSupabase);
+    } else {
+        initializeSupabase();
+    }
+})();
+</script>
 
 </body>
 
