@@ -117,14 +117,30 @@
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbmtiZmF6aGRlZGFxdnhjcGh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTE5NDksImV4cCI6MjA5MzI4Nzk0OX0.F_S6ORkFe-SuJPybs7FEFH94E6U2hZ5ern4vrg4kMOk";
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         const ADMIN_ALLOWLIST = ['nbhsttclub@gmail.com'];
+        const ACCOUNT_REQUESTS_TABLE = 'account_requests_v2';
 
         const container = document.getElementById('custom-rules-container');
         let customRules = [];
         let isAdmin = false;
         let editingRuleId = null;
 
-        function isAdminEmail(email) {
-            return typeof email === 'string' && ADMIN_ALLOWLIST.includes(email.toLowerCase());
+        async function resolveAccountRole(email) {
+            if (ADMIN_ALLOWLIST.includes(email.toLowerCase())) {
+                return 'admin';
+            }
+            const { data, error } = await _supabase
+                .from(ACCOUNT_REQUESTS_TABLE)
+                .select('role, status')
+                .ilike('email', email)
+                .order('created_at', { ascending: false })
+                .limit(1);
+            if (error) return 'standard';
+            const request = data && data[0];
+            if (!request) return 'standard';
+            if ((request.status || '').toLowerCase() === 'approved') {
+                return (request.role || 'standard').toLowerCase();
+            }
+            return 'standard';
         }
 
         // Reveal logic
@@ -240,16 +256,23 @@
             location.reload();
         };
 
-        // Shared Logic
-        _supabase.auth.onAuthStateChange((_event, session) => {
-            isAdmin = isAdminEmail(session?.user?.email);
+        // Shared Logic — now uses resolveAccountRole instead of isAdminEmail
+        async function updateAdminState(session) {
+            if (session?.user?.email) {
+                const role = await resolveAccountRole(session.user.email);
+                isAdmin = role === 'admin';
+            } else {
+                isAdmin = false;
+            }
             document.getElementById('admin-form-container').classList.toggle('hidden', !isAdmin);
             renderRules();
+        }
+
+        _supabase.auth.onAuthStateChange((_event, session) => {
+            updateAdminState(session);
         });
         _supabase.auth.getSession().then(({ data }) => {
-            isAdmin = isAdminEmail(data?.session?.user?.email);
-            document.getElementById('admin-form-container').classList.toggle('hidden', !isAdmin);
-            renderRules();
+            updateAdminState(data?.session);
         });
         (function(){const t=document.getElementById("rankingNavToggle"),e=document.getElementById("rankingNavLinks"),n=document.getElementById("menu-icon"),o=document.getElementById("close-icon");if(t&&e)t.addEventListener("click",()=>{const s=e.classList.contains("hidden");s?(e.classList.remove("hidden"),e.classList.add("flex","animate-[fadeIn_0.2s_ease-in-out]"),n.classList.add("hidden"),o.classList.remove("hidden")):(e.classList.add("hidden"),n.classList.remove("hidden"),o.classList.add("hidden"))})})();
         (function(){const y=document.getElementById('current-year'); if(y) y.textContent=new Date().getFullYear();})();
