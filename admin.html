@@ -68,7 +68,7 @@
                 </div>
 
                 <div id="dialogPanelAdminLogin" class="space-y-4">
-                    <p class="text-sm text-slate-600">Admin login is reserved for the club admin account.</p>
+                    <p class="text-sm text-slate-600">Log in with any approved admin account.</p>
                     <form id="adminLoginForm" class="space-y-4" action="javascript:void(0);" onsubmit="handleDialogLogin(event, 'admin')">
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1">Email</label>
@@ -399,16 +399,9 @@
             const passwordInput = document.getElementById(isAdminLogin ? 'adminPassword' : 'standardPassword');
             const statusNode = document.getElementById(isAdminLogin ? 'adminLoginStatus' : 'standardLoginStatus');
 
-            if (isAdminLogin && emailInput.value.trim().toLowerCase() !== ADMIN_ALLOWLIST[0]) {
-                statusNode.classList.remove('hidden');
-                statusNode.textContent = 'This admin login is reserved for the club admin account.';
-                statusNode.className = 'mt-2 text-sm font-medium text-red-600 text-center block';
-                return;
-            }
-
             statusNode.classList.remove('hidden');
             statusNode.textContent = 'Logging in...';
-            statusNode.className = 'mt-2 text-sm font-medium text-red-600 text-center block';
+            statusNode.className = 'mt-2 text-sm font-medium text-blue-600 text-center block';
 
             try {
                 const { data, error } = await _supabase.auth.signInWithPassword({
