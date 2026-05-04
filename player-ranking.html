@@ -66,7 +66,7 @@
             </a>
             
             <a href="admin.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-white/10 hover:bg-white/20 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">
-                <svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>Admin Portal
+                <svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>Login
             </a>
         </div>
     </nav>
@@ -96,33 +96,27 @@
         </div>
     </div>
 
-<<<<<<< HEAD
 <script>
     // Use the CSV output link for your Players tab
     const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_UHoHNgToKV4yCuB_M56029JuMrOYWN-VkyxDiWkwXHJI1hhRnon_GMnvgvmQeHmL4F0gxkVz7IMP/pub?gid=2082256240&single=true&output=csv";
-=======
-    <script>
-        // Use the CSV output link for your Players tab
-        const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_UHoHNgToKV4yCuB_M56029JuMrOYWN-VkyxDiWkwXHJI1hhRnon_GMnvgvmQeHmL4F0gxkVz7IMP/pub?gid=2082256240&single=true&output=csv";
-        const PLAYER_TAGS = {
-            'jonathan zhao': ['Website Feature Dev', 'Club Runner'],
-            'damon yuan': ['Club Runner'],
-            'fanda gong': ['Club Runner', 'Main Owner'],
-            'mr siu': ['Teacher Supervisor']
-        };
+    const PLAYER_TAGS = {
+        'jonathan zhao': ['Website Feature Dev', 'Club Runner'],
+        'damon yuan': ['Club Runner'],
+        'fanda gong': ['Club Runner', 'Main Owner'],
+        'mr siu': ['Teacher Supervisor']
+    };
 
-        function getPlayerTags(name) {
-            return PLAYER_TAGS[(name || '').trim().toLowerCase()] || [];
-        }
+    function getPlayerTags(name) {
+        return PLAYER_TAGS[(name || '').trim().toLowerCase()] || [];
+    }
 
-        function renderPlayerTags(name) {
-            return getPlayerTags(name).map(tag => `
-                <span class="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-blue-700">
-                    ${tag}
-                </span>
-            `).join('');
-        }
->>>>>>> origin/old-main
+    function renderPlayerTags(name) {
+        return getPlayerTags(name).map(tag => `
+            <span class="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-blue-700">
+                ${tag}
+            </span>
+        `).join('');
+    }
 
     async function loadRankings() {
         try {
@@ -160,48 +154,7 @@
                     rows.push(row);
                 }
 
-<<<<<<< HEAD
                 return rows;
-=======
-                const rows = parseCsv(data).filter(r => r.length > 0);
-                const playerRows = rows.slice(1); // Skip header row
-
-                const players = playerRows.map(cols => {
-                    const rawElo = cols[1]?.replace(/"/g, '').replace(/,/g, '').trim();
-
-                    return {
-                        name: cols[0]?.replace(/"/g, '').trim() || "Unknown",
-                        elo: parseInt(rawElo) || 0, // Now "1,338" becomes 1338
-                        wins: parseInt(cols[2]?.trim()) || 0,
-                        losses: parseInt(cols[3]?.trim()) || 0
-                    };
-                });
-
-                // Sort High to Low by Elo
-                players.sort((a, b) => b.elo - a.elo);
-
-                const table = document.getElementById('ladder-table');
-                table.innerHTML = players.map((p, i) => `
-    <tr class="border-b hover:bg-slate-50 transition-colors">
-        <td class="p-4 text-slate-400 font-bold">#${i + 1}</td>
-        <td class="p-4 font-semibold text-slate-800">
-            <div class="flex flex-wrap items-center gap-2">
-                <a href="player-analysis.html?name=${encodeURIComponent(p.name)}" class="text-red-600 hover:underline">
-                    ${p.name}
-                </a>
-                ${renderPlayerTags(p.name)}
-            </div>
-        </td>
-        <td class="p-4 text-center text-green-600 font-bold">${p.wins}</td>
-        <td class="p-4 text-center text-red-500 font-bold">${p.losses}</td>
-        <td class="p-4 text-right font-mono font-bold text-blue-600">${p.elo}</td>
-    </tr>
-`).join('');
-
-            } catch (err) {
-                console.error("Fetch error:", err);
-                document.getElementById('ladder-table').innerHTML = `<tr><td colspan="5" class="p-10 text-center text-red-500">Error loading data. Check your internet or CSV link.</td></tr>`;
->>>>>>> origin/old-main
             }
 
             const response = await fetch(SHEET_URL);
@@ -225,14 +178,16 @@
             players.sort((a, b) => b.elo - a.elo);
 
             const table = document.getElementById('ladder-table');
-            // Fixed the text-blue-600 to text-red-600 here for your new theme!
             table.innerHTML = players.map((p, i) => `
                 <tr class="border-b hover:bg-slate-50 transition-colors">
                     <td class="p-4 text-slate-400 font-bold">#${i + 1}</td>
                     <td class="p-4 font-semibold text-slate-800">
-                        <a href="player-analysis.html?name=${encodeURIComponent(p.name)}" class="text-red-600 hover:underline">
-                            ${p.name}
-                        </a>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <a href="player-analysis.html?name=${encodeURIComponent(p.name)}" class="text-red-600 hover:underline">
+                                ${p.name}
+                            </a>
+                            ${renderPlayerTags(p.name)}
+                        </div>
                     </td>
                     <td class="p-4 text-center text-green-600 font-bold">${p.wins}</td>
                     <td class="p-4 text-center text-red-500 font-bold">${p.losses}</td>

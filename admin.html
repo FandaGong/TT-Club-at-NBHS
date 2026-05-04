@@ -17,6 +17,9 @@
     <header class="bg-red-800 text-white shadow-md fade-in">
         <nav class="max-w-6xl mx-auto flex items-center justify-between gap-4 px-4 py-4">
             <a href="index.html" class="text-xl font-bold">NBHS TT Hub</a>
+            <div id="authBadge" class="hidden items-center justify-center rounded-full w-8 h-8 text-xs font-semibold text-white bg-red-600">
+                <span id="authBadgeText">A</span>
+            </div>
             <button id="rankingNavToggle" type="button"
                 class="sm:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl border border-blue-600 bg-blue-700 text-white hover:bg-blue-600 transition-colors duration-200"
                 aria-label="Toggle navigation" aria-controls="rankingNavLinks" aria-expanded="false">
@@ -33,7 +36,7 @@
                 <a href="past-records.html" class="block nav-link-hover px-2 py-1"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4"/><path d="M12 12l3 2"/></svg>Past Records</a>
                 <a href="absence-report.html" class="block nav-link-hover px-2 py-1"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h8M8 11h8M8 15h5"/><rect x="4" y="3" width="16" height="18" rx="2" ry="2"/></svg>Absence</a>
                 <a href="rules.html" class="block nav-link-hover px-2 py-1"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>Rules</a>
-                <a href="admin.html" class="block nav-link-hover px-2 py-1 bg-white/20 rounded-md hover:bg-white/30"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>Admin Portal</a>
+                <button id="navLoginBtn" type="button" class="block nav-link-hover px-2 py-1 bg-white/20 rounded-md hover:bg-white/30 text-left cursor-pointer"><svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg><span id="navLoginBtnText">Login</span></button>
             </div>
         </nav>
     </header>
@@ -41,35 +44,93 @@
     <main class="max-w-4xl mx-auto p-6">
         <section class="space-y-8">
             <div class="text-center py-10 fade-up">
-                <h1 class="text-4xl font-extrabold text-red-900">Admin Portal</h1>
-                <p class="text-slate-600 mt-2">Manage club data, absence reports, and rules.</p>
+                <h1 id="pageTitle" class="text-4xl font-extrabold text-red-900">Login</h1>
+                <p id="pageSubtitle" class="text-slate-600 mt-2">Manage club data, absence reports, and rules.</p>
             </div>
 
             <!-- Login Container -->
-            <div id="loginContainer" class="bg-white rounded-2xl shadow-sm border border-slate-100 p-8 max-w-sm mx-auto fade-up-d1">
-                <h2 class="text-xl font-bold text-slate-800 mb-6 text-center">Admin Login</h2>
-                <form id="adminLoginForm" class="space-y-4" action="javascript:void(0);" onsubmit="handleAdminLogin(event)">
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Email</label>
-                        <input id="adminEmail" type="email" placeholder="admin@nbhs.com" class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 text-sm">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Password</label>
-                        <input id="adminPassword" type="password" placeholder="••••••••" class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 text-sm">
-                    </div>
-                    <button type="submit" class="w-full bg-red-800 text-white px-4 py-3 rounded-xl font-bold hover:bg-red-900 transition-colors">Log In</button>
-                    <p id="adminLoginStatus" class="hidden text-sm font-medium text-center"></p>
-                </form>
+            <div id="loginContainer" class="bg-white rounded-2xl shadow-sm border border-slate-100 p-8 max-w-2xl mx-auto fade-up-d1">
+                <div class="text-center mb-6">
+                    <h2 id="authPanelTitle" class="text-xl font-bold text-slate-800">Admin Login</h2>
+                    <p id="authPanelSubtitle" class="mt-2 text-sm text-slate-500">Admin access is login-only. Standard user login and account creation are available here.</p>
+                </div>
+
+                <div class="mb-5 grid grid-cols-1 sm:grid-cols-3 gap-2 rounded-2xl bg-slate-100 p-2">
+                    <button id="dialogTabAdminLogin" type="button" data-tab="admin-login" class="rounded-xl bg-white px-4 py-3 text-sm font-semibold text-red-800 shadow-sm transition-colors">Admin Login</button>
+                    <button id="dialogTabStandardLogin" type="button" data-tab="standard-login" class="rounded-xl px-4 py-3 text-sm font-semibold text-slate-600 transition-colors hover:text-slate-900">Standard User Login</button>
+                    <button id="dialogTabCreateAccount" type="button" data-tab="create-account" class="rounded-xl px-4 py-3 text-sm font-semibold text-slate-600 transition-colors hover:text-slate-900">Account Creation</button>
+                </div>
+
+                <div id="dialogPanelAdminLogin" class="space-y-4">
+                    <p class="text-sm text-slate-600">Admin login is reserved for the club admin account.</p>
+                    <form id="adminLoginForm" class="space-y-4" action="javascript:void(0);" onsubmit="handleDialogLogin(event, 'admin')">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Email</label>
+                            <input id="adminEmail" type="email" placeholder="Admin email" class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Password</label>
+                            <input id="adminPassword" type="password" placeholder="••••••••" class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                        </div>
+                        <button type="submit" class="w-full bg-red-800 text-white px-4 py-3 rounded-xl font-bold hover:bg-red-900 transition-colors">Admin Login</button>
+                        <p id="adminLoginStatus" class="hidden text-sm font-medium text-center"></p>
+                    </form>
+                </div>
+
+                <div id="dialogPanelStandardLogin" class="hidden space-y-4">
+                    <p class="text-sm text-slate-600">Use this tab for approved standard user accounts.</p>
+                    <form id="standardLoginForm" class="space-y-4" action="javascript:void(0);" onsubmit="handleDialogLogin(event, 'standard')">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Email</label>
+                            <input id="standardEmail" type="email" placeholder="you@example.com" class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Password</label>
+                            <input id="standardPassword" type="password" placeholder="••••••••" class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+                        </div>
+                        <button type="submit" class="w-full bg-slate-900 text-white px-4 py-3 rounded-xl font-bold hover:bg-slate-800 transition-colors">Standard User Login</button>
+                        <p id="standardLoginStatus" class="hidden text-sm font-medium text-center"></p>
+                    </form>
+                </div>
+
+                <div id="dialogPanelCreateAccount" class="hidden space-y-4">
+                    <p class="text-sm text-slate-600">Account creation must be independently verified by an admin user before it will be approved.</p>
+                    <form id="accountRequestForm" class="grid grid-cols-1 gap-3">
+                        <input id="requestEmail" type="email" placeholder="Email to approve" required class="p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500">
+                        <input id="requestPassword" type="password" placeholder="Create a password" required class="p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500">
+                        <input id="requestConfirmPassword" type="password" placeholder="Confirm password" required class="p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500">
+                        <button type="submit" class="bg-red-600 text-white px-5 py-3 rounded-xl font-bold hover:bg-red-700 transition-colors">Submit Request</button>
+                        <p id="accountRequestStatus" class="hidden text-sm font-medium"></p>
+                    </form>
+                </div>
             </div>
 
             <!-- Dashboard Container -->
             <div id="dashboardContainer" class="hidden space-y-6 fade-up-d1">
-                <div class="flex justify-between items-center bg-slate-50 p-4 rounded-xl border border-slate-200">
-                    <span class="text-slate-700 font-semibold" id="adminUserEmail">Logged in as: ...</span>
+                <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <div class="space-y-1">
+                        <span class="text-slate-700 font-semibold" id="adminUserEmail">Logged in as: ...</span>
+                        <p id="dashboardAccessNote" class="text-sm text-slate-500">Loading account type...</p>
+                    </div>
                     <button id="adminLogoutBtn" type="button" class="text-sm font-bold text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 px-4 py-2 rounded-lg transition-colors border border-red-100">Log Out</button>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div id="standardUserNotice" class="hidden bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                    <h3 class="font-bold text-lg text-slate-800">Standard User</h3>
+                    <p class="text-slate-600 text-sm mt-1">You are signed in with standard user access. Admin tools are hidden.</p>
+                </div>
+
+                <div id="adminToolsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-start gap-4">
+                        <div class="bg-purple-100 text-purple-700 p-3 rounded-xl">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg text-slate-800">Account Requests</h3>
+                            <p class="text-slate-600 text-sm mt-1">Review and approve pending account requests.</p>
+                        </div>
+                        <button id="openAccountRequestsModalBtn" type="button" class="mt-auto text-blue-600 font-semibold hover:text-red-800 text-sm flex items-center gap-1 cursor-pointer">Review Requests &rarr;</button>
+                    </div>
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-start gap-4">
                         <div class="bg-red-100 text-red-700 p-3 rounded-xl">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
@@ -93,14 +154,73 @@
                     </div>
                 </div>
             </div>
-            
+
         </section>
     </main>
+
+    <!-- Account Requests Modal — direct child of body so it overlays everything including header -->
+    <div id="accountRequestsModal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+        <div class="bg-white rounded-2xl shadow-lg max-w-2xl w-full max-h-96 overflow-auto">
+            <div class="sticky top-0 bg-white border-b border-slate-200 p-4 flex items-center justify-between">
+                <h3 class="font-bold text-lg text-slate-800">Account Requests</h3>
+                <button id="closeAccountRequestsModalBtn" type="button" class="text-slate-500 hover:text-slate-700 text-2xl leading-none">&times;</button>
+            </div>
+            <div id="accountRequestsModalList" class="p-4 space-y-3">
+                <p class="text-slate-500">Loading requests...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Modal — direct child of body so it overlays everything including header -->
+    <div id="profileModal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+        <div class="bg-white rounded-2xl shadow-lg max-w-md w-full">
+            <div class="bg-red-800 text-white border-b border-red-700 p-4 flex items-center justify-between">
+                <h3 class="font-bold text-lg">Profile</h3>
+                <button id="closeProfileModalBtn" type="button" class="text-white hover:text-red-100 text-2xl leading-none">&times;</button>
+            </div>
+            <div class="p-6 space-y-4">
+                <div>
+                    <p class="text-sm text-slate-600 mb-1">Email</p>
+                    <p id="profileEmail" class="font-semibold text-slate-800">—</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-2">Change Password</label>
+                    <input id="newPasswordInput" type="password" placeholder="New password" class="w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-red-500 mb-2">
+                    <input id="confirmPasswordInput" type="password" placeholder="Confirm password" class="w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-red-500">
+                </div>
+                <button id="changePasswordBtn" type="button" class="w-full bg-red-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-700 transition-colors">Update Password</button>
+                <p id="passwordStatus" class="hidden text-sm font-medium text-center"></p>
+                <button id="profileLogoutBtn" type="button" class="w-full bg-slate-200 text-slate-800 px-4 py-2 rounded-lg font-semibold hover:bg-slate-300 transition-colors">Log Out</button>
+            </div>
+        </div>
+    </div>
 
     <script>
         const SUPABASE_URL = "https://ngnkbfazhdedaqvxcphw.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbmtiZmF6aGRlZGFxdnhjcGh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTE5NDksImV4cCI6MjA5MzI4Nzk0OX0.F_S6ORkFe-SuJPybs7FEFH94E6U2hZ5ern4vrg4kMOk";
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const ACCOUNT_REQUESTS_TABLE = 'account_requests_v2';
+        const ADMIN_ALLOWLIST = ['nbhsttclub@gmail.com'];
+
+        let currentAccountRole = 'standard';
+        let currentAccountEmail = '';
+        let activeSessionToken = 0;
+        let activeDialogTab = 'admin-login';
+
+        function isMissingAccountRequestsTableError(error) {
+            const code = (error?.code || '').toUpperCase();
+            const message = (error?.message || '').toLowerCase();
+            if (code === '42P01' || code === 'PGRST205') {
+                return true;
+            }
+            return message.includes('relation') && message.includes('account_requests') && message.includes('does not exist');
+        }
+
+        function isAccountRequestsPermissionError(error) {
+            const code = (error?.code || '').toUpperCase();
+            const message = (error?.message || '').toLowerCase();
+            return code === '42501' || message.includes('permission denied') || message.includes('row-level security policy');
+        }
 
         // Navbar Logic
         const rankingNavToggle = document.getElementById('rankingNavToggle');
@@ -116,22 +236,159 @@
             const loginContainer = document.getElementById('loginContainer');
             const dashboardContainer = document.getElementById('dashboardContainer');
             const adminUserEmail = document.getElementById('adminUserEmail');
+            const authBadge = document.getElementById('authBadge');
+            const authBadgeText = document.getElementById('authBadgeText');
+            const dashboardAccessNote = document.getElementById('dashboardAccessNote');
+            const standardUserNotice = document.getElementById('standardUserNotice');
+            const adminToolsContainer = document.getElementById('adminToolsContainer');
+            const navLoginBtn = document.getElementById('navLoginBtn');
+            const navLoginBtnText = document.getElementById('navLoginBtnText');
+            const pageTitle = document.getElementById('pageTitle');
+            const pageSubtitle = document.getElementById('pageSubtitle');
+
+            activeSessionToken += 1;
+            const sessionToken = activeSessionToken;
 
             if (session) {
                 loginContainer.classList.add('hidden');
                 dashboardContainer.classList.remove('hidden');
                 adminUserEmail.textContent = `Logged in as: ${session.user.email}`;
+                currentAccountEmail = session.user.email;
+
+                resolveAccountRole(session.user.email).then((role) => {
+                    if (sessionToken !== activeSessionToken) return;
+
+                    currentAccountRole = role;
+                    const isAdmin = role === 'admin';
+
+                    authBadge.classList.remove('hidden');
+                    authBadge.classList.add('inline-flex');
+                    authBadgeText.textContent = isAdmin ? 'A' : 'S';
+                    authBadge.className = isAdmin
+                        ? 'inline-flex items-center justify-center rounded-full w-8 h-8 text-xs font-semibold text-white bg-red-600'
+                        : 'inline-flex items-center justify-center rounded-full w-8 h-8 text-xs font-semibold text-white bg-green-600';
+                    dashboardAccessNote.textContent = isAdmin ? 'Admin access granted.' : 'Standard user access granted.';
+                    standardUserNotice.classList.toggle('hidden', isAdmin);
+                    adminToolsContainer.classList.toggle('hidden', !isAdmin);
+                    
+                    if (isAdmin) {
+                        navLoginBtnText.textContent = 'Admin Portal';
+                    } else {
+                        navLoginBtnText.textContent = 'Profile';
+                        document.getElementById('profileEmail').textContent = session.user.email;
+                    }
+                    
+                    if (!isAdmin) {
+                        const parts = session.user.email.split('@');
+                        navLoginBtnText.innerHTML = 'Profile <span class="text-xs ml-1">(' + parts[0] + ')</span>';
+                    }
+                    
+                    pageTitle.textContent = isAdmin ? 'Admin Panel' : 'Dashboard';
+                    pageSubtitle.textContent = isAdmin ? 'Review account requests, absence reports, and manage club rules.' : 'Your account profile and settings.';
+                    
+                    attachEventListeners();
+
+                    if (isAdmin) {
+                        loadAccountRequests();
+                    }
+                }).catch((error) => {
+                    if (sessionToken !== activeSessionToken) return;
+                    console.error('Failed to resolve role:', error);
+                    dashboardAccessNote.textContent = 'Signed in, but the account role could not be loaded.';
+                    authBadge.className = 'inline-flex items-center gap-2 rounded-full border border-green-200 bg-green-50 px-3 py-1 text-xs font-semibold text-green-800';
+                    authBadgeText.textContent = 'User';
+                    authBadge.classList.remove('hidden');
+                    standardUserNotice.classList.remove('hidden');
+                    adminToolsContainer.classList.add('hidden');
+                });
             } else {
                 loginContainer.classList.remove('hidden');
                 dashboardContainer.classList.add('hidden');
+                authBadge.classList.add('hidden');
+                currentAccountRole = 'standard';
+                currentAccountEmail = '';
+                navLoginBtn.classList.add('hidden');
+                navLoginBtnText.textContent = 'Login';
+                pageTitle.textContent = 'Login';
+                pageSubtitle.textContent = 'Manage club data, absence reports, and rules.';
             }
         }
 
-        async function handleAdminLogin(event) {
+        function setDialogTab(tabName) {
+            const tabs = {
+                'admin-login': {
+                    button: document.getElementById('dialogTabAdminLogin'),
+                    panel: document.getElementById('dialogPanelAdminLogin')
+                },
+                'standard-login': {
+                    button: document.getElementById('dialogTabStandardLogin'),
+                    panel: document.getElementById('dialogPanelStandardLogin')
+                },
+                'create-account': {
+                    button: document.getElementById('dialogTabCreateAccount'),
+                    panel: document.getElementById('dialogPanelCreateAccount')
+                }
+            };
+
+            activeDialogTab = tabName;
+
+            for (const [name, item] of Object.entries(tabs)) {
+                const isActive = name === tabName;
+                item.panel.classList.toggle('hidden', !isActive);
+                item.button.classList.toggle('bg-white', isActive);
+                item.button.classList.toggle('text-red-800', isActive);
+                item.button.classList.toggle('shadow-sm', isActive);
+                item.button.classList.toggle('text-slate-600', !isActive);
+            }
+        }
+
+        async function resolveAccountRole(email) {
+            if (ADMIN_ALLOWLIST.includes(email.toLowerCase())) {
+                return 'admin';
+            }
+
+            const { data, error } = await _supabase
+                .from(ACCOUNT_REQUESTS_TABLE)
+                .select('role, status')
+                .ilike('email', email)
+                .order('created_at', { ascending: false })
+                .limit(1);
+
+            if (error) {
+                if (isMissingAccountRequestsTableError(error)) {
+                    throw new Error('Supabase table public.account_requests is missing. Create it using the README setup steps.');
+                }
+                if (isAccountRequestsPermissionError(error)) {
+                    throw new Error('Supabase account_requests policies are blocking reads. Run the README RLS policies for account_requests.');
+                }
+                throw error;
+            }
+
+            const request = data && data[0];
+            if (!request) {
+                return 'standard';
+            }
+
+            if ((request.status || '').toLowerCase() === 'approved') {
+                return (request.role || 'standard').toLowerCase();
+            }
+
+            return 'standard';
+        }
+
+        async function handleDialogLogin(event, targetRole) {
             event.preventDefault();
-            const emailInput = document.getElementById('adminEmail');
-            const passwordInput = document.getElementById('adminPassword');
-            const statusNode = document.getElementById('adminLoginStatus');
+            const isAdminLogin = targetRole === 'admin';
+            const emailInput = document.getElementById(isAdminLogin ? 'adminEmail' : 'standardEmail');
+            const passwordInput = document.getElementById(isAdminLogin ? 'adminPassword' : 'standardPassword');
+            const statusNode = document.getElementById(isAdminLogin ? 'adminLoginStatus' : 'standardLoginStatus');
+
+            if (isAdminLogin && emailInput.value.trim().toLowerCase() !== ADMIN_ALLOWLIST[0]) {
+                statusNode.classList.remove('hidden');
+                statusNode.textContent = 'This admin login is reserved for the club admin account.';
+                statusNode.className = 'mt-2 text-sm font-medium text-red-600 text-center block';
+                return;
+            }
 
             statusNode.classList.remove('hidden');
             statusNode.textContent = 'Logging in...';
@@ -144,6 +401,17 @@
                 });
 
                 if (error) throw error;
+
+                const sessionRole = await resolveAccountRole(data.user.email);
+                if (isAdminLogin && sessionRole !== 'admin') {
+                    await _supabase.auth.signOut();
+                    throw new Error('That account is not approved as an admin account.');
+                }
+
+                if (!isAdminLogin && sessionRole === 'admin') {
+                    await _supabase.auth.signOut();
+                    throw new Error('This is an admin account. Use the Admin Login tab.');
+                }
                 
                 statusNode.classList.add('hidden');
             } catch (error) {
@@ -152,13 +420,327 @@
             }
         }
 
+        async function handleAccountRequest(event) {
+            event.preventDefault();
+            const emailInput = document.getElementById('requestEmail');
+            const passwordInput = document.getElementById('requestPassword');
+            const confirmPasswordInput = document.getElementById('requestConfirmPassword');
+            const statusNode = document.getElementById('accountRequestStatus');
+
+            if (passwordInput.value !== confirmPasswordInput.value) {
+                statusNode.classList.remove('hidden');
+                statusNode.textContent = 'Passwords do not match.';
+                statusNode.className = 'mt-2 text-sm font-medium text-red-600 text-center block';
+                return;
+            }
+
+            statusNode.classList.remove('hidden');
+            statusNode.textContent = 'Checking request status...';
+            statusNode.className = 'mt-2 text-sm font-medium text-blue-600 text-center block';
+
+            try {
+                const email = emailInput.value.trim().toLowerCase();
+                const { data, error: lookupError } = await _supabase
+                    .from(ACCOUNT_REQUESTS_TABLE)
+                    .select('id, status')
+                    .ilike('email', email)
+                    .order('created_at', { ascending: false })
+                    .limit(1);
+
+                let request = data && data[0];
+                const canReadRequestTable = !lookupError;
+
+                if (lookupError && isMissingAccountRequestsTableError(lookupError)) {
+                    throw new Error('Supabase table public.account_requests is missing. Create it using the README setup steps.');
+                }
+
+                if (lookupError && !isAccountRequestsPermissionError(lookupError)) {
+                    throw lookupError;
+                }
+
+                if (lookupError && isAccountRequestsPermissionError(lookupError)) {
+                    request = null;
+                }
+
+                if (request && (request.status || '').toLowerCase() === 'approved') {
+                    statusNode.textContent = 'Request approved. Creating account...';
+                    statusNode.className = 'mt-2 text-sm font-medium text-blue-600 text-center block';
+
+                    const signUpResult = await _supabase.auth.signUp({
+                        email,
+                        password: passwordInput.value
+                    });
+
+                    if (signUpResult.error) throw signUpResult.error;
+
+                    statusNode.textContent = 'Account created successfully.';
+                    statusNode.className = 'mt-2 text-sm font-medium text-green-600 text-center block';
+                    emailInput.value = '';
+                    passwordInput.value = '';
+                    confirmPasswordInput.value = '';
+                    return;
+                }
+
+                const { error } = await _supabase
+                    .from(ACCOUNT_REQUESTS_TABLE)
+                    .insert({
+                        email,
+                        password: passwordInput.value,
+                        role: 'standard',
+                        status: 'pending'
+                    });
+
+                if (error) throw error;
+
+                statusNode.textContent = canReadRequestTable
+                    ? 'Request submitted. An admin must independently verify and approve it before the account can be created.'
+                    : 'Request submitted. Admin approval works, but account status checks are blocked until README select policy is added for account_requests.';
+                statusNode.className = 'mt-2 text-sm font-medium text-green-600 text-center block';
+                emailInput.value = '';
+                passwordInput.value = '';
+                confirmPasswordInput.value = '';
+            } catch (error) {
+                statusNode.textContent = error.message || 'Request submission failed.';
+                statusNode.className = 'mt-2 text-sm font-medium text-red-600 text-center block';
+            }
+        }
+
+        async function loadAccountRequests() {
+            const list = document.getElementById('accountRequestsModalList');
+            if (!list) return;
+
+            list.innerHTML = '<p class="text-slate-500">Loading requests...</p>';
+
+            const { data, error } = await _supabase
+                .from(ACCOUNT_REQUESTS_TABLE)
+                .select('id, email, role, status, created_at, reviewed_at, reviewed_by')
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                const setupMessage = isMissingAccountRequestsTableError(error)
+                    ? 'Supabase table public.account_requests is missing. Create it using the README setup steps.'
+                    : isAccountRequestsPermissionError(error)
+                        ? 'Supabase account_requests policies are blocking reads. Run the README RLS policies for account_requests.'
+                        : `Failed to load requests: ${error.message}`;
+                list.innerHTML = `<p class="text-red-600">${setupMessage}</p>`;
+                return;
+            }
+
+            if (!data.length) {
+                list.innerHTML = '<p class="text-slate-500">No account requests yet.</p>';
+                return;
+            }
+
+            list.innerHTML = data.map((request) => {
+                const requestedAt = new Date(request.created_at).toLocaleString();
+                const status = (request.status || 'pending').toLowerCase();
+
+                let statusChip = 'bg-yellow-100 text-yellow-800 border-yellow-200';
+                if (status === 'approved') statusChip = 'bg-green-100 text-green-800 border-green-200';
+                if (status === 'declined') statusChip = 'bg-red-100 text-red-800 border-red-200';
+
+                const actionButtons = status === 'pending' ? `
+                    <div class="flex flex-col gap-3 mt-3">
+                        <div class="flex items-center gap-2">
+                            <label class="text-sm font-medium text-slate-700">Role:</label>
+                            <select class="request-role-select p-2 border rounded-lg text-sm bg-white" data-id="${request.id}">
+                                <option value="standard" ${request.role === 'standard' ? 'selected' : ''}>Standard User</option>
+                                <option value="admin" ${request.role === 'admin' ? 'selected' : ''}>Admin</option>
+                            </select>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <button type="button" class="approve-request-btn text-sm font-semibold bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700" data-id="${request.id}" data-email="${request.email}">Approve</button>
+                            <button type="button" class="decline-request-btn text-sm font-semibold bg-red-600 text-white px-3 py-2 rounded-lg hover:bg-red-700" data-id="${request.id}" data-email="${request.email}">Decline</button>
+                        </div>
+                    </div>
+                ` : `<p class="mt-3 text-xs text-slate-500">Reviewed by ${request.reviewed_by || 'unknown'} on ${request.reviewed_at ? new Date(request.reviewed_at).toLocaleString() : 'unknown'}</p>`;
+
+                return `
+                    <div class="rounded-xl border border-slate-200 p-4 bg-slate-50">
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                            <div>
+                                <p class="font-semibold text-slate-800">${request.email}</p>
+                                <p class="text-xs text-slate-500">Requested ${requestedAt}</p>
+                            </div>
+                            <span class="inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold ${statusChip}">${status.toUpperCase()}</span>
+                        </div>
+                        ${actionButtons}
+                    </div>
+                `;
+            }).join('');
+
+            list.querySelectorAll('.request-role-select').forEach((select) => {
+                select.addEventListener('change', async (e) => {
+                    const newRole = e.target.value;
+                    const id = e.target.dataset.id;
+                    const { error } = await _supabase
+                        .from(ACCOUNT_REQUESTS_TABLE)
+                        .update({ role: newRole })
+                        .eq('id', id);
+                    if (error) {
+                        alert('Failed to update role: ' + error.message);
+                        e.target.value = e.target.getAttribute('data-previous-value');
+                    }
+                });
+            });
+
+            list.querySelectorAll('.approve-request-btn').forEach((button) => {
+                button.addEventListener('click', async () => {
+                    const roleSelect = button.parentElement.parentElement.querySelector('.request-role-select');
+                    const role = roleSelect ? roleSelect.value : 'standard';
+                    await reviewAccountRequest(button.dataset.id, 'approved', button.dataset.email, role);
+                });
+            });
+
+            list.querySelectorAll('.decline-request-btn').forEach((button) => {
+                button.addEventListener('click', async () => {
+                    await reviewAccountRequest(button.dataset.id, 'declined', button.dataset.email, 'standard');
+                });
+            });
+        }
+
+        async function reviewAccountRequest(id, status, email, role) {
+    if (!confirm(`Mark ${email} as ${status}?`)) return;
+
+    const { error } = await _supabase
+        .from(ACCOUNT_REQUESTS_TABLE)
+        .update({
+            status,
+            reviewed_at: new Date().toISOString(),
+            reviewed_by: currentAccountEmail,
+            role: status === 'approved' ? role : role
+        })
+        .eq('id', id);
+
+    if (error) {
+        alert('Failed to review request: ' + error.message);
+        return;
+    }
+
+    // Auto-create the Supabase auth account on approval
+    if (status === 'approved') {
+        // Fetch the stored password from the request
+        const { data: reqData, error: fetchErr } = await _supabase
+            .from(ACCOUNT_REQUESTS_TABLE)
+            .select('password')
+            .eq('id', id)
+            .single();
+
+        if (fetchErr || !reqData?.password) {
+            alert('Request approved, but could not retrieve the stored password to auto-create the account. The user will need to re-submit on the Account Creation tab.');
+        } else {
+            const { error: signUpErr } = await _supabase.auth.signUp({
+                email,
+                password: reqData.password
+            });
+
+            if (signUpErr) {
+                alert('Request approved, but account creation failed: ' + signUpErr.message);
+            }
+        }
+    }
+
+    await loadAccountRequests();
+}
+
+
         document.getElementById('adminLogoutBtn').addEventListener('click', async () => {
             await _supabase.auth.signOut();
         });
 
+        function attachEventListeners() {
+            const openBtn = document.getElementById('openAccountRequestsModalBtn');
+            if (openBtn && !openBtn._listenerAttached) {
+                openBtn.addEventListener('click', () => {
+                    const modal = document.getElementById('accountRequestsModal');
+                    modal.classList.remove('hidden');
+                    loadAccountRequests();
+                });
+                openBtn._listenerAttached = true;
+            }
+
+            const navBtn = document.getElementById('navLoginBtn');
+            if (navBtn && !navBtn._listenerAttached) {
+                navBtn.addEventListener('click', () => {
+                    if (currentAccountRole === 'admin') {
+                        return;
+                    } else if (currentAccountRole === 'standard') {
+                        document.getElementById('profileModal').classList.remove('hidden');
+                    } else {
+                        document.getElementById('loginContainer').scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+                navBtn._listenerAttached = true;
+            }
+        }
+
+        document.getElementById('closeAccountRequestsModalBtn').addEventListener('click', () => {
+            document.getElementById('accountRequestsModal').classList.add('hidden');
+        });
+
+        document.getElementById('closeProfileModalBtn').addEventListener('click', () => {
+            document.getElementById('profileModal').classList.add('hidden');
+        });
+
+        document.getElementById('profileLogoutBtn').addEventListener('click', async () => {
+            await _supabase.auth.signOut();
+        });
+
+        document.getElementById('changePasswordBtn').addEventListener('click', async () => {
+            const newPass = document.getElementById('newPasswordInput').value;
+            const confirmPass = document.getElementById('confirmPasswordInput').value;
+            const statusNode = document.getElementById('passwordStatus');
+            statusNode.classList.remove('hidden');
+
+            if (!newPass || !confirmPass) {
+                statusNode.textContent = 'Please fill in both password fields.';
+                statusNode.className = 'mt-2 text-sm font-medium text-red-600 text-center block';
+                return;
+            }
+
+            if (newPass !== confirmPass) {
+                statusNode.textContent = 'Passwords do not match.';
+                statusNode.className = 'mt-2 text-sm font-medium text-red-600 text-center block';
+                return;
+            }
+
+            statusNode.textContent = 'Updating password...';
+            statusNode.className = 'mt-2 text-sm font-medium text-blue-600 text-center block';
+
+            try {
+                const { error } = await _supabase.auth.updateUser({ password: newPass });
+                if (error) throw error;
+                statusNode.textContent = 'Password updated successfully!';
+                statusNode.className = 'mt-2 text-sm font-medium text-green-600 text-center block';
+                document.getElementById('newPasswordInput').value = '';
+                document.getElementById('confirmPasswordInput').value = '';
+            } catch (error) {
+                statusNode.textContent = error.message || 'Failed to update password.';
+                statusNode.className = 'mt-2 text-sm font-medium text-red-600 text-center block';
+            }
+        });
+
+        document.getElementById('dialogTabAdminLogin').addEventListener('click', () => setDialogTab('admin-login'));
+        document.getElementById('dialogTabStandardLogin').addEventListener('click', () => setDialogTab('standard-login'));
+        document.getElementById('dialogTabCreateAccount').addEventListener('click', () => setDialogTab('create-account'));
+
+        document.getElementById('accountRequestForm').addEventListener('submit', handleAccountRequest);
+
         // Initialize state
-        _supabase.auth.getSession().then(({ data }) => updateUI(data.session));
-        _supabase.auth.onAuthStateChange((_event, session) => updateUI(session));
+        _supabase.auth.getSession().then(({ data }) => {
+            updateUI(data.session);
+            if (data.session) {
+                document.getElementById('navLoginBtn').classList.remove('hidden');
+            }
+            attachEventListeners();
+        });
+        _supabase.auth.onAuthStateChange((_event, session) => {
+            updateUI(session);
+            if (session) {
+                document.getElementById('navLoginBtn').classList.remove('hidden');
+            }
+            attachEventListeners();
+        });
     </script>
 </body>
 </html>
