@@ -228,7 +228,7 @@
         const SUPABASE_URL = "https://ngnkbfazhdedaqvxcphw.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbmtiZmF6aGRlZGFxdnhjcGh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTE5NDksImV4cCI6MjA5MzI4Nzk0OX0.F_S6ORkFe-SuJPybs7FEFH94E6U2hZ5ern4vrg4kMOk";
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        const ACCOUNT_REQUESTS_TABLE = 'account_requests_v2';
+        const ACCOUNT_REQUESTS_TABLES = ['account_requests_v2', 'account_requests'];
         const ADMIN_ALLOWLIST = ['nbhsttclub@gmail.com'];
 
         let currentAccountRole = 'standard';
@@ -249,6 +249,25 @@
             const code = (error?.code || '').toUpperCase();
             const message = (error?.message || '').toLowerCase();
             return code === '42501' || message.includes('permission denied') || message.includes('row-level security policy');
+        }
+
+        async function withAccountRequestsTable(operation) {
+            let lastError = null;
+
+            for (const tableName of ACCOUNT_REQUESTS_TABLES) {
+                const result = await operation(tableName);
+                if (!result.error) {
+                    return result;
+                }
+
+                lastError = result.error;
+
+                if (!isMissingAccountRequestsTableError(result.error) && !isAccountRequestsPermissionError(result.error)) {
+                    break;
+                }
+            }
+
+            return { data: null, error: lastError };
         }
 
         // Standardized Navbar Toggle Logic
@@ -280,8 +299,8 @@
             const dashboardAccessNote = document.getElementById('dashboardAccessNote');
             const standardUserNotice = document.getElementById('standardUserNotice');
             const adminToolsContainer = document.getElementById('adminToolsContainer');
-            const navLoginBtn = document.getElementById('navLoginBtn');
-            const navLoginBtnText = document.getElementById('navLoginBtnText');
+            const navLoginBtn = document.getElementById('navLoginLink');
+            const navLoginBtnText = document.getElementById('navLoginLinkText');
             const pageTitle = document.getElementById('pageTitle');
             const pageSubtitle = document.getElementById('pageSubtitle');
 
@@ -386,21 +405,15 @@
                 return 'admin';
             }
 
-            const { data, error } = await _supabase
-                .from(ACCOUNT_REQUESTS_TABLE)
+            const { data, error } = await withAccountRequestsTable((tableName) => _supabase
+                .from(tableName)
                 .select('role, status')
                 .ilike('email', email)
                 .order('created_at', { ascending: false })
-                .limit(1);
+                .limit(1));
 
             if (error) {
-                if (isMissingAccountRequestsTableError(error)) {
-                    throw new Error('Supabase table public.account_requests is missing. Create it using the README setup steps.');
-                }
-                if (isAccountRequestsPermissionError(error)) {
-                    throw new Error('Supabase account_requests policies are blocking reads. Run the README RLS policies for account_requests.');
-                }
-                throw error;
+                return 'standard';
             }
 
             const request = data && data[0];
@@ -471,25 +484,21 @@
 
             try {
                 const email = emailInput.value.trim().toLowerCase();
-                const { data, error: lookupError } = await _supabase
-                    .from(ACCOUNT_REQUESTS_TABLE)
+                const { data, error: lookupError } = await withAccountRequestsTable((tableName) => _supabase
+                    .from(tableName)
                     .select('id, status')
                     .ilike('email', email)
                     .order('created_at', { ascending: false })
-                    .limit(1);
+                    .limit(1));
 
                 let request = data && data[0];
                 const canReadRequestTable = !lookupError;
 
-                if (lookupError && isMissingAccountRequestsTableError(lookupError)) {
-                    throw new Error('Supabase table public.account_requests is missing. Create it using the README setup steps.');
-                }
-
-                if (lookupError && !isAccountRequestsPermissionError(lookupError)) {
+                if (lookupError && !isMissingAccountRequestsTableError(lookupError) && !isAccountRequestsPermissionError(lookupError)) {
                     throw lookupError;
                 }
 
-                if (lookupError && isAccountRequestsPermissionError(lookupError)) {
+                if (lookupError) {
                     request = null;
                 }
 
@@ -512,14 +521,14 @@
                     return;
                 }
 
-                const { error } = await _supabase
-                    .from(ACCOUNT_REQUESTS_TABLE)
+                const { error } = await withAccountRequestsTable((tableName) => _supabase
+                    .from(tableName)
                     .insert({
                         email,
                         password: passwordInput.value,
                         role: 'standard',
                         status: 'pending'
-                    });
+                    }));
 
                 if (error) throw error;
 
@@ -542,16 +551,16 @@
 
             list.innerHTML = '<p class="text-slate-500">Loading requests...</p>';
 
-            const { data, error } = await _supabase
-                .from(ACCOUNT_REQUESTS_TABLE)
+            const { data, error } = await withAccountRequestsTable((tableName) => _supabase
+                .from(tableName)
                 .select('id, email, role, status, created_at, reviewed_at, reviewed_by')
-                .order('created_at', { ascending: false });
+                .order('created_at', { ascending: false }));
 
             if (error) {
                 const setupMessage = isMissingAccountRequestsTableError(error)
-                    ? 'Supabase table public.account_requests is missing. Create it using the README setup steps.'
+                    ? 'Supabase account_requests tables are missing. Create public.account_requests from the README setup steps.'
                     : isAccountRequestsPermissionError(error)
-                        ? 'Supabase account_requests policies are blocking reads. Run the README RLS policies for account_requests.'
+                        ? 'Supabase account_requests policies are blocking reads. Run the README RLS policies for public.account_requests.'
                         : `Failed to load requests: ${error.message}`;
                 list.innerHTML = `<p class="text-red-600">${setupMessage}</p>`;
                 return;
@@ -604,10 +613,10 @@
                 select.addEventListener('change', async (e) => {
                     const newRole = e.target.value;
                     const id = e.target.dataset.id;
-                    const { error } = await _supabase
-                        .from(ACCOUNT_REQUESTS_TABLE)
+                    const { error } = await withAccountRequestsTable((tableName) => _supabase
+                        .from(tableName)
                         .update({ role: newRole })
-                        .eq('id', id);
+                        .eq('id', id));
                     if (error) {
                         alert('Failed to update role: ' + error.message);
                         e.target.value = e.target.getAttribute('data-previous-value');
@@ -633,15 +642,15 @@
         async function reviewAccountRequest(id, status, email, role) {
             if (!confirm(`Mark ${email} as ${status}?`)) return;
 
-            const { error } = await _supabase
-                .from(ACCOUNT_REQUESTS_TABLE)
+            const { error } = await withAccountRequestsTable((tableName) => _supabase
+                .from(tableName)
                 .update({
                     status,
                     reviewed_at: new Date().toISOString(),
                     reviewed_by: currentAccountEmail,
                     role: status === 'approved' ? role : role
                 })
-                .eq('id', id);
+                .eq('id', id));
 
             if (error) {
                 alert('Failed to review request: ' + error.message);
@@ -651,11 +660,11 @@
             // Auto-create the Supabase auth account on approval
             if (status === 'approved') {
                 // Fetch the stored password from the request
-                const { data: reqData, error: fetchErr } = await _supabase
-                    .from(ACCOUNT_REQUESTS_TABLE)
+                const { data: reqData, error: fetchErr } = await withAccountRequestsTable((tableName) => _supabase
+                    .from(tableName)
                     .select('password')
                     .eq('id', id)
-                    .single();
+                    .single());
 
                 if (fetchErr || !reqData?.password) {
                     alert('Request approved, but could not retrieve the stored password to auto-create the account. The user will need to re-submit on the Account Creation tab.');
@@ -702,7 +711,7 @@
                 openBtn._listenerAttached = true;
             }
 
-            const navBtn = document.getElementById('navLoginBtn');
+            const navBtn = document.getElementById('navLoginLink');
             if (navBtn && !navBtn._listenerAttached) {
                 navBtn.addEventListener('click', () => {
                     if (currentAccountRole === 'admin') {
@@ -773,14 +782,14 @@
         _supabase.auth.getSession().then(({ data }) => {
             updateUI(data.session);
             if (data.session) {
-                document.getElementById('navLoginBtn').classList.remove('hidden');
+                document.getElementById('navLoginLink').classList.remove('hidden');
             }
             attachEventListeners();
         });
         _supabase.auth.onAuthStateChange((_event, session) => {
             updateUI(session);
             if (session) {
-                document.getElementById('navLoginBtn').classList.remove('hidden');
+                document.getElementById('navLoginLink').classList.remove('hidden');
             }
             attachEventListeners();
         });

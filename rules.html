@@ -117,7 +117,7 @@
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbmtiZmF6aGRlZGFxdnhjcGh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTE5NDksImV4cCI6MjA5MzI4Nzk0OX0.F_S6ORkFe-SuJPybs7FEFH94E6U2hZ5ern4vrg4kMOk";
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         const ADMIN_ALLOWLIST = ['nbhsttclub@gmail.com'];
-        const ACCOUNT_REQUESTS_TABLE = 'account_requests_v2';
+        const ACCOUNT_REQUESTS_TABLES = ['account_requests_v2', 'account_requests'];
 
         const container = document.getElementById('custom-rules-container');
         let customRules = [];
@@ -128,17 +128,28 @@
             if (ADMIN_ALLOWLIST.includes(email.toLowerCase())) {
                 return 'admin';
             }
-            const { data, error } = await _supabase
-                .from(ACCOUNT_REQUESTS_TABLE)
-                .select('role, status')
-                .ilike('email', email)
-                .order('created_at', { ascending: false })
-                .limit(1);
-            if (error) return 'standard';
-            const request = data && data[0];
-            if (!request) return 'standard';
-            if ((request.status || '').toLowerCase() === 'approved') {
-                return (request.role || 'standard').toLowerCase();
+            for (const tableName of ACCOUNT_REQUESTS_TABLES) {
+                const { data, error } = await _supabase
+                    .from(tableName)
+                    .select('role, status')
+                    .ilike('email', email)
+                    .order('created_at', { ascending: false })
+                    .limit(1);
+                if (!error) {
+                    const request = data && data[0];
+                    if (!request) return 'standard';
+                    if ((request.status || '').toLowerCase() === 'approved') {
+                        return (request.role || 'standard').toLowerCase();
+                    }
+                    return 'standard';
+                }
+                const code = (error?.code || '').toUpperCase();
+                const message = (error?.message || '').toLowerCase();
+                const missingTable = code === '42P01' || code === 'PGRST205' || (message.includes('relation') && message.includes('account_requests') && message.includes('does not exist'));
+                const permissionDenied = code === '42501' || message.includes('permission denied') || message.includes('row-level security policy');
+                if (!missingTable && !permissionDenied) {
+                    break;
+                }
             }
             return 'standard';
         }
