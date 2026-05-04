@@ -615,48 +615,60 @@
         }
 
         async function reviewAccountRequest(id, status, email, role) {
-    if (!confirm(`Mark ${email} as ${status}?`)) return;
+            if (!confirm(`Mark ${email} as ${status}?`)) return;
 
-    const { error } = await _supabase
-        .from(ACCOUNT_REQUESTS_TABLE)
-        .update({
-            status,
-            reviewed_at: new Date().toISOString(),
-            reviewed_by: currentAccountEmail,
-            role: status === 'approved' ? role : role
-        })
-        .eq('id', id);
+            const { error } = await _supabase
+                .from(ACCOUNT_REQUESTS_TABLE)
+                .update({
+                    status,
+                    reviewed_at: new Date().toISOString(),
+                    reviewed_by: currentAccountEmail,
+                    role: status === 'approved' ? role : role
+                })
+                .eq('id', id);
 
-    if (error) {
-        alert('Failed to review request: ' + error.message);
-        return;
-    }
-
-    // Auto-create the Supabase auth account on approval
-    if (status === 'approved') {
-        // Fetch the stored password from the request
-        const { data: reqData, error: fetchErr } = await _supabase
-            .from(ACCOUNT_REQUESTS_TABLE)
-            .select('password')
-            .eq('id', id)
-            .single();
-
-        if (fetchErr || !reqData?.password) {
-            alert('Request approved, but could not retrieve the stored password to auto-create the account. The user will need to re-submit on the Account Creation tab.');
-        } else {
-            const { error: signUpErr } = await _supabase.auth.signUp({
-                email,
-                password: reqData.password
-            });
-
-            if (signUpErr) {
-                alert('Request approved, but account creation failed: ' + signUpErr.message);
+            if (error) {
+                alert('Failed to review request: ' + error.message);
+                return;
             }
-        }
-    }
 
-    await loadAccountRequests();
-}
+            // Auto-create the Supabase auth account on approval
+            if (status === 'approved') {
+                // Fetch the stored password from the request
+                const { data: reqData, error: fetchErr } = await _supabase
+                    .from(ACCOUNT_REQUESTS_TABLE)
+                    .select('password')
+                    .eq('id', id)
+                    .single();
+
+                if (fetchErr || !reqData?.password) {
+                    alert('Request approved, but could not retrieve the stored password to auto-create the account. The user will need to re-submit on the Account Creation tab.');
+                } else {
+                    // FIX: Save admin session before signUp (which auto-signs-in as the new user)
+                    const { data: adminSessionData } = await _supabase.auth.getSession();
+                    const adminSession = adminSessionData?.session;
+
+                    const { error: signUpErr } = await _supabase.auth.signUp({
+                        email,
+                        password: reqData.password
+                    });
+
+                    if (signUpErr) {
+                        alert('Request approved, but account creation failed: ' + signUpErr.message);
+                    }
+
+                    // Restore admin session so we don't get logged in as the new user
+                    if (adminSession) {
+                        await _supabase.auth.setSession({
+                            access_token: adminSession.access_token,
+                            refresh_token: adminSession.refresh_token
+                        });
+                    }
+                }
+            }
+
+            await loadAccountRequests();
+        }
 
 
         document.getElementById('adminLogoutBtn').addEventListener('click', async () => {
