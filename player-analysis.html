@@ -10,37 +10,17 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="animations.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <style>
-            /* Keep analysis cards neutral on hover instead of blue outline */
-            main .rounded-2xl:hover {
-                border-color: #e2e8f0;
-            }
-        </style>
+    <style>
+        /* Keep analysis cards neutral on hover instead of blue outline */
+        main .rounded-2xl:hover {
+            border-color: #e2e8f0;
+        }
+    </style>
 </head>
 
 <body class="bg-red-50 text-slate-900 min-h-screen">
-<header class="bg-red-800 text-white shadow-md fade-in">
-    <nav class="max-w-6xl mx-auto flex flex-wrap items-center justify-between px-4 py-4">
-        
-        <!-- The Homepage Logo -->
-        <a href="index.html" class="text-xl font-bold transition-opacity duration-200 hover:opacity-80">NBHS TT Hub</a>
-        
-        <!-- The Hamburger Toggle Button (Hardware Accelerated to prevent shape flash) -->
-        <button id="rankingNavToggle" type="button"
-            class="sm:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl border border-red-600 bg-red-700 text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 transition-colors duration-200 overflow-hidden transform-gpu"
-            style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);"
-            aria-label="Toggle navigation" aria-controls="rankingNavLinks" aria-expanded="false">
-            
-            <!-- Hamburger Icon (Visible by default) -->
-            <svg id="menu-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-            
-            <!-- Close 'X' Icon (Hidden by default) -->
-            <svg id="close-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-        </button>
+    <header class="bg-red-800 text-white shadow-md fade-in">
+        <nav class="max-w-6xl mx-auto flex flex-wrap items-center justify-between px-4 py-4">
 
         <!-- Nav Links inside Hamburger Menu -->
         <div id="rankingNavLinks" class="hidden w-full flex-col gap-1 mt-4 pt-4 border-t border-red-700/50 sm:flex sm:w-auto sm:flex-row sm:items-center sm:gap-2 sm:mt-0 sm:pt-0 sm:border-0">
@@ -113,7 +93,12 @@
             </table>
         </div>
     </main>
-
+    <footer class="bg-slate-800 text-slate-400 mt-16">
+        <div class="max-w-6xl mx-auto flex items-center justify-between p-4 text-sm">
+            <p>&copy; <span id="current-year">2024</span> NBHS Table Tennis Hub. All Rights Reserved.</p>
+            <a href="#" class="hover:text-white transition-colors">Back to Top &uarr;</a>
+        </div>
+    </footer>
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const playerName = urlParams.get('name');
@@ -186,7 +171,7 @@
 
                     document.getElementById('quick-stats').innerHTML = `
                         <div class="mt-4 flex flex-wrap gap-6 font-black uppercase italic tracking-tighter text-sm sm:text-base">
-                            <span class="text-blue-700">ELO: ${elo}</span>
+                            <span class="text-red-700">ELO: ${elo}</span>
                             <span class="text-green-600">WINS: ${wins}</span>
                             <span class="text-red-500">LOSSES: ${losses}</span>
                             <div class="border-l border-slate-300 pl-6 flex gap-4 text-slate-400">
@@ -234,7 +219,7 @@
                     }
 
                     const hasWon = winner.toLowerCase() === playerName.toLowerCase();
-                    const deltaColor = delta.includes('+') ? 'text-blue-600' : 'text-orange-600';
+                    const deltaColor = delta.includes('+') ? 'text-green-600' : 'text-red-600';
 
                     return `
                 <tr class="border-b hover:bg-slate-50 transition-colors">
@@ -276,12 +261,12 @@
                     datasets: [{
                         label: 'Elo Rating',
                         data: historyData,
-                        borderColor: '#1e3a8a',
+                        borderColor: '#991b1b',
                         borderWidth: 3,
-                        pointBackgroundColor: '#1e3a8a',
+                        pointBackgroundColor: '#991b1b',
                         tension: 0.3,
                         fill: true,
-                        backgroundColor: 'rgba(30, 58, 138, 0.1)'
+                        backgroundColor: 'rgba(153, 27, 27, 0.1)'
                     }]
                 },
                 options: {
@@ -300,8 +285,8 @@
         init();
     </script>
     <script>
-    // Navbar toggle logic for Player Analysis page
-        (function(){
+        // Navbar toggle logic for Player Analysis page
+        (function () {
             const rankingNavToggle = document.getElementById('rankingNavToggle');
             const rankingNavLinks = document.getElementById('rankingNavLinks');
             const menuIcon = document.getElementById('menu-icon');
@@ -310,33 +295,39 @@
             if (rankingNavToggle && rankingNavLinks) {
                 rankingNavToggle.addEventListener('click', () => {
                     const isHidden = rankingNavLinks.classList.contains('hidden');
-                    
+
                     if (isHidden) {
                         // Open Menu
                         rankingNavLinks.classList.remove('hidden');
                         rankingNavLinks.classList.add('flex', 'animate-[fadeIn_0.2s_ease-in-out]');
-                        
+
                         // Swap Icons
                         menuIcon.classList.add('hidden');
                         closeIcon.classList.remove('hidden');
-                        
+
                         // Update ARIA for screen readers
                         rankingNavToggle.setAttribute('aria-expanded', 'true');
                     } else {
                         // Close Menu
                         rankingNavLinks.classList.add('hidden');
                         rankingNavLinks.classList.remove('flex', 'animate-[fadeIn_0.2s_ease-in-out]');
-                        
+
                         // Swap Icons
                         menuIcon.classList.remove('hidden');
                         closeIcon.classList.add('hidden');
-                        
+
                         rankingNavToggle.setAttribute('aria-expanded', 'false');
                     }
                 });
             }
         })();
-</script>
+        (function () {
+            const yearEl = document.getElementById('current-year');
+            if (yearEl) {
+                yearEl.textContent = new Date().getFullYear();
+            }
+        })();
+    </script>
 </body>
 
 </html>

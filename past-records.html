@@ -12,30 +12,24 @@
     <link rel="icon" type="image/png" href="favicon.png">
 </head>
 
-<body class="bg-red-50 text-slate-900 font-sans min-h-screen">
+<!-- CHANGE 1: flex flex-col for sticky footer -->
+<body class="bg-red-50 text-slate-900 font-sans min-h-screen flex flex-col">
 
-<header class="bg-red-800 text-white shadow-md fade-in">
-    <nav class="max-w-6xl mx-auto flex flex-wrap items-center justify-between px-4 py-4">
-        
-        <!-- The Homepage Logo -->
-        <a href="index.html" class="text-xl font-bold transition-opacity duration-200 hover:opacity-80">NBHS TT Hub</a>
-        
-        <!-- The Hamburger Toggle Button (Hardware Accelerated to prevent shape flash) -->
-        <button id="rankingNavToggle" type="button"
-            class="sm:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl border border-red-600 bg-red-700 text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 transition-colors duration-200 overflow-hidden transform-gpu"
-            style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);"
-            aria-label="Toggle navigation" aria-controls="rankingNavLinks" aria-expanded="false">
+    <header class="bg-red-800 text-white shadow-md fade-in relative">
+        <nav class="max-w-6xl mx-auto flex flex-wrap items-center justify-between px-4 py-4">
+            <a href="index.html" class="text-xl font-bold transition-opacity duration-200 hover:opacity-80 shrink-0">NBHS TT Hub</a>
             
-            <!-- Hamburger Icon (Visible by default) -->
-            <svg id="menu-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-            
-            <!-- Close 'X' Icon (Hidden by default) -->
-            <svg id="close-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-        </button>
+            <button id="rankingNavToggle" type="button"
+                class="sm:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl border border-red-600 bg-red-700 text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 transition-colors duration-200 overflow-hidden transform-gpu shrink-0"
+                style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);"
+                aria-label="Toggle navigation" aria-controls="rankingNavLinks" aria-expanded="false">
+                <svg id="menu-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+                <svg id="close-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
 
         <!-- Nav Links inside Hamburger Menu -->
         <div id="rankingNavLinks" class="hidden w-full flex-col gap-1 mt-4 pt-4 border-t border-red-700/50 sm:flex sm:w-auto sm:flex-row sm:items-center sm:gap-2 sm:mt-0 sm:pt-0 sm:border-0">
@@ -72,67 +66,69 @@
     </nav>
 </header>
 
-
-    <div class="max-w-4xl mx-auto p-6">
-        <h1 class="text-3xl font-bold text-red-900 mb-2">Hall of Fame</h1>
-        <p class="text-slate-500 mb-8 font-medium">Historic season winners and club milestones.</p>
+    <!-- CHANGE 2: Added id, flex-grow, and opacity-0 -->
+    <main id="main-content" class="max-w-4xl mx-auto p-6 flex-grow w-full opacity-0 transition-opacity duration-500">
+        <h1 class="text-3xl font-bold text-red-900 mb-2 fade-up">Hall of Fame</h1>
+        <p class="text-slate-500 mb-8 font-medium fade-up">Historic season winners and club milestones.</p>
 
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
-            <div class="bg-white p-6 rounded-2xl border shadow-sm border-l-4 border-l-blue-800">
+            <div class="bg-white p-6 rounded-2xl border shadow-sm border-l-4 border-l-red-800 fade-up fade-up-d1">
                 <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Highest Ever Elo</p>
                 <p id="top-elo-val" class="text-2xl font-black text-red-900 mt-1">--</p>
                 <p id="top-elo-player" class="text-[10px] text-slate-500 font-bold uppercase mt-1">Loading...</p>
             </div>
-            <div class="bg-white p-6 rounded-2xl border shadow-sm border-l-4 border-l-green-600">
+            <div class="bg-white p-6 rounded-2xl border shadow-sm border-l-4 border-l-green-600 fade-up fade-up-d2">
                 <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Most Match Wins</p>
                 <p id="top-wins-val" class="text-2xl font-black text-green-700 mt-1">--</p>
                 <p id="top-wins-player" class="text-[10px] text-slate-500 font-bold uppercase mt-1">Loading...</p>
             </div>
-            <div class="bg-white p-6 rounded-2xl border shadow-sm border-l-4 border-l-red-500">
+            <div class="bg-white p-6 rounded-2xl border shadow-sm border-l-4 border-l-orange-500 fade-up fade-up-d3">
                 <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Biggest Upset</p>
-                <p id="top-upset-val" class="text-2xl font-black text-red-600 mt-1">--</p>
+                <p id="top-upset-val" class="text-2xl font-black text-orange-600 mt-1">--</p>
                 <p id="top-upset-desc" class="text-[10px] text-slate-500 font-bold uppercase mt-1">Loading...</p>
             </div>
         </div>
 
-        <h2 class="text-xl font-bold text-slate-800 mb-4">Season Archives</h2>
+        <h2 class="text-xl font-bold text-slate-800 mb-4 fade-up fade-up-d4">Season Archives</h2>
 
         <div id="season-grid" class="grid gap-6 md:grid-cols-2">
             <div class="col-span-full p-10 text-center text-slate-400 italic">Fetching archive records...</div>
         </div>
 
-        <div
-            class="mt-6 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center p-8 text-center">
+        <div class="mt-10 bg-white rounded-2xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center p-8 text-center fade-up">
             <p class="text-sm font-bold text-slate-400 uppercase tracking-widest">Term 2 2026</p>
-            <p class="text-[10px] text-slate-400 mt-1 italic">Season is currently live. Records will be finalized at the
-                end of the term.</p>
+            <p class="text-[10px] text-slate-400 mt-1 italic">Season is currently live. Records will be finalized at the end of the term.</p>
         </div>
-    </div>
+    </main>
+
+    <!-- CHANGE 3: Added id, mt-auto, and opacity-0 -->
+    <footer id="page-footer" class="bg-slate-800 text-slate-400 mt-auto opacity-0 transition-opacity duration-500">
+        <div class="max-w-6xl mx-auto flex items-center justify-between p-4 text-sm">
+            <p>&copy; <span id="current-year">2024</span> NBHS Table Tennis Hub. All Rights Reserved.</p>
+            <a href="#" class="hover:text-white transition-colors">Back to Top &uarr;</a>
+        </div>
+    </footer>
 
     <script>
-        // 1. Update with your actual Seasons Tab GID
         const SEASONS_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_UHoHNgToKV4yCuB_M56029JuMrOYWN-VkyxDiWkwXHJI1hhRnon_GMnvgvmQeHmL4F0gxkVz7IMP/pub?gid=662509425&output=csv";
 
-        // 2. CSV Parser (Must be present in every file that uses CSV)
         function parseCsv(text) {
             const rows = []; let row = []; let field = ''; let inQuotes = false;
             for (let i = 0; i < text.length; i++) {
                 const char = text[i];
-                if (char === '"') {
-                    if (inQuotes && text[i + 1] === '"') { field += '"'; i++; }
-                    else { inQuotes = !inQuotes; }
-                } else if (char === ',' && !inQuotes) { row.push(field); field = ''; }
-                else if ((char === '\n' || char === '\r') && !inQuotes) {
-                    if (char === '\r' && text[i + 1] === '\n') i++;
-                    row.push(field); field = ''; rows.push(row); row = [];
-                } else { field += char; }
+                if (char === '"') { if (inQuotes && text[i + 1] === '"') { field += '"'; i++; } else { inQuotes = !inQuotes; } } 
+                else if (char === ',' && !inQuotes) { row.push(field); field = ''; }
+                else if (("\n" === char || "\r" === char) && !inQuotes) { if ("\r" === char && "\n" === text[i + 1]) i++; row.push(field); field = ''; rows.push(row); row = []; } 
+                else { field += char; }
             }
-            if (field !== '' || row.length > 0) { row.push(field); rows.push(row); }
-            return rows;
+            if (field !== '' || row.length > 0) { row.push(field); rows.push(row); } return rows;
         }
 
         async function loadHallOfFame() {
             const grid = document.getElementById('season-grid');
+            const mainContent = document.getElementById('main-content');
+            const pageFooter = document.getElementById('page-footer');
+
             try {
                 const response = await fetch(SEASONS_URL);
                 const text = await response.text();
@@ -141,117 +137,68 @@
 
                 if (rows.length === 0) {
                     grid.innerHTML = "<div class='col-span-full text-center p-10 text-slate-400'>No records found.</div>";
-                    return;
+                } else {
+                    let allTimeElo = 0, atEloP = "", allTimeWins = 0, atWinsP = "", maxUpsetVal = 0, maxUpsetDesc = "";
+
+                    rows.forEach(row => {
+                        if (parseInt(row[2]) > allTimeElo) { allTimeElo = row[2]; atEloP = `${row[1]} (${row[0]})`; }
+                        const wMatch = row[6].match(/\((\d+)\)/);
+                        if (wMatch && parseInt(wMatch[1]) > allTimeWins) { allTimeWins = parseInt(wMatch[1]); atWinsP = row[6]; }
+                        const uMatch = row[7].match(/\((\d+)\spts\)/);
+                        if (uMatch && parseInt(uMatch[1]) > maxUpsetVal) { maxUpsetVal = parseInt(uMatch[1]); maxUpsetDesc = row[7]; }
+                    });
+
+                    document.getElementById('top-elo-val').innerText = allTimeElo;
+                    document.getElementById('top-elo-player').innerText = atEloP;
+                    document.getElementById('top-wins-val').innerText = allTimeWins;
+                    document.getElementById('top-wins-player').innerText = atWinsP;
+                    document.getElementById('top-upset-val').innerText = `${maxUpsetVal} pts`;
+                    document.getElementById('top-upset-desc').innerText = maxUpsetDesc.split('(')[0];
+
+                    let delay = 5; // Start staggering from d5
+                    grid.innerHTML = rows.reverse().filter(cols => cols[0] && cols[0].trim()).map(cols => `
+                        <div class="bg-white rounded-2xl shadow-sm border overflow-hidden fade-up fade-up-d${delay++}">
+                            <div class="bg-red-50 border-b p-4 flex justify-between items-center">
+                                <span class="font-bold text-red-900 italic uppercase">${cols[0]}</span>
+                                <span class="bg-red-100 text-red-700 text-[10px] px-2 py-1 rounded font-black uppercase">${cols[5]}</span>
+                            </div>
+                            <div class="p-6">
+                                <div class="flex justify-between items-center mb-4">
+                                    <span class="text-sm font-semibold text-slate-500">Champion</span>
+                                    <span class="text-lg font-bold text-red-800">${cols[1]}</span>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4 text-center border-t border-b py-4 mb-4">
+                                    <div><p class="text-[10px] font-bold text-slate-400 uppercase">Most Wins</p><p class="text-[11px] font-bold text-slate-700">${cols[6]}</p></div>
+                                    <div><p class="text-[10px] font-bold text-slate-400 uppercase">Biggest Upset</p><p class="text-[11px] font-bold text-slate-700">${cols[7]}</p></div>
+                                </div>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase mb-2 text-center">Top 3 Players</p>
+                                <div class="flex flex-wrap justify-center gap-1">
+                                    ${cols[4].split(',').map(n => `<span class="bg-slate-100 px-2 py-0.5 rounded text-[10px] font-bold">${n.trim()}</span>`).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
                 }
-
-                // Calculate All-Time Highs
-                let allTimeElo = 0, atEloP = "";
-                let allTimeWins = 0, atWinsP = "";
-                let maxUpsetVal = 0, maxUpsetDesc = "";
-
-                rows.forEach(row => {
-                    // Elo
-                    if (parseInt(row[2]) > allTimeElo) {
-                        allTimeElo = row[2];
-                        atEloP = `${row[1]} (${row[0]})`;
-                    }
-                    // Wins
-                    const wMatch = row[6].match(/\((\d+)\)/);
-                    if (wMatch && parseInt(wMatch[1]) > allTimeWins) {
-                        allTimeWins = parseInt(wMatch[1]);
-                        atWinsP = row[6];
-                    }
-                    // Upset
-                    const uMatch = row[7].match(/\((\d+)\spts\)/);
-                    if (uMatch && parseInt(uMatch[1]) > maxUpsetVal) {
-                        maxUpsetVal = parseInt(uMatch[1]);
-                        maxUpsetDesc = row[7];
-                    }
-                });
-
-                // Update Top Cards
-                document.getElementById('top-elo-val').innerText = allTimeElo;
-                document.getElementById('top-elo-player').innerText = atEloP;
-                document.getElementById('top-wins-val').innerText = allTimeWins;
-                document.getElementById('top-wins-player').innerText = atWinsP;
-                document.getElementById('top-upset-val').innerText = `${maxUpsetVal} pts`;
-                document.getElementById('top-upset-desc').innerText = maxUpsetDesc.split('(')[0];
-
-                // Render Archive Cards
-                grid.innerHTML = rows.reverse().filter(cols => cols[0] && cols[0].trim()).map(cols => `
-            <div class="bg-white rounded-2xl shadow-sm border overflow-hidden">
-                <div class="bg-slate-50 border-b p-4 flex justify-between items-center">
-                    <span class="font-bold text-red-900 italic uppercase">${cols[0]}</span>
-                    <span class="bg-blue-100 text-blue-700 text-[10px] px-2 py-1 rounded font-black uppercase">${cols[5]}</span>
-                </div>
-                <div class="p-6">
-                    <div class="flex justify-between items-center mb-4">
-                        <span class="text-sm font-semibold text-slate-500">Champion</span>
-                        <span class="text-lg font-bold text-red-800">${cols[1]}</span>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4 text-center border-t border-b py-4 mb-4">
-                        <div>
-                            <p class="text-[10px] font-bold text-slate-400 uppercase">Most Wins</p>
-                            <p class="text-[11px] font-bold text-slate-700">${cols[6]}</p>
-                        </div>
-                        <div>
-                            <p class="text-[10px] font-bold text-slate-400 uppercase">Biggest Upset</p>
-                            <p class="text-[11px] font-bold text-slate-700">${cols[7]}</p>
-                        </div>
-                    </div>
-                    <p class="text-[10px] font-bold text-slate-400 uppercase mb-2 text-center">Top 3 Players</p>
-                    <div class="flex flex-wrap justify-center gap-1">
-                        ${cols[4].split(',').map(n => `<span class="bg-slate-100 px-2 py-0.5 rounded text-[10px] font-bold">${n.trim()}</span>`).join('')}
-                    </div>
-                </div>
-            </div>
-        `).join('');
-
             } catch (e) { console.error(e); }
+            finally {
+                // CHANGE 4: Reveal logic
+                mainContent.classList.remove('opacity-0');
+                pageFooter.classList.remove('opacity-0');
+            }
         }
 
-        // Don't forget to actually call the function at the end of the script!
         loadHallOfFame();
 
-    </script>
-    <script>
-        // Navbar toggle for mobile (past records page)
-        (function(){
-            const rankingNavToggle = document.getElementById('rankingNavToggle');
-            const rankingNavLinks = document.getElementById('rankingNavLinks');
-            const menuIcon = document.getElementById('menu-icon');
-            const closeIcon = document.getElementById('close-icon');
+        // Standardized Navbar logic
+        (function () {
+            const t=document.getElementById("rankingNavToggle"),e=document.getElementById("rankingNavLinks"),n=document.getElementById("menu-icon"),o=document.getElementById("close-icon");
+            if(t&&e)t.addEventListener("click",()=>{const s=e.classList.contains("hidden");s?(e.classList.remove("hidden"),e.classList.add("flex","animate-[fadeIn_0.2s_ease-in-out]"),n.classList.add("hidden"),o.classList.remove("hidden"),t.setAttribute("aria-expanded","true")):(e.classList.add("hidden"),e.classList.remove("flex","animate-[fadeIn_0.2s_ease-in-out]"),n.classList.remove("hidden"),o.classList.add("hidden"),t.setAttribute("aria-expanded","false"))})
+        })();
 
-            if (rankingNavToggle && rankingNavLinks) {
-                rankingNavToggle.addEventListener('click', () => {
-                    const isHidden = rankingNavLinks.classList.contains('hidden');
-                    
-                    if (isHidden) {
-                        // Open Menu
-                        rankingNavLinks.classList.remove('hidden');
-                        rankingNavLinks.classList.add('flex', 'animate-[fadeIn_0.2s_ease-in-out]');
-                        
-                        // Swap Icons
-                        menuIcon.classList.add('hidden');
-                        closeIcon.classList.remove('hidden');
-                        
-                        // Update ARIA for screen readers
-                        rankingNavToggle.setAttribute('aria-expanded', 'true');
-                    } else {
-                        // Close Menu
-                        rankingNavLinks.classList.add('hidden');
-                        rankingNavLinks.classList.remove('flex', 'animate-[fadeIn_0.2s_ease-in-out]');
-                        
-                        // Swap Icons
-                        menuIcon.classList.remove('hidden');
-                        closeIcon.classList.add('hidden');
-                        
-                        rankingNavToggle.setAttribute('aria-expanded', 'false');
-                    }
-                });
-            }
+        (function () {
+            const yearEl = document.getElementById('current-year');
+            if (yearEl) yearEl.textContent = new Date().getFullYear();
         })();
     </script>
 </body>
-
 </html>

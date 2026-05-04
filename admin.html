@@ -12,8 +12,10 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
-<body class="bg-red-50 text-slate-900 font-sans min-h-screen">
+<!-- CHANGE 1: Added flex flex-col for sticky footer -->
+<body class="bg-red-50 text-slate-900 font-sans min-h-screen flex flex-col">
 
+    <!-- CHANGE 2: Standardized Header (Hardware accelerated + Icon swap) -->
     <header class="bg-red-800 text-white shadow-md fade-in">
         <nav class="max-w-6xl mx-auto flex items-center justify-between gap-4 px-4 py-4">
             <a href="index.html" class="text-xl font-bold">NBHS TT Hub</a>
@@ -21,11 +23,14 @@
                 <span id="authBadgeText">A</span>
             </div>
             <button id="rankingNavToggle" type="button"
-                class="sm:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl border border-blue-600 bg-blue-700 text-white hover:bg-blue-600 transition-colors duration-200"
+                class="sm:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl border border-red-600 bg-red-700 text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 transition-colors duration-200 overflow-hidden transform-gpu"
+                style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);"
                 aria-label="Toggle navigation" aria-controls="rankingNavLinks" aria-expanded="false">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16" />
+                <svg id="menu-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+                <svg id="close-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
             </button>
             <div id="rankingNavLinks"
@@ -41,7 +46,8 @@
         </nav>
     </header>
 
-    <main class="max-w-4xl mx-auto p-6">
+    <!-- CHANGE 3: Added flex-grow -->
+    <main class="max-w-4xl mx-auto p-6 flex-grow w-full">
         <section class="space-y-8">
             <div class="text-center py-10 fade-up">
                 <h1 id="pageTitle" class="text-4xl font-extrabold text-red-900">Login</h1>
@@ -222,14 +228,24 @@
             return code === '42501' || message.includes('permission denied') || message.includes('row-level security policy');
         }
 
-        // Navbar Logic
-        const rankingNavToggle = document.getElementById('rankingNavToggle');
-        const rankingNavLinks = document.getElementById('rankingNavLinks');
-        if (rankingNavToggle && rankingNavLinks) {
-            rankingNavToggle.addEventListener('click', () => {
-                rankingNavLinks.classList.toggle('hidden');
-            });
-        }
+        // Standardized Navbar Toggle Logic
+        (function () {
+            const rankingNavToggle = document.getElementById('rankingNavToggle');
+            const rankingNavLinks = document.getElementById('rankingNavLinks');
+            const menuIcon = document.getElementById('menu-icon');
+            const closeIcon = document.getElementById('close-icon');
+
+            if (rankingNavToggle && rankingNavLinks) {
+                rankingNavToggle.addEventListener('click', () => {
+                    const isHidden = rankingNavLinks.classList.contains('hidden');
+                    if (isHidden) {
+                        rankingNavLinks.classList.remove('hidden'); rankingNavLinks.classList.add('flex', 'animate-[fadeIn_0.2s_ease-in-out]'); menuIcon.classList.add('hidden'); closeIcon.classList.remove('hidden'); rankingNavToggle.setAttribute('aria-expanded', 'true');
+                    } else {
+                        rankingNavLinks.classList.add('hidden'); rankingNavLinks.classList.remove('flex', 'animate-[fadeIn_0.2s_ease-in-out]'); menuIcon.classList.remove('hidden'); closeIcon.classList.add('hidden'); rankingNavToggle.setAttribute('aria-expanded', 'false');
+                    }
+                });
+            }
+        })();
 
         // Auth Logic
         function updateUI(session) {
@@ -392,14 +408,13 @@
 
             statusNode.classList.remove('hidden');
             statusNode.textContent = 'Logging in...';
-            statusNode.className = 'mt-2 text-sm font-medium text-blue-600 text-center block';
+            statusNode.className = 'mt-2 text-sm font-medium text-red-600 text-center block';
 
             try {
                 const { data, error } = await _supabase.auth.signInWithPassword({
                     email: emailInput.value,
                     password: passwordInput.value
                 });
-
                 if (error) throw error;
 
                 const sessionRole = await resolveAccountRole(data.user.email);
@@ -743,4 +758,5 @@
         });
     </script>
 </body>
+
 </html>
