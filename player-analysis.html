@@ -140,9 +140,8 @@
 
     <main class="max-w-4xl mx-auto p-6">
         <div id="player-header" class="mb-8">
-            <h1 id="player-name" class="text-4xl font-black text-red-900 uppercase italic">Loading...</h1>
                 <div class="flex flex-wrap items-center gap-3">
-                    <h1 id="player-name" class="text-4xl font-black text-blue-900 uppercase italic">Loading...</h1>
+                    <h1 id="player-name" class="text-4xl font-black text-red-900 uppercase italic">Loading...</h1>
                     <div id="player-tags" class="flex flex-wrap gap-2"></div>
                 </div>
                 <div id="quick-stats" class="flex gap-6 mt-4 font-bold"></div>
@@ -252,7 +251,7 @@
 
                     document.getElementById('quick-stats').innerHTML = `
                         <div class="mt-4 flex flex-wrap gap-6 font-black uppercase italic tracking-tighter text-sm sm:text-base">
-                            <span class="text-blue-700">ELO: ${elo}</span>
+                            <span class="text-red-700">ELO: ${elo}</span>
                             <span class="text-green-600">WINS: ${wins}</span>
                             <span class="text-red-500">LOSSES: ${losses}</span>
                             <div class="border-l border-slate-300 pl-6 flex gap-4 text-slate-400">
@@ -300,7 +299,7 @@
                     }
 
                     const hasWon = winner.toLowerCase() === playerName.toLowerCase();
-                    const deltaColor = delta.includes('+') ? 'text-blue-600' : 'text-orange-600';
+                    const deltaColor = delta.includes('+') ? 'text-green-600' : 'text-red-600';
 
                     return `
                 <tr class="border-b hover:bg-slate-50 transition-colors">
@@ -342,12 +341,12 @@
                     datasets: [{
                         label: 'Elo Rating',
                         data: historyData,
-                        borderColor: '#1e3a8a',
+                        borderColor: '#991b1b',
                         borderWidth: 3,
-                        pointBackgroundColor: '#1e3a8a',
+                        pointBackgroundColor: '#991b1b',
                         tension: 0.3,
                         fill: true,
-                        backgroundColor: 'rgba(30, 58, 138, 0.1)'
+                        backgroundColor: 'rgba(153, 27, 27, 0.1)'
                     }]
                 },
                 options: {
