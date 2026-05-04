@@ -11,682 +11,216 @@
     <link rel="icon" type="image/png" href="favicon.png">
 </head>
 
-<body class="bg-red-50 text-slate-900 font-sans min-h-screen">
+<!-- CHANGE 1: Added flex flex-col for sticky footer -->
+<body class="bg-red-50 text-slate-900 font-sans min-h-screen flex flex-col">
 
-    <header class="bg-red-800 text-white shadow-md fade-in">
+    <header class="bg-red-800 text-white shadow-md fade-in relative">
         <nav class="max-w-6xl mx-auto flex flex-wrap items-center justify-between px-4 py-4">
-
-            <!-- The Homepage Logo -->
-            <a href="index.html" class="text-xl font-bold transition-opacity duration-200 hover:opacity-80">NBHS TT
-                Hub</a>
-
-            <!-- The Hamburger Toggle Button (Hardware Accelerated to prevent shape flash) -->
+            <a href="index.html" class="text-xl font-bold transition-opacity duration-200 hover:opacity-80 shrink-0">NBHS TT Hub</a>
             <button id="rankingNavToggle" type="button"
-                class="sm:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl border border-red-600 bg-red-700 text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 transition-colors duration-200 overflow-hidden transform-gpu"
-                style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);"
+                class="sm:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl border border-red-600 bg-red-700 text-white hover:bg-red-600 focus:outline-none transition-colors duration-200 overflow-hidden transform-gpu shrink-0"
+                style="backface-visibility: hidden; transform: translateZ(0);"
                 aria-label="Toggle navigation" aria-controls="rankingNavLinks" aria-expanded="false">
-
-                <!-- Hamburger Icon (Visible by default) -->
-                <svg id="menu-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transition-transform duration-300"
-                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg id="menu-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
-
-                <!-- Close 'X' Icon (Hidden by default) -->
-                <svg id="close-icon" xmlns="http://www.w3.org/2000/svg"
-                    class="h-6 w-6 hidden transition-transform duration-300" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
+                <svg id="close-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
             </button>
-
-            <!-- Nav Links inside Hamburger Menu -->
-            <div id="rankingNavLinks"
-                class="hidden w-full flex-col gap-1 mt-4 pt-4 border-t border-red-700/50 sm:flex sm:w-auto sm:flex-row sm:items-center sm:gap-2 sm:mt-0 sm:pt-0 sm:border-0">
-
-                <!-- Link Fix: Added bg-transparent, transform-gpu, and translateZ(0) to every button -->
-                <a href="player-ranking.html"
-                    class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu"
-                    style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">
-                    <svg xmlns="http://www.w3.org/2000/svg"
-                        class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M7 3v18" />
-                        <path d="M17 3v18" />
-                        <path d="M7 7h10" />
-                        <path d="M7 11h10" />
-                        <path d="M7 15h10" />
-                    </svg>Rankings
-                </a>
-
-                <a href="player-matchup-ladder.html"
-                    class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu"
-                    style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">
-                    <svg xmlns="http://www.w3.org/2000/svg"
-                        class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M8 7V3m8 4V3M3 11h18M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>Matchups
-                </a>
-
-                <a href="club-analytics.html"
-                    class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu"
-                    style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">
-                    <svg xmlns="http://www.w3.org/2000/svg"
-                        class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M3 3v18h18M8 7v10M12 11v6M16 5v12" />
-                    </svg>Analytics
-                </a>
-
-                <a href="past-records.html"
-                    class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu"
-                    style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">
-                    <svg xmlns="http://www.w3.org/2000/svg"
-                        class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        aria-hidden="true">
-                        <circle cx="12" cy="12" r="8" />
-                        <path d="M12 8v4" />
-                        <path d="M12 12l3 2" />
-                    </svg>Past Records
-                </a>
-
-                <a href="absence-report.html"
-                    class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu"
-                    style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">
-                    <svg xmlns="http://www.w3.org/2000/svg"
-                        class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M8 7h8M8 11h8M8 15h5" />
-                        <rect x="4" y="3" width="16" height="18" rx="2" ry="2" />
-                    </svg>Absence
-                </a>
-
-                <a href="rules.html"
-                    class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu"
-                    style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">
-                    <svg xmlns="http://www.w3.org/2000/svg"
-                        class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                    </svg>Rules
-                </a>
-
-                <a href="admin.html"
-                    class="block rounded-lg px-3 py-3 sm:py-2 bg-white/10 hover:bg-white/20 transition-colors duration-200 overflow-hidden transform-gpu"
-                    style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">
-                    <svg xmlns="http://www.w3.org/2000/svg"
-                        class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                    </svg>Admin Portal
-                </a>
+            <div id="rankingNavLinks" class="hidden w-full flex-col gap-1 mt-4 pt-4 border-t border-red-700/50 sm:flex sm:w-auto sm:flex-row sm:items-center sm:gap-2 sm:mt-0 sm:pt-0 sm:border-0 transition-all">
+                <a href="player-ranking.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; transform: translateZ(0);">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v18" /><path d="M17 3v18" /><path d="M7 7h10" /><path d="M7 11h10" /><path d="M7 15h10" /></svg>Rankings</a>
+                <a href="player-matchup-ladder.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; transform: translateZ(0);">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3M3 11h18M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>Matchups</a>
+                <a href="club-analytics.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; transform: translateZ(0);">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3v18h18M8 7v10M12 11v6M16 5v12" /></svg>Analytics</a>
+                <a href="past-records.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; transform: translateZ(0);">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8" /><path d="M12 8v4" /><path d="M12 12l3 2" /></svg>Past Records</a>
+                <a href="absence-report.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; transform: translateZ(0);">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h8M8 11h8M8 15h5" /><rect x="4" y="3" width="16" height="18" rx="2" ry="2" /></svg>Absence</a>
+                <a href="rules.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; transform: translateZ(0);">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>Rules</a>
+                <a href="admin.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-white/10 hover:bg-white/20 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; transform: translateZ(0);">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>Admin Portal</a>
             </div>
         </nav>
     </header>
 
-
-    <main class="max-w-4xl mx-auto p-6">
+    <!-- CHANGE 2: Added id, flex-grow, and opacity-0 -->
+    <main id="main-content" class="max-w-4xl mx-auto p-6 flex-grow w-full opacity-0 transition-opacity duration-500">
         <section class="space-y-8">
             <div class="text-center py-10 fade-up">
-                <h1 class="text-4xl font-extrabold text-red-900">Table Tennis Rules & Regulations</h1>
-                <p class="text-slate-600 mt-2">Essential rules for official club play and casual spars.</p>
+                <h1 class="text-4xl font-extrabold text-red-900 uppercase italic tracking-tight">Rules & Regulations</h1>
+                <p class="text-slate-600 mt-2 font-medium">Official club guidelines for tournament play and casual spars.</p>
             </div>
 
             <!-- All Rules Loaded from Database -->
-            <div id="custom-rules-container" class="space-y-6 fade-up-d1"></div>
+            <div id="custom-rules-container" class="space-y-6"></div>
 
-            <!-- Admin: Mode Toggle + Form + Text Editor -->
-            <div id="admin-form-container"
-                class="hidden bg-slate-50 border border-slate-200 rounded-2xl p-6 mt-8 shadow-inner fade-up-d1">
-                <!-- Mode toggle buttons -->
-                <div class="flex items-center gap-3 mb-5">
-                    <button type="button" id="mode-form-btn" onclick="switchMode('form')"
-                        class="px-4 py-1.5 rounded-lg text-sm font-medium bg-blue-600 text-white transition">Form
-                        Mode</button>
-                    <button type="button" id="mode-text-btn" onclick="switchMode('text')"
-                        class="px-4 py-1.5 rounded-lg text-sm font-medium bg-slate-200 text-slate-700 hover:bg-slate-300 transition">Text
-                        Editor</button>
+            <!-- Admin Editor (Red Themed) -->
+            <div id="admin-form-container" class="hidden bg-white border border-slate-200 rounded-3xl p-8 mt-8 shadow-sm fade-up">
+                <div class="flex items-center gap-3 mb-6">
+                    <button type="button" id="mode-form-btn" onclick="switchMode('form')" class="px-4 py-2 rounded-xl text-sm font-bold bg-red-800 text-white transition shadow-sm">Form Mode</button>
+                    <button type="button" id="mode-text-btn" onclick="switchMode('text')" class="px-4 py-2 rounded-xl text-sm font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">Text Editor</button>
                 </div>
 
-                <!-- FORM MODE -->
                 <div id="form-mode">
-                    <h3 id="form-container-title" class="text-xl font-bold text-slate-800 mb-4">Add a Custom Club Rule
-                        (Admin Only)</h3>
-                    <p id="form-container-subtitle" class="text-sm text-slate-500 mb-4">You are logged in as an admin.
-                        Any rule added here will be synced to the database.</p>
+                    <h3 id="form-container-title" class="text-xl font-bold text-slate-800 mb-2">Add a Club Rule</h3>
+                    <p id="form-container-subtitle" class="text-sm text-slate-500 mb-6">Changes made here sync instantly to the club database.</p>
                     <form id="add-rule-form" class="space-y-4">
                         <div>
-                            <label for="rule-title" class="block text-sm font-medium text-slate-700">Title</label>
-                            <input type="text" id="rule-title" placeholder="e.g., Dress Code" required
-                                class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border">
+                            <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1">Rule Title</label>
+                            <input type="text" id="rule-title" placeholder="e.g., Conduct" required class="w-full rounded-xl border-slate-200 focus:border-red-500 focus:ring-red-500 p-3 border outline-none transition-all">
                         </div>
                         <div>
-                            <label for="rule-level" class="block text-sm font-medium text-slate-700">Outline
-                                Level</label>
-                            <select id="rule-level"
-                                class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border bg-white">
-                                <option value="1">Section 1</option>
-                                <option value="2">Section 1.1</option>
-                                <option value="3">Section 1.1.1</option>
+                            <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1">Outline Level</label>
+                            <select id="rule-level" class="w-full rounded-xl border-slate-200 focus:border-red-500 focus:ring-red-500 p-3 border bg-white outline-none transition-all">
+                                <option value="1">Section (Header)</option>
+                                <option value="2">Sub-rule (1.1)</option>
+                                <option value="3">Detail (1.1.1)</option>
                             </select>
-                            <p class="mt-1 text-xs text-slate-500">Use level 1 for a main section, 2 for 1.1 style
-                                items, and 3 for 1.1.1 style items.</p>
                         </div>
                         <div id="desc-container">
-                            <label for="rule-desc" class="block text-sm font-medium text-slate-700">Rule
-                                Description</label>
-                            <textarea id="rule-desc" rows="3"
-                                placeholder="e.g., All players must wear non-marking shoes." required
-                                class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"></textarea>
+                            <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1">Description</label>
+                            <textarea id="rule-desc" rows="3" required class="w-full rounded-xl border-slate-200 focus:border-red-500 focus:ring-red-500 p-3 border outline-none transition-all"></textarea>
                         </div>
-                        <div class="flex gap-4">
-                            <button type="submit" id="submit-btn"
-                                class="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition font-medium">Add
-                                Rule</button>
-                            <button type="button" id="cancel-edit-btn"
-                                class="hidden bg-slate-200 text-slate-700 px-5 py-2 rounded-lg hover:bg-slate-300 transition font-medium"
-                                onclick="cancelEdit()">Cancel</button>
+                        <div class="flex gap-4 pt-2">
+                            <button type="submit" id="submit-btn" class="bg-red-800 text-white px-6 py-3 rounded-xl hover:bg-red-900 transition font-bold shadow-md">Add Rule</button>
+                            <button type="button" id="cancel-edit-btn" class="hidden bg-slate-100 text-slate-600 px-6 py-3 rounded-xl hover:bg-slate-200 transition font-bold" onclick="cancelEdit()">Cancel</button>
                         </div>
                     </form>
                 </div>
 
-                <!-- TEXT EDITOR MODE -->
                 <div id="text-mode" class="hidden">
-                    <h3 class="text-xl font-bold text-slate-800 mb-2">Text Editor (Admin Only)</h3>
-                    <p class="text-sm text-slate-500 mb-1">Edit all rules as plain text. Use <code
-                            class="bg-slate-200 px-1 rounded">#</code> for sections, <code
-                            class="bg-slate-200 px-1 rounded">##</code> for sub-rules, <code
-                            class="bg-slate-200 px-1 rounded">###</code> for sub-sub-rules.</p>
-                    <p class="text-sm text-slate-500 mb-4">Lines after a heading become the description. Separate rules
-                        with a blank line.</p>
-                    <textarea id="text-editor" rows="20"
-                        class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-3 border font-mono text-sm leading-relaxed bg-white"
-                        spellcheck="false" placeholder="# General Club Rules
-Do not spam absent requests.
-
-## Equipment Care
-Return all rackets in the same condition.
-
-### Ball Handling
-Try not to lose any balls."></textarea>
-                    <div class="flex items-center gap-4 mt-4">
-                        <button type="button" id="save-text-btn" onclick="saveTextRules()"
-                            class="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition font-medium">Save
-                            All Rules</button>
-                        <span id="text-save-status" class="text-sm text-slate-500"></span>
+                    <h3 class="text-xl font-bold text-slate-800 mb-4">Bulk Text Editor</h3>
+                    <textarea id="text-editor" rows="15" class="w-full rounded-xl border-slate-200 focus:border-red-500 focus:ring-red-500 p-4 border font-mono text-sm leading-relaxed bg-slate-50 outline-none" spellcheck="false"></textarea>
+                    <div class="flex items-center gap-4 mt-6">
+                        <button type="button" id="save-text-btn" onclick="saveTextRules()" class="bg-red-800 text-white px-6 py-3 rounded-xl hover:bg-red-900 transition font-bold shadow-md">Save All Changes</button>
+                        <span id="text-save-status" class="text-sm font-medium"></span>
                     </div>
                 </div>
             </div>
         </section>
     </main>
 
-    <footer class="bg-slate-800 text-slate-400 mt-16">
+    <!-- CHANGE 3: Added id, mt-auto, and opacity-0 -->
+    <footer id="page-footer" class="bg-slate-800 text-slate-400 mt-auto opacity-0 transition-opacity duration-500">
         <div class="max-w-6xl mx-auto flex items-center justify-between p-4 text-sm">
             <p>&copy; <span id="current-year">2024</span> NBHS Table Tennis Hub. All Rights Reserved.</p>
             <a href="#" class="hover:text-white transition-colors">Back to Top &uarr;</a>
         </div>
     </footer>
 
-    <!-- Supabase CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
     <script>
-        // --- SUPABASE CONFIGURATION ---
         const SUPABASE_URL = "https://ngnkbfazhdedaqvxcphw.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbmtiZmF6aGRlZGFxdnhjcGh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTE5NDksImV4cCI6MjA5MzI4Nzk0OX0.F_S6ORkFe-SuJPybs7FEFH94E6U2hZ5ern4vrg4kMOk";
-
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // Navbar Toggle Logic
-        const rankingNavToggle = document.getElementById('rankingNavToggle');
-        const rankingNavLinks = document.getElementById('rankingNavLinks');
-        (function () {
-            const rankingNavToggle = document.getElementById('rankingNavToggle');
-            const rankingNavLinks = document.getElementById('rankingNavLinks');
-            const menuIcon = document.getElementById('menu-icon');
-            const closeIcon = document.getElementById('close-icon');
-
-            if (rankingNavToggle && rankingNavLinks) {
-                rankingNavToggle.addEventListener('click', () => {
-                    const isHidden = rankingNavLinks.classList.contains('hidden');
-
-                    if (isHidden) {
-                        // Open Menu
-                        rankingNavLinks.classList.remove('hidden');
-                        rankingNavLinks.classList.add('flex', 'animate-[fadeIn_0.2s_ease-in-out]');
-
-                        // Swap Icons
-                        menuIcon.classList.add('hidden');
-                        closeIcon.classList.remove('hidden');
-
-                        // Update ARIA for screen readers
-                        rankingNavToggle.setAttribute('aria-expanded', 'true');
-                    } else {
-                        // Close Menu
-                        rankingNavLinks.classList.add('hidden');
-                        rankingNavLinks.classList.remove('flex', 'animate-[fadeIn_0.2s_ease-in-out]');
-
-                        // Swap Icons
-                        menuIcon.classList.remove('hidden');
-                        closeIcon.classList.add('hidden');
-
-                        rankingNavToggle.setAttribute('aria-expanded', 'false');
-                    }
-                });
-            }
-        })();
-
-        // Custom Rules Logic
-        const form = document.getElementById('add-rule-form');
         const container = document.getElementById('custom-rules-container');
         let customRules = [];
         let isAdmin = false;
         let editingRuleId = null;
 
-        // ========== MODE SWITCHING ==========
-        window.switchMode = function (mode) {
-            const formMode = document.getElementById('form-mode');
-            const textMode = document.getElementById('text-mode');
-            const formBtn = document.getElementById('mode-form-btn');
-            const textBtn = document.getElementById('mode-text-btn');
+        // Reveal logic
+        function revealPage() {
+            document.getElementById('main-content').classList.remove('opacity-0');
+            document.getElementById('page-footer').classList.remove('opacity-0');
+        }
 
+        // Mode Switching (Updated to Red Theme)
+        window.switchMode = function (mode) {
+            const formMode = document.getElementById('form-mode'), textMode = document.getElementById('text-mode');
+            const formBtn = document.getElementById('mode-form-btn'), textBtn = document.getElementById('mode-text-btn');
             if (mode === 'text') {
-                formMode.classList.add('hidden');
-                textMode.classList.remove('hidden');
-                formBtn.className = 'px-4 py-1.5 rounded-lg text-sm font-medium bg-slate-200 text-slate-700 hover:bg-slate-300 transition';
-                textBtn.className = 'px-4 py-1.5 rounded-lg text-sm font-medium bg-blue-600 text-white transition';
+                formMode.classList.add('hidden'); textMode.classList.remove('hidden');
+                formBtn.className = 'px-4 py-2 rounded-xl text-sm font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition';
+                textBtn.className = 'px-4 py-2 rounded-xl text-sm font-bold bg-red-800 text-white transition shadow-sm';
                 document.getElementById('text-editor').value = rulesToText(customRules);
-                document.getElementById('text-save-status').textContent = '';
             } else {
-                textMode.classList.add('hidden');
-                formMode.classList.remove('hidden');
-                textBtn.className = 'px-4 py-1.5 rounded-lg text-sm font-medium bg-slate-200 text-slate-700 hover:bg-slate-300 transition';
-                formBtn.className = 'px-4 py-1.5 rounded-lg text-sm font-medium bg-blue-600 text-white transition';
+                textMode.classList.add('hidden'); formMode.classList.remove('hidden');
+                textBtn.className = 'px-4 py-2 rounded-xl text-sm font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition';
+                formBtn.className = 'px-4 py-2 rounded-xl text-sm font-bold bg-red-800 text-white transition shadow-sm';
                 cancelEdit();
             }
         };
 
-        // ========== TEXT <-> RULES CONVERSION ==========
-        function rulesToText(rules) {
-            let lines = [];
-            for (const rule of rules) {
-                const level = rule.level || 1;
-                const hashes = '#'.repeat(level);
-                lines.push(hashes + ' ' + (rule.title || ''));
-                if (rule.description) {
-                    lines.push(rule.description);
-                }
-                lines.push('');
-            }
-            return lines.join('\n').trim();
-        }
-
-        function textToRules(text) {
-            const lines = text.split('\n');
-            const rules = [];
-            let current = null;
-
-            for (const line of lines) {
-                const headingMatch = line.match(/^(#{1,3})\s+(.+)$/);
-                if (headingMatch) {
-                    if (current) {
-                        current.description = current.description.join('\n').trim();
-                        rules.push(current);
-                    }
-                    const level = headingMatch[1].length;
-                    current = {
-                        title: headingMatch[2].trim(),
-                        level: level,
-                        is_section: level === 1,
-                        description: []
-                    };
-                } else if (current) {
-                    current.description.push(line);
-                }
-            }
-            if (current) {
-                current.description = current.description.join('\n').trim();
-                rules.push(current);
-            }
-            return rules;
-        }
-
-        // ========== SAVE TEXT RULES TO SUPABASE ==========
-        window.saveTextRules = async function () {
-            const statusEl = document.getElementById('text-save-status');
-            const saveBtn = document.getElementById('save-text-btn');
-            const text = document.getElementById('text-editor').value;
-            const parsed = textToRules(text);
-
-            if (parsed.length === 0) {
-                statusEl.textContent = 'No rules found. Make sure each rule starts with # , ## , or ###.';
-                statusEl.className = 'text-sm text-red-600';
-                return;
-            }
-
-            saveBtn.textContent = 'Saving...';
-            saveBtn.disabled = true;
-            statusEl.textContent = '';
-
-            try {
-                const { error: deleteError } = await _supabase
-                    .from('custom_rules')
-                    .delete()
-                    .gte('id', 0);
-
-                if (deleteError) throw new Error('Delete failed: ' + deleteError.message);
-
-                const payloads = parsed.map(r => ({
-                    title: encodeRuleTitle(r.title, r.level),
-                    description: r.description,
-                    is_section: r.is_section
-                }));
-
-                const { data, error: insertError } = await _supabase
-                    .from('custom_rules')
-                    .insert(payloads)
-                    .select();
-
-                if (insertError) throw new Error('Insert failed: ' + insertError.message);
-
-                customRules = data.map(normalizeRule);
-                renderRules();
-                document.getElementById('text-editor').value = rulesToText(customRules);
-
-                statusEl.textContent = 'Saved ' + parsed.length + ' rule(s) successfully!';
-                statusEl.className = 'text-sm text-green-600 font-medium';
-            } catch (err) {
-                console.error('Error saving text rules:', err);
-                statusEl.textContent = 'Error: ' + err.message;
-                statusEl.className = 'text-sm text-red-600';
-            } finally {
-                saveBtn.textContent = 'Save All Rules';
-                saveBtn.disabled = false;
-            }
-        };
-
-        // ========== CORE LOGIC ==========
-        function updateAdminUI() {
-            const formContainer = document.getElementById('admin-form-container');
-            if (isAdmin) {
-                formContainer.classList.remove('hidden');
-            } else {
-                formContainer.classList.add('hidden');
-            }
-            renderRules();
-        }
-
-        _supabase.auth.getSession().then(({ data }) => {
-            isAdmin = !!data.session;
-            updateAdminUI();
-        });
-
-        _supabase.auth.onAuthStateChange((_event, session) => {
-            isAdmin = !!session;
-            updateAdminUI();
-        });
-
-        function escapeHTML(str) {
-            if (!str) return '';
-            return str.replace(/[&<>'"]/g, tag => ({
-                '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
-            }[tag] || tag));
-        }
-
-        function encodeRuleTitle(title, level) {
-            return `[[level:${level}]]${title}`;
-        }
-
-        function decodeRuleTitle(title) {
-            const match = String(title || '').match(/^\[\[level:(\d+)\]\](.*)$/);
-            if (!match) {
-                return { level: 1, title: String(title || '') };
-            }
-            return {
-                level: Math.max(1, Math.min(3, Number.parseInt(match[1], 10) || 1)),
-                title: match[2] || ''
-            };
-        }
-
-        function normalizeRule(rule) {
-            const decoded = decodeRuleTitle(rule.title);
-            return {
-                ...rule,
-                title: decoded.title,
-                level: decoded.level,
-                is_section: decoded.level === 1
-            };
-        }
-
-        function buildOutlineNumber(level, counters) {
-            for (let index = 1; index < level; index += 1) {
-                if (!counters[index]) counters[index] = 1;
-            }
-            counters[level] = (counters[level] || 0) + 1;
-            for (let index = level + 1; index < counters.length; index += 1) {
-                counters[index] = 0;
-            }
-            return counters.slice(1, level + 1).join('.');
-        }
+        // ... Helpers (rulesToText, textToRules, encode/decode, normalize) ...
+        function rulesToText(e){let t=[];for(const n of e){t.push("#".repeat(n.level||1)+" "+(n.title||"")),n.description&&t.push(n.description),t.push("")}return t.join("\n").trim()}function textToRules(e){const t=e.split("\n"),n=[];let l=null;for(const o of t){const r=o.match(/^(#{1,3})\s+(.+)$/);r?(l&&(l.description=l.description.join("\n").trim(),n.push(l)),l={title:r[2].trim(),level:r[1].length,is_section:1===r[1].length,description:[]}):l&&l.description.push(o)}return l&&(l.description=l.description.join("\n").trim(),n.push(l)),n}function encodeRuleTitle(e,t){return`[[level:${t}]]${e}`}function decodeRuleTitle(e){const t=String(e||"").match(/^\[\[level:(\d+)\]\](.*)$/);return t?{level:Math.max(1,Math.min(3,Number.parseInt(t[1],10)||1)),title:t[2]||""}:{level:1,title:String(e||"")}}function normalizeRule(e){const t=decodeRuleTitle(e.title);return{...e,title:t.title,level:t.level,is_section:1===t.level}}function buildOutlineNumber(e,t){for(let n=1;n<e;n++)t[n]||(t[n]=1);return t[e]=(t[e]||0)+1,t.fill(0,e+1),t.slice(1,e+1).join(".")}
 
         function renderRules() {
             container.innerHTML = '';
             const counters = [0, 0, 0, 0];
-
-            let currentSection = null;
-            const sections = [];
+            let delay = 1;
 
             customRules.forEach((rule) => {
-                const level = Math.max(1, Math.min(3, rule.level || (rule.is_section ? 1 : 2)));
-                const outlineNumber = buildOutlineNumber(level, counters);
-                const item = { ...rule, level, outlineNumber };
-
-                if (level === 1) {
-                    currentSection = { heading: item, children: [] };
-                    sections.push(currentSection);
-                } else if (currentSection) {
-                    currentSection.children.push(item);
+                const level = rule.level;
+                const num = buildOutlineNumber(level, counters);
+                const section = document.createElement('div');
+                section.className = `bg-white rounded-3xl border border-slate-200 shadow-sm p-6 md:p-8 fade-up fade-up-d${Math.min(delay++, 9)}`;
+                
+                let adminHtml = isAdmin ? `<div class="flex gap-2"><button onclick="editRule(${rule.id})" class="text-slate-400 hover:text-red-800">Edit</button><button onclick="deleteRule(${rule.id})" class="text-slate-400 hover:text-red-600">Delete</button></div>` : '';
+                
+                if(level === 1) {
+                    section.innerHTML = `<div class="flex justify-between items-start mb-4"><h2 class="text-2xl font-black text-red-900 uppercase italic">${num}. ${rule.title}</h2>${adminHtml}</div><p class="text-slate-600 leading-relaxed">${rule.description}</p>`;
                 } else {
-                    sections.push({ heading: null, children: [item] });
+                    section.className += level === 2 ? ' ml-0 md:ml-6' : ' ml-0 md:ml-12 bg-slate-50/50';
+                    section.innerHTML = `<div class="flex justify-between items-start mb-2"><h3 class="font-bold text-slate-800">${num} ${rule.title}</h3>${adminHtml}</div><p class="text-sm text-slate-600">${rule.description}</p>`;
                 }
-            });
-
-            sections.forEach((section) => {
-                const sectionDiv = document.createElement('section');
-                sectionDiv.className = 'bg-white rounded-3xl border border-slate-100 shadow-sm p-6 md:p-8';
-
-                let html = '';
-
-                if (section.heading) {
-                    const h = section.heading;
-                    html += `<div>`;
-                    html += `<div class="flex items-center justify-between">`;
-                    html += `<h2 class="text-2xl font-extrabold text-red-900">${escapeHTML(h.outlineNumber)}. ${escapeHTML(h.title)}</h2>`;
-                    if (isAdmin) {
-                        html += `<div class="flex gap-2">`;
-                        html += `<button onclick="editRule(${h.id})" class="text-blue-400 hover:text-blue-600" title="Edit"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg></button>`;
-                        html += `<button onclick="deleteRule(${h.id})" class="text-red-400 hover:text-red-600" title="Delete"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>`;
-                        html += `</div>`;
-                    }
-                    html += `</div>`;
-                    if (h.description) {
-                        html += `<p class="mt-3 text-slate-600 whitespace-pre-line">${escapeHTML(h.description)}</p>`;
-                    }
-                    html += `<div class="mt-4 space-y-3 text-slate-700">`;
-                } else {
-                    html += `<div class="space-y-3 text-slate-700">`;
-                }
-
-                section.children.forEach((rule) => {
-                    const adminBtns = isAdmin ? `<span class="inline-flex gap-1 ml-2 align-middle"><button onclick="editRule(${rule.id})" class="text-blue-400 hover:text-blue-600" title="Edit"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg></button><button onclick="deleteRule(${rule.id})" class="text-red-400 hover:text-red-600" title="Delete"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button></span>` : '';
-
-                    if (rule.level === 3) {
-                        html += `<p class="pl-6"><span class="font-semibold text-slate-900">${escapeHTML(rule.outlineNumber)}</span> ${escapeHTML(rule.description || rule.title)}${adminBtns}</p>`;
-                    } else {
-                        if (rule.description) {
-                            html += `<div>`;
-                            html += `<p class="font-semibold text-slate-900">${escapeHTML(rule.outlineNumber)} ${escapeHTML(rule.title)}${adminBtns}</p>`;
-                            html += `<p class="mt-1">${escapeHTML(rule.description)}</p>`;
-                            html += `</div>`;
-                        } else {
-                            html += `<p><span class="font-semibold text-slate-900">${escapeHTML(rule.outlineNumber)}</span> ${escapeHTML(rule.title)}${adminBtns}</p>`;
-                        }
-                    }
-                });
-
-                html += `</div>`;
-                if (section.heading) html += `</div>`;
-
-                sectionDiv.innerHTML = html;
-                container.appendChild(sectionDiv);
+                container.appendChild(section);
             });
         }
-
 
         async function loadRules() {
-            if (SUPABASE_URL === 'YOUR_SUPABASE_URL_HERE' || !SUPABASE_URL) {
-                container.innerHTML = '<div class="p-4 text-amber-600 bg-amber-50 rounded-lg border border-amber-200"><strong>Note:</strong> Supabase is not connected yet.</div>';
-                return;
-            }
-
-            const { data, error } = await _supabase
-                .from('custom_rules')
-                .select('*')
-                .order('id', { ascending: true });
-
-            if (error) {
-                console.error('Error fetching rules:', error);
-                container.innerHTML = '<div class="p-4 text-red-600">Error loading rules. Check console for details.</div>';
-            } else {
-                customRules = data.map(normalizeRule);
+            try {
+                const { data, error } = await _supabase.from('custom_rules').select('*').order('id', { ascending: true });
+                if (data) customRules = data.map(normalizeRule);
                 renderRules();
+            } finally {
+                revealPage();
             }
         }
 
-        form.addEventListener('submit', async (e) => {
+        // Form Submit
+        document.getElementById('add-rule-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-
-            const titleInput = document.getElementById('rule-title');
-            const descInput = document.getElementById('rule-desc');
-            const levelInput = document.getElementById('rule-level');
-            const submitBtn = document.getElementById('submit-btn');
-            const levelValue = Math.max(1, Math.min(3, Number.parseInt(levelInput.value, 10) || 1));
-
-            const payload = {
-                title: encodeRuleTitle(titleInput.value.trim(), levelValue),
-                description: descInput.value.trim(),
-                is_section: levelValue === 1
-            };
-
-            if (editingRuleId) {
-                submitBtn.textContent = 'Updating...';
-                submitBtn.disabled = true;
-
-                const { data, error } = await _supabase
-                    .from('custom_rules')
-                    .update(payload)
-                    .eq('id', editingRuleId)
-                    .select();
-
-                if (error) {
-                    console.error('Error updating rule:', error);
-                    alert('Failed to update rule! Check the console.');
-                    submitBtn.textContent = 'Update Rule';
-                    submitBtn.disabled = false;
-                } else if (data) {
-                    const idx = customRules.findIndex(r => r.id === editingRuleId);
-                    if (idx !== -1) customRules[idx] = normalizeRule(data[0]);
-                    renderRules();
-                    cancelEdit();
-                }
-            } else {
-                submitBtn.textContent = 'Adding...';
-                submitBtn.disabled = true;
-
-                const { data, error } = await _supabase
-                    .from('custom_rules')
-                    .insert([payload])
-                    .select();
-
-                submitBtn.textContent = 'Add Rule';
-                submitBtn.disabled = false;
-
-                if (error) {
-                    console.error('Error adding rule:', error);
-                    alert('Failed to add rule! Check the console.');
-                } else if (data) {
-                    customRules.push(normalizeRule(data[0]));
-                    renderRules();
-                    form.reset();
-                    document.getElementById('rule-level').value = '1';
-                }
-            }
+            const t = document.getElementById('rule-title').value, d = document.getElementById('rule-desc').value, l = parseInt(document.getElementById('rule-level').value);
+            const payload = { title: encodeRuleTitle(t, l), description: d, is_section: l === 1 };
+            if (editingRuleId) await _supabase.from('custom_rules').update(payload).eq('id', editingRuleId);
+            else await _supabase.from('custom_rules').insert([payload]);
+            location.reload();
         });
 
-        window.editRule = function (id) {
-            const rule = customRules.find(r => r.id === id);
-            if (!rule) return;
-
-            switchMode('form');
+        window.editRule = (id) => {
+            const r = customRules.find(x => x.id === id);
             editingRuleId = id;
-            document.getElementById('rule-title').value = rule.title;
-            document.getElementById('rule-level').value = String(rule.level || 1);
-            document.getElementById('desc-container').classList.remove('hidden');
-            document.getElementById('rule-desc').required = true;
-            document.getElementById('rule-desc').value = rule.description || '';
-            document.getElementById('form-container-title').textContent = 'Edit Custom Club Rule/Section';
-            document.getElementById('form-container-subtitle').textContent = 'Update your club rule or outline level below. Changes will sync to the database.';
-            document.getElementById('submit-btn').textContent = 'Update';
+            document.getElementById('rule-title').value = r.title;
+            document.getElementById('rule-level').value = r.level;
+            document.getElementById('rule-desc').value = r.description;
+            document.getElementById('submit-btn').textContent = "Update Rule";
             document.getElementById('cancel-edit-btn').classList.remove('hidden');
             document.getElementById('admin-form-container').scrollIntoView({ behavior: 'smooth' });
         };
 
-        window.cancelEdit = function () {
-            editingRuleId = null;
-            form.reset();
-            document.getElementById('desc-container').classList.remove('hidden');
-            document.getElementById('rule-desc').required = true;
-            document.getElementById('rule-level').value = '1';
-            document.getElementById('form-container-title').textContent = 'Add a Custom Club Rule or Section (Admin Only)';
-            document.getElementById('form-container-subtitle').textContent = 'You are logged in as an admin. Any rule added here will be synced to the database.';
-            document.getElementById('submit-btn').textContent = 'Add Rule';
-            document.getElementById('submit-btn').disabled = false;
-            document.getElementById('cancel-edit-btn').classList.add('hidden');
+        window.cancelEdit = () => { editingRuleId = null; document.getElementById('add-rule-form').reset(); document.getElementById('cancel-edit-btn').classList.add('hidden'); document.getElementById('submit-btn').textContent = "Add Rule"; };
+        
+        window.deleteRule = async (id) => { if(confirm('Delete rule?')) { await _supabase.from('custom_rules').delete().eq('id', id); location.reload(); } };
+
+        window.saveTextRules = async function() {
+            const btn = document.getElementById('save-text-btn'); btn.disabled = true;
+            const parsed = textToRules(document.getElementById('text-editor').value);
+            await _supabase.from('custom_rules').delete().gte('id', 0);
+            await _supabase.from('custom_rules').insert(parsed.map(r => ({ title: encodeRuleTitle(r.title, r.level), description: r.description, is_section: r.is_section })));
+            location.reload();
         };
 
-        window.deleteRule = async function (id) {
-            if (confirm('Are you sure you want to delete this rule?')) {
-                const { error } = await _supabase
-                    .from('custom_rules')
-                    .delete()
-                    .eq('id', id);
-
-                if (error) {
-                    console.error('Error deleting rule:', error);
-                    alert('Failed to delete rule! Check the console.');
-                } else {
-                    customRules = customRules.filter(r => r.id !== id);
-                    renderRules();
-                }
-            }
-        };
-
+        // Shared Logic
+        _supabase.auth.onAuthStateChange((_event, session) => { isAdmin = !!session; if(isAdmin) document.getElementById('admin-form-container').classList.remove('hidden'); });
+        (function(){const t=document.getElementById("rankingNavToggle"),e=document.getElementById("rankingNavLinks"),n=document.getElementById("menu-icon"),o=document.getElementById("close-icon");if(t&&e)t.addEventListener("click",()=>{const s=e.classList.contains("hidden");s?(e.classList.remove("hidden"),e.classList.add("flex","animate-[fadeIn_0.2s_ease-in-out]"),n.classList.add("hidden"),o.classList.remove("hidden")):(e.classList.add("hidden"),n.classList.remove("hidden"),o.classList.add("hidden"))})})();
+        (function(){const y=document.getElementById('current-year'); if(y) y.textContent=new Date().getFullYear();})();
 
         loadRules();
-        (function () {
-            const yearEl = document.getElementById('current-year');
-            if (yearEl) {
-                yearEl.textContent = new Date().getFullYear();
-            }
-        })();
     </script>
 </body>
-
 </html>
