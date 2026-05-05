@@ -7,7 +7,7 @@
     <title>Absence Report - NBHS Table Tennis</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Supabase required for both form and components.js -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script type="text/javascript">
         (function () {
@@ -49,7 +49,7 @@
             <div class="mt-8 border-t border-slate-200 pt-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <p class="text-sm font-medium text-slate-500">Only club admins can view submitted reports.</p>
                 <div class="flex items-center gap-2">
-                    <button id="adminShowReportsBtn" type="button" class="hidden text-sm font-bold bg-red-600 text-white px-4 py-2 rounded-xl hover:bg-red-700 transition-colors shadow-sm" onclick="document.getElementById('adminReportsModal').classList.remove('hidden')">View Reports</button>
+                    <button id="adminShowReportsBtn" type="button" class="hidden text-sm font-bold bg-red-600 text-white px-4 py-2 rounded-xl hover:bg-red-700 transition-colors shadow-sm" onclick="openAdminReports()">View Reports</button>
                 </div>
             </div>
         </section>
@@ -127,17 +127,75 @@
             if (data) renderAdminReports(data);
         }
 
-        function renderAdminReports(reports) {
-            const list = document.getElementById('adminReportsList');
-            if (!list) return;
-            list.innerHTML = reports.map(r => `
-                <div class="border rounded-lg p-4 bg-white">
-                    <p><strong>Name:</strong> ${escapeHtml(r.name)}</p>
-                    <p><strong>Reason:</strong> ${escapeHtml(r.reason)}</p>
-                    <p class="text-xs text-slate-400 mt-2">Status: ${r.status || 'pending'}</p>
-                </div>
-            `).join('') || '<p>No reports.</p>';
-        }
+            function renderAdminReports(reports) {
+                const list = document.getElementById('adminReportsList');
+                if (!list) return;
+                if (!reports || !reports.length) { list.innerHTML = '<p>No reports.</p>'; return; }
+
+                const isAdminView = !!window._isAdmin;
+
+                list.innerHTML = reports.map(r => {
+                    const status = (r.status || 'pending');
+                    const actions = isAdminView ? `
+                        <div class="mt-3 flex gap-2">
+                            <button data-id="${r.id}" data-status="approved" class="approve-absence-btn text-sm font-semibold bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700">Approve</button>
+                            <button data-id="${r.id}" data-status="declined" class="decline-absence-btn text-sm font-semibold bg-red-600 text-white px-3 py-2 rounded-lg hover:bg-red-700">Decline</button>
+                        </div>
+                    ` : '';
+
+                    return `
+                        <div class="border rounded-lg p-4 bg-white">
+                            <p><strong>Name:</strong> ${escapeHtml(r.name)}</p>
+                            <p><strong>Reason:</strong> ${escapeHtml(r.reason)}</p>
+                            <p class="text-xs text-slate-400 mt-2">Status: ${escapeHtml(status)}</p>
+                            ${status !== 'pending' ? `<p class="text-xs text-slate-400 mt-1">Reviewed by: ${escapeHtml(r.reviewed_by || 'unknown')}</p>` : ''}
+                            ${status === 'pending' ? actions : ''}
+                        </div>
+                    `;
+                }).join('');
+
+                // Attach handlers for admin actions
+                if (isAdminView) {
+                    list.querySelectorAll('.approve-absence-btn, .decline-absence-btn').forEach(btn => {
+                        btn.addEventListener('click', async (e) => {
+                            const id = e.currentTarget.getAttribute('data-id');
+                            const newStatus = e.currentTarget.getAttribute('data-status');
+                            try {
+                                await reviewAbsenceReport(id, newStatus);
+                            } catch (err) {
+                                console.error('Failed to update report status', err);
+                                alert('Failed to update report: ' + (err.message || err));
+                            }
+                        });
+                    });
+                }
+            }
+
+            // Open admin modal and set admin view flag
+            function openAdminReports() {
+                window._isAdmin = true;
+                document.getElementById('adminReportsModal').classList.remove('hidden');
+                refreshAdminPanel();
+            }
+
+            // Update absence report status (approve/decline)
+            async function reviewAbsenceReport(id, status) {
+                const client = getSupabaseClient();
+                if (!client) throw new Error('Supabase client not initialized');
+
+                // Get current user for reviewed_by
+                const { data: sessionData } = await client.auth.getSession();
+                const userEmail = sessionData?.session?.user?.email || 'unknown';
+
+                const { error } = await client.from(ABSENCE_TABLE).update({
+                    status,
+                    reviewed_by: userEmail,
+                    reviewed_at: new Date().toISOString()
+                }).eq('id', id);
+
+                if (error) throw error;
+                await refreshAdminPanel();
+            }
 
         document.addEventListener("DOMContentLoaded", () => {
             // Form Submit Logic
@@ -156,10 +214,27 @@
 
             // Auth Logic & Reveal Trigger
             const client = getSupabaseClient();
-            if (client) client.auth.onAuthStateChange((_event, session) => {
+            const adminBtn = document.getElementById('adminShowReportsBtn');
+
+            async function handleAuth(session) {
                 updateFormVisibility(session);
-                const adminBtn = document.getElementById('adminShowReportsBtn');
-                if (session?.user.email === "nbhsttclub@gmail.com") {
+                let isAdmin = false;
+                if (session && session.user && session.user.email) {
+                    const email = (session.user.email || '').toLowerCase();
+                    if (window._resolveAccountRole) {
+                        try {
+                            const role = await window._resolveAccountRole(email);
+                            isAdmin = role === 'admin';
+                        } catch (err) { isAdmin = false; }
+                    } else {
+                        const adminEmails = window._adminEmails || ['nbhsttclub@gmail.com'];
+                        isAdmin = adminEmails.includes(email);
+                    }
+                }
+
+                window._isAdmin = !!isAdmin;
+
+                if (isAdmin) {
                     adminBtn?.classList.remove('hidden');
                     refreshAdminPanel();
                 } else {
@@ -169,8 +244,15 @@
                 // REVEAL PAGE Logic
                 document.getElementById('main-content').classList.remove('opacity-0');
                 const footer = document.getElementById('page-footer');
-                if(footer) footer.classList.remove('opacity-0');
-            });
+                if (footer) footer.classList.remove('opacity-0');
+            }
+
+            if (client) {
+                client.auth.getSession().then(({ data }) => handleAuth(data?.session)).catch(() => handleAuth(null));
+                client.auth.onAuthStateChange((_event, session) => handleAuth(session));
+            } else {
+                handleAuth(null);
+            }
         });
     </script>
 </body>

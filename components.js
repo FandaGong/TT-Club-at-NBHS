@@ -1,9 +1,15 @@
 // components.js
 const CONFIG = {
     SUPABASE_URL: "https://ngnkbfazhdedaqvxcphw.supabase.co",
-    SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbmtiZmF6aGRlZGFxdnhjcGh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTE5NDksImV4cCI6MjA5MzI4Nzk0OX0.F_S6ORkFe-SuJPybs7FEFH94E6U2hZ5ern4vrg4kMOk",
-    ADMIN_EMAILS: ['nbhsttclub@gmail.com']
+    SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbmtiZmF6aGRlZGFxdnhjcGh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTE5NDksImV4cCI6MjA5MzI4Nzk0OX0.F_S6ORkFe-SuJPybs7FEFH94E6U2hZ5ern4vrg4kMOk"
 };
+
+// Hardcoded admin allowlist (lowercase)
+window._adminEmails = (window._adminEmails || [
+    'nbhsttclub@gmail.com',
+    'jonathanzhao111@gmail.com',
+    'damon.yuan@education.nsw.gov.au'
+]).map(e => (e || '').toLowerCase());
 
 const headerHTML = `
 <header class="bg-red-800 text-white shadow-md fade-in relative z-50">
@@ -41,12 +47,23 @@ const footerHTML = `
 </footer>
 `;
 
-function updateAuthUI(session) {
+async function updateAuthUI(session) {
     const loginText = document.getElementById('navLoginLinkText');
     if (!loginText) return;
-    if (session) {
-        const email = session.user.email.toLowerCase();
-        loginText.textContent = CONFIG.ADMIN_EMAILS.includes(email) ? "Admin Portal" : "Profile";
+    if (session && session.user && session.user.email) {
+        const email = (session.user.email || '').toLowerCase();
+        try {
+            if (window._resolveAccountRole) {
+                const role = await window._resolveAccountRole(email);
+                loginText.textContent = role === 'admin' ? 'Admin Portal' : 'Profile';
+                return;
+            }
+        } catch (err) {
+            // fall through to default label
+        }
+        // Fallback display
+        const adminEmails = (window._adminEmails || []).slice();
+        loginText.textContent = adminEmails.includes(email) ? "Admin Portal" : "Profile";
     } else {
         loginText.textContent = "Login";
     }
@@ -88,8 +105,33 @@ document.addEventListener('DOMContentLoaded', async () => {
         const _supabase = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
         // Export the client globally so other pages can use it
         window._supabaseClient = _supabase;
+
+        // Expose a resolver that checks the `account_requests` tables for approved admin role
+        window._ACCOUNT_REQUESTS_TABLES = ['account_requests_v2', 'account_requests'];
+        window._resolveAccountRole = async function(email) {
+            if (!email) return 'standard';
+            const lower = (email || '').toLowerCase();
+            if (window._adminEmails && window._adminEmails.includes(lower)) return 'admin';
+            for (const tableName of window._ACCOUNT_REQUESTS_TABLES) {
+                try {
+                    const { data, error } = await _supabase.from(tableName)
+                        .select('role, status')
+                        .ilike('email', email)
+                        .order('created_at', { ascending: false })
+                        .limit(1);
+                    if (error) continue;
+                    const request = data && data[0];
+                    if (!request) return 'standard';
+                    if ((request.status || '').toLowerCase() === 'approved') return (request.role || 'standard').toLowerCase();
+                    return 'standard';
+                } catch (err) {
+                    continue;
+                }
+            }
+            return 'standard';
+        };
         const { data } = await _supabase.auth.getSession();
-        updateAuthUI(data.session);
+        await updateAuthUI(data.session);
         _supabase.auth.onAuthStateChange((_event, session) => updateAuthUI(session));
         
         // If this is the admin page, initialize its auth handlers now that shared client is ready

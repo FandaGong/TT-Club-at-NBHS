@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="animations.css">
     <link rel="icon" type="image/png" href="favicon.png">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 </head>
 
 <body class="bg-red-50 text-slate-900 font-sans min-h-screen flex flex-col">
@@ -216,7 +216,7 @@
         });
         
         const ACCOUNT_REQUESTS_TABLES = ['account_requests_v2', 'account_requests'];
-        const ADMIN_ALLOWLIST = ['nbhsttclub@gmail.com'];
+        const ADMIN_ALLOWLIST = ['nbhsttclub@gmail.com', 'jonathanzhao111@gmail.com', 'damon.yuan@education.nsw.gov.au'];
 
         let currentAccountRole = 'guest';
         let currentAccountEmail = '';
@@ -297,6 +297,15 @@
         })();
 
         async function resolveAccountRole(email) {
+            if (!email) return 'standard';
+            // Prefer centralized resolver exposed by components.js when available
+            if (window._resolveAccountRole) {
+                try {
+                    return await window._resolveAccountRole(email);
+                } catch (err) {
+                    // fall back to local lookup
+                }
+            }
             if (ADMIN_ALLOWLIST.includes(email.toLowerCase())) return 'admin';
             const { data, error } = await withAccountRequestsTable((tableName) => _supabase
                 .from(tableName)

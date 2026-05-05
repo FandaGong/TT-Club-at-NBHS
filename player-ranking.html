@@ -7,7 +7,7 @@
     <title>Player Rankings - NBHS Table Tennis</title>
     <script src="tailwind-theme.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="animations.css">
     <link rel="icon" type="image/png" href="favicon.png">
@@ -236,7 +236,7 @@
     const defaultLabel = 'Login';
     const profileLabel = 'Profile';
     const adminLabel = 'Admin Portal';
-    const adminAllowlist = ['nbhsttclub@gmail.com'];
+    const adminAllowlist = [];
     const supabaseUrl = 'https://ngnkbfazhdedaqvxcphw.supabase.co';
     const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbmtiZmF6aGRlZGFxdnhjcGh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTE5NDksImV4cCI6MjA5MzI4Nzk0OX0.F_S6ORkFe-SuJPybs7FEFH94E6U2hZ5ern4vrg4kMOk';
 
@@ -254,11 +254,20 @@
         loginText.textContent = label;
     }
 
-    function updateLabel(session) {
+    async function updateLabel(session) {
         const email = session?.user?.email?.toLowerCase();
         if (!email) {
             setLabel(defaultLabel);
             return;
+        }
+        try {
+            if (window._resolveAccountRole) {
+                const role = await window._resolveAccountRole(email);
+                setLabel(role === 'admin' ? adminLabel : profileLabel);
+                return;
+            }
+        } catch (err) {
+            // ignore and fallback
         }
         setLabel(adminAllowlist.includes(email) ? adminLabel : profileLabel);
     }
