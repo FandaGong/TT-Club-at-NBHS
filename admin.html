@@ -12,10 +12,8 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
-<!-- CHANGE 1: Added flex flex-col for sticky footer -->
 <body class="bg-red-50 text-slate-900 font-sans min-h-screen flex flex-col">
 
-    <!-- CHANGE 2: Standardized Header (Hardware accelerated + Icon swap) -->
     <header class="bg-red-800 text-white shadow-md fade-in">
         <nav class="max-w-6xl mx-auto flex items-center justify-between gap-4 px-4 py-4">
             <a href="index.html" class="text-xl font-bold">NBHS TT Hub</a>
@@ -34,42 +32,32 @@
                 </svg>
             </button>
 
-        <!-- Nav Links inside Hamburger Menu -->
-        <div id="rankingNavLinks" class="hidden w-full flex-col gap-1 mt-4 pt-4 border-t border-red-700/50 sm:flex sm:w-auto sm:flex-row sm:items-center sm:gap-2 sm:mt-0 sm:pt-0 sm:border-0">
-            
-            <!-- Link Fix: Added bg-transparent, transform-gpu, and translateZ(0) to every button -->
-            <a href="player-ranking.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">
-                <svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v18"/><path d="M17 3v18"/><path d="M7 7h10"/><path d="M7 11h10"/><path d="M7 15h10"/></svg>Rankings
-            </a>
-            
-            <a href="player-matchup-ladder.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">
-                <svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3M3 11h18M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>Matchups
-            </a>
-            
-            <a href="club-analytics.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">
-                <svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3v18h18M8 7v10M12 11v6M16 5v12"/></svg>Analytics
-            </a>
-            
-            <a href="past-records.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">
-                <svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4"/><path d="M12 12l3 2"/></svg>Past Records
-            </a>
-            
-            <a href="absence-report.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">
-                <svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h8M8 11h8M8 15h5"/><rect x="4" y="3" width="16" height="18" rx="2" ry="2"/></svg>Absence
-            </a>
-            
-            <a href="rules.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">
-                <svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>Rules
-            </a>
-            
-            <a id="navLoginLink" href="admin.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-white/10 hover:bg-white/20 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">
-                <svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg><span id="navLoginLinkText">Login</span>
-            </a>
+            <div id="rankingNavLinks" class="hidden w-full flex-col gap-1 mt-4 pt-4 border-t border-red-700/50 sm:flex sm:w-auto sm:flex-row sm:items-center sm:gap-2 sm:mt-0 sm:pt-0 sm:border-0">
+                <a href="player-ranking.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v18"/><path d="M17 3v18"/><path d="M7 7h10"/><path d="M7 11h10"/><path d="M7 15h10"/></svg>Rankings
+                </a>
+                <a href="player-matchup-ladder.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3M3 11h18M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>Matchups
+                </a>
+                <a href="club-analytics.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3v18h18M8 7v10M12 11v6M16 5v12"/></svg>Analytics
+                </a>
+                <a href="past-records.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4"/><path d="M12 12l3 2"/></svg>Past Records
+                </a>
+                <a href="absence-report.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h8M8 11h8M8 15h5"/><rect x="4" y="3" width="16" height="18" rx="2" ry="2"/></svg>Absence
+                </a>
+                <a href="rules.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>Rules
+                </a>
+                <a id="navLoginLink" href="admin.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-white/10 hover:bg-white/20 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg><span id="navLoginLinkText">Login</span>
+                </a>
             </div>
         </nav>
     </header>
 
-    <!-- CHANGE 3: Added flex-grow -->
     <main class="max-w-4xl mx-auto p-6 flex-grow w-full">
         <section class="space-y-8">
             <div class="text-center py-10 fade-up">
@@ -77,7 +65,6 @@
                 <p id="pageSubtitle" class="text-slate-600 mt-2">Log in to submit absence report and others.</p>
             </div>
 
-            <!-- Login Container -->
             <div id="loginContainer" class="bg-white rounded-2xl shadow-sm border border-slate-100 p-8 max-w-2xl mx-auto fade-up-d1">
                 <div class="text-center mb-6">
                     <h2 id="authPanelTitle" class="text-xl font-bold text-slate-800">Admin Login</h2>
@@ -134,7 +121,6 @@
                 </div>
             </div>
 
-            <!-- Dashboard Container -->
             <div id="dashboardContainer" class="hidden space-y-6 fade-up-d1">
                 <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
                     <div class="space-y-1">
@@ -187,7 +173,6 @@
         </section>
     </main>
 
-    <!-- Account Requests Modal — direct child of body so it overlays everything including header -->
     <div id="accountRequestsModal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
         <div class="bg-white rounded-2xl shadow-lg max-w-2xl w-full max-h-96 overflow-auto">
             <div class="sticky top-0 bg-white border-b border-slate-200 p-4 flex items-center justify-between">
@@ -200,7 +185,6 @@
         </div>
     </div>
 
-    <!-- Profile Modal — direct child of body so it overlays everything including header -->
     <div id="profileModal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
         <div class="bg-white rounded-2xl shadow-lg max-w-md w-full">
             <div class="bg-red-800 text-white border-b border-red-700 p-4 flex items-center justify-between">
@@ -239,9 +223,7 @@
         function isMissingAccountRequestsTableError(error) {
             const code = (error?.code || '').toUpperCase();
             const message = (error?.message || '').toLowerCase();
-            if (code === '42P01' || code === 'PGRST205') {
-                return true;
-            }
+            if (code === '42P01' || code === 'PGRST205') return true;
             return message.includes('relation') && message.includes('account_requests') && message.includes('does not exist');
         }
 
@@ -253,30 +235,21 @@
 
         async function withAccountRequestsTable(operation) {
             let lastError = null;
-
             for (const tableName of ACCOUNT_REQUESTS_TABLES) {
                 const result = await operation(tableName);
-                if (!result.error) {
-                    return result;
-                }
-
+                if (!result.error) return result;
                 lastError = result.error;
-
-                if (!isMissingAccountRequestsTableError(result.error) && !isAccountRequestsPermissionError(result.error)) {
-                    break;
-                }
+                if (!isMissingAccountRequestsTableError(result.error) && !isAccountRequestsPermissionError(result.error)) break;
             }
-
             return { data: null, error: lastError };
         }
 
-        // Standardized Navbar Toggle Logic
+        // Navbar Toggle
         (function () {
             const rankingNavToggle = document.getElementById('rankingNavToggle');
             const rankingNavLinks = document.getElementById('rankingNavLinks');
             const menuIcon = document.getElementById('menu-icon');
             const closeIcon = document.getElementById('close-icon');
-
             if (rankingNavToggle && rankingNavLinks) {
                 rankingNavToggle.addEventListener('click', () => {
                     const isHidden = rankingNavLinks.classList.contains('hidden');
@@ -289,7 +262,6 @@
             }
         })();
 
-        // Auth Logic
         function updateUI(session) {
             const loginContainer = document.getElementById('loginContainer');
             const dashboardContainer = document.getElementById('dashboardContainer');
@@ -315,7 +287,6 @@
 
                 resolveAccountRole(session.user.email).then((role) => {
                     if (sessionToken !== activeSessionToken) return;
-
                     currentAccountRole = role;
                     const isAdmin = role === 'admin';
 
@@ -328,27 +299,20 @@
                     dashboardAccessNote.textContent = isAdmin ? 'Admin access granted.' : 'Standard user access granted.';
                     standardUserNotice.classList.toggle('hidden', isAdmin);
                     adminToolsContainer.classList.toggle('hidden', !isAdmin);
-                    
+
                     if (isAdmin) {
                         navLoginBtnText.textContent = 'Admin Portal';
                     } else {
-                        navLoginBtnText.textContent = 'Profile';
-                        document.getElementById('profileEmail').textContent = session.user.email;
-                    }
-                    
-                    if (!isAdmin) {
                         const parts = session.user.email.split('@');
                         navLoginBtnText.innerHTML = 'Profile <span class="text-xs ml-1">(' + parts[0] + ')</span>';
+                        document.getElementById('profileEmail').textContent = session.user.email;
                     }
-                    
+
                     pageTitle.textContent = isAdmin ? 'Admin Panel' : 'Dashboard';
                     pageSubtitle.textContent = isAdmin ? 'Review account requests, absence reports, and manage club rules.' : 'Your account profile and settings.';
-                    
-                    attachEventListeners();
 
-                    if (isAdmin) {
-                        loadAccountRequests();
-                    }
+                    attachEventListeners();
+                    if (isAdmin) loadAccountRequests();
                 }).catch((error) => {
                     if (sessionToken !== activeSessionToken) return;
                     console.error('Failed to resolve role:', error);
@@ -374,22 +338,11 @@
 
         function setDialogTab(tabName) {
             const tabs = {
-                'admin-login': {
-                    button: document.getElementById('dialogTabAdminLogin'),
-                    panel: document.getElementById('dialogPanelAdminLogin')
-                },
-                'standard-login': {
-                    button: document.getElementById('dialogTabStandardLogin'),
-                    panel: document.getElementById('dialogPanelStandardLogin')
-                },
-                'create-account': {
-                    button: document.getElementById('dialogTabCreateAccount'),
-                    panel: document.getElementById('dialogPanelCreateAccount')
-                }
+                'admin-login': { button: document.getElementById('dialogTabAdminLogin'), panel: document.getElementById('dialogPanelAdminLogin') },
+                'standard-login': { button: document.getElementById('dialogTabStandardLogin'), panel: document.getElementById('dialogPanelStandardLogin') },
+                'create-account': { button: document.getElementById('dialogTabCreateAccount'), panel: document.getElementById('dialogPanelCreateAccount') }
             };
-
             activeDialogTab = tabName;
-
             for (const [name, item] of Object.entries(tabs)) {
                 const isActive = name === tabName;
                 item.panel.classList.toggle('hidden', !isActive);
@@ -401,33 +354,21 @@
         }
 
         async function resolveAccountRole(email) {
-            if (ADMIN_ALLOWLIST.includes(email.toLowerCase())) {
-                return 'admin';
-            }
-
+            if (ADMIN_ALLOWLIST.includes(email.toLowerCase())) return 'admin';
             const { data, error } = await withAccountRequestsTable((tableName) => _supabase
                 .from(tableName)
                 .select('role, status')
                 .ilike('email', email)
                 .order('created_at', { ascending: false })
                 .limit(1));
-
-            if (error) {
-                return 'standard';
-            }
-
+            if (error) return 'standard';
             const request = data && data[0];
-            if (!request) {
-                return 'standard';
-            }
-
-            if ((request.status || '').toLowerCase() === 'approved') {
-                return (request.role || 'standard').toLowerCase();
-            }
-
+            if (!request) return 'standard';
+            if ((request.status || '').toLowerCase() === 'approved') return (request.role || 'standard').toLowerCase();
             return 'standard';
         }
 
+        // CHANGED: Login now checks if standard user is approved before allowing access
         async function handleDialogLogin(event, targetRole) {
             event.preventDefault();
             const isAdminLogin = targetRole === 'admin';
@@ -447,16 +388,31 @@
                 if (error) throw error;
 
                 const sessionRole = await resolveAccountRole(data.user.email);
+
                 if (isAdminLogin && sessionRole !== 'admin') {
                     await _supabase.auth.signOut();
                     throw new Error('That account is not approved as an admin account.');
                 }
-
                 if (!isAdminLogin && sessionRole === 'admin') {
                     await _supabase.auth.signOut();
                     throw new Error('This is an admin account. Use the Admin Login tab.');
                 }
-                
+
+                // Block unapproved standard users
+                if (!isAdminLogin) {
+                    const { data: reqData } = await withAccountRequestsTable((tableName) => _supabase
+                        .from(tableName)
+                        .select('status')
+                        .ilike('email', data.user.email)
+                        .order('created_at', { ascending: false })
+                        .limit(1));
+                    const status = reqData && reqData[0] && (reqData[0].status || '').toLowerCase();
+                    if (status !== 'approved') {
+                        await _supabase.auth.signOut();
+                        throw new Error('Your account is pending admin approval.');
+                    }
+                }
+
                 statusNode.classList.add('hidden');
             } catch (error) {
                 statusNode.textContent = error.message || 'Login failed. Check credentials.';
@@ -464,6 +420,7 @@
             }
         }
 
+        // CHANGED: Account request now creates auth account immediately, no password stored in table
         async function handleAccountRequest(event) {
             event.preventDefault();
             const emailInput = document.getElementById('requestEmail');
@@ -479,62 +436,47 @@
             }
 
             statusNode.classList.remove('hidden');
-            statusNode.textContent = 'Checking request status...';
+            statusNode.textContent = 'Creating account...';
             statusNode.className = 'mt-2 text-sm font-medium text-blue-600 text-center block';
 
             try {
                 const email = emailInput.value.trim().toLowerCase();
-                const { data, error: lookupError } = await withAccountRequestsTable((tableName) => _supabase
+
+                // Check if request already exists
+                const { data } = await withAccountRequestsTable((tableName) => _supabase
                     .from(tableName)
                     .select('id, status')
                     .ilike('email', email)
                     .order('created_at', { ascending: false })
                     .limit(1));
-
-                let request = data && data[0];
-                const canReadRequestTable = !lookupError;
-
-                if (lookupError && !isMissingAccountRequestsTableError(lookupError) && !isAccountRequestsPermissionError(lookupError)) {
-                    throw lookupError;
-                }
-
-                if (lookupError) {
-                    request = null;
-                }
-
-                if (request && (request.status || '').toLowerCase() === 'approved') {
-                    statusNode.textContent = 'Request approved. Creating account...';
-                    statusNode.className = 'mt-2 text-sm font-medium text-blue-600 text-center block';
-
-                    const signUpResult = await _supabase.auth.signUp({
-                        email,
-                        password: passwordInput.value
-                    });
-
-                    if (signUpResult.error) throw signUpResult.error;
-
-                    statusNode.textContent = 'Account created successfully.';
-                    statusNode.className = 'mt-2 text-sm font-medium text-green-600 text-center block';
-                    emailInput.value = '';
-                    passwordInput.value = '';
-                    confirmPasswordInput.value = '';
+                const existing = data && data[0];
+                if (existing) {
+                    statusNode.textContent = 'An account request for this email already exists.';
+                    statusNode.className = 'mt-2 text-sm font-medium text-amber-600 text-center block';
                     return;
                 }
 
+                // Create auth account immediately (password handled by Supabase Auth)
+                const { error: signUpErr } = await _supabase.auth.signUp({
+                    email,
+                    password: passwordInput.value
+                });
+                if (signUpErr) throw signUpErr;
+
+                // Sign out so they can't use the app until approved
+                await _supabase.auth.signOut();
+
+                // Insert request row — no password column needed
                 const { error } = await withAccountRequestsTable((tableName) => _supabase
                     .from(tableName)
                     .insert({
                         email,
-                        password: passwordInput.value,
                         role: 'standard',
                         status: 'pending'
                     }));
-
                 if (error) throw error;
 
-                statusNode.textContent = canReadRequestTable
-                    ? 'Request submitted. An admin must independently verify and approve it before the account can be created.'
-                    : 'Request submitted. Admin approval works, but account status checks are blocked until README select policy is added for account_requests.';
+                statusNode.textContent = 'Account created! An admin must approve it before you can log in.';
                 statusNode.className = 'mt-2 text-sm font-medium text-green-600 text-center block';
                 emailInput.value = '';
                 passwordInput.value = '';
@@ -548,7 +490,6 @@
         async function loadAccountRequests() {
             const list = document.getElementById('accountRequestsModalList');
             if (!list) return;
-
             list.innerHTML = '<p class="text-slate-500">Loading requests...</p>';
 
             const { data, error } = await withAccountRequestsTable((tableName) => _supabase
@@ -574,7 +515,6 @@
             list.innerHTML = data.map((request) => {
                 const requestedAt = new Date(request.created_at).toLocaleString();
                 const status = (request.status || 'pending').toLowerCase();
-
                 let statusChip = 'bg-yellow-100 text-yellow-800 border-yellow-200';
                 if (status === 'approved') statusChip = 'bg-green-100 text-green-800 border-green-200';
                 if (status === 'declined') statusChip = 'bg-red-100 text-red-800 border-red-200';
@@ -639,6 +579,7 @@
             });
         }
 
+        // CHANGED: Simplified — just updates status, no more signUp on approval (account already exists)
         async function reviewAccountRequest(id, status, email, role) {
             if (!confirm(`Mark ${email} as ${status}?`)) return;
 
@@ -648,7 +589,7 @@
                     status,
                     reviewed_at: new Date().toISOString(),
                     reviewed_by: currentAccountEmail,
-                    role: status === 'approved' ? role : role
+                    role: role
                 })
                 .eq('id', id));
 
@@ -657,44 +598,8 @@
                 return;
             }
 
-            // Auto-create the Supabase auth account on approval
-            if (status === 'approved') {
-                // Fetch the stored password from the request
-                const { data: reqData, error: fetchErr } = await withAccountRequestsTable((tableName) => _supabase
-                    .from(tableName)
-                    .select('password')
-                    .eq('id', id)
-                    .single());
-
-                if (fetchErr || !reqData?.password) {
-                    alert('Request approved, but could not retrieve the stored password to auto-create the account. The user will need to re-submit on the Account Creation tab.');
-                } else {
-                    // FIX: Save admin session before signUp (which auto-signs-in as the new user)
-                    const { data: adminSessionData } = await _supabase.auth.getSession();
-                    const adminSession = adminSessionData?.session;
-
-                    const { error: signUpErr } = await _supabase.auth.signUp({
-                        email,
-                        password: reqData.password
-                    });
-
-                    if (signUpErr) {
-                        alert('Request approved, but account creation failed: ' + signUpErr.message);
-                    }
-
-                    // Restore admin session so we don't get logged in as the new user
-                    if (adminSession) {
-                        await _supabase.auth.setSession({
-                            access_token: adminSession.access_token,
-                            refresh_token: adminSession.refresh_token
-                        });
-                    }
-                }
-            }
-
             await loadAccountRequests();
         }
-
 
         document.getElementById('adminLogoutBtn').addEventListener('click', async () => {
             await _supabase.auth.signOut();
@@ -704,8 +609,7 @@
             const openBtn = document.getElementById('openAccountRequestsModalBtn');
             if (openBtn && !openBtn._listenerAttached) {
                 openBtn.addEventListener('click', () => {
-                    const modal = document.getElementById('accountRequestsModal');
-                    modal.classList.remove('hidden');
+                    document.getElementById('accountRequestsModal').classList.remove('hidden');
                     loadAccountRequests();
                 });
                 openBtn._listenerAttached = true;
@@ -714,13 +618,9 @@
             const navBtn = document.getElementById('navLoginLink');
             if (navBtn && !navBtn._listenerAttached) {
                 navBtn.addEventListener('click', () => {
-                    if (currentAccountRole === 'admin') {
-                        return;
-                    } else if (currentAccountRole === 'standard') {
-                        document.getElementById('profileModal').classList.remove('hidden');
-                    } else {
-                        document.getElementById('loginContainer').scrollIntoView({ behavior: 'smooth' });
-                    }
+                    if (currentAccountRole === 'admin') return;
+                    else if (currentAccountRole === 'standard') document.getElementById('profileModal').classList.remove('hidden');
+                    else document.getElementById('loginContainer').scrollIntoView({ behavior: 'smooth' });
                 });
                 navBtn._listenerAttached = true;
             }
@@ -749,7 +649,6 @@
                 statusNode.className = 'mt-2 text-sm font-medium text-red-600 text-center block';
                 return;
             }
-
             if (newPass !== confirmPass) {
                 statusNode.textContent = 'Passwords do not match.';
                 statusNode.className = 'mt-2 text-sm font-medium text-red-600 text-center block';
@@ -778,19 +677,14 @@
 
         document.getElementById('accountRequestForm').addEventListener('submit', handleAccountRequest);
 
-        // Initialize state
         _supabase.auth.getSession().then(({ data }) => {
             updateUI(data.session);
-            if (data.session) {
-                document.getElementById('navLoginLink').classList.remove('hidden');
-            }
+            if (data.session) document.getElementById('navLoginLink').classList.remove('hidden');
             attachEventListeners();
         });
         _supabase.auth.onAuthStateChange((_event, session) => {
             updateUI(session);
-            if (session) {
-                document.getElementById('navLoginLink').classList.remove('hidden');
-            }
+            if (session) document.getElementById('navLoginLink').classList.remove('hidden');
             attachEventListeners();
         });
     </script>
