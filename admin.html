@@ -194,9 +194,26 @@
         const SUPABASE_URL = "https://ngnkbfazhdedaqvxcphw.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbmtiZmF6aGRlZGFxdnhjcGh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTE5NDksImV4cCI6MjA5MzI4Nzk0OX0.F_S6ORkFe-SuJPybs7FEFH94E6U2hZ5ern4vrg4kMOk";
         
-        // Supabase client will be set by components.js (injected at end of body)
-        // This defers initialization to let components.js create the shared instance first
-        let _supabase = null;
+        // Supabase client resolves lazily so auth calls can run before components.js finishes initializing.
+        let adminSupabaseClient = null;
+        function getSupabaseClient() {
+            if (adminSupabaseClient) return adminSupabaseClient;
+            if (window._supabaseClient) return window._supabaseClient;
+            if (window.supabase) {
+                adminSupabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                window._supabaseClient = adminSupabaseClient;
+                return adminSupabaseClient;
+            }
+            return null;
+        }
+        const _supabase = new Proxy({}, {
+            get(_target, prop) {
+                const client = getSupabaseClient();
+                if (!client) throw new Error('Supabase client not initialized');
+                const value = client[prop];
+                return typeof value === 'function' ? value.bind(client) : value;
+            }
+        });
         
         const ACCOUNT_REQUESTS_TABLES = ['account_requests_v2', 'account_requests'];
         const ADMIN_ALLOWLIST = ['nbhsttclub@gmail.com'];
@@ -670,15 +687,10 @@
         // Initialize auth state - will use the shared client from components.js
         // This function is called by components.js after it initializes the shared client
         window._adminInitAuth = function() {
-            if (!window._supabaseClient) {
-                // Fallback: create client if components.js somehow didn't
-                _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            } else {
-                // Use shared client from components.js
-                _supabase = window._supabaseClient;
-            }
-            _supabase.auth.getSession().then(({ data }) => updateUI(data.session));
-            _supabase.auth.onAuthStateChange((_event, session) => updateUI(session));
+            const client = getSupabaseClient();
+            if (!client) return;
+            client.auth.getSession().then(({ data }) => updateUI(data.session));
+            client.auth.onAuthStateChange((_event, session) => updateUI(session));
         };
         
         // If components.js already initialized (shouldn't happen but fallback), init now
