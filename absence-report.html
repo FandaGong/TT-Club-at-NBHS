@@ -80,17 +80,31 @@
         // Tell components.js we will reveal the page manually after auth check
         window.manualPageReveal = true;
 
-        const SUPABASE_URL = "https://ngnkbfazhdedaqvxcphw.supabase.co";
-        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbmtiZmF6aGRlZGFxdnhjcGh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTE5NDksImV4cCI6MjA5MzI4Nzk0OX0.F_S6ORkFe-SuJPybs7FEFH94E6U2hZ5ern4vrg4kMOk";
         const ABSENCE_TABLE = "absence_reports";
-        const supabaseClient = window.supabase?.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        let supabaseClient = null;
+        
+        function getSupabaseClient() {
+            if (!supabaseClient) {
+                // Try to use shared client from components.js first
+                supabaseClient = window._supabaseClient;
+                // If components.js hasn't initialized yet, create one
+                if (!supabaseClient && window.supabase) {
+                    const SUPABASE_URL = "https://ngnkbfazhdedaqvxcphw.supabase.co";
+                    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbmtiZmF6aGRlZGFxdnhjcGh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTE5NDksImV4cCI6MjA5MzI4Nzk0OX0.F_S6ORkFe-SuJPybs7FEFH94E6U2hZ5ern4vrg4kMOk";
+                    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                }
+            }
+            return supabaseClient;
+        }
 
         // Helper functions
         function setStatus(t, e, s) { t && (t.textContent = e, t.className = `mt-2 text-sm font-medium ${s}`, t.classList.remove("hidden")) }
         function escapeHtml(t) { return String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;") }
 
         async function submitAbsenceReport(name, email, reason) {
-            const { error } = await supabaseClient.from(ABSENCE_TABLE).insert([{ name, email, reason }]);
+            const client = getSupabaseClient();
+            if (!client) throw new Error('Supabase client not initialized');
+            const { error } = await client.from(ABSENCE_TABLE).insert([{ name, email, reason }]);
             if (error) throw error;
         }
 
@@ -107,7 +121,9 @@
         }
 
         async function refreshAdminPanel() {
-            const { data, error } = await supabaseClient.from(ABSENCE_TABLE).select('*').order('created_at', { ascending: false });
+            const client = getSupabaseClient();
+            if (!client) return;
+            const { data, error } = await client.from(ABSENCE_TABLE).select('*').order('created_at', { ascending: false });
             if (data) renderAdminReports(data);
         }
 
@@ -128,20 +144,26 @@
             document.getElementById("absenceForm").addEventListener("submit", async (e) => {
                 e.preventDefault();
                 const status = document.getElementById("absenceSubmitStatus");
+                const emailField = document.getElementById("absenceEmail");
+                const currentEmail = emailField.value;
                 try {
-                    await submitAbsenceReport(document.getElementById("absenceName").value, document.getElementById("absenceEmail").value, document.getElementById("absenceReason").value);
+                    await submitAbsenceReport(document.getElementById("absenceName").value, currentEmail, document.getElementById("absenceReason").value);
                     e.target.reset();
+                    emailField.value = currentEmail;
                     setStatus(status, "Absence submitted successfully.", "text-green-600");
                 } catch (err) { setStatus(status, "Error submitting report.", "text-red-600"); }
             });
 
             // Auth Logic & Reveal Trigger
-            supabaseClient.auth.onAuthStateChange((_event, session) => {
+            const client = getSupabaseClient();
+            if (client) client.auth.onAuthStateChange((_event, session) => {
                 updateFormVisibility(session);
                 const adminBtn = document.getElementById('adminShowReportsBtn');
                 if (session?.user.email === "nbhsttclub@gmail.com") {
                     adminBtn?.classList.remove('hidden');
                     refreshAdminPanel();
+                } else {
+                    adminBtn?.classList.add('hidden');
                 }
 
                 // REVEAL PAGE Logic

@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NBHS TT Hub - Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://ngnkbfazhdedaqvxcphw.supabase.co">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="animations.css">
     <link rel="icon" type="image/png" href="favicon.png">
@@ -119,7 +121,7 @@
                     <p class="text-slate-600 text-sm mt-1">You are signed in. Your profile settings are below.</p>
                 </div>
 
-                <div id="adminToolsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div id="adminToolsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-start gap-4">
                         <div class="bg-purple-100 text-purple-700 p-3 rounded-xl">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
@@ -139,6 +141,16 @@
                             <p class="text-slate-600 text-sm mt-1">Manage student absence submissions.</p>
                         </div>
                         <a href="absence-report.html" class="mt-auto text-red-600 font-semibold hover:underline text-sm">View Reports &rarr;</a>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-start gap-4">
+                        <div class="bg-slate-100 text-slate-700 p-3 rounded-xl">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg text-slate-800">Club Rules</h3>
+                            <p class="text-slate-600 text-sm mt-1">Edit and review club rules and guidelines.</p>
+                        </div>
+                        <a href="rules.html" class="mt-auto text-red-600 font-semibold hover:underline text-sm">Edit Rules &rarr;</a>
                     </div>
                 </div>
             </div>
@@ -181,11 +193,15 @@
     <script>
         const SUPABASE_URL = "https://ngnkbfazhdedaqvxcphw.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbmtiZmF6aGRlZGFxdnhjcGh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTE5NDksImV4cCI6MjA5MzI4Nzk0OX0.F_S6ORkFe-SuJPybs7FEFH94E6U2hZ5ern4vrg4kMOk";
-        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        // Supabase client will be set by components.js (injected at end of body)
+        // This defers initialization to let components.js create the shared instance first
+        let _supabase = null;
+        
         const ACCOUNT_REQUESTS_TABLES = ['account_requests_v2', 'account_requests'];
         const ADMIN_ALLOWLIST = ['nbhsttclub@gmail.com'];
 
-        let currentAccountRole = 'standard';
+        let currentAccountRole = 'guest';
         let currentAccountEmail = '';
         let authStateToken = 0;
         let activeDialogTab = 'admin-login';
@@ -313,9 +329,8 @@
                     : `Profile <span class="text-xs ml-1">(${email.split('@')[0]})</span>`;
                 if (profileEmail) profileEmail.textContent = email;
                 attachEventListeners();
-                if (isAdmin) loadAccountRequests();
             } else {
-                currentAccountRole = 'standard';
+                currentAccountRole = 'guest';
                 currentAccountEmail = '';
                 loginContainer.classList.remove('hidden');
                 dashboardContainer.classList.add('hidden');
@@ -323,6 +338,8 @@
                 pageSubtitle.textContent = 'Log in to submit absence report and others.';
                 navLoginBtnText.textContent = 'Login';
                 hideAuthBadge();
+                document.getElementById('profileModal').classList.add('hidden');
+                document.getElementById('accountRequestsModal').classList.add('hidden');
             }
 
             revealPage();
@@ -648,10 +665,27 @@
         document.getElementById('dialogTabStandardLogin').addEventListener('click', () => setDialogTab('standard-login'));
         document.getElementById('dialogTabCreateAccount').addEventListener('click', () => setDialogTab('create-account'));
 
-        _supabase.auth.getSession().then(({ data }) => updateUI(data.session));
-        _supabase.auth.onAuthStateChange((_event, session) => updateUI(session));
-
         setDialogTab('admin-login');
+        
+        // Initialize auth state - will use the shared client from components.js
+        // This function is called by components.js after it initializes the shared client
+        window._adminInitAuth = function() {
+            if (!window._supabaseClient) {
+                // Fallback: create client if components.js somehow didn't
+                _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            } else {
+                // Use shared client from components.js
+                _supabase = window._supabaseClient;
+            }
+            _supabase.auth.getSession().then(({ data }) => updateUI(data.session));
+            _supabase.auth.onAuthStateChange((_event, session) => updateUI(session));
+        };
+        
+        // If components.js already initialized (shouldn't happen but fallback), init now
+        if (window._supabaseClient) {
+            window._adminInitAuth();
+        }
     </script>
+    <script src="components.js"></script>
 </body>
 </html>

@@ -86,9 +86,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     if (window.supabase) {
         const _supabase = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
+        // Export the client globally so other pages can use it
+        window._supabaseClient = _supabase;
         const { data } = await _supabase.auth.getSession();
         updateAuthUI(data.session);
         _supabase.auth.onAuthStateChange((_event, session) => updateAuthUI(session));
+        
+        // If this is the admin page, initialize its auth handlers now that shared client is ready
+        if (window._adminInitAuth) {
+            window._adminInitAuth();
+        }
     }
 
     // Default reveal for non-data pages

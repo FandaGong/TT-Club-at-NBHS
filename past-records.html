@@ -142,7 +142,8 @@
                     let allTimeElo = 0, atEloP = "", allTimeWins = 0, atWinsP = "", maxUpsetVal = 0, maxUpsetDesc = "";
 
                     rows.forEach(row => {
-                        if (parseInt(row[2]) > allTimeElo) { allTimeElo = row[2]; atEloP = `${row[1]} (${row[0]})`; }
+                        const elo = parseInt(String(row[2] || '').replace(/,/g, ''), 10);
+                        if (!Number.isNaN(elo) && elo > allTimeElo) { allTimeElo = elo; atEloP = `${row[1]} (${row[0]})`; }
                         const wMatch = row[6].match(/\((\d+)\)/);
                         if (wMatch && parseInt(wMatch[1]) > allTimeWins) { allTimeWins = parseInt(wMatch[1]); atWinsP = row[6]; }
                         const uMatch = row[7].match(/\((\d+)\spts\)/);

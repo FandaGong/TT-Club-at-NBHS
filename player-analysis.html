@@ -161,7 +161,13 @@
         }
 
         async function init() {
-            if (!playerName) return;
+            if (!playerName) {
+                document.getElementById('player-name').innerText = 'Select a Player';
+                document.getElementById('player-tags').innerHTML = '';
+                document.getElementById('quick-stats').innerHTML = '<span class="text-slate-500 text-sm font-bold uppercase italic">Open Rankings and choose a player to view their stats.</span>';
+                document.getElementById('history-table').innerHTML = `<tr><td colspan="4" class="p-10 text-center italic text-slate-400">No player selected. Open this page from the Rankings list.</td></tr>`;
+                return;
+            }
             document.getElementById('player-name').innerText = playerName;
             document.getElementById('player-tags').innerHTML = renderPlayerTags(playerName);
             await loadPlayerStats();
