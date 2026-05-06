@@ -132,7 +132,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         };
         const { data } = await _supabase.auth.getSession();
         await updateAuthUI(data.session);
-        _supabase.auth.onAuthStateChange((_event, session) => updateAuthUI(session));
+        _supabase.auth.onAuthStateChange((_event, session) => {
+            updateAuthUI(session);
+            if (_event === 'PASSWORD_RECOVERY') {
+                const newPassword = prompt('Enter your new password');
+                if (newPassword) {
+                    _supabase.auth.updateUser({ password: newPassword })
+                        .then(() => alert('Password updated successfully!'))
+                        .catch((err) => alert('Error updating password: ' + err.message));
+                }
+            }
+        });
         
         // If this is the admin page, initialize its auth handlers now that shared client is ready
         if (window._adminInitAuth) {
