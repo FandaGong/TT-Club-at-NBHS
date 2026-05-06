@@ -699,7 +699,18 @@
             const client = getSupabaseClient();
             if (!client) return;
             client.auth.getSession().then(({ data }) => updateUI(data.session));
-            client.auth.onAuthStateChange((_event, session) => updateUI(session));
+            client.auth.onAuthStateChange((_event, session) => {
+                updateUI(session);
+                if (_event === 'PASSWORD_RECOVERY') {
+                    document.getElementById('profileModal').classList.remove('hidden');
+                    const statusNode = document.getElementById('passwordStatus');
+                    if (statusNode) {
+                        statusNode.classList.remove('hidden');
+                        statusNode.textContent = 'Enter a new password below to reset your password.';
+                        statusNode.className = 'mt-2 text-sm font-medium text-blue-600 text-center block';
+                    }
+                }
+            });
         };
         
         // If components.js already initialized (shouldn't happen but fallback), init now
