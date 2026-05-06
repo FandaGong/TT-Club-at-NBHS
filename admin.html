@@ -77,6 +77,7 @@
                             <input id="adminPassword" type="password" placeholder="••••••••" class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500 text-sm">
                         </div>
                         <button type="submit" class="w-full bg-red-800 text-white px-4 py-3 rounded-xl font-bold hover:bg-red-900 transition-colors">Admin Login</button>
+                        <button type="button" id="forgotPasswordBtn" class="w-full text-sm text-red-600 hover:text-red-800 hover:underline mt-2">Forgot Password?</button>
                         <p id="adminLoginStatus" class="hidden text-sm font-medium text-center"></p>
                     </form>
                 </div>
@@ -92,6 +93,7 @@
                             <input id="standardPassword" type="password" placeholder="••••••••" class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500 text-sm">
                         </div>
                         <button type="submit" class="w-full bg-slate-900 text-white px-4 py-3 rounded-xl font-bold hover:bg-slate-800 transition-colors">Standard User Login</button>
+                        <button type="button" id="forgotPasswordBtnStandard" class="w-full text-sm text-slate-600 hover:text-slate-800 hover:underline mt-2">Forgot Password?</button>
                         <p id="standardLoginStatus" class="hidden text-sm font-medium text-center"></p>
                     </form>
                 </div>
@@ -194,7 +196,6 @@
         const SUPABASE_URL = "https://ngnkbfazhdedaqvxcphw.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbmtiZmF6aGRlZGFxdnhjcGh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTE5NDksImV4cCI6MjA5MzI4Nzk0OX0.F_S6ORkFe-SuJPybs7FEFH94E6U2hZ5ern4vrg4kMOk";
         
-        // Supabase client resolves lazily so auth calls can run before components.js finishes initializing.
         let adminSupabaseClient = null;
         function getSupabaseClient() {
             if (adminSupabaseClient) return adminSupabaseClient;
@@ -298,13 +299,10 @@
 
         async function resolveAccountRole(email) {
             if (!email) return 'standard';
-            // Prefer centralized resolver exposed by components.js when available
             if (window._resolveAccountRole) {
                 try {
                     return await window._resolveAccountRole(email);
-                } catch (err) {
-                    // fall back to local lookup
-                }
+                } catch (err) {}
             }
             if (ADMIN_ALLOWLIST.includes(email.toLowerCase())) return 'admin';
             const { data, error } = await withAccountRequestsTable((tableName) => _supabase
@@ -692,9 +690,37 @@
         document.getElementById('dialogTabCreateAccount').addEventListener('click', () => setDialogTab('create-account'));
 
         setDialogTab('admin-login');
+
+        // Forgot password handler
+        async function handleForgotPassword(emailInputId, statusId) {
+            const email = document.getElementById(emailInputId).value;
+            const status = document.getElementById(statusId);
+            if (!email) {
+                status.classList.remove('hidden');
+                status.textContent = 'Enter your email first, then click Forgot Password.';
+                status.className = 'mt-2 text-sm font-medium text-red-600 text-center block';
+                return;
+            }
+            status.classList.remove('hidden');
+            status.textContent = 'Sending reset email...';
+            status.className = 'mt-2 text-sm font-medium text-blue-600 text-center block';
+            try {
+                const { error } = await _supabase.auth.resetPasswordForEmail(email, {
+                    redirectTo: 'https://fandagong.github.io/TT-Club-at-NBHS/admin.html'
+                });
+                if (error) throw error;
+                status.textContent = 'Reset email sent! Check your inbox.';
+                status.className = 'mt-2 text-sm font-medium text-green-600 text-center block';
+            } catch (err) {
+                status.textContent = err.message || 'Failed to send reset email.';
+                status.className = 'mt-2 text-sm font-medium text-red-600 text-center block';
+            }
+        }
+
+        document.getElementById('forgotPasswordBtn').addEventListener('click', () => handleForgotPassword('adminEmail', 'adminLoginStatus'));
+        document.getElementById('forgotPasswordBtnStandard').addEventListener('click', () => handleForgotPassword('standardEmail', 'standardLoginStatus'));
         
-        // Initialize auth state - will use the shared client from components.js
-        // This function is called by components.js after it initializes the shared client
+        // Initialize auth state
         window._adminInitAuth = function() {
             const client = getSupabaseClient();
             if (!client) return;
@@ -713,7 +739,6 @@
             });
         };
         
-        // If components.js already initialized (shouldn't happen but fallback), init now
         if (window._supabaseClient) {
             window._adminInitAuth();
         }
