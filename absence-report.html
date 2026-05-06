@@ -80,8 +80,45 @@
         // Tell components.js we will reveal the page manually after auth check
         window.manualPageReveal = true;
 
+        function resolveEmailJsValue(...values) {
+            for (const value of values) {
+                if (typeof value === 'string' && value.trim()) return value.trim();
+            }
+            return '';
+        }
+
         const ABSENCE_TABLE = "absence_reports";
+        const EMAILJS_SERVICE_ID = resolveEmailJsValue(
+            'service_r3qup2c',
+            window.EMAILJS_SERVICE_ID,
+            window.EMAILJS_CONFIG?.serviceId,
+            window.localStorage?.getItem('EMAILJS_SERVICE_ID'),
+            window.localStorage?.getItem('emailjs_service_id'),
+            document.querySelector('meta[name="emailjs-service-id"]')?.content
+        );
+        const EMAILJS_TEMPLATE_ID = resolveEmailJsValue(
+            window.EMAILJS_TEMPLATE_ID,
+            window.EMAILJS_CONFIG?.templateId,
+            window.localStorage?.getItem('EMAILJS_TEMPLATE_ID'),
+            window.localStorage?.getItem('emailjs_template_id'),
+            document.querySelector('meta[name="emailjs-template-id"]')?.content
+        );
+        const EMAILJS_ACCEPT_TEMPLATE_ID = resolveEmailJsValue(
+            'template_1g3bzms',
+            window.EMAILJS_ACCEPT_TEMPLATE_ID,
+            window.EMAILJS_CONFIG?.acceptTemplateId,
+            window.localStorage?.getItem('EMAILJS_ACCEPT_TEMPLATE_ID'),
+            window.localStorage?.getItem('emailjs_accept_template_id')
+        );
+        const EMAILJS_DECLINE_TEMPLATE_ID = resolveEmailJsValue(
+            'template_cll4zbl',
+            window.EMAILJS_DECLINE_TEMPLATE_ID,
+            window.EMAILJS_CONFIG?.declineTemplateId,
+            window.localStorage?.getItem('EMAILJS_DECLINE_TEMPLATE_ID'),
+            window.localStorage?.getItem('emailjs_decline_template_id')
+        );
         let supabaseClient = null;
+        const absenceReportsById = new Map();
         
         function getSupabaseClient() {
             if (!supabaseClient) {
@@ -100,12 +137,93 @@
         // Helper functions
         function setStatus(t, e, s) { t && (t.textContent = e, t.className = `mt-2 text-sm font-medium ${s}`, t.classList.remove("hidden")) }
         function escapeHtml(t) { return String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;") }
+        function getEmailErrorReason(err) {
+            if (!err) return 'Unknown EmailJS error';
+            if (typeof err === 'string') return err;
+            const parts = [];
+            if (err.status) parts.push(`status ${err.status}`);
+            if (err.text) parts.push(err.text);
+            if (err.message) parts.push(err.message);
+            if (!parts.length) {
+                try {
+                    const json = JSON.stringify(err);
+                    if (json && json !== '{}') return json;
+                } catch (_e) {
+                    // Ignore stringify failures.
+                }
+                return 'Unknown EmailJS error';
+            }
+            return parts.join(' - ');
+        }
 
         async function submitAbsenceReport(name, email, reason) {
             const client = getSupabaseClient();
             if (!client) throw new Error('Supabase client not initialized');
             const { error } = await client.from(ABSENCE_TABLE).insert([{ name, email, reason }]);
             if (error) throw error;
+        }
+
+        async function sendAbsenceEmail(name, email, reason) {
+            if (!window.emailjs || !EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID) {
+                const missing = [];
+                if (!window.emailjs) missing.push('EmailJS library');
+                if (!EMAILJS_SERVICE_ID) missing.push('service ID');
+                if (!EMAILJS_TEMPLATE_ID) missing.push('template ID');
+                return { sent: false, reason: `Missing ${missing.join(', ')}` };
+            }
+
+            const templateParams = {
+                student_name: name,
+                student_email: email,
+                absence_reason: reason,
+                submitted_at: new Date().toLocaleString()
+            };
+
+            await window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
+            return { sent: true };
+        }
+
+        async function sendReviewDecisionEmail(status, report, reviewedBy) {
+            if (!window.emailjs || !EMAILJS_SERVICE_ID) {
+                return { sent: false, reason: 'Missing EmailJS library or service ID' };
+            }
+
+            const templateId = status === 'approved' ? EMAILJS_ACCEPT_TEMPLATE_ID : EMAILJS_DECLINE_TEMPLATE_ID;
+            if (!templateId) {
+                return { sent: false, reason: `Missing ${status} template ID` };
+            }
+            const recipientEmail = (report?.email || '').trim();
+            if (!recipientEmail) {
+                return { sent: false, reason: 'Missing student email on report' };
+            }
+
+            const templateParams = {
+                student_name: report?.name || 'Student',
+                student_email: recipientEmail,
+                absence_reason: report?.reason || '',
+                to_name: report?.name || 'Student',
+                to_email: recipientEmail,
+                name: report?.name || 'Student',
+                email: recipientEmail,
+                reason: report?.reason || '',
+                recipient: recipientEmail,
+                recipient_email: recipientEmail,
+                email_to: recipientEmail,
+                mail_to: recipientEmail,
+                user_email: recipientEmail,
+                reply_to: recipientEmail,
+                decision: status,
+                status,
+                result: status,
+                reviewed_by: reviewedBy || 'unknown',
+                reviewed_at: new Date().toLocaleString(),
+                message: status === 'approved'
+                    ? 'Your absence report has been approved.'
+                    : 'Your absence report has been declined.'
+            };
+
+            await window.emailjs.send(EMAILJS_SERVICE_ID, templateId, templateParams);
+            return { sent: true };
         }
 
         function updateFormVisibility(session) {
@@ -132,24 +250,38 @@
                 if (!list) return;
                 if (!reports || !reports.length) { list.innerHTML = '<p>No reports.</p>'; return; }
 
+                absenceReportsById.clear();
+                reports.forEach(r => {
+                    if (r && r.id != null) absenceReportsById.set(String(r.id), r);
+                });
+
                 const isAdminView = !!window._isAdmin;
 
                 list.innerHTML = reports.map(r => {
                     const status = (r.status || 'pending');
-                    const actions = isAdminView ? `
+                    const pendingActions = isAdminView ? `
                         <div class="mt-3 flex gap-2">
                             <button data-id="${r.id}" data-status="approved" class="approve-absence-btn text-sm font-semibold bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700">Approve</button>
                             <button data-id="${r.id}" data-status="declined" class="decline-absence-btn text-sm font-semibold bg-red-600 text-white px-3 py-2 rounded-lg hover:bg-red-700">Decline</button>
+                        </div>
+                    ` : '';
+                    const deleteAction = isAdminView ? `
+                        <div class="mt-2">
+                            <button data-id="${r.id}" class="delete-absence-btn text-sm font-semibold bg-slate-700 text-white px-3 py-2 rounded-lg hover:bg-slate-800">Delete</button>
                         </div>
                     ` : '';
 
                     return `
                         <div class="border rounded-lg p-4 bg-white">
                             <p><strong>Name:</strong> ${escapeHtml(r.name)}</p>
+                            <p><strong>Email:</strong> ${escapeHtml(r.email || 'unknown')}</p>
                             <p><strong>Reason:</strong> ${escapeHtml(r.reason)}</p>
+                            <p class="text-xs text-slate-500 mt-2">Submitted: ${r.created_at ? escapeHtml(new Date(r.created_at).toLocaleString()) : 'unknown'}</p>
                             <p class="text-xs text-slate-400 mt-2">Status: ${escapeHtml(status)}</p>
                             ${status !== 'pending' ? `<p class="text-xs text-slate-400 mt-1">Reviewed by: ${escapeHtml(r.reviewed_by || 'unknown')}</p>` : ''}
-                            ${status === 'pending' ? actions : ''}
+                            ${status !== 'pending' ? `<p class="text-xs text-slate-400 mt-1">Reviewed at: ${r.reviewed_at ? escapeHtml(new Date(r.reviewed_at).toLocaleString()) : 'unknown'}</p>` : ''}
+                            ${status === 'pending' ? pendingActions : ''}
+                            ${deleteAction}
                         </div>
                     `;
                 }).join('');
@@ -161,10 +293,27 @@
                             const id = e.currentTarget.getAttribute('data-id');
                             const newStatus = e.currentTarget.getAttribute('data-status');
                             try {
-                                await reviewAbsenceReport(id, newStatus);
+                                const emailResult = await reviewAbsenceReport(id, newStatus, absenceReportsById.get(String(id)) || null);
+                                if (!emailResult.sent) {
+                                    alert(`Report updated, but notification email was not sent (${emailResult.reason}).`);
+                                }
                             } catch (err) {
                                 console.error('Failed to update report status', err);
                                 alert('Failed to update report: ' + (err.message || err));
+                            }
+                        });
+                    });
+
+                    list.querySelectorAll('.delete-absence-btn').forEach(btn => {
+                        btn.addEventListener('click', async (e) => {
+                            const id = e.currentTarget.getAttribute('data-id');
+                            const ok = window.confirm('Delete this absence report? This cannot be undone.');
+                            if (!ok) return;
+                            try {
+                                await deleteAbsenceReport(id);
+                            } catch (err) {
+                                console.error('Failed to delete report', err);
+                                alert('Failed to delete report: ' + (err.message || err));
                             }
                         });
                     });
@@ -179,7 +328,7 @@
             }
 
             // Update absence report status (approve/decline)
-            async function reviewAbsenceReport(id, status) {
+            async function reviewAbsenceReport(id, status, report) {
                 const client = getSupabaseClient();
                 if (!client) throw new Error('Supabase client not initialized');
 
@@ -194,6 +343,34 @@
                 }).eq('id', id);
 
                 if (error) throw error;
+
+                let emailResult = { sent: false, reason: 'No email attempted' };
+                try {
+                    let reportForEmail = report;
+                    if (!reportForEmail || !String(reportForEmail.email || '').trim()) {
+                        const { data: latestReport, error: latestReportError } = await client
+                            .from(ABSENCE_TABLE)
+                            .select('id, name, email, reason')
+                            .eq('id', id)
+                            .single();
+                        if (latestReportError) throw latestReportError;
+                        reportForEmail = latestReport;
+                    }
+                    emailResult = await sendReviewDecisionEmail(status, reportForEmail, userEmail);
+                } catch (emailErr) {
+                    console.error('Decision email failed', emailErr);
+                    emailResult = { sent: false, reason: getEmailErrorReason(emailErr) };
+                }
+
+                await refreshAdminPanel();
+                return emailResult;
+            }
+
+            async function deleteAbsenceReport(id) {
+                const client = getSupabaseClient();
+                if (!client) throw new Error('Supabase client not initialized');
+                const { error } = await client.from(ABSENCE_TABLE).delete().eq('id', id);
+                if (error) throw error;
                 await refreshAdminPanel();
             }
 
@@ -204,8 +381,15 @@
                 const status = document.getElementById("absenceSubmitStatus");
                 const emailField = document.getElementById("absenceEmail");
                 const currentEmail = emailField.value;
+                const name = document.getElementById("absenceName").value;
+                const reason = document.getElementById("absenceReason").value;
                 try {
-                    await submitAbsenceReport(document.getElementById("absenceName").value, currentEmail, document.getElementById("absenceReason").value);
+                    await submitAbsenceReport(name, currentEmail, reason);
+                    try {
+                        await sendAbsenceEmail(name, currentEmail, reason);
+                    } catch (emailErr) {
+                        console.error('EmailJS send failed', emailErr);
+                    }
                     e.target.reset();
                     emailField.value = currentEmail;
                     setStatus(status, "Absence submitted successfully.", "text-green-600");
