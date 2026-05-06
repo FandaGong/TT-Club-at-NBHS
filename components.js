@@ -143,6 +143,24 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
             }
         });
+
+        // Check URL hash for recovery token on page load
+        const hash = window.location.hash;
+        if (hash && hash.includes('type=recovery')) {
+            _supabase.auth.getSession().then(({ data: { session } }) => {
+                if (session) {
+                    const newPassword = prompt('Enter your new password');
+                    if (newPassword) {
+                        _supabase.auth.updateUser({ password: newPassword })
+                            .then(() => {
+                                alert('Password updated successfully!');
+                                window.location.hash = '';
+                            })
+                            .catch((err) => alert('Error updating password: ' + err.message));
+                    }
+                }
+            });
+        }
         
         // If this is the admin page, initialize its auth handlers now that shared client is ready
         if (window._adminInitAuth) {
