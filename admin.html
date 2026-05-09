@@ -18,29 +18,49 @@
     <header class="bg-red-800 text-white shadow-md fade-in">
         <nav class="max-w-6xl mx-auto flex items-center justify-between gap-4 px-4 py-4">
             <a href="index.html" class="text-xl font-bold">NBHS TT Hub</a>
-            <div id="authBadge" class="hidden items-center justify-center rounded-full w-8 h-8 text-xs font-semibold text-white bg-red-600">
+            <div id="authBadge"
+                class="hidden items-center justify-center rounded-full w-8 h-8 text-xs font-semibold text-white bg-red-600">
                 <span id="authBadgeText">A</span>
             </div>
             <button id="rankingNavToggle" type="button"
                 class="sm:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl border border-red-600 bg-red-700 text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 transition-colors duration-200 overflow-hidden transform-gpu"
                 style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);"
                 aria-label="Toggle navigation" aria-controls="rankingNavLinks" aria-expanded="false">
-                <svg id="menu-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg id="menu-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transition-transform duration-300"
+                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
-                <svg id="close-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg id="close-icon" xmlns="http://www.w3.org/2000/svg"
+                    class="h-6 w-6 hidden transition-transform duration-300" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
             </button>
 
-            <div id="rankingNavLinks" class="hidden w-full flex-col gap-1 mt-4 pt-4 border-t border-red-700/50 sm:flex sm:w-auto sm:flex-row sm:items-center sm:gap-2 sm:mt-0 sm:pt-0 sm:border-0">
-                <a href="player-ranking.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">Rankings</a>
-                <a href="player-matchup-ladder.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">Matchups</a>
-                <a href="club-analytics.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">Analytics</a>
-                <a href="past-records.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">Past Records</a>
-                <a href="absence-report.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">Absence</a>
-                <a href="rules.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">Rules</a>
-                <a id="navLoginLink" href="admin.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-white/10 hover:bg-white/20 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">
+            <div id="rankingNavLinks"
+                class="hidden w-full flex-col gap-1 mt-4 pt-4 border-t border-red-700/50 sm:flex sm:w-auto sm:flex-row sm:items-center sm:gap-2 sm:mt-0 sm:pt-0 sm:border-0">
+                <a href="player-ranking.html"
+                    class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu"
+                    style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">Rankings</a>
+                <a href="player-matchup-ladder.html"
+                    class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu"
+                    style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">Matchups</a>
+                <a href="club-analytics.html"
+                    class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu"
+                    style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">Analytics</a>
+                <a href="past-records.html"
+                    class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu"
+                    style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">Past
+                    Records</a>
+                <a href="absence-report.html"
+                    class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu"
+                    style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">Absence</a>
+                <a href="rules.html"
+                    class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu"
+                    style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">Rules</a>
+                <a id="navLoginLink" href="admin.html"
+                    class="block rounded-lg px-3 py-3 sm:py-2 bg-white/10 hover:bg-white/20 transition-colors duration-200 overflow-hidden transform-gpu"
+                    style="backface-visibility: hidden; -webkit-transform: translateZ(0); transform: translateZ(0);">
                     <span id="navLoginLinkText">Login</span>
                 </a>
             </div>
@@ -54,68 +74,98 @@
                 <p id="pageSubtitle" class="text-slate-600 mt-2">Log in to submit absence report and others.</p>
             </div>
 
-            <div id="loginContainer" class="bg-white rounded-2xl shadow-sm border border-slate-100 p-8 max-w-2xl mx-auto fade-up-d1">
+            <div id="loginContainer"
+                class="bg-white rounded-2xl shadow-sm border border-slate-100 p-8 max-w-2xl mx-auto fade-up-d1">
                 <div class="text-center mb-6">
                     <h2 class="text-xl font-bold text-slate-800">Admin Login</h2>
-                    <p class="mt-2 text-sm text-slate-500">Admin access is login-only. Standard user login and account creation are available here.</p>
+                    <p class="mt-2 text-sm text-slate-500">Admin access is login-only. Standard user login and account
+                        creation are available here.</p>
                 </div>
 
                 <div class="mb-5 grid grid-cols-1 sm:grid-cols-3 gap-2 rounded-2xl bg-slate-100 p-2">
-                    <button id="dialogTabAdminLogin" type="button" data-tab="admin-login" class="rounded-xl bg-white px-4 py-3 text-sm font-semibold text-red-800 shadow-sm transition-colors">Admin Login</button>
-                    <button id="dialogTabStandardLogin" type="button" data-tab="standard-login" class="rounded-xl px-4 py-3 text-sm font-semibold text-slate-600 transition-colors hover:text-slate-900">Standard User Login</button>
-                    <button id="dialogTabCreateAccount" type="button" data-tab="create-account" class="rounded-xl px-4 py-3 text-sm font-semibold text-slate-600 transition-colors hover:text-slate-900">Account Creation</button>
+                    <button id="dialogTabAdminLogin" type="button" data-tab="admin-login"
+                        class="rounded-xl bg-white px-4 py-3 text-sm font-semibold text-red-800 shadow-sm transition-colors">Admin
+                        Login</button>
+                    <button id="dialogTabStandardLogin" type="button" data-tab="standard-login"
+                        class="rounded-xl px-4 py-3 text-sm font-semibold text-slate-600 transition-colors hover:text-slate-900">Standard
+                        User Login</button>
+                    <button id="dialogTabCreateAccount" type="button" data-tab="create-account"
+                        class="rounded-xl px-4 py-3 text-sm font-semibold text-slate-600 transition-colors hover:text-slate-900">Account
+                        Creation</button>
                 </div>
 
                 <div id="dialogPanelAdminLogin" class="space-y-4">
-                    <form id="adminLoginForm" class="space-y-4" action="javascript:void(0);" onsubmit="handleDialogLogin(event, 'admin')">
+                    <form id="adminLoginForm" class="space-y-4" action="javascript:void(0);"
+                        onsubmit="handleDialogLogin(event, 'admin')">
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1">Email</label>
-                            <input id="adminEmail" type="email" placeholder="Admin email" class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500 text-sm">
+                            <input id="adminEmail" type="email" placeholder="Admin email"
+                                class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500 text-sm">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1">Password</label>
-                            <input id="adminPassword" type="password" placeholder="••••••••" class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500 text-sm">
+                            <input id="adminPassword" type="password" placeholder="••••••••"
+                                class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500 text-sm">
                         </div>
-                        <button type="submit" class="w-full bg-red-800 text-white px-4 py-3 rounded-xl font-bold hover:bg-red-900 transition-colors">Admin Login</button>
-                        <button type="button" id="forgotPasswordBtn" class="w-full text-sm text-red-600 hover:text-red-800 hover:underline mt-2">Forgot Password?</button>
+                        <button type="submit"
+                            class="w-full bg-red-800 text-white px-4 py-3 rounded-xl font-bold hover:bg-red-900 transition-colors">Admin
+                            Login</button>
+                        <button type="button" id="forgotPasswordBtn"
+                            class="w-full text-sm text-red-600 hover:text-red-800 hover:underline mt-2">Forgot
+                            Password?</button>
                         <p id="adminLoginStatus" class="hidden text-sm font-medium text-center"></p>
                     </form>
                 </div>
 
                 <div id="dialogPanelStandardLogin" class="hidden space-y-4">
-                    <form id="standardLoginForm" class="space-y-4" action="javascript:void(0);" onsubmit="handleDialogLogin(event, 'standard')">
+                    <form id="standardLoginForm" class="space-y-4" action="javascript:void(0);"
+                        onsubmit="handleDialogLogin(event, 'standard')">
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1">Email</label>
-                            <input id="standardEmail" type="email" placeholder="you@example.com" class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500 text-sm">
+                            <input id="standardEmail" type="email" placeholder="you@example.com"
+                                class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500 text-sm">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1">Password</label>
-                            <input id="standardPassword" type="password" placeholder="••••••••" class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500 text-sm">
+                            <input id="standardPassword" type="password" placeholder="••••••••"
+                                class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500 text-sm">
                         </div>
-                        <button type="submit" class="w-full bg-slate-900 text-white px-4 py-3 rounded-xl font-bold hover:bg-slate-800 transition-colors">Standard User Login</button>
-                        <button type="button" id="forgotPasswordBtnStandard" class="w-full text-sm text-slate-600 hover:text-slate-800 hover:underline mt-2">Forgot Password?</button>
+                        <button type="submit"
+                            class="w-full bg-slate-900 text-white px-4 py-3 rounded-xl font-bold hover:bg-slate-800 transition-colors">Standard
+                            User Login</button>
+                        <button type="button" id="forgotPasswordBtnStandard"
+                            class="w-full text-sm text-slate-600 hover:text-slate-800 hover:underline mt-2">Forgot
+                            Password?</button>
                         <p id="standardLoginStatus" class="hidden text-sm font-medium text-center"></p>
                     </form>
                 </div>
 
                 <div id="dialogPanelCreateAccount" class="hidden space-y-4">
                     <form id="accountRequestForm" class="grid grid-cols-1 gap-3">
-                        <input id="requestEmail" type="email" placeholder="Email to approve" required class="p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500">
-                        <input id="requestPassword" type="password" placeholder="Create a password" required class="p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500">
-                        <input id="requestConfirmPassword" type="password" placeholder="Confirm password" required class="p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500">
-                        <button type="submit" class="bg-red-600 text-white px-5 py-3 rounded-xl font-bold hover:bg-red-700 transition-colors">Submit Request</button>
+                        <input id="requestEmail" type="email" placeholder="Email to approve" required
+                            class="p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500">
+                        <input id="requestPassword" type="password" placeholder="Create a password" required
+                            class="p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500">
+                        <input id="requestConfirmPassword" type="password" placeholder="Confirm password" required
+                            class="p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500">
+                        <button type="submit"
+                            class="bg-red-600 text-white px-5 py-3 rounded-xl font-bold hover:bg-red-700 transition-colors">Submit
+                            Request</button>
                         <p id="accountRequestStatus" class="hidden text-sm font-medium"></p>
                     </form>
                 </div>
             </div>
 
             <div id="dashboardContainer" class="hidden space-y-6 fade-up-d1">
-                <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                <div
+                    class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
                     <div class="space-y-1">
                         <span class="text-slate-700 font-semibold" id="adminUserEmail">Logged in as: ...</span>
                         <p id="dashboardAccessNote" class="text-sm text-slate-500">Loading account type...</p>
                     </div>
-                    <button id="adminLogoutBtn" type="button" class="text-sm font-bold text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 px-4 py-2 rounded-lg transition-colors border border-red-100">Log Out</button>
+                    <button id="adminLogoutBtn" type="button"
+                        class="text-sm font-bold text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 px-4 py-2 rounded-lg transition-colors border border-red-100">Log
+                        Out</button>
                 </div>
 
                 <div id="standardUserNotice" class="hidden bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
@@ -124,56 +174,79 @@
                 </div>
 
                 <div id="adminToolsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-start gap-4">
+                    <div
+                        class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-start gap-4">
                         <div class="bg-purple-100 text-purple-700 p-3 rounded-xl">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path
+                                    d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                            </svg>
                         </div>
                         <div>
                             <h3 class="font-bold text-lg text-slate-800">Account Requests</h3>
                             <p class="text-slate-600 text-sm mt-1">Review pending account approvals.</p>
                         </div>
-                        <button id="openAccountRequestsModalBtn" type="button" class="mt-auto text-red-600 font-semibold hover:underline text-sm">Review Requests &rarr;</button>
+                        <button id="openAccountRequestsModalBtn" type="button"
+                            class="mt-auto text-red-600 font-semibold hover:underline text-sm">Review Requests
+                            &rarr;</button>
                     </div>
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-start gap-4">
+                    <div
+                        class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-start gap-4">
                         <div class="bg-red-100 text-red-700 p-3 rounded-xl">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path
+                                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
                         </div>
                         <div>
                             <h3 class="font-bold text-lg text-slate-800">Absence Reports</h3>
                             <p class="text-slate-600 text-sm mt-1">Manage student absence submissions.</p>
                         </div>
-                        <a href="absence-report.html" class="mt-auto text-red-600 font-semibold hover:underline text-sm">View Reports &rarr;</a>
+                        <a href="absence-report.html"
+                            class="mt-auto text-red-600 font-semibold hover:underline text-sm">View Reports &rarr;</a>
                     </div>
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-start gap-4">
+                    <div
+                        class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-start gap-4">
                         <div class="bg-slate-100 text-slate-700 p-3 rounded-xl">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                            </svg>
                         </div>
                         <div>
                             <h3 class="font-bold text-lg text-slate-800">Club Rules</h3>
                             <p class="text-slate-600 text-sm mt-1">Edit and review club rules and guidelines.</p>
                         </div>
-                        <a href="rules.html" class="mt-auto text-red-600 font-semibold hover:underline text-sm">Edit Rules &rarr;</a>
+                        <a href="rules.html" class="mt-auto text-red-600 font-semibold hover:underline text-sm">Edit
+                            Rules &rarr;</a>
                     </div>
                 </div>
             </div>
         </section>
     </main>
 
-    <div id="accountRequestsModal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+    <div id="accountRequestsModal"
+        class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
         <div class="bg-white rounded-2xl shadow-lg max-w-2xl w-full max-h-[80vh] overflow-auto">
             <div class="sticky top-0 bg-white border-b p-4 flex items-center justify-between">
                 <h3 class="font-bold text-lg text-slate-800">Account Requests</h3>
-                <button id="closeAccountRequestsModalBtn" type="button" class="text-slate-500 hover:text-slate-700 text-2xl">&times;</button>
+                <button id="closeAccountRequestsModalBtn" type="button"
+                    class="text-slate-500 hover:text-slate-700 text-2xl">&times;</button>
             </div>
             <div id="accountRequestsModalList" class="p-4 space-y-3"></div>
         </div>
     </div>
 
-    <div id="profileModal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+    <div id="profileModal"
+        class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
         <div class="bg-white rounded-2xl shadow-lg max-w-md w-full">
             <div class="bg-red-800 text-white border-b border-red-700 p-4 flex items-center justify-between">
                 <h3 class="font-bold text-lg">Profile</h3>
-                <button id="closeProfileModalBtn" type="button" class="text-white hover:text-red-100 text-2xl leading-none">&times;</button>
+                <button id="closeProfileModalBtn" type="button"
+                    class="text-white hover:text-red-100 text-2xl leading-none">&times;</button>
             </div>
             <div class="p-6 space-y-4">
                 <div>
@@ -182,12 +255,18 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-slate-700 mb-2">Change Password</label>
-                    <input id="newPasswordInput" type="password" placeholder="New password" class="w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-red-500 mb-2">
-                    <input id="confirmPasswordInput" type="password" placeholder="Confirm password" class="w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-red-500">
+                    <input id="newPasswordInput" type="password" placeholder="New password"
+                        class="w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-red-500 mb-2">
+                    <input id="confirmPasswordInput" type="password" placeholder="Confirm password"
+                        class="w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-red-500">
                 </div>
-                <button id="changePasswordBtn" type="button" class="w-full bg-red-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-700 transition-colors">Update Password</button>
+                <button id="changePasswordBtn" type="button"
+                    class="w-full bg-red-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-700 transition-colors">Update
+                    Password</button>
                 <p id="passwordStatus" class="hidden text-sm font-medium text-center"></p>
-                <button id="profileLogoutBtn" type="button" class="w-full bg-slate-200 text-slate-800 px-4 py-2 rounded-lg font-semibold hover:bg-slate-300 transition-colors">Log Out</button>
+                <button id="profileLogoutBtn" type="button"
+                    class="w-full bg-slate-200 text-slate-800 px-4 py-2 rounded-lg font-semibold hover:bg-slate-300 transition-colors">Log
+                    Out</button>
             </div>
         </div>
     </div>
@@ -195,7 +274,7 @@
     <script>
         const SUPABASE_URL = "https://ngnkbfazhdedaqvxcphw.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbmtiZmF6aGRlZGFxdnhjcGh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTE5NDksImV4cCI6MjA5MzI4Nzk0OX0.F_S6ORkFe-SuJPybs7FEFH94E6U2hZ5ern4vrg4kMOk";
-        
+
         let adminSupabaseClient = null;
         function getSupabaseClient() {
             if (adminSupabaseClient) return adminSupabaseClient;
@@ -215,7 +294,7 @@
                 return typeof value === 'function' ? value.bind(client) : value;
             }
         });
-        
+
         const ACCOUNT_REQUESTS_TABLES = ['account_requests'];
         const ADMIN_ALLOWLIST = ['nbhsttclub@gmail.com', 'jonathanzhao111@gmail.com', 'damon.yuan@education.nsw.gov.au'];
 
@@ -302,7 +381,7 @@
             if (window._resolveAccountRole) {
                 try {
                     return await window._resolveAccountRole(email);
-                } catch (err) {}
+                } catch (err) { }
             }
             if (ADMIN_ALLOWLIST.includes(email.toLowerCase())) return 'admin';
             const { data, error } = await withAccountRequestsTable((tableName) => _supabase
@@ -453,41 +532,50 @@
             try {
                 const email = emailInput.value.trim().toLowerCase();
 
+                // 1. Check for existing request using the correct PK 'request_id'
                 const { data } = await withAccountRequestsTable((tableName) => _supabase
                     .from(tableName)
-                    .select('id, status')
+                    .select('request_id, status') // Updated from 'id' to 'request_id'
                     .ilike('email', email)
-                    .order('created_at', { ascending: false })
                     .limit(1));
-                const existing = data && data[0];
-                if (existing) {
+
+                if (data && data.length > 0) {
                     statusNode.textContent = 'An account request for this email already exists.';
                     statusNode.className = 'mt-2 text-sm font-medium text-amber-600 text-center block';
                     return;
                 }
 
-                const { error: signUpErr } = await _supabase.auth.signUp({
+                // 2. Sign up the user
+                const { data: signUpData, error: signUpErr } = await _supabase.auth.signUp({
                     email,
                     password: passwordInput.value
                 });
                 if (signUpErr) throw signUpErr;
 
+                // 3. Immediately sign them out (prevents them from bypassing approval)
                 await _supabase.auth.signOut();
 
+                // 4. Insert into account_requests WITH the link to avoid FK violation
+                // Use the ID from the signUpData to satisfy the foreign key
                 const { error } = await withAccountRequestsTable((tableName) => _supabase
                     .from(tableName)
                     .insert({
-                        email,
+                        email: email,
                         role: 'standard',
-                        status: 'pending'
+                        status: 'pending',
+                        linked_account_id: signUpData.user.id // This satisfies the bouncer!
                     }));
+
                 if (error) throw error;
 
                 statusNode.textContent = 'Account created! An admin must approve it before you can log in.';
                 statusNode.className = 'mt-2 text-sm font-medium text-green-600 text-center block';
+
+                // Clear inputs
                 emailInput.value = '';
                 passwordInput.value = '';
                 confirmPasswordInput.value = '';
+
             } catch (error) {
                 statusNode.textContent = error.message || 'Request submission failed.';
                 statusNode.className = 'mt-2 text-sm font-medium text-red-600 text-center block';
@@ -719,9 +807,9 @@
 
         document.getElementById('forgotPasswordBtn').addEventListener('click', () => handleForgotPassword('adminEmail', 'adminLoginStatus'));
         document.getElementById('forgotPasswordBtnStandard').addEventListener('click', () => handleForgotPassword('standardEmail', 'standardLoginStatus'));
-        
+
         // Initialize auth state
-        window._adminInitAuth = function() {
+        window._adminInitAuth = function () {
             const client = getSupabaseClient();
             if (!client) return;
             client.auth.getSession().then(({ data }) => updateUI(data.session));
@@ -738,11 +826,12 @@
                 }
             });
         };
-        
+
         if (window._supabaseClient) {
             window._adminInitAuth();
         }
     </script>
     <script src="components.js"></script>
 </body>
+
 </html>
