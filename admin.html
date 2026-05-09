@@ -216,7 +216,7 @@
             }
         });
         
-        const ACCOUNT_REQUESTS_TABLES = ['account_requests_v2', 'account_requests'];
+        const ACCOUNT_REQUESTS_TABLES = ['account_requests'];
         const ADMIN_ALLOWLIST = ['nbhsttclub@gmail.com', 'jonathanzhao111@gmail.com', 'damon.yuan@education.nsw.gov.au'];
 
         let currentAccountRole = 'guest';
@@ -501,7 +501,7 @@
 
             const { data, error } = await withAccountRequestsTable((tableName) => _supabase
                 .from(tableName)
-                .select('id, email, role, status, created_at, reviewed_at, reviewed_by')
+                .select('request_id, email, role, status, created_at, reviewed_at, reviewed_by')
                 .order('created_at', { ascending: false }));
 
             if (error) {
@@ -564,7 +564,7 @@
                     const { error } = await withAccountRequestsTable((tableName) => _supabase
                         .from(tableName)
                         .update({ role: newRole })
-                        .eq('id', id));
+                        .eq('request_id', id));
                     if (error) {
                         alert('Failed to update role: ' + error.message);
                         e.target.value = previousValue;
@@ -600,7 +600,7 @@
                     reviewed_by: currentAccountEmail,
                     role: role
                 })
-                .eq('id', id));
+                .eq('request_id', id));
 
             if (error) {
                 alert('Failed to review request: ' + error.message);
