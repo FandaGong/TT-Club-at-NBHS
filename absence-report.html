@@ -20,7 +20,7 @@
 </head>
 
 <body class="bg-red-50 text-slate-900 font-sans min-h-screen flex flex-col">
-    
+
     <!-- 1. HEADER HOLDER -->
     <div id="header-placeholder"></div>
 
@@ -28,28 +28,43 @@
     <main id="main-content" class="max-w-4xl mx-auto p-6 flex-grow w-full opacity-0 transition-opacity duration-500">
         <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 fade-up-d1 card-hover">
             <h1 class="text-3xl font-bold text-red-900 mb-2">Club Absence Report</h1>
-            <p class="text-sm text-slate-600 mb-6">If you did not show up to club, submit your details so the team can review your note. Note: you must be logged in to submit.</p>
+            <p class="text-sm text-slate-600 mb-6">If you did not show up to club, submit your details so the team can
+                review your note. Note: you must be logged in to submit.</p>
 
             <!-- Login required notice -->
             <div id="loginRequiredNotice" class="text-center py-8">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-slate-300 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-slate-300 mb-3" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
                 <p class="text-slate-500 font-medium">You must be logged in to submit an absence report.</p>
-                <a href="admin.html" class="inline-block mt-3 text-sm font-semibold text-red-600 hover:text-red-800 transition-colors">Go to Login &rarr;</a>
+                <a href="admin.html"
+                    class="inline-block mt-3 text-sm font-semibold text-red-600 hover:text-red-800 transition-colors">Go
+                    to Login &rarr;</a>
             </div>
 
             <!-- Absence form -->
             <form id="absenceForm" class="hidden grid grid-cols-1 gap-3">
-                <input id="absenceName" type="text" placeholder="Your name" required class="p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500">
-                <input id="absenceEmail" type="email" placeholder="Email (auto-filled)" required readonly class="p-3 border rounded-xl outline-none bg-slate-50 text-slate-600 cursor-not-allowed">
-                <textarea id="absenceReason" rows="5" placeholder="Reason for absence" required class="p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500"></textarea>
-                <button type="submit" class="bg-red-600 text-white px-5 py-3 rounded-xl font-bold hover:bg-red-700 transition-colors">Submit Absence</button>
+                <input id="absenceName" type="text" placeholder="Your name" required
+                    class="p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500">
+                <input id="absenceEmail" type="email" placeholder="Email (auto-filled)" required readonly
+                    class="p-3 border rounded-xl outline-none bg-slate-50 text-slate-600 cursor-not-allowed">
+                <textarea id="absenceReason" rows="5" placeholder="Reason for absence" required
+                    class="p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500"></textarea>
+                <button type="submit"
+                    class="bg-red-600 text-white px-5 py-3 rounded-xl font-bold hover:bg-red-700 transition-colors">Submit
+                    Absence</button>
                 <p id="absenceSubmitStatus" class="hidden text-sm font-medium"></p>
             </form>
 
-            <div class="mt-8 border-t border-slate-200 pt-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div
+                class="mt-8 border-t border-slate-200 pt-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <p class="text-sm font-medium text-slate-500">Only club admins can view submitted reports.</p>
                 <div class="flex items-center gap-2">
-                    <button id="adminShowReportsBtn" type="button" class="hidden text-sm font-bold bg-red-600 text-white px-4 py-2 rounded-xl hover:bg-red-700 transition-colors shadow-sm" onclick="openAdminReports()">View Reports</button>
+                    <button id="adminShowReportsBtn" type="button"
+                        class="hidden text-sm font-bold bg-red-600 text-white px-4 py-2 rounded-xl hover:bg-red-700 transition-colors shadow-sm"
+                        onclick="openAdminReports()">View Reports</button>
                 </div>
             </div>
         </section>
@@ -59,12 +74,19 @@
     <div id="footer-placeholder"></div>
 
     <!-- Admin Reports Modal -->
-    <div id="adminReportsModal" class="hidden fixed inset-0 z-[9999] bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-slate-50 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[85vh] flex flex-col overflow-hidden border border-slate-200/60">
+    <div id="adminReportsModal"
+        class="hidden fixed inset-0 z-[9999] bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+        <div
+            class="bg-slate-50 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[85vh] flex flex-col overflow-hidden border border-slate-200/60">
             <div class="flex items-center justify-between p-5 border-b border-slate-200 bg-white">
                 <h2 class="text-xl font-bold text-slate-800">Absence Reports Management</h2>
-                <button type="button" onclick="document.getElementById('adminReportsModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-700 transition-colors p-1 bg-slate-100 hover:bg-slate-200 rounded-lg">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                <button type="button" onclick="document.getElementById('adminReportsModal').classList.add('hidden')"
+                    class="text-slate-400 hover:text-slate-700 transition-colors p-1 bg-slate-100 hover:bg-slate-200 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
                 </button>
             </div>
             <div id="adminReportsList" class="p-6 overflow-y-auto flex-1 space-y-4 text-sm text-slate-700">
@@ -119,7 +141,7 @@
         );
         let supabaseClient = null;
         const absenceReportsById = new Map();
-        
+
         function getSupabaseClient() {
             if (!supabaseClient) {
                 // Try to use shared client from components.js first
@@ -159,7 +181,20 @@
         async function submitAbsenceReport(name, email, reason) {
             const client = getSupabaseClient();
             if (!client) throw new Error('Supabase client not initialized');
-            const { error } = await client.from(ABSENCE_TABLE).insert([{ name, email, reason }]);
+
+            // Get the current logged-in user's ID
+            const { data: { session } } = await client.auth.getSession();
+            const userId = session?.user?.id;
+
+            // Use the correct column names from your schema screenshot
+            const { error } = await client.from(ABSENCE_TABLE).insert([{
+                name: name,
+                email: email,
+                reason: reason,
+                account_id: userId, // This links the report to the player
+                status: 'pending'
+            }]);
+
             if (error) throw error;
         }
 
@@ -245,33 +280,33 @@
             if (data) renderAdminReports(data);
         }
 
-            function renderAdminReports(reports) {
-                const list = document.getElementById('adminReportsList');
-                if (!list) return;
-                if (!reports || !reports.length) { list.innerHTML = '<p>No reports.</p>'; return; }
+        function renderAdminReports(reports) {
+            const list = document.getElementById('adminReportsList');
+            if (!list) return;
+            if (!reports || !reports.length) { list.innerHTML = '<p>No reports.</p>'; return; }
 
-                absenceReportsById.clear();
-                reports.forEach(r => {
-                    if (r && r.id != null) absenceReportsById.set(String(r.id), r);
-                });
+            absenceReportsById.clear();
+            reports.forEach(r => {
+                if (r && r.id != null) absenceReportsById.set(String(r.id), r);
+            });
 
-                const isAdminView = !!window._isAdmin;
+            const isAdminView = !!window._isAdmin;
 
-                list.innerHTML = reports.map(r => {
-                    const status = (r.status || 'pending');
-                    const pendingActions = isAdminView ? `
+            list.innerHTML = reports.map(r => {
+                const status = (r.status || 'pending');
+                const pendingActions = isAdminView ? `
                         <div class="mt-3 flex gap-2">
                             <button data-id="${r.id}" data-status="approved" class="approve-absence-btn text-sm font-semibold bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700">Approve</button>
                             <button data-id="${r.id}" data-status="declined" class="decline-absence-btn text-sm font-semibold bg-red-600 text-white px-3 py-2 rounded-lg hover:bg-red-700">Decline</button>
                         </div>
                     ` : '';
-                    const deleteAction = isAdminView ? `
+                const deleteAction = isAdminView ? `
                         <div class="mt-2">
                             <button data-id="${r.id}" class="delete-absence-btn text-sm font-semibold bg-slate-700 text-white px-3 py-2 rounded-lg hover:bg-slate-800">Delete</button>
                         </div>
                     ` : '';
 
-                    return `
+                return `
                         <div class="border rounded-lg p-4 bg-white">
                             <p><strong>Name:</strong> ${escapeHtml(r.name)}</p>
                             <p><strong>Email:</strong> ${escapeHtml(r.email || 'unknown')}</p>
@@ -284,95 +319,75 @@
                             ${deleteAction}
                         </div>
                     `;
-                }).join('');
+            }).join('');
 
-                // Attach handlers for admin actions
-                if (isAdminView) {
-                    list.querySelectorAll('.approve-absence-btn, .decline-absence-btn').forEach(btn => {
-                        btn.addEventListener('click', async (e) => {
-                            const id = e.currentTarget.getAttribute('data-id');
-                            const newStatus = e.currentTarget.getAttribute('data-status');
-                            try {
-                                const emailResult = await reviewAbsenceReport(id, newStatus, absenceReportsById.get(String(id)) || null);
-                                if (!emailResult.sent) {
-                                    alert(`Report updated, but notification email was not sent (${emailResult.reason}).`);
-                                }
-                            } catch (err) {
-                                console.error('Failed to update report status', err);
-                                alert('Failed to update report: ' + (err.message || err));
+            // Attach handlers for admin actions
+            if (isAdminView) {
+                list.querySelectorAll('.approve-absence-btn, .decline-absence-btn').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        const id = e.currentTarget.getAttribute('data-id');
+                        const newStatus = e.currentTarget.getAttribute('data-status');
+                        try {
+                            const emailResult = await reviewAbsenceReport(id, newStatus, absenceReportsById.get(String(id)) || null);
+                            if (!emailResult.sent) {
+                                alert(`Report updated, but notification email was not sent (${emailResult.reason}).`);
                             }
-                        });
+                        } catch (err) {
+                            console.error('Failed to update report status', err);
+                            alert('Failed to update report: ' + (err.message || err));
+                        }
                     });
+                });
 
-                    list.querySelectorAll('.delete-absence-btn').forEach(btn => {
-                        btn.addEventListener('click', async (e) => {
-                            const id = e.currentTarget.getAttribute('data-id');
-                            const ok = window.confirm('Delete this absence report? This cannot be undone.');
-                            if (!ok) return;
-                            try {
-                                await deleteAbsenceReport(id);
-                            } catch (err) {
-                                console.error('Failed to delete report', err);
-                                alert('Failed to delete report: ' + (err.message || err));
-                            }
-                        });
+                list.querySelectorAll('.delete-absence-btn').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        const id = e.currentTarget.getAttribute('data-id');
+                        const ok = window.confirm('Delete this absence report? This cannot be undone.');
+                        if (!ok) return;
+                        try {
+                            await deleteAbsenceReport(id);
+                        } catch (err) {
+                            console.error('Failed to delete report', err);
+                            alert('Failed to delete report: ' + (err.message || err));
+                        }
                     });
-                }
+                });
             }
+        }
 
-            // Open admin modal and set admin view flag
-            function openAdminReports() {
-                window._isAdmin = true;
-                document.getElementById('adminReportsModal').classList.remove('hidden');
-                refreshAdminPanel();
-            }
+        // Open admin modal and set admin view flag
+        function openAdminReports() {
+            window._isAdmin = true;
+            document.getElementById('adminReportsModal').classList.remove('hidden');
+            refreshAdminPanel();
+        }
 
-            // Update absence report status (approve/decline)
-            async function reviewAbsenceReport(id, status, report) {
-                const client = getSupabaseClient();
-                if (!client) throw new Error('Supabase client not initialized');
+        // Update absence report status (approve/decline)
+        // 1. Update the Review function
+        async function reviewAbsenceReport(id, status, report) {
+            const client = getSupabaseClient();
+            // ... (keep session logic) ...
 
-                // Get current user for reviewed_by
-                const { data: sessionData } = await client.auth.getSession();
-                const userEmail = sessionData?.session?.user?.email || 'unknown';
+            const { error } = await client.from(ABSENCE_TABLE).update({
+                status,
+                reviewed_by: userEmail,
+                reviewed_at: new Date().toISOString()
+            }).eq('report_id', id); // CHANGE 'id' TO 'report_id'
 
-                const { error } = await client.from(ABSENCE_TABLE).update({
-                    status,
-                    reviewed_by: userEmail,
-                    reviewed_at: new Date().toISOString()
-                }).eq('id', id);
+            if (error) throw error;
+            // ... (keep email logic) ...
+        }
 
-                if (error) throw error;
+        // 2. Update the Delete function
+        async function deleteAbsenceReport(id) {
+            const client = getSupabaseClient();
+            const { error } = await client.from(ABSENCE_TABLE)
+                .delete()
+                .eq('report_id', id); // CHANGE 'id' TO 'report_id'
 
-                let emailResult = { sent: false, reason: 'No email attempted' };
-                try {
-                    let reportForEmail = report;
-                    if (!reportForEmail || !String(reportForEmail.email || '').trim()) {
-                        const { data: latestReport, error: latestReportError } = await client
-                            .from(ABSENCE_TABLE)
-                            .select('id, name, email, reason')
-                            .eq('id', id)
-                            .single();
-                        if (latestReportError) throw latestReportError;
-                        reportForEmail = latestReport;
-                    }
-                    emailResult = await sendReviewDecisionEmail(status, reportForEmail, userEmail);
-                } catch (emailErr) {
-                    console.error('Decision email failed', emailErr);
-                    emailResult = { sent: false, reason: getEmailErrorReason(emailErr) };
-                }
-
-                await refreshAdminPanel();
-                return emailResult;
-            }
-
-            async function deleteAbsenceReport(id) {
-                const client = getSupabaseClient();
-                if (!client) throw new Error('Supabase client not initialized');
-                const { error } = await client.from(ABSENCE_TABLE).delete().eq('id', id);
-                if (error) throw error;
-                await refreshAdminPanel();
-            }
+            if (error) throw error;
+            await refreshAdminPanel();
+        }
 
         document.addEventListener("DOMContentLoaded", () => {
             // Form Submit Logic
@@ -440,4 +455,5 @@
         });
     </script>
 </body>
+
 </html>
