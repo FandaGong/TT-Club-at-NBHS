@@ -650,8 +650,9 @@
 
 
         // Replaces resetSeasonStats()
+        // Replaces resetSeasonStats()
         async function resetSeason() {
-            if (!confirm("Are you SURE you want to reset all players to baseline Elos? This cannot be undone.")) return;
+            if (!confirm("Are you SURE you want to reset all players to baseline Elos and clear records? This cannot be undone.")) return;
 
             try {
                 const { data: players, error: playerError } = await _supabase.from('account')
@@ -660,22 +661,40 @@
                 if (playerError) throw new Error("Database rejected player query: " + playerError.message);
                 if (!players || players.length === 0) throw new Error("No players found in the account table.");
 
+                // We use simple numbers for the division keys to make matching foolproof
                 const eloMap = {
-                    "Second": { "Division 1": 1000, "Division 2": 900, "Division 3": 800 },
-                    "First": { "Division 1": 700, "Division 2": 600, "Division 3": 500 }
+                    "Second": { "1": 1000, "2": 900, "3": 800 },
+                    "First": { "1": 700, "2": 600, "3": 500 }
                 };
 
                 let successCount = 0;
 
-                // We loop through and update everyone to their baseline
+                // Loop through and calculate each player's correct baseline
                 for (const player of players) {
-                    const half = player.Half || "First";
-                    const div = player.Division || "Division 3";
-                    const newElo = (eloMap[half] && eloMap[half][div]) ? eloMap[half][div] : 600;
+                    // 1. Grab raw strings from the database (or defaults)
+                    const rawHalf = (player.Half || "First").trim();
+                    const rawDiv = (player.Division || "3").toString().trim();
 
-                    // FIX: We now capture the error from the update attempt!
+                    // 2. Extract just the number (Fixes the "Div 1" vs "Division 1" mismatch)
+                    let divNum = "3";
+                    if (rawDiv.includes("1")) divNum = "1";
+                    else if (rawDiv.includes("2")) divNum = "2";
+                    else if (rawDiv.includes("3")) divNum = "3";
+
+                    // 3. Ensure 'Half' matches exactly "First" or "Second"
+                    let halfKey = "First";
+                    if (rawHalf.toLowerCase().includes("second")) halfKey = "Second";
+
+                    // 4. Calculate the new ELO based on your chart!
+                    const newElo = eloMap[halfKey][divNum] || 600;
+
+                    // 5. Update the Database (Elo updated, wins and losses cleared to 0)
                     const { error: updateError } = await _supabase.from('account')
-                        .update({ elo: newElo })
+                        .update({
+                            elo: newElo,
+                            wins: 0,
+                            losses: 0
+                        })
                         .eq('account_id', player.account_id);
 
                     if (updateError) {
@@ -684,11 +703,12 @@
                     successCount++;
                 }
 
-                alert(`Season Reset Complete! Successfully updated ${successCount} players.`);
+                alert(`Season Reset Complete!\n\nSuccessfully updated ${successCount} players to their Division/Half baselines and cleared all wins/losses.`);
             } catch (err) {
                 alert("Error resetting season:\n\n" + err.message);
             }
-        }    </script>
+        }
+    </script>
 </body>
 
 </html>
