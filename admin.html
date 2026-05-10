@@ -654,10 +654,8 @@
             if (!confirm("Are you SURE you want to reset all players to baseline Elos? This cannot be undone.")) return;
 
             try {
-                // Fetch players directly with the Half and Division columns from the account table
-                // (Wrapped in quotes to protect Capital letters)
                 const { data: players, error: playerError } = await _supabase.from('account')
-                    .select('account_id, "half", "division"');
+                    .select('account_id, "Half", "Division"');
 
                 if (playerError) throw new Error("Database rejected player query: " + playerError.message);
                 if (!players || players.length === 0) throw new Error("No players found in the account table.");
@@ -667,24 +665,30 @@
                     "First": { "Division 1": 700, "Division 2": 600, "Division 3": 500 }
                 };
 
+                let successCount = 0;
+
                 // We loop through and update everyone to their baseline
                 for (const player of players) {
-                    // Read from the newly added columns on the account table itself
-                    const half = player.half || "First";
-                    const div = player.division || "Division 3";
+                    const half = player.Half || "First";
+                    const div = player.Division || "Division 3";
                     const newElo = (eloMap[half] && eloMap[half][div]) ? eloMap[half][div] : 600;
 
-                    await _supabase.from('account')
+                    // FIX: We now capture the error from the update attempt!
+                    const { error: updateError } = await _supabase.from('account')
                         .update({ elo: newElo })
                         .eq('account_id', player.account_id);
+
+                    if (updateError) {
+                        throw new Error(`Blocked updating a player: ${updateError.message}`);
+                    }
+                    successCount++;
                 }
 
-                alert("Season Reset Complete! All Elos set to baselines.");
+                alert(`Season Reset Complete! Successfully updated ${successCount} players.`);
             } catch (err) {
                 alert("Error resetting season:\n\n" + err.message);
             }
-        }
-    </script>
+        }    </script>
 </body>
 
 </html>
