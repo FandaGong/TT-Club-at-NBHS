@@ -5,18 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Absence Report - NBHS Table Tennis</title>
-    <script src="tailwind-theme.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Supabase required for both form and components.js -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-    <script type="text/javascript">
-        (function () {
-            emailjs.init({ publicKey: "e5NumK8MWzpAArS95" });
-        })();
-    </script>
-    
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="animations.css">
     <link rel="icon" type="image/png" href="favicon.png">
@@ -24,30 +14,23 @@
 
 <body class="bg-red-50 text-slate-900 font-sans min-h-screen flex flex-col">
 
-    <!-- 1. HEADER HOLDER -->
     <div id="header-placeholder"></div>
 
-    <!-- 2. MAIN WITH ID AND OPACITY -->
     <main id="main-content" class="max-w-4xl mx-auto p-6 flex-grow w-full opacity-0 transition-opacity duration-500">
         <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 fade-up-d1 card-hover">
             <h1 class="text-3xl font-bold text-red-900 mb-2">Club Absence Report</h1>
-            <p class="text-sm text-slate-600 mb-6">If you did not show up to club, submit your details so the team can review your note. Note: you must be logged in to submit.</p>
+            <p class="text-sm text-slate-600 mb-6">If you did not show up to club, submit your details so the team can
+                review your note. Note: you must be logged in to submit.</p>
 
-            <!-- Login required notice -->
             <div id="loginRequiredNotice" class="text-center py-8">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-slate-300 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-slate-300 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
                 <p class="text-slate-500 font-medium">You must be logged in to submit an absence report.</p>
                 <a href="admin.html" class="inline-block mt-3 text-sm font-semibold text-red-600 hover:text-red-800 transition-colors">Go to Login &rarr;</a>
             </div>
 
-            <!-- Absence form -->
             <form id="absenceForm" class="hidden grid grid-cols-1 gap-3">
-                <input id="absenceName" type="text" placeholder="Your name" required class="p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500">
-                <input id="absenceEmail" type="email" placeholder="Email (auto-filled)" required readonly class="p-3 border rounded-xl outline-none bg-slate-50 text-slate-600 cursor-not-allowed">
                 <textarea id="absenceReason" rows="5" placeholder="Reason for absence" required class="p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500"></textarea>
-                <button type="submit" class="bg-red-600 text-white px-5 py-3 rounded-xl font-bold hover:bg-red-700 transition-colors shadow-sm">Submit Absence</button>
+                <button type="submit" class="bg-red-600 text-white px-5 py-3 rounded-xl font-bold hover:bg-red-700 transition-colors">Submit Absence</button>
                 <p id="absenceSubmitStatus" class="hidden text-sm font-medium"></p>
             </form>
 
@@ -60,7 +43,6 @@
         </section>
     </main>
 
-    <!-- 3. FOOTER HOLDER -->
     <div id="footer-placeholder"></div>
 
     <!-- Admin Reports Modal -->
@@ -68,9 +50,7 @@
         <div class="bg-slate-50 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[85vh] flex flex-col overflow-hidden border border-slate-200/60">
             <div class="flex items-center justify-between p-5 border-b border-slate-200 bg-white">
                 <h2 class="text-xl font-bold text-slate-800">Absence Reports Management</h2>
-                <button type="button" onclick="document.getElementById('adminReportsModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-700 transition-colors p-1 bg-slate-100 hover:bg-slate-200 rounded-lg">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
-                </button>
+                <button type="button" onclick="document.getElementById('adminReportsModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-700 transition-colors p-1 bg-slate-100 hover:bg-slate-200 rounded-lg"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button>
             </div>
             <div id="adminReportsList" class="p-6 overflow-y-auto flex-1 space-y-4 text-sm text-slate-700">
                 <p>No reports submitted yet.</p>
@@ -78,287 +58,115 @@
         </div>
     </div>
 
-    <!-- 4. LOAD COMPONENTS.JS -->
     <script src="components.js"></script>
 
     <script>
-        // Tell components.js we will reveal the page manually after auth check
         window.manualPageReveal = true;
 
-        function resolveEmailJsValue(...values) {
-            for (const value of values) {
-                if (typeof value === 'string' && value.trim()) return value.trim();
-            }
-            return '';
-        }
-
+        const SUPABASE_URL = "https://ngnkbfazhdedaqvxcphw.supabase.co";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbmtiZmF6aGRlZGFxdnhjcGh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTE5NDksImV4cCI6MjA5MzI4Nzk0OX0.F_S6ORkFe-SuJPybs7FEFH94E6U2hZ5ern4vrg4kMOk";
         const ABSENCE_TABLE = "absence_reports";
-        const EMAILJS_SERVICE_ID = resolveEmailJsValue('service_r3qup2c', window.EMAILJS_SERVICE_ID);
-        const EMAILJS_TEMPLATE_ID = resolveEmailJsValue(window.EMAILJS_TEMPLATE_ID);
-        const EMAILJS_ACCEPT_TEMPLATE_ID = resolveEmailJsValue('template_1g3bzms', window.EMAILJS_ACCEPT_TEMPLATE_ID);
-        const EMAILJS_DECLINE_TEMPLATE_ID = resolveEmailJsValue('template_cll4zbl', window.EMAILJS_DECLINE_TEMPLATE_ID);
-        
-        let supabaseClient = null;
-        const absenceReportsById = new Map();
+        let supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        function getSupabaseClient() {
-            if (!supabaseClient) {
-                supabaseClient = window._supabaseClient;
-                if (!supabaseClient && window.supabase) {
-                    const SUPABASE_URL = "https://ngnkbfazhdedaqvxcphw.supabase.co";
-                    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbmtiZmF6aGRlZGFxdnhjcGh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTE5NDksImV4cCI6MjA5MzI4Nzk0OX0.F_S6ORkFe-SuJPybs7FEFH94E6U2hZ5ern4vrg4kMOk";
-                    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-                }
-            }
-            return supabaseClient;
-        }
+        async function submitAbsenceReport(reason) {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if(!session) throw new Error("Not logged in");
 
-        // Helper functions
-        function setStatus(t, e, s) { t && (t.textContent = e, t.className = `mt-2 text-sm font-medium ${s}`, t.classList.remove("hidden")) }
-        function escapeHtml(t) { return String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;") }
-
-        async function submitAbsenceReport(name, email, reason) {
-            const client = getSupabaseClient();
-            if (!client) throw new Error('Supabase client not initialized');
-
-            const { data: { session } } = await client.auth.getSession();
-            const userId = session?.user?.id;
-
-            const { error } = await client.from(ABSENCE_TABLE).insert([{
-                name: name,
-                email: email,
+            // EXACT SCHEMA MATCH: Insert into absence_reports using account_id
+            const { error } = await supabaseClient.from(ABSENCE_TABLE).insert([{
                 reason: reason,
-                account_id: userId,
+                account_id: session.user.id,
                 status: 'pending'
             }]);
 
             if (error) throw error;
         }
 
-        async function sendAbsenceEmail(name, email, reason) {
-            if (!window.emailjs || !EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID) return { sent: false };
-            await window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-                student_name: name, student_email: email, absence_reason: reason, submitted_at: new Date().toLocaleString()
-            });
-            return { sent: true };
-        }
-
-        async function sendReviewDecisionEmail(status, report, reviewedBy) {
-            if (!window.emailjs || !EMAILJS_SERVICE_ID) return { sent: false };
-
-            const templateId = status === 'approved' ? EMAILJS_ACCEPT_TEMPLATE_ID : EMAILJS_DECLINE_TEMPLATE_ID;
-            if (!templateId) return { sent: false };
-
-            const recipientEmail = (report?.email || '').trim();
-            if (!recipientEmail) return { sent: false };
-
-            await window.emailjs.send(EMAILJS_SERVICE_ID, templateId, {
-                student_name: report?.name || 'Student',
-                student_email: recipientEmail,
-                absence_reason: report?.reason || '',
-                decision: status,
-                status: status,
-                reviewed_by: reviewedBy || 'unknown',
-                message: status === 'approved' ? 'Your absence report has been approved.' : 'Your absence report has been declined.'
-            });
-            return { sent: true };
-        }
-
-        function updateFormVisibility(session) {
-            const form = document.getElementById('absenceForm');
-            const notice = document.getElementById('loginRequiredNotice');
-            const emailField = document.getElementById('absenceEmail');
-            if (session) {
-                form.classList.remove('hidden'); notice.classList.add('hidden');
-                emailField.value = session.user.email;
-            } else {
-                form.classList.add('hidden'); notice.classList.remove('hidden');
-            }
-        }
-
         async function refreshAdminPanel() {
-            const client = getSupabaseClient();
-            if (!client) return;
-            const { data, error } = await client.from(ABSENCE_TABLE).select('*').order('created_at', { ascending: false });
-            if (data) renderAdminReports(data);
-        }
+            // Include a join to fetch the account's email associated with the report
+            const { data, error } = await supabaseClient.from(ABSENCE_TABLE)
+                .select('report_id, reason, status, created_at, reviewed_at, reviewed_by, account(email)')
+                .order('created_at', { ascending: false });
 
-        function renderAdminReports(reports) {
-            const list = document.getElementById('adminReportsList');
-            if (!list) return;
-            if (!reports || !reports.length) { list.innerHTML = '<p>No reports.</p>'; return; }
+            if (data) {
+                const list = document.getElementById('adminReportsList');
+                if (!data.length) { list.innerHTML = '<p>No reports.</p>'; return; }
 
-            absenceReportsById.clear();
-            reports.forEach(r => {
-                const pKey = r.report_id || r.id; // Support both just in case
-                if (pKey != null) absenceReportsById.set(String(pKey), r);
-            });
-
-            const isAdminView = !!window._isAdmin;
-
-            list.innerHTML = reports.map(r => {
-                const status = (r.status || 'pending');
-                const pKey = r.report_id || r.id;
-                
-                const pendingActions = isAdminView ? `
+                list.innerHTML = data.map(r => {
+                    const status = (r.status || 'pending');
+                    const studentEmail = r.account ? r.account.email : 'Unknown Email';
+                    
+                    const pendingActions = `
                         <div class="mt-3 flex gap-2">
-                            <button data-id="${pKey}" data-status="approved" class="approve-absence-btn text-sm font-semibold bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 shadow-sm">Approve</button>
-                            <button data-id="${pKey}" data-status="declined" class="decline-absence-btn text-sm font-semibold bg-red-600 text-white px-3 py-2 rounded-lg hover:bg-red-700 shadow-sm">Decline</button>
-                        </div>
-                    ` : '';
-                const deleteAction = isAdminView ? `
-                        <div class="mt-2 text-right">
-                            <button data-id="${pKey}" class="delete-absence-btn text-xs font-semibold text-slate-400 hover:text-red-600">Delete Permanently</button>
-                        </div>
-                    ` : '';
+                            <button data-id="${r.report_id}" data-status="approved" class="approve-absence-btn text-sm font-semibold bg-green-600 text-white px-3 py-2 rounded-lg">Approve</button>
+                            <button data-id="${r.report_id}" data-status="declined" class="decline-absence-btn text-sm font-semibold bg-red-600 text-white px-3 py-2 rounded-lg">Decline</button>
+                        </div>`;
 
-                return `
-                        <div class="border border-slate-200 rounded-xl p-5 bg-white shadow-sm">
+                    return `
+                        <div class="border rounded-lg p-4 bg-white shadow-sm">
                             <div class="flex justify-between items-start mb-2">
-                                <p class="text-lg font-bold text-slate-800">${escapeHtml(r.name)}</p>
-                                <span class="px-2 py-1 rounded text-[10px] font-bold uppercase ${status === 'approved' ? 'bg-green-100 text-green-700' : (status === 'declined' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700')}">${escapeHtml(status)}</span>
+                                <p class="text-lg font-bold text-slate-800">${studentEmail}</p>
+                                <span class="px-2 py-1 rounded text-[10px] font-bold uppercase bg-slate-100">${status}</span>
                             </div>
-                            <p class="text-sm"><strong class="text-slate-600">Email:</strong> <a href="mailto:${escapeHtml(r.email)}" class="text-blue-600 hover:underline">${escapeHtml(r.email || 'unknown')}</a></p>
-                            <p class="text-sm mt-1"><strong class="text-slate-600">Reason:</strong> ${escapeHtml(r.reason)}</p>
-                            <p class="text-xs text-slate-400 mt-4 border-t border-slate-100 pt-2">Submitted: ${r.created_at ? escapeHtml(new Date(r.created_at).toLocaleString()) : 'unknown'}</p>
-                            ${status !== 'pending' ? `<p class="text-xs text-slate-400">Reviewed by: ${escapeHtml(r.reviewed_by || 'unknown')}</p>` : ''}
-                            ${status === 'pending' ? pendingActions : ''}
-                            ${deleteAction}
+                            <p class="text-sm mt-1"><strong>Reason:</strong> ${r.reason}</p>
+                            <p class="text-xs text-slate-400 mt-2">Submitted: ${new Date(r.created_at).toLocaleString()}</p>
+                            ${status === 'pending' ? pendingActions : `<p class="text-xs text-slate-400 mt-1">Reviewed by: ${r.reviewed_by || 'unknown'}</p>`}
                         </div>
                     `;
-            }).join('');
+                }).join('');
 
-            // Attach handlers for admin actions
-            if (isAdminView) {
                 list.querySelectorAll('.approve-absence-btn, .decline-absence-btn').forEach(btn => {
                     btn.addEventListener('click', async (e) => {
                         const id = e.currentTarget.getAttribute('data-id');
                         const newStatus = e.currentTarget.getAttribute('data-status');
-                        try {
-                            await reviewAbsenceReport(id, newStatus, absenceReportsById.get(String(id)) || null);
-                        } catch (err) {
-                            console.error('Failed to update report status', err);
-                            alert('Failed to update report: ' + (err.message || err));
-                        }
-                    });
-                });
-
-                list.querySelectorAll('.delete-absence-btn').forEach(btn => {
-                    btn.addEventListener('click', async (e) => {
-                        const id = e.currentTarget.getAttribute('data-id');
-                        const ok = window.confirm('Delete this absence report? This cannot be undone.');
-                        if (!ok) return;
-                        try {
-                            await deleteAbsenceReport(id);
-                        } catch (err) {
-                            console.error('Failed to delete report', err);
-                            alert('Failed to delete report: ' + (err.message || err));
-                        }
+                        const { data: { session } } = await supabaseClient.auth.getSession();
+                        
+                        // EXACT SCHEMA MATCH: Update by report_id
+                        await supabaseClient.from(ABSENCE_TABLE).update({
+                            status: newStatus,
+                            reviewed_by: session.user.email,
+                            reviewed_at: new Date().toISOString()
+                        }).eq('report_id', id);
+                        
+                        refreshAdminPanel();
                     });
                 });
             }
         }
 
         function openAdminReports() {
-            window._isAdmin = true;
             document.getElementById('adminReportsModal').classList.remove('hidden');
             refreshAdminPanel();
         }
 
-        async function reviewAbsenceReport(id, status, report) {
-            const client = getSupabaseClient();
-            const { data: { session } } = await client.auth.getSession();
-            const adminEmail = session?.user?.email || 'Admin';
-
-            // Changed .eq('report_id', id) to match your schema
-            const { error } = await client.from(ABSENCE_TABLE).update({
-                status,
-                reviewed_by: adminEmail,
-                reviewed_at: new Date().toISOString()
-            }).eq('report_id', id);
-
-            if (error) throw error;
-            
-            // Try to send email, but don't crash if it fails
-            try {
-                await sendReviewDecisionEmail(status, report, adminEmail);
-            } catch(e) { console.warn("Email notice not sent:", e); }
-            
-            await refreshAdminPanel();
-        }
-
-        async function deleteAbsenceReport(id) {
-            const client = getSupabaseClient();
-            const { error } = await client.from(ABSENCE_TABLE).delete().eq('report_id', id);
-            if (error) throw error;
-            await refreshAdminPanel();
-        }
-
         document.addEventListener("DOMContentLoaded", () => {
-            // Form Submit Logic
             document.getElementById("absenceForm").addEventListener("submit", async (e) => {
                 e.preventDefault();
                 const status = document.getElementById("absenceSubmitStatus");
-                const emailField = document.getElementById("absenceEmail");
-                const currentEmail = emailField.value;
-                const name = document.getElementById("absenceName").value;
-                const reason = document.getElementById("absenceReason").value;
-                
-                status.classList.remove('hidden');
-                status.className = 'mt-2 text-sm font-medium text-blue-600';
-                status.textContent = 'Submitting...';
-
+                status.classList.remove('hidden'); status.textContent = 'Submitting...'; status.className = 'mt-2 text-sm text-blue-600';
                 try {
-                    await submitAbsenceReport(name, currentEmail, reason);
-                    try {
-                        await sendAbsenceEmail(name, currentEmail, reason);
-                    } catch (emailErr) {
-                        console.error('EmailJS send failed', emailErr);
-                    }
+                    await submitAbsenceReport(document.getElementById("absenceReason").value);
                     e.target.reset();
-                    emailField.value = currentEmail; // Restore email since it's readonly
-                    setStatus(status, "Absence submitted successfully. An admin will review it soon.", "text-green-600");
-                } catch (err) { setStatus(status, "Error submitting report. Please try again.", "text-red-600"); }
+                    status.textContent = 'Absence submitted successfully.'; status.className = 'mt-2 text-sm text-green-600';
+                } catch (err) { 
+                    status.textContent = 'Error: ' + err.message; status.className = 'mt-2 text-sm text-red-600'; 
+                }
             });
 
-            // Auth Logic & Reveal Trigger
-            const client = getSupabaseClient();
-            const adminBtn = document.getElementById('adminShowReportsBtn');
-
-            async function handleAuth(session) {
-                updateFormVisibility(session);
-                let isAdmin = false;
-                
-                if (session && session.user && session.user.email) {
-                    const email = (session.user.email || '').toLowerCase();
-                    // Basic admin check (add more emails to this list if needed)
-                    const adminAllowlist =['nbhsttclub@gmail.com', 'jonathanzhao111@gmail.com', 'damon.yuan@education.nsw.gov.au'];
-                    isAdmin = adminAllowlist.includes(email);
-                }
-
-                window._isAdmin = !!isAdmin;
-
-                if (isAdmin) {
-                    adminBtn?.classList.remove('hidden');
-                    refreshAdminPanel();
+            supabaseClient.auth.onAuthStateChange((_event, session) => {
+                if (session) {
+                    document.getElementById('absenceForm').classList.remove('hidden');
+                    document.getElementById('loginRequiredNotice').classList.add('hidden');
+                    if (session.user.email === "nbhsttclub@gmail.com") document.getElementById('adminShowReportsBtn').classList.remove('hidden');
                 } else {
-                    adminBtn?.classList.add('hidden');
+                    document.getElementById('absenceForm').classList.add('hidden');
+                    document.getElementById('loginRequiredNotice').classList.remove('hidden');
+                    document.getElementById('adminShowReportsBtn').classList.add('hidden');
                 }
-
-                // REVEAL PAGE Logic (Fades everything in at once)
                 document.getElementById('main-content').classList.remove('opacity-0');
-                const footer = document.getElementById('page-footer');
-                if (footer) footer.classList.remove('opacity-0');
-            }
-
-            if (client) {
-                client.auth.getSession().then(({ data }) => handleAuth(data?.session)).catch(() => handleAuth(null));
-                client.auth.onAuthStateChange((_event, session) => handleAuth(session));
-            } else {
-                handleAuth(null);
-            }
+                if (document.getElementById('page-footer')) document.getElementById('page-footer').classList.remove('opacity-0');
+            });
         });
     </script>
 </body>
-
 </html>
