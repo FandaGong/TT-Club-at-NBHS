@@ -361,13 +361,7 @@
                     <p id="profileEmail" class="font-semibold text-slate-800">—</p>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-2">Display Name</label>
-                    <input id="profileNameInput" type="text" placeholder="Your name"
-                        class="w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-red-500 mb-2">
-                    <button id="saveProfileNameBtn" type="button"
-                        class="w-full bg-slate-900 text-white px-4 py-2 rounded-lg font-semibold hover:bg-slate-800 transition-colors">Save
-                        Name</button>
-                    <p id="nameStatus" class="hidden text-sm font-medium text-center mt-2"></p>
+                    <p class="text-sm text-slate-600 leading-5">If you are linked to the wrong name, request a club runner in Teams to change it.</p>
                 </div>
                 <div>
                     <p id="profileMeta" class="text-sm text-slate-500">Loading your results...</p>
@@ -1063,6 +1057,39 @@
             if (footer) footer.classList.remove('opacity-0');
         }
 
+        async function forceLogout() {
+            try {
+                await _supabase.auth.signOut();
+            } catch (error) {
+                console.warn('Logout error (may be expected if account was deleted):', error.message);
+            }
+            // Clear all local auth state
+            currentAccountRole = 'guest';
+            currentAccountEmail = '';
+            currentAccountId = '';
+            currentAccountDisplayName = '';
+            
+            // Clear any localStorage/sessionStorage auth tokens
+            try {
+                localStorage.removeItem('sb-' + _supabase.supabaseUrl.split('//')[1].split('.')[0] + '-auth-token');
+                sessionStorage.removeItem('sb-' + _supabase.supabaseUrl.split('//')[1].split('.')[0] + '-auth-token');
+            } catch (e) {
+                console.log('Could not clear storage tokens:', e);
+            }
+            
+            // Close profile modal
+            const profileModal = document.getElementById('profileModal');
+            if (profileModal) profileModal.classList.add('hidden');
+            
+            // Force UI update
+            await updateUI(null);
+            
+            // Navigate to homepage to fully reset
+            setTimeout(() => {
+                window.location.href = window.location.origin;
+            }, 500);
+        }
+
         async function resolveAccountRole(email, accountId) {
             if (!email) return 'standard';
             if (ADMIN_ALLOWLIST.includes(email.toLowerCase())) return 'admin';
@@ -1119,9 +1146,6 @@
                     document.getElementById('pageTitle').textContent = isAdmin ? 'Admin Panel' : 'Dashboard';
 
                     if (document.getElementById('profileEmail')) document.getElementById('profileEmail').textContent = email;
-                    if (document.getElementById('profileNameInput') && !document.getElementById('profileNameInput').value) {
-                        document.getElementById('profileNameInput').value = currentAccountDisplayName;
-                    }
                     loadProfileSummary();
                     if (isAdmin) loadAccountRequests();
                 } else {
@@ -1571,7 +1595,6 @@
             const profileMeta = document.getElementById('profileMeta');
             const profileStats = document.getElementById('profileStats');
             const profileMatches = document.getElementById('profileMatches');
-            const profileNameInput = document.getElementById('profileNameInput');
 
             if (profileMeta) profileMeta.textContent = 'Loading your results...';
             if (profileStats) profileStats.innerHTML = '';
@@ -1588,8 +1611,7 @@
                 if (rankingError) throw rankingError;
                 if (matchError) throw matchError;
 
-                currentAccountDisplayName = profileNameInput?.value?.trim() || accountData?.display_name || currentAccountDisplayName || currentAccountEmail.split('@')[0];
-                if (profileNameInput && !profileNameInput.value.trim()) profileNameInput.value = currentAccountDisplayName;
+                currentAccountDisplayName = accountData?.display_name || currentAccountDisplayName || currentAccountEmail.split('@')[0];
 
                 const nameCandidates = [currentAccountDisplayName, accountData?.display_name, currentAccountEmail, currentAccountEmail.split('@')[0]]
                     .filter(Boolean)
@@ -1758,7 +1780,7 @@
         }
 
         // Event Listeners
-        document.getElementById('adminLogoutBtn').addEventListener('click', () => _supabase.auth.signOut());
+        document.getElementById('adminLogoutBtn').addEventListener('click', () => forceLogout());
         document.getElementById('dialogTabAdminLogin').addEventListener('click', () => setDialogTab('admin-login'));
         document.getElementById('dialogTabStandardLogin').addEventListener('click', () => setDialogTab('standard-login'));
         document.getElementById('dialogTabCreateAccount').addEventListener('click', () => setDialogTab('create-account'));
@@ -1833,7 +1855,7 @@
 
         // Profile Listeners
         document.getElementById('closeProfileModalBtn').addEventListener('click', () => document.getElementById('profileModal').classList.add('hidden'));
-        document.getElementById('profileLogoutBtn').addEventListener('click', () => { document.getElementById('profileModal').classList.add('hidden'); _supabase.auth.signOut(); });
+        document.getElementById('profileLogoutBtn').addEventListener('click', () => { document.getElementById('profileModal').classList.add('hidden'); forceLogout(); });
         document.getElementById('changePasswordBtn').addEventListener('click', async () => {
             const n = document.getElementById('newPasswordInput').value, c = document.getElementById('confirmPasswordInput').value, s = document.getElementById('passwordStatus');
             s.classList.remove('hidden');
@@ -1845,35 +1867,7 @@
             else { s.textContent = 'Success!'; s.className = 'mt-2 text-sm text-green-600 block text-center'; document.getElementById('newPasswordInput').value = ''; document.getElementById('confirmPasswordInput').value = ''; }
         });
 
-        document.getElementById('saveProfileNameBtn').addEventListener('click', async () => {
-            const s = document.getElementById('nameStatus');
-            const nameInput = document.getElementById('profileNameInput');
-            const nextName = (nameInput?.value || '').trim();
-            if (!nextName) {
-                s.textContent = 'Enter a name first.';
-                s.className = 'mt-2 text-sm text-red-600 block text-center';
-                s.classList.remove('hidden');
-                return;
-            }
-            s.textContent = 'Saving name...';
-            s.className = 'mt-2 text-sm text-blue-600 block text-center';
-            s.classList.remove('hidden');
-            const { error } = await _supabase.from('account').upsert({
-                account_id: currentAccountId,
-                email: currentAccountEmail,
-                display_name: nextName,
-                status: 'active'
-            }, { onConflict: 'account_id' });
-            if (error) {
-                s.textContent = error.message;
-                s.className = 'mt-2 text-sm text-red-600 block text-center';
-                return;
-            }
-            currentAccountDisplayName = nextName;
-            s.textContent = 'Saved. Your profile will use this name now.';
-            s.className = 'mt-2 text-sm text-green-600 block text-center';
-            loadProfileSummary();
-        });
+
 
         document.getElementById('saveNameLinkBtn').addEventListener('click', saveNameLink);
 
