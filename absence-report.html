@@ -29,6 +29,8 @@
             </div>
 
             <form id="absenceForm" class="hidden grid grid-cols-1 gap-3">
+                <input id="absenceName" type="text" placeholder="Submit your name" required class="p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500">
+                <input id="absenceEmail" type="email" placeholder="Your email" readonly class="p-3 border rounded-xl bg-slate-50 text-slate-700 outline-none">
                 <textarea id="absenceReason" rows="5" placeholder="Reason for absence" required class="p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500"></textarea>
                 <button type="submit" class="bg-red-600 text-white px-5 py-3 rounded-xl font-bold hover:bg-red-700 transition-colors">Submit Absence</button>
                 <p id="absenceSubmitStatus" class="hidden text-sm font-medium"></p>
@@ -68,14 +70,56 @@
         const ABSENCE_TABLE = "absence_reports";
         let supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+        async function resolveCurrentRole(email) {
+            if (!email) return 'standard';
+            if (window._resolveAccountRole) {
+                try {
+                    return await window._resolveAccountRole(email);
+                } catch (err) {
+                    // fall through to allowlist
+                }
+            }
+
+            const adminEmails = (window._adminEmails || [
+                'nbhsttclub@gmail.com',
+                'jonathanzhao111@gmail.com',
+                'damon.yuan@education.nsw.gov.au'
+            ]).map(emailValue => (emailValue || '').toLowerCase());
+            return adminEmails.includes((email || '').toLowerCase()) ? 'admin' : 'standard';
+        }
+
+        async function updateAdminReportsButton(session) {
+            const button = document.getElementById('adminShowReportsBtn');
+            if (!button) return;
+            if (!session?.user?.email) {
+                button.classList.add('hidden');
+                return;
+            }
+            const role = await resolveCurrentRole(session.user.email);
+            button.classList.toggle('hidden', role !== 'admin');
+        }
+
+        function fillUserFields(session) {
+            if (!session?.user) return;
+            const emailInput = document.getElementById('absenceEmail');
+            if (emailInput) {
+                emailInput.value = session.user.email || '';
+            }
+        }
+
         async function submitAbsenceReport(reason) {
             const { data: { session } } = await supabaseClient.auth.getSession();
             if(!session) throw new Error("Not logged in");
 
-            // EXACT SCHEMA MATCH: Insert into absence_reports using account_id
+            const nameValue = document.getElementById('absenceName')?.value.trim();
+            const emailValue = document.getElementById('absenceEmail')?.value || session.user.email;
+
+            if (!nameValue) throw new Error('Please enter your name.');
+
             const { error } = await supabaseClient.from(ABSENCE_TABLE).insert([{
+                name: nameValue,
+                email: emailValue,
                 reason: reason,
-                account_id: session.user.id,
                 status: 'pending'
             }]);
 
@@ -83,10 +127,14 @@
         }
 
         async function refreshAdminPanel() {
-            // Include a join to fetch the account's email associated with the report
             const { data, error } = await supabaseClient.from(ABSENCE_TABLE)
-                .select('report_id, reason, status, created_at, reviewed_at, reviewed_by, account(email)')
+                .select('*')
                 .order('created_at', { ascending: false });
+
+            if (error) {
+                document.getElementById('adminReportsList').innerHTML = `<p class="text-red-600">Failed to load reports: ${error.message}</p>`;
+                return;
+            }
 
             if (data) {
                 const list = document.getElementById('adminReportsList');
@@ -94,18 +142,23 @@
 
                 list.innerHTML = data.map(r => {
                     const status = (r.status || 'pending');
-                    const studentEmail = r.account ? r.account.email : 'Unknown Email';
+                    const studentEmail = r.email || 'Unknown Email';
+                    const studentName = r.name || 'Unknown Name';
+                    const reportKey = r.id || r.report_id;
                     
                     const pendingActions = `
                         <div class="mt-3 flex gap-2">
-                            <button data-id="${r.report_id}" data-status="approved" class="approve-absence-btn text-sm font-semibold bg-green-600 text-white px-3 py-2 rounded-lg">Approve</button>
-                            <button data-id="${r.report_id}" data-status="declined" class="decline-absence-btn text-sm font-semibold bg-red-600 text-white px-3 py-2 rounded-lg">Decline</button>
+                            <button data-id="${reportKey}" data-status="approved" class="approve-absence-btn text-sm font-semibold bg-green-600 text-white px-3 py-2 rounded-lg">Approve</button>
+                            <button data-id="${reportKey}" data-status="declined" class="decline-absence-btn text-sm font-semibold bg-red-600 text-white px-3 py-2 rounded-lg">Decline</button>
                         </div>`;
 
                     return `
                         <div class="border rounded-lg p-4 bg-white shadow-sm">
                             <div class="flex justify-between items-start mb-2">
-                                <p class="text-lg font-bold text-slate-800">${studentEmail}</p>
+                                <div>
+                                    <p class="text-lg font-bold text-slate-800">${studentName}</p>
+                                    <p class="text-sm text-slate-500">${studentEmail}</p>
+                                </div>
                                 <span class="px-2 py-1 rounded text-[10px] font-bold uppercase bg-slate-100">${status}</span>
                             </div>
                             <p class="text-sm mt-1"><strong>Reason:</strong> ${r.reason}</p>
@@ -115,19 +168,20 @@
                     `;
                 }).join('');
 
+                const keyColumn = Object.prototype.hasOwnProperty.call(data[0] || {}, 'id') ? 'id' : 'report_id';
+
                 list.querySelectorAll('.approve-absence-btn, .decline-absence-btn').forEach(btn => {
                     btn.addEventListener('click', async (e) => {
                         const id = e.currentTarget.getAttribute('data-id');
                         const newStatus = e.currentTarget.getAttribute('data-status');
                         const { data: { session } } = await supabaseClient.auth.getSession();
-                        
-                        // EXACT SCHEMA MATCH: Update by report_id
+
                         await supabaseClient.from(ABSENCE_TABLE).update({
                             status: newStatus,
                             reviewed_by: session.user.email,
                             reviewed_at: new Date().toISOString()
-                        }).eq('report_id', id);
-                        
+                        }).eq(keyColumn, id);
+
                         refreshAdminPanel();
                     });
                 });
@@ -157,14 +211,20 @@
                 if (session) {
                     document.getElementById('absenceForm').classList.remove('hidden');
                     document.getElementById('loginRequiredNotice').classList.add('hidden');
-                    if (session.user.email === "nbhsttclub@gmail.com") document.getElementById('adminShowReportsBtn').classList.remove('hidden');
+                    fillUserFields(session);
+                    document.getElementById('absenceName').focus();
                 } else {
                     document.getElementById('absenceForm').classList.add('hidden');
                     document.getElementById('loginRequiredNotice').classList.remove('hidden');
-                    document.getElementById('adminShowReportsBtn').classList.add('hidden');
                 }
+                updateAdminReportsButton(session);
                 document.getElementById('main-content').classList.remove('opacity-0');
                 if (document.getElementById('page-footer')) document.getElementById('page-footer').classList.remove('opacity-0');
+            });
+
+            supabaseClient.auth.getSession().then(({ data: { session } }) => {
+                fillUserFields(session);
+                updateAdminReportsButton(session);
             });
         });
     </script>
