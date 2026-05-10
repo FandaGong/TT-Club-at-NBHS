@@ -590,6 +590,16 @@
         const SUPABASE_URL = "https://ngnkbfazhdedaqvxcphw.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbmtiZmF6aGRlZGFxdnhjcGh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTE5NDksImV4cCI6MjA5MzI4Nzk0OX0.F_S6ORkFe-SuJPybs7FEFH94E6U2hZ5ern4vrg4kMOk";
         console.log('2. Config loaded');
+
+        function createEphemeralSupabaseClient() {
+            return supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+                auth: {
+                    persistSession: false,
+                    autoRefreshToken: false,
+                    detectSessionInUrl: false
+                }
+            });
+        }
         
         // Create or reuse Supabase client
         let _supabase = window._supabaseClient;
@@ -1690,7 +1700,8 @@
                     if (!requestData?.password) throw new Error("No password found for this request.");
 
                     // 2. Create auth account
-                    const { data: signUpData, error: signUpErr } = await _supabase.auth.signUp({
+                    const approvalClient = createEphemeralSupabaseClient();
+                    const { data: signUpData, error: signUpErr } = await approvalClient.auth.signUp({
                         email,
                         password: requestData.password
                     });
@@ -1709,6 +1720,10 @@
 
                     if (accError && !accError.message.includes('duplicate')) {
                         throw new Error("Failed to create account entry: " + accError.message);
+                    }
+
+                    if (approvalClient.auth?.signOut) {
+                        await approvalClient.auth.signOut();
                     }
 
                     // 4. Update the request with the linked_account_id

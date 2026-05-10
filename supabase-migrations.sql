@@ -419,8 +419,8 @@ begin
       when normalize_key(name) = normalize_key(v_match.player_2) then v_player_2_old_elo
       else elo
     end,
-    wins = wins - case when normalize_key(name) = normalize_key(v_match.winner) then 1 else 0 end,
-    losses = losses - case when normalize_key(name) <> normalize_key(v_match.winner) and (normalize_key(name) = normalize_key(v_match.player_1) or normalize_key(name) = normalize_key(v_match.player_2)) then 1 else 0 end
+    wins = greatest(wins - case when normalize_key(name) = normalize_key(v_match.winner) then 1 else 0 end, 0),
+    losses = greatest(losses - case when normalize_key(name) <> normalize_key(v_match.winner) and (normalize_key(name) = normalize_key(v_match.player_1) or normalize_key(name) = normalize_key(v_match.player_2)) then 1 else 0 end, 0)
   where normalize_key(name) in (normalize_key(v_match.player_1), normalize_key(v_match.player_2));
 
   -- Update account table to revert Elo and adjust win/loss counts
@@ -428,18 +428,32 @@ begin
     update public.account
     set
       elo = v_player_1_old_elo,
-      wins = wins - case when normalize_key(v_match.winner) = normalize_key(v_match.player_1) then 1 else 0 end,
-      losses = losses - case when normalize_key(v_match.winner) <> normalize_key(v_match.player_1) then 1 else 0 end
+      wins = greatest(wins - case when normalize_key(v_match.winner) = normalize_key(v_match.player_1) then 1 else 0 end, 0),
+      losses = greatest(losses - case when normalize_key(v_match.winner) <> normalize_key(v_match.player_1) then 1 else 0 end, 0)
     where account_id = v_match.player_1_account_id;
+  elsif v_match.player_1 is not null then
+    update public.account
+    set
+      elo = v_player_1_old_elo,
+      wins = greatest(wins - case when normalize_key(v_match.winner) = normalize_key(v_match.player_1) then 1 else 0 end, 0),
+      losses = greatest(losses - case when normalize_key(v_match.winner) <> normalize_key(v_match.player_1) then 1 else 0 end, 0)
+    where normalize_key(coalesce(display_name, split_part(email, '@', 1))) = normalize_key(v_match.player_1);
   end if;
 
   if v_match.player_2_account_id is not null then
     update public.account
     set
       elo = v_player_2_old_elo,
-      wins = wins - case when normalize_key(v_match.winner) = normalize_key(v_match.player_2) then 1 else 0 end,
-      losses = losses - case when normalize_key(v_match.winner) <> normalize_key(v_match.player_2) then 1 else 0 end
+      wins = greatest(wins - case when normalize_key(v_match.winner) = normalize_key(v_match.player_2) then 1 else 0 end, 0),
+      losses = greatest(losses - case when normalize_key(v_match.winner) <> normalize_key(v_match.player_2) then 1 else 0 end, 0)
     where account_id = v_match.player_2_account_id;
+  elsif v_match.player_2 is not null then
+    update public.account
+    set
+      elo = v_player_2_old_elo,
+      wins = greatest(wins - case when normalize_key(v_match.winner) = normalize_key(v_match.player_2) then 1 else 0 end, 0),
+      losses = greatest(losses - case when normalize_key(v_match.winner) <> normalize_key(v_match.player_2) then 1 else 0 end, 0)
+    where normalize_key(coalesce(display_name, split_part(email, '@', 1))) = normalize_key(v_match.player_2);
   end if;
 
   -- Delete the match
