@@ -331,6 +331,42 @@
                 const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
                 if (error) throw error;
 
+                // Prevent login if the most recent request for this email is not approved
+                if (!ADMIN_ALLOWLIST.includes(email.toLowerCase())) {
+                    const { data: reqData, error: reqErr } = await _supabase
+                        .from('account_requests')
+                        .select('status')
+                        .ilike('email', email)
+                        .order('created_at', { ascending: false })
+                        .limit(1);
+
+                    if (reqErr) {
+                        await _supabase.auth.signOut();
+                        throw reqErr;
+                    }
+
+                    const latestStatus = (reqData && reqData.length > 0 && reqData[0].status) ? reqData[0].status.toLowerCase() : null;
+                    if (latestStatus !== 'approved') {
+                        // Also check account table status as a fallback for older signups
+                        const { data: accData, error: accErr } = await _supabase
+                            .from('account')
+                            .select('status')
+                            .ilike('email', email)
+                            .limit(1);
+
+                        if (accErr) {
+                            await _supabase.auth.signOut();
+                            throw accErr;
+                        }
+
+                        const accStatus = (accData && accData.length > 0 && accData[0].status) ? accData[0].status.toLowerCase() : null;
+                        if (accStatus !== 'active') {
+                            await _supabase.auth.signOut();
+                            throw new Error('Account not approved yet. An admin must approve your request before you can log in.');
+                        }
+                    }
+                }
+
                 const sessionRole = await resolveAccountRole(data.user.email);
                 if (isAdminLogin && sessionRole !== 'admin') {
                     await _supabase.auth.signOut();
@@ -362,56 +398,31 @@
 
             try {
                 const email = emailInput.value.trim().toLowerCase();
+                const password = passwordInput.value;
 
                 // 1. Check for existing pending request
-                const { data: existingData } = await _supabase.from('account_requests').select('request_id').ilike('email', email).eq('status', 'pending').limit(1);
+                const { data: existingData } = await _supabase.from('account_requests').select('id').ilike('email', email).eq('status', 'pending').limit(1);
 
                 if (existingData && existingData.length > 0) {
                     throw new Error('A pending request for this email already exists.');
                 }
 
-                // 2. Sign up user in Supabase Auth
-                const { data: signUpData, error: signUpErr } = await _supabase.auth.signUp({
-                    email,
-                    password: passwordInput.value
-                });
-                if (signUpErr) throw signUpErr;
-
-                const userId = signUpData?.user?.id;
-                if (!userId) throw new Error("Could not fetch User ID.");
-
-                // 3. Create the Row in the 'account' table (Status: Pending) to satisfy the Foreign Key
-                const { error: accError } = await _supabase.from('account').insert({
-                    account_id: userId,
-                    email: email,
-                    role: 'standard',
-                    status: 'pending',
-                    password: passwordInput.value
-                });
-
-                if (accError && !accError.message.includes('duplicate')) throw accError;
-
-                // 4. Create the Request Row WITH the linked account ID
+                // 2. Create the Request Row (do NOT create auth account yet - wait for admin approval)
                 const { error: reqError } = await _supabase.from('account_requests').insert({
                     email: email,
-                    password: passwordInput.value,
+                    password: password,
                     role: 'standard',
                     status: 'pending',
-                    linked_account_id: userId
+                    linked_account_id: null
                 });
 
                 if (reqError) throw reqError;
-
-                // 5. NOW sign out, after the database inserts are complete
-                await _supabase.auth.signOut();
 
                 statusNode.textContent = 'Request submitted! An admin must approve it before you can log in.';
                 statusNode.className = 'mt-2 text-sm font-medium text-green-600 text-center block';
                 emailInput.value = ''; passwordInput.value = ''; confirmPasswordInput.value = '';
 
             } catch (error) {
-                // If it fails, sign them out just in case
-                await _supabase.auth.signOut();
                 statusNode.textContent = error.message || 'Request submission failed.';
                 statusNode.className = 'mt-2 text-sm font-medium text-red-600 text-center block';
             }
@@ -478,30 +489,70 @@
         async function reviewAccountRequest(id, linkedId, status, email, role) {
             if (!confirm(`Mark ${email} as ${status}?`)) return;
 
-            // 1. Update the linked row in the 'account' table (active vs declined)
-            if (linkedId && linkedId !== 'null') {
-                const { error: accErr } = await _supabase.from('account').update({
-                    status: status === 'approved' ? 'active' : 'declined',
-                    role: role
-                }).eq('account_id', linkedId);
+            try {
+                // If approving, create the auth account and account table entry
+                if (status === 'approved' && (!linkedId || linkedId === 'null')) {
+                    // 1. Fetch the request to get the password
+                    const { data: requestData, error: fetchErr } = await _supabase
+                        .from('account_requests')
+                        .select('password')
+                        .eq('request_id', id)
+                        .single();
 
-                if (accErr) console.warn("Notice: Failed to sync with account table:", accErr.message);
+                    if (fetchErr) throw new Error("Could not fetch password: " + fetchErr.message);
+                    if (!requestData?.password) throw new Error("No password found for this request.");
+
+                    // 2. Create auth account
+                    const { data: signUpData, error: signUpErr } = await _supabase.auth.signUp({
+                        email,
+                        password: requestData.password
+                    });
+                    if (signUpErr) throw new Error("Failed to create auth account: " + signUpErr.message);
+
+                    const userId = signUpData?.user?.id;
+                    if (!userId) throw new Error("Could not fetch User ID.");
+
+                    // 3. Create account table entry
+                    const { error: accError } = await _supabase.from('account').insert({
+                        account_id: userId,
+                        email: email,
+                        role: role,
+                        status: 'active'
+                    });
+
+                    if (accError && !accError.message.includes('duplicate')) {
+                        throw new Error("Failed to create account entry: " + accError.message);
+                    }
+
+                    // 4. Update the request with the linked_account_id
+                    linkedId = userId;
+                } else if (status === 'declined' && linkedId && linkedId !== 'null') {
+                    // If declining and account was created, delete it
+                    const { error: authErr } = await _supabase.auth.admin.deleteUser(linkedId);
+                    if (authErr) console.warn("Warning: Could not delete auth user:", authErr.message);
+
+                    const { error: accErr } = await _supabase.from('account').delete().eq('account_id', linkedId);
+                    if (accErr) console.warn("Warning: Could not delete account entry:", accErr.message);
+                }
+
+                // 5. Update the 'account_requests' log
+                const { error: dbError } = await _supabase.from('account_requests').update({
+                    status,
+                    reviewed_at: new Date().toISOString(),
+                    reviewed_by: currentAccountEmail,
+                    role,
+                    linked_account_id: linkedId && linkedId !== 'null' ? linkedId : null
+                }).eq('request_id', id);
+
+                if (dbError) {
+                    alert('Failed to update request status: ' + dbError.message);
+                    return;
+                }
+
+                await loadAccountRequests();
+            } catch (err) {
+                alert('Error processing request: ' + err.message);
             }
-
-            // 2. Update the 'account_requests' log
-            const { error: dbError } = await _supabase.from('account_requests').update({
-                status,
-                reviewed_at: new Date().toISOString(),
-                reviewed_by: currentAccountEmail,
-                role
-            }).eq('request_id', id);
-
-            if (dbError) {
-                alert('Failed to update request status: ' + dbError.message);
-                return;
-            }
-
-            await loadAccountRequests();
         }
 
         // Event Listeners
