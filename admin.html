@@ -14,8 +14,10 @@
 
 <body class="bg-red-50 text-slate-900 font-sans min-h-screen flex flex-col">
 
+    <!-- 1. HEADER PLACEHOLDER -->
     <div id="header-placeholder"></div>
 
+    <!-- 2. MAIN CONTENT -->
     <main id="main-content" class="max-w-4xl mx-auto p-6 flex-grow w-full opacity-0 transition-opacity duration-500">
         <section class="space-y-8">
             <div class="text-center py-10 fade-up">
@@ -26,8 +28,8 @@
             <!-- Login Container -->
             <div id="loginContainer" class="bg-white rounded-2xl shadow-sm border border-slate-100 p-8 max-w-2xl mx-auto fade-up-d1">
                 <div class="text-center mb-6">
-                    <h2 class="text-xl font-bold text-slate-800">Account Access</h2>
-                    <p class="mt-2 text-sm text-slate-500">Admin access is login-only. Standard user login and account creation are available here.</p>
+                    <h2 id="authPanelTitle" class="text-xl font-bold text-slate-800">Account Access</h2>
+                    <p id="authPanelSubtitle" class="mt-2 text-sm text-slate-500">Admin access is login-only. Standard user login and account creation are available here.</p>
                 </div>
 
                 <div class="mb-5 grid grid-cols-1 sm:grid-cols-3 gap-2 rounded-2xl bg-slate-100 p-2">
@@ -91,12 +93,14 @@
                     <button id="adminLogoutBtn" type="button" class="text-sm font-bold text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 px-4 py-2 rounded-lg transition-colors border border-red-100">Log Out</button>
                 </div>
 
+                <!-- Standard User Dashboard View -->
                 <div id="standardUserNotice" class="hidden bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
                     <h3 class="font-bold text-lg text-slate-800">Standard User Dashboard</h3>
                     <p class="text-slate-600 text-sm mt-1">You are signed in. You can now submit Absence Reports without filling in your email.</p>
                     <a href="absence-report.html" class="inline-block mt-4 text-red-600 font-semibold hover:underline text-sm">Go to Absence Reports &rarr;</a>
                 </div>
 
+                <!-- Admin Dashboard View -->
                 <div id="adminToolsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-start gap-4">
                         <div class="bg-purple-100 text-purple-700 p-3 rounded-xl">
@@ -133,11 +137,12 @@
         </section>
     </main>
 
+    <!-- 3. FOOTER PLACEHOLDER -->
     <div id="footer-placeholder"></div>
 
-    <!-- Account Requests Modal -->
+    <!-- Modals (direct children of body) -->
     <div id="accountRequestsModal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-        <div class="bg-white rounded-2xl shadow-lg max-w-2xl w-full max-h-[80vh] overflow-auto">
+        <div class="bg-white rounded-2xl shadow-lg max-w-3xl w-full max-h-[80vh] overflow-auto">
             <div class="sticky top-0 bg-white border-b p-4 flex items-center justify-between">
                 <h3 class="font-bold text-lg text-slate-800">Account Requests</h3>
                 <button id="closeAccountRequestsModalBtn" type="button" class="text-slate-500 hover:text-slate-700 text-2xl">&times;</button>
@@ -146,6 +151,31 @@
         </div>
     </div>
 
+    <!-- Profile Modal -->
+    <div id="profileModal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+        <div class="bg-white rounded-2xl shadow-lg max-w-md w-full overflow-hidden">
+            <div class="bg-red-800 text-white p-4 flex items-center justify-between">
+                <h3 class="font-bold text-lg">Profile</h3>
+                <button id="closeProfileModalBtn" type="button" class="text-white hover:text-red-200 text-2xl leading-none">&times;</button>
+            </div>
+            <div class="p-6 space-y-4">
+                <div>
+                    <p class="text-sm text-slate-600 mb-1">Email</p>
+                    <p id="profileEmail" class="font-semibold text-slate-800">—</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-2">Change Password</label>
+                    <input id="newPasswordInput" type="password" placeholder="New password" class="w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-red-500 mb-2">
+                    <input id="confirmPasswordInput" type="password" placeholder="Confirm password" class="w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-red-500">
+                </div>
+                <button id="changePasswordBtn" type="button" class="w-full bg-red-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-700 transition-colors">Update Password</button>
+                <p id="passwordStatus" class="hidden text-sm font-medium text-center"></p>
+                <button id="profileLogoutBtn" type="button" class="w-full bg-slate-200 text-slate-800 px-4 py-2 rounded-lg font-semibold hover:bg-slate-300 transition-colors">Log Out</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. LOAD COMPONENTS SCRIPT -->
     <script src="components.js"></script>
 
     <script>
@@ -156,6 +186,8 @@
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         
         const ADMIN_ALLOWLIST =['nbhsttclub@gmail.com', 'jonathanzhao111@gmail.com', 'damon.yuan@education.nsw.gov.au'];
+
+        let currentAccountRole = 'guest';
         let currentAccountEmail = '';
 
         function revealPage() {
@@ -168,7 +200,6 @@
             if (!email) return 'standard';
             if (ADMIN_ALLOWLIST.includes(email.toLowerCase())) return 'admin';
             
-            // Check account_requests table
             const { data, error } = await _supabase.from('account_requests').select('role, status').ilike('email', email).order('created_at', { ascending: false }).limit(1);
             if (error || !data || data.length === 0) return 'standard';
             if ((data[0].status || '').toLowerCase() === 'approved') return (data[0].role || 'standard').toLowerCase();
@@ -187,6 +218,7 @@
                 document.getElementById('adminUserEmail').textContent = `Logged in as: ${email}`;
 
                 const role = await resolveAccountRole(email);
+                currentAccountRole = role;
                 const isAdmin = role === 'admin';
 
                 document.getElementById('dashboardAccessNote').textContent = isAdmin ? 'Admin access granted.' : 'Standard user access granted.';
@@ -194,18 +226,21 @@
                 document.getElementById('adminToolsContainer').classList.toggle('hidden', !isAdmin);
                 document.getElementById('pageTitle').textContent = isAdmin ? 'Admin Panel' : 'Dashboard';
                 
+                if (document.getElementById('profileEmail')) document.getElementById('profileEmail').textContent = email;
                 if (isAdmin) loadAccountRequests();
             } else {
+                currentAccountRole = 'guest';
                 currentAccountEmail = '';
                 loginContainer.classList.remove('hidden');
                 dashboardContainer.classList.add('hidden');
                 document.getElementById('pageTitle').textContent = 'Login';
+                document.getElementById('profileModal').classList.add('hidden');
             }
             revealPage();
         }
 
         function setDialogTab(tabName) {
-            const tabs =['admin-login', 'standard-login', 'create-account'];
+            const tabs = ['admin-login', 'standard-login', 'create-account'];
             tabs.forEach(t => {
                 const btn = document.getElementById('dialogTab' + t.split('-').map(s => s[0].toUpperCase() + s.slice(1)).join(''));
                 const panel = document.getElementById('dialogPanel' + t.split('-').map(s => s[0].toUpperCase() + s.slice(1)).join(''));
@@ -222,9 +257,7 @@
             const password = document.getElementById(isAdminLogin ? 'adminPassword' : 'standardPassword').value;
             const status = document.getElementById(isAdminLogin ? 'adminLoginStatus' : 'standardLoginStatus');
 
-            status.classList.remove('hidden');
-            status.textContent = 'Logging in...';
-            status.className = 'mt-2 text-sm font-medium text-blue-600 text-center block';
+            status.classList.remove('hidden'); status.textContent = 'Logging in...'; status.className = 'mt-2 text-sm font-medium text-blue-600 text-center block';
 
             try {
                 const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
@@ -243,9 +276,9 @@
             }
         }
 
-        // ==========================================
-        // FIXED ACCOUNT CREATION LOGIC
-        // ==========================================
+        // ==============================================
+        // FIXED ACCOUNT CREATION LOGIC (FOREIGN KEY FIX)
+        // ==============================================
         async function handleAccountRequest(event) {
             event.preventDefault();
             const emailInput = document.getElementById('requestEmail');
@@ -254,36 +287,55 @@
             const statusNode = document.getElementById('accountRequestStatus');
 
             if (passwordInput.value !== confirmPasswordInput.value) {
-                statusNode.classList.remove('hidden');
-                statusNode.textContent = 'Passwords do not match.';
-                statusNode.className = 'mt-2 text-sm font-medium text-red-600 text-center block';
-                return;
+                statusNode.classList.remove('hidden'); statusNode.textContent = 'Passwords do not match.'; statusNode.className = 'mt-2 text-sm font-medium text-red-600 text-center block'; return;
             }
 
-            statusNode.classList.remove('hidden');
-            statusNode.textContent = 'Submitting request...';
-            statusNode.className = 'mt-2 text-sm font-medium text-blue-600 text-center block';
+            statusNode.classList.remove('hidden'); statusNode.textContent = 'Submitting request...'; statusNode.className = 'mt-2 text-sm font-medium text-blue-600 text-center block';
 
             try {
                 const email = emailInput.value.trim().toLowerCase();
 
-                // 1. Check if a request already exists
-                const { data: existingData } = await _supabase.from('account_requests').select('request_id').ilike('email', email).limit(1);
+                // 1. Check for existing pending request
+                const { data: existingData } = await _supabase.from('account_requests').select('request_id').ilike('email', email).eq('status', 'pending').limit(1);
                 
                 if (existingData && existingData.length > 0) {
-                    throw new Error('A request for this email already exists.');
+                    throw new Error('A pending request for this email already exists.');
                 }
 
-                // 2. Just save it to the database for Admin review.
-                // Notice we DO NOT pass 'linked_account_id' here, preventing the FK violation.
-                const { error } = await _supabase.from('account_requests').insert({
+                // 2. Sign up user in Supabase Auth
+                const { data: signUpData, error: signUpErr } = await _supabase.auth.signUp({
+                    email,
+                    password: passwordInput.value
+                });
+                if (signUpErr) throw signUpErr;
+
+                const userId = signUpData?.user?.id;
+                if (!userId) throw new Error("Could not fetch User ID.");
+
+                // Sign out immediately so they aren't logged in while unapproved
+                await _supabase.auth.signOut();
+
+                // 3. Create the Row in the 'account' table (Status: Pending) to satisfy the Foreign Key
+                const { error: accError } = await _supabase.from('account').insert({
+                    account_id: userId,
+                    email: email,
+                    role: 'standard',
+                    status: 'pending',
+                    password: passwordInput.value
+                });
+                
+                if (accError && !accError.message.includes('duplicate')) throw accError;
+
+                // 4. Create the Request Row WITH the linked account ID
+                const { error: reqError } = await _supabase.from('account_requests').insert({
                     email: email,
                     password: passwordInput.value,
                     role: 'standard',
-                    status: 'pending'
+                    status: 'pending',
+                    linked_account_id: userId
                 });
 
-                if (error) throw error;
+                if (reqError) throw reqError;
 
                 statusNode.textContent = 'Request submitted! An admin must approve it before you can log in.';
                 statusNode.className = 'mt-2 text-sm font-medium text-green-600 text-center block';
@@ -300,7 +352,10 @@
             if (!list) return;
             list.innerHTML = '<p class="text-slate-500">Loading requests...</p>';
 
-            const { data, error } = await _supabase.from('account_requests').select('request_id, email, role, status, created_at, reviewed_at, reviewed_by').order('created_at', { ascending: false });
+            // Load 'linked_account_id' so we can update the 'account' table on approval
+            const { data, error } = await _supabase.from('account_requests')
+                .select('request_id, linked_account_id, email, role, status, created_at, reviewed_at, reviewed_by')
+                .order('created_at', { ascending: false });
 
             if (error) {
                 list.innerHTML = `<p class="text-red-600">Failed to load requests: ${error.message}</p>`;
@@ -323,18 +378,19 @@
                             <option value="standard" ${req.role === 'standard' ? 'selected' : ''}>Standard</option>
                             <option value="admin" ${req.role === 'admin' ? 'selected' : ''}>Admin</option>
                         </select>
-                        <button class="approve-request-btn bg-green-600 text-white px-3 py-2 rounded-lg text-sm font-bold shadow-sm" data-id="${req.request_id}" data-email="${req.email}">Approve</button>
-                        <button class="decline-request-btn bg-red-600 text-white px-3 py-2 rounded-lg text-sm font-bold shadow-sm" data-id="${req.request_id}" data-email="${req.email}">Decline</button>
+                        <button class="approve-request-btn bg-green-600 text-white px-3 py-2 rounded-lg text-sm font-bold shadow-sm" data-id="${req.request_id}" data-linked="${req.linked_account_id}" data-email="${req.email}">Approve</button>
+                        <button class="decline-request-btn bg-red-600 text-white px-3 py-2 rounded-lg text-sm font-bold shadow-sm" data-id="${req.request_id}" data-linked="${req.linked_account_id}" data-email="${req.email}">Decline</button>
                     </div>` : '';
 
                 return `
                     <div class="rounded-xl border border-slate-200 p-4 bg-slate-50">
-                        <div class="flex justify-between items-start">
+                        <div class="flex flex-col md:flex-row justify-between md:items-start gap-2">
                             <div>
                                 <p class="font-bold text-slate-800">${req.email}</p>
-                                <p class="text-xs text-slate-500 mt-1">${new Date(req.created_at).toLocaleDateString()}</p>
+                                <p class="text-xs text-slate-500 mt-1">Requested: ${new Date(req.created_at).toLocaleString()}</p>
+                                ${req.reviewed_by ? `<p class="text-xs text-slate-500 mt-1">Reviewed by: ${req.reviewed_by}</p>` : ''}
                             </div>
-                            <span class="px-2 py-1 rounded text-xs font-bold uppercase ${statusChip}">${status}</span>
+                            <span class="px-2 py-1 rounded text-[10px] font-bold uppercase self-start ${statusChip}">${status}</span>
                         </div>
                         ${actions}
                     </div>`;
@@ -342,71 +398,37 @@
 
             list.querySelectorAll('.approve-request-btn').forEach(btn => btn.addEventListener('click', async () => {
                 const roleSelect = btn.parentElement.querySelector('.request-role-select');
-                await reviewAccountRequest(btn.dataset.id, 'approved', btn.dataset.email, roleSelect.value);
+                await reviewAccountRequest(btn.dataset.id, btn.dataset.linked, 'approved', btn.dataset.email, roleSelect.value);
             }));
             list.querySelectorAll('.decline-request-btn').forEach(btn => btn.addEventListener('click', async () => {
-                await reviewAccountRequest(btn.dataset.id, 'declined', btn.dataset.email, 'standard');
+                await reviewAccountRequest(btn.dataset.id, btn.dataset.linked, 'declined', btn.dataset.email, 'standard');
             }));
         }
 
-        async function reviewAccountRequest(id, status, email, role) {
+        async function reviewAccountRequest(id, linkedId, status, email, role) {
             if (!confirm(`Mark ${email} as ${status}?`)) return;
 
-            // 1. If approved, ADMIN calls signUp to officially create the auth account.
-            let linkedAccountId = null;
-            if (status === 'approved') {
-                const { data: reqData } = await _supabase.from('account_requests').select('password').eq('request_id', id).single();
-                if (reqData && reqData.password) {
-                    
-                    // Save Admin Session before signing up the new user
-                    const { data: sessionData } = await _supabase.auth.getSession();
-                    const adminSession = sessionData?.session;
-                    
-                    // Create User Account in Auth
-                    const { data: signUpData, error: signUpErr } = await _supabase.auth.signUp({ email, password: reqData.password });
-                    
-                    if (signUpErr) {
-                        alert('Auth creation failed: ' + signUpErr.message);
-                        return;
-                    }
+            // 1. Update the linked row in the 'account' table (active vs declined)
+            if (linkedId && linkedId !== 'null') {
+                const { error: accErr } = await _supabase.from('account').update({
+                    status: status === 'approved' ? 'active' : 'declined',
+                    role: role
+                }).eq('account_id', linkedId);
 
-                    if (signUpData?.user) {
-                        linkedAccountId = signUpData.user.id;
-
-                        // Insert row into 'public.account' table to satisfy constraints
-                        const { error: accError } = await _supabase.from('account').insert({
-                            account_id: linkedAccountId,
-                            email: email,
-                            role: role,
-                            status: 'active',
-                            password: reqData.password
-                        });
-
-                        if (accError) {
-                            console.warn('Failed to insert into public.account:', accError);
-                        }
-                    }
-
-                    // Restore Admin Session
-                    if (adminSession) {
-                        await _supabase.auth.setSession({ access_token: adminSession.access_token, refresh_token: adminSession.refresh_token });
-                    }
-                } else {
-                    alert("Couldn't find the password to automatically create the account.");
-                    return;
-                }
+                if (accErr) console.warn("Notice: Failed to sync with account table:", accErr.message);
             }
 
-            // 2. Update Database Status (and attach the linked ID if approved)
-            const updatePayload = { status, reviewed_at: new Date().toISOString(), reviewed_by: currentAccountEmail, role };
-            if (linkedAccountId) {
-                updatePayload.linked_account_id = linkedAccountId;
-            }
+            // 2. Update the 'account_requests' log
+            const { error: dbError } = await _supabase.from('account_requests').update({ 
+                status, 
+                reviewed_at: new Date().toISOString(), 
+                reviewed_by: currentAccountEmail, 
+                role 
+            }).eq('request_id', id);
 
-            const { error: dbError } = await _supabase.from('account_requests').update(updatePayload).eq('request_id', id);
-            
             if (dbError) { 
-                alert('Failed to update request: ' + dbError.message); 
+                alert('Failed to update request status: ' + dbError.message); 
+                return; 
             }
 
             await loadAccountRequests();
@@ -420,6 +442,20 @@
         document.getElementById('accountRequestForm').addEventListener('submit', handleAccountRequest);
         document.getElementById('openAccountRequestsModalBtn')?.addEventListener('click', () => { document.getElementById('accountRequestsModal').classList.remove('hidden'); loadAccountRequests(); });
         document.getElementById('closeAccountRequestsModalBtn').addEventListener('click', () => document.getElementById('accountRequestsModal').classList.add('hidden'));
+
+        // Profile Listeners
+        document.getElementById('closeProfileModalBtn').addEventListener('click', () => document.getElementById('profileModal').classList.add('hidden'));
+        document.getElementById('profileLogoutBtn').addEventListener('click', () => { document.getElementById('profileModal').classList.add('hidden'); _supabase.auth.signOut(); });
+        document.getElementById('changePasswordBtn').addEventListener('click', async () => {
+            const n = document.getElementById('newPasswordInput').value, c = document.getElementById('confirmPasswordInput').value, s = document.getElementById('passwordStatus');
+            s.classList.remove('hidden');
+            if (!n || !c) { s.textContent = 'Fill both fields.'; s.className = 'mt-2 text-sm text-red-600 block text-center'; return; }
+            if (n !== c) { s.textContent = 'Passwords do not match.'; s.className = 'mt-2 text-sm text-red-600 block text-center'; return; }
+            s.textContent = 'Updating...'; s.className = 'mt-2 text-sm text-blue-600 block text-center';
+            const { error } = await _supabase.auth.updateUser({ password: n });
+            if (error) { s.textContent = error.message; s.className = 'mt-2 text-sm text-red-600 block text-center'; } 
+            else { s.textContent = 'Success!'; s.className = 'mt-2 text-sm text-green-600 block text-center'; document.getElementById('newPasswordInput').value = ''; document.getElementById('confirmPasswordInput').value = ''; }
+        });
 
         // Initialize state
         _supabase.auth.getSession().then(({ data }) => updateUI(data.session));
