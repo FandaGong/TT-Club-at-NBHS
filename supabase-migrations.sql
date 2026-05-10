@@ -1,6 +1,14 @@
 -- Supabase migrations for TT-Club
 -- Run these in Supabase SQL editor to create required tables and RLS policies.
 
+create or replace function public.normalize_key(input text)
+returns text
+language sql
+immutable
+as $$
+  select regexp_replace(lower(coalesce(input, '')), '[^a-z0-9]+', '', 'g');
+$$;
+
 -- absence_reports
 create table if not exists public.absence_reports (
   id uuid primary key default gen_random_uuid(),
@@ -216,5 +224,118 @@ create policy "Anyone can read match history"
   for select
   to anon, authenticated
   using (true);
+
+create or replace function public.record_manual_match(
+  p_player_1_name text,
+  p_player_2_name text,
+  p_winner_name text,
+  p_score text,
+  p_division text default null,
+  p_half text default null,
+  p_term_and_week text default null,
+  p_player_1_account_id uuid default null,
+  p_player_2_account_id uuid default null,
+  p_winner_account_id uuid default null,
+  p_player_1_elo_change integer default 0,
+  p_player_2_elo_change integer default 0,
+  p_player_1_new_elo integer default 0,
+  p_player_2_new_elo integer default 0
+)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  player_1_is_winner boolean;
+  loser_name text;
+begin
+  player_1_is_winner := normalize_key(p_player_1_name) = normalize_key(p_winner_name);
+  loser_name := case when player_1_is_winner then p_player_2_name else p_player_1_name end;
+
+  if not exists (
+    select 1
+    from public.account a
+    where a.account_id = auth.uid()
+      and lower(a.role) = 'admin'
+  ) and not exists (
+    select 1
+    from auth.users u
+    where u.id = auth.uid()
+      and lower(u.email) in ('nbhsttclub@gmail.com', 'jonathanzhao111@gmail.com', 'damon.yuan@education.nsw.gov.au')
+  ) then
+    raise exception 'Not authorized to record match results.';
+  end if;
+
+  if normalize_key(p_player_1_name) = normalize_key(p_player_2_name) then
+    raise exception 'The two players must be different.';
+  end if;
+
+  if not player_1_is_winner and normalize_key(p_player_2_name) <> normalize_key(p_winner_name) then
+    raise exception 'Winner must be one of the selected players.';
+  end if;
+
+  insert into public.match_history (
+    player_1_account_id,
+    player_2_account_id,
+    winner_account_id,
+    player_1,
+    player_2,
+    winner,
+    score,
+    division,
+    half,
+    p1_elo_change,
+    p2_elo_change,
+    p1_new_elo,
+    p2_new_elo,
+    term_and_week
+  ) values (
+    p_player_1_account_id,
+    p_player_2_account_id,
+    p_winner_account_id,
+    p_player_1_name,
+    p_player_2_name,
+    p_winner_name,
+    p_score,
+    p_division,
+    p_half,
+    p_player_1_elo_change,
+    p_player_2_elo_change,
+    p_player_1_new_elo,
+    p_player_2_new_elo,
+    p_term_and_week
+  );
+
+  update public.player_rankings
+  set
+    elo = case
+      when normalize_key(name) = normalize_key(p_player_1_name) then p_player_1_new_elo
+      when normalize_key(name) = normalize_key(p_player_2_name) then p_player_2_new_elo
+      else elo
+    end,
+    wins = wins + case when normalize_key(name) = normalize_key(p_winner_name) then 1 else 0 end,
+    losses = losses + case when normalize_key(name) = normalize_key(loser_name) then 1 else 0 end
+  where normalize_key(name) in (normalize_key(p_player_1_name), normalize_key(p_player_2_name));
+
+  if p_player_1_account_id is not null then
+    update public.account
+    set
+      elo = p_player_1_new_elo,
+      wins = wins + case when player_1_is_winner then 1 else 0 end,
+      losses = losses + case when player_1_is_winner then 0 else 1 end
+    where account_id = p_player_1_account_id;
+  end if;
+
+  if p_player_2_account_id is not null then
+    update public.account
+    set
+      elo = p_player_2_new_elo,
+      wins = wins + case when player_1_is_winner then 0 else 1 end,
+      losses = losses + case when player_1_is_winner then 1 else 0 end
+    where account_id = p_player_2_account_id;
+  end if;
+end;
+$$;
 
 -- End of migrations
