@@ -105,8 +105,15 @@
         // Tell components.js we will handle the fade-in reveal manually once data is loaded
         window.manualPageReveal = true;
 
-        const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_UHoHNgToKV4yCuB_M56029JuMrOYWN-VkyxDiWkwXHJI1hhRnon_GMnvgvmQeHmL4F0gxkVz7IMP/pub?output=csv&gid=2082256240";
-        const SCHEDULE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_UHoHNgToKV4yCuB_M56029JuMrOYWN-VkyxDiWkwXHJI1hhRnon_GMnvgvmQeHmL4F0gxkVz7IMP/pub?output=csv&gid=1897930093";
+        // Data now served from Supabase tables: `player_rankings` and `schedule_dates`
+        async function getSupabaseClient() {
+            if (window._supabaseClient) return window._supabaseClient;
+            // Wait for components.js to initialize the global client on DOMContentLoaded
+            if (document.readyState === 'loading') {
+                await new Promise(resolve => document.addEventListener('DOMContentLoaded', resolve));
+            }
+            return window._supabaseClient;
+        }
         let players = [];
 
         // Exact original parser
@@ -136,13 +143,11 @@
         }
 
         async function loadData() {
-            const response = await fetch(SHEET_URL);
-            const data = await response.text();
-            const playerRows = parseCsv(data).filter(row => row.length > 0).slice(1);
-            players = playerRows.map(columns => {
-                const clean = (val) => (val || "").replace(/"/g, '').replace(/,/g, '').trim();
-                return { name: clean(columns[0]) || "Unknown", elo: parseInt(clean(columns[1])) || 0, wins: parseInt(clean(columns[2])) || 0, losses: parseInt(clean(columns[3])) || 0 };
-            });
+            const supabase = await getSupabaseClient();
+            if (!supabase) return;
+            const { data, error } = await supabase.from('player_rankings').select('name,elo,wins,losses').order('elo', { ascending: false });
+            if (error) { console.error('Supabase error:', error); return; }
+            players = (data || []).map(r => ({ name: r.name || 'Unknown', elo: r.elo || 0, wins: r.wins || 0, losses: r.losses || 0 }));
         }
 
         function searchPlayer(event) {
@@ -170,14 +175,12 @@
         }
 
         async function initCountdown() {
-            const response = await fetch(SCHEDULE_URL);
-            const csvData = await response.text();
-            const rows = csvData.split(/\r?\n/).map(row => row.trim()).filter(row => row !== "");
-            const upcomingDates = rows.map(dateStr => {
-                const parts = dateStr.split('-');
-                return parts.length !== 3 ? null : new Date(parts[0], parts[1] - 1, parts[2], 9, 0, 0);
-            }).filter(d => d !== null && d > new Date()).sort((a, b) => a - b);
-
+            const supabase = await getSupabaseClient();
+            if (!supabase) return;
+            const { data, error } = await supabase.from('schedule_dates').select('session_date').order('session_date', { ascending: true });
+            if (error) { console.error('Supabase error:', error); return; }
+            const now = new Date();
+            const upcomingDates = (data || []).map(r => new Date(r.session_date)).filter(d => d > now).sort((a, b) => a - b);
             if (upcomingDates.length > 0) {
                 const target = upcomingDates[0];
                 document.getElementById('countdown-container').classList.remove('hidden');

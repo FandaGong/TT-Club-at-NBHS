@@ -101,8 +101,10 @@
     </footer>
 
 <script>
-    // Use the CSV output link for your Players tab
-    const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_UHoHNgToKV4yCuB_M56029JuMrOYWN-VkyxDiWkwXHJI1hhRnon_GMnvgvmQeHmL4F0gxkVz7IMP/pub?gid=2082256240&single=true&output=csv";
+    const SUPABASE_URL = 'https://ngnkbfazhdedaqvxcphw.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbmtiZmF6aGRlZGFxdnhjcGh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTE5NDksImV4cCI6MjA5MzI4Nzk0OX0.F_S6ORkFe-SuJPybs7FEFH94E6U2hZ5ern4vrg4kMOk';
+
+    // Data now comes from Supabase `player_rankings`
     const PLAYER_TAGS = {
         'jonathan zhao': ['Website Feature Dev', 'Club Runner'],
         'damon yuan': ['Club Runner'],
@@ -123,6 +125,20 @@
         `).join('');
     }
 
+        async function getSupabaseClient() {
+            if (window._supabaseClient) return window._supabaseClient;
+            if (window.supabase) {
+                window._supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                return window._supabaseClient;
+            }
+            if (document.readyState === 'loading') await new Promise(resolve => document.addEventListener('DOMContentLoaded', resolve));
+            if (window.supabase && !window._supabaseClient) {
+                window._supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            }
+            if (window._supabaseClient) return window._supabaseClient;
+            return null;
+        }
+
         async function loadRankings() {
             const mainContent = document.getElementById('main-content');
             const pageFooter = document.getElementById('page-footer');
@@ -133,66 +149,14 @@
             }
 
             try {
-                function parseCsv(text) {
-                    const rows = [];
-                    let row = [];
-                    let field = '';
-                    let inQuotes = false;
+                const supabase = await getSupabaseClient();
+                if (!supabase) throw new Error('Supabase client not available');
+                const { data, error } = await supabase.from('player_rankings').select('name,elo,wins,losses').order('elo', { ascending: false });
+                if (error) throw error;
+                const players = (data || []).map(r => ({ name: r.name || 'Unknown', elo: r.elo || 0, wins: r.wins || 0, losses: r.losses || 0 }));
 
-                    for (let i = 0; i < text.length; i++) {
-                        const char = text[i];
-
-                        if (char === '"') {
-                            if (inQuotes && text[i + 1] === '"') {
-                                field += '"';
-                                i++;
-                            } else {
-                                inQuotes = !inQuotes;
-                            }
-                        } else if (char === ',' && !inQuotes) {
-                            row.push(field);
-                            field = '';
-                        } else if ((char === '\n' || char === '\r') && !inQuotes) {
-                            if (char === '\r' && text[i + 1] === '\n') i++;
-                            row.push(field);
-                            field = '';
-                            rows.push(row);
-                            row = [];
-                        } else {
-                            field += char;
-                        }
-                    }
-
-                    if (field !== '' || row.length > 0) {
-                        row.push(field);
-                        rows.push(row);
-                    }
-
-                    return rows;
-                }
-
-            const response = await fetch(SHEET_URL);
-            const data = await response.text();
-
-            const rows = parseCsv(data).filter(r => r.length > 0);
-            const playerRows = rows.slice(1); // Skip header row
-
-            const players = playerRows.map(cols => {
-                const rawElo = cols[1]?.replace(/"/g, '').replace(/,/g, '').trim();
-
-                return {
-                    name: cols[0]?.replace(/"/g, '').trim() || "Unknown",
-                    elo: parseInt(rawElo) || 0, // Now "1,338" becomes 1338
-                    wins: parseInt(cols[2]?.trim()) || 0,
-                    losses: parseInt(cols[3]?.trim()) || 0
-                };
-            });
-
-            // Sort High to Low by Elo
-            players.sort((a, b) => b.elo - a.elo);
-
-            const table = document.getElementById('ladder-table');
-            table.innerHTML = players.map((p, i) => `
+                const table = document.getElementById('ladder-table');
+                table.innerHTML = players.map((p, i) => `
                 <tr class="border-b hover:bg-slate-50 transition-colors">
                     <td class="p-4 text-slate-400 font-bold">#${i + 1}</td>
                     <td class="p-4 font-semibold text-slate-800">
@@ -208,10 +172,10 @@
                     <td class="p-4 text-right font-mono font-bold text-red-600">${p.elo}</td>
                 </tr>
             `).join('');
-        } catch (err) {
-            console.error("Fetch error:", err);
-            document.getElementById('ladder-table').innerHTML = `<tr><td colspan="5" class="p-10 text-center text-red-500">Error loading data. Check your internet or CSV link.</td></tr>`;
-        }
+            } catch (err) {
+                console.error("Data error:", err);
+                document.getElementById('ladder-table').innerHTML = `<tr><td colspan="5" class="p-10 text-center text-red-500">Error loading data. Check your internet or Supabase configuration.</td></tr>`;
+            }
     }
 
         loadRankings();

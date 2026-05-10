@@ -91,8 +91,16 @@
     </footer>
 
     <script>
-        const STATS_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_UHoHNgToKV4yCuB_M56029JuMrOYWN-VkyxDiWkwXHJI1hhRnon_GMnvgvmQeHmL4F0gxkVz7IMP/pub?output=csv&gid=2082256240";
-        const MATCHES_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_UHoHNgToKV4yCuB_M56029JuMrOYWN-VkyxDiWkwXHJI1hhRnon_GMnvgvmQeHmL4F0gxkVz7IMP/pub?output=csv&gid=160991986";
+        // Use Supabase `player_rankings` and `match_history` tables
+        async function getSupabaseClient() {
+            if (window._supabaseClient) return window._supabaseClient;
+            if (window.supabase) {
+                window._supabaseClient = window.supabase.createClient('https://ngnkbfazhdedaqvxcphw.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbmtiZmF6aGRlZGFxdnhjcGh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTE5NDksImV4cCI6MjA5MzI4Nzk0OX0.F_S6ORkFe-SuJPybs7FEFH94E6U2hZ5ern4vrg4kMOk');
+                return window._supabaseClient;
+            }
+            if (document.readyState === 'loading') await new Promise(resolve => document.addEventListener('DOMContentLoaded', resolve));
+            return window._supabaseClient;
+        }
 
         // ... (parseCsv, clean, parseNumber, parseScoreDiff, formatMatch, addCard functions are unchanged)
         function parseCsv(text) {
@@ -116,48 +124,43 @@
             summary.innerHTML = '<div class="col-span-full rounded-3xl border border-slate-200 bg-white p-6 text-slate-500">Loading master analytics...</div>';
 
             try {
-                const [statsResp, matchesResp] = await Promise.all([fetch(STATS_URL), fetch(MATCHES_URL)]);
-                if (!statsResp.ok || !matchesResp.ok) throw new Error('Unable to fetch data.');
+                const supabase = await getSupabaseClient();
+                if (!supabase) throw new Error('Supabase client not available');
 
-                const statsText = await statsResp.text();
-                const matchesText = await matchesResp.text();
+                const [{ data: players }] = [await supabase.from('player_rankings').select('name,elo')];
+                const { data: matches } = await supabase.from('match_history').select('*');
 
-                const statsRows = parseCsv(statsText).filter(row => row.length > 0);
-                const players = statsRows.slice(1).map(cols => ({ name: clean(cols[0]), elo: parseNumber(cols[1]) })).filter(p => p.name);
-
-                const matchRows = parseCsv(matchesText).filter(row => row.length >= 11 && row[2]);
-                const matches = matchRows.slice(1).map(cols => {
-                    const player1 = clean(cols[0]), player2 = clean(cols[1]), winner = clean(cols[2]), score = clean(cols[3]);
-                    const loser = winner.toLowerCase() === player1.toLowerCase() ? player2 : player1;
-                    const p1Elo = parseNumber(cols[9]), p2Elo = parseNumber(cols[10]);
-                    return { winner, loser, score, winnerElo: winner.toLowerCase() === player1.toLowerCase() ? p1Elo : p2Elo, loserElo: winner.toLowerCase() === player1.toLowerCase() ? p2Elo : p1Elo, scoreDiff: parseScoreDiff(score) || 0 };
+                const totalMatches = (matches || []).length;
+                const counts = {}, winCounts = {};
+                (matches || []).forEach(m => {
+                    const winner = m.winner || '';
+                    const loser = m.loser || '';
+                    counts[winner] = (counts[winner] || 0) + 1;
+                    counts[loser] = (counts[loser] || 0) + 1;
+                    if (winner) winCounts[winner] = (winCounts[winner] || 0) + 1;
                 });
 
-                const totalMatches = matches.length;
-                const counts = {}, winCounts = {};
-                matches.forEach(m => { counts[m.winner] = (counts[m.winner] || 0) + 1; counts[m.loser] = (counts[m.loser] || 0) + 1; winCounts[m.winner] = (winCounts[m.winner] || 0) + 1; });
-
                 const activePlayers = Object.entries(counts).map(([name, count]) => ({ name, count })).sort((a, b) => b.count - a.count);
-                const biggestUpset = matches.filter(m => m.loserElo > m.winnerElo).sort((a, b) => (b.loserElo - b.winnerElo) - (a.loserElo - a.winnerElo))[0];
+                const biggestUpset = (matches || []).filter(m => (m.loserElo || m.loser_elo || 0) > (m.winnerElo || m.winner_elo || 0)).sort((a, b) => ((b.loserElo || 0) - (b.winnerElo || 0)) - ((a.loserElo || 0) - (a.winnerElo || 0)))[0];
                 const topWinner = Object.entries(winCounts).sort((a, b) => b[1] - a[1])[0];
                 const topActive = activePlayers[0];
 
                 summary.innerHTML = '';
                 addCard(summary, 'Total Match Records', totalMatches, 'Every match archived in history.');
-                addCard(summary, 'Highest Elo', players.length ? Math.max(...players.map(p => p.elo)) : 'N/A', 'Top rating in the current rankings.');
+                addCard(summary, 'Highest Elo', players && players.length ? Math.max(...players.map(p => p.elo || 0)) : 'N/A', 'Top rating in the current rankings.');
                 addCard(summary, 'Club Leader', topWinner ? `${topWinner[0]} (${topWinner[1]} wins)` : 'N/A', 'Player with the most total wins recorded.');
                 addCard(summary, 'Most Dedicated', topActive ? `${topActive.name} (${topActive.count})` : 'N/A', 'Most matches played (Win or Loss).');
 
                 highlights.innerHTML = '';
                 if (biggestUpset) {
-                    const margin = Math.abs(biggestUpset.loserElo - biggestUpset.winnerElo);
+                    const margin = Math.abs((biggestUpset.loserElo || 0) - (biggestUpset.winnerElo || 0));
                     addCard(highlights, 'Biggest Upset', `${biggestUpset.winner} vs ${biggestUpset.loser}`, `Overcame a ${margin} Elo point gap!`);
                 }
                 activeList.innerHTML = activePlayers.slice(0, 5).map(p => `<li class="text-slate-700 font-medium">${p.name} — <span class="text-red-600 font-bold">${p.count}</span> matches</li>`).join('');
 
             } catch (error) {
                 console.error('Analytics error:', error);
-                summary.innerHTML = '<div class="col-span-full p-6 text-red-500">Sync Error: Verify the History GID is correct.</div>';
+                summary.innerHTML = '<div class="col-span-full p-6 text-red-500">Sync Error: Verify the Supabase project configuration.</div>';
             } finally {
                 // CHANGE 4: This will run after the data loads (or fails), fading in the content.
                 mainContent.classList.remove('opacity-0');

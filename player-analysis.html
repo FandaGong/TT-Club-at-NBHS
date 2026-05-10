@@ -116,10 +116,16 @@
         const urlParams = new URLSearchParams(window.location.search);
         const playerName = urlParams.get('name');
 
-        // GIDs - Ensure these match your specific "Players" and "Elo_History" tabs
-        const STATS_GID = "2082256240";
-        const HISTORY_GID = "160991986"; // Point this to your Elo_History tab GID
-        const BASE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_UHoHNgToKV4yCuB_M56029JuMrOYWN-VkyxDiWkwXHJI1hhRnon_GMnvgvmQeHmL4F0gxkVz7IMP/pub?output=csv&gid=";
+        // Use Supabase tables `player_rankings` and `match_history` instead of Google Sheets
+        async function getSupabaseClient() {
+            if (window._supabaseClient) return window._supabaseClient;
+            if (window.supabase) {
+                window._supabaseClient = window.supabase.createClient('https://ngnkbfazhdedaqvxcphw.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbmtiZmF6aGRlZGFxdnhjcGh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTE5NDksImV4cCI6MjA5MzI4Nzk0OX0.F_S6ORkFe-SuJPybs7FEFH94E6U2hZ5ern4vrg4kMOk');
+                return window._supabaseClient;
+            }
+            if (document.readyState === 'loading') await new Promise(resolve => document.addEventListener('DOMContentLoaded', resolve));
+            return window._supabaseClient;
+        }
         const PLAYER_TAGS = {
             'jonathan zhao': ['Website Feature Dev', 'Club Runner'],
             'damon yuan': ['Club Runner'],
@@ -176,19 +182,17 @@
 
         async function loadPlayerStats() {
             try {
-                const resp = await fetch(BASE_URL + STATS_GID);
-                const data = await resp.text();
-                const rows = parseCsv(data).filter(row => row.length > 0);
-                const found = rows.find(row => (row[0] || '').toLowerCase() === playerName.toLowerCase());
-
+                const supabase = await getSupabaseClient();
+                if (!supabase) throw new Error('Supabase client not available');
+                const { data, error } = await supabase.from('player_rankings').select('name,elo,wins,losses,division,half').ilike('name', playerName);
+                if (error) throw error;
+                const found = (data || [])[0];
                 if (found) {
-                    const cleanStat = (val) => (val || "").toString().replace(/"/g, '').replace(/,/g, '').trim() || "0";
-                    const elo = cleanStat(found[1]);
-                    const wins = cleanStat(found[2]);
-                    const losses = cleanStat(found[3]);
-                    const division = (found[4] || "N/A").trim();
-                    const half = (found[5] || "N/A").trim();
-
+                    const elo = found.elo || 0;
+                    const wins = found.wins || 0;
+                    const losses = found.losses || 0;
+                    const division = found.division || 'N/A';
+                    const half = found.half || 'N/A';
                     document.getElementById('quick-stats').innerHTML = `
                         <div class="mt-4 flex flex-wrap gap-6 font-black uppercase italic tracking-tighter text-sm sm:text-base">
                             <span class="text-red-700">ELO: ${elo}</span>
@@ -205,19 +209,21 @@
 
         async function loadCombinedHistory() {
             try {
-                const resp = await fetch(BASE_URL + HISTORY_GID);
-                const data = await resp.text();
-                const allRows = parseCsv(data).filter(row => row.length >= 11);
+                const supabase = await getSupabaseClient();
+                if (!supabase) throw new Error('Supabase client not available');
+                const { data: allRows, error } = await supabase.from('match_history').select('*').order('created_at', { ascending: true });
+                if (error) throw error;
 
-                const playerMatches = allRows.filter(cols => {
-                    const p1 = (cols[0] || "").toLowerCase().trim();
-                    const p2 = (cols[1] || "").toLowerCase().trim();
+                const rows = (allRows || []).filter(r => r.player_1 || r.player_2);
+                const playerMatches = rows.filter(cols => {
+                    const p1 = (cols.player_1 || '').toLowerCase().trim();
+                    const p2 = (cols.player_2 || '').toLowerCase().trim();
                     return p1 === playerName.toLowerCase() || p2 === playerName.toLowerCase();
                 });
 
                 const table = document.getElementById('history-table');
                 const eloProgress = [1000];
-                const labels = ["Start"];
+                const labels = ['Start'];
 
                 if (playerMatches.length === 0) {
                     table.innerHTML = `<tr><td colspan="4" class="p-10 text-center text-slate-400 font-bold">No matches found in history.</td></tr>`;
@@ -226,20 +232,19 @@
                 }
 
                 table.innerHTML = playerMatches.slice().reverse().map(cols => {
-                    const isP1 = cols[0].toLowerCase() === playerName.toLowerCase();
-                    const opponent = isP1 ? cols[1] : cols[0];
-                    const winner = cols[2].trim();
-                    const score = cols[3].trim();
+                    const isP1 = (cols.player_1 || '').toLowerCase() === playerName.toLowerCase();
+                    const opponent = isP1 ? cols.player_2 : cols.player_1;
+                    const winner = (cols.winner || '').trim();
+                    const score = (cols.score || '').trim();
 
-                    // --- FIX: Force Delta to show signs ---
-                    let delta = isP1 ? cols[7] : cols[8];
+                    let delta = isP1 ? String(cols.p1_elo_change || '') : String(cols.p2_elo_change || '');
                     delta = delta.toString().trim();
-                    if (!delta.startsWith('+') && !delta.startsWith('-') && delta !== "0") {
-                        delta = parseInt(delta) > 0 ? "+" + delta : delta;
+                    if (!delta.startsWith('+') && !delta.startsWith('-') && delta !== '0') {
+                        delta = parseInt(delta) > 0 ? '+' + delta : delta;
                     }
 
-                    const hasWon = winner.toLowerCase() === playerName.toLowerCase();
-                    const deltaColor = delta.includes('+') ? 'text-green-600' : 'text-red-600';
+                    const hasWon = (winner || '').toLowerCase() === playerName.toLowerCase();
+                    const deltaColor = (delta || '').includes('+') ? 'text-green-600' : 'text-red-600';
 
                     return `
                 <tr class="border-b hover:bg-slate-50 transition-colors">
@@ -255,8 +260,8 @@
                 }).join('');
 
                 playerMatches.forEach((cols, index) => {
-                    const isP1 = cols[0].toLowerCase() === playerName.toLowerCase();
-                    const newElo = isP1 ? cols[9] : cols[10];
+                    const isP1 = (cols.player_1 || '').toLowerCase() === playerName.toLowerCase();
+                    const newElo = isP1 ? cols.p1_new_elo : cols.p2_new_elo;
                     if (newElo) {
                         eloProgress.push(parseInt(newElo));
                         labels.push(`Match ${index + 1}`);

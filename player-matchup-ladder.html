@@ -103,7 +103,17 @@
     </footer>
 
     <script>
-        const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_UHoHNgToKV4yCuB_M56029JuMrOYWN-VkyxDiWkwXHJI1hhRnon_GMnvgvmQeHmL4F0gxkVz7IMP/pub?gid=2082256240&single=true&output=csv";
+        // Use Supabase `player_rankings` instead of the Google Sheets CSV
+        async function getSupabaseClient() {
+            if (window._supabaseClient) return window._supabaseClient;
+            if (window.supabase) {
+                // create a local client instance for pages that include supabase.js directly
+                window._supabaseClient = window.supabase.createClient('https://ngnkbfazhdedaqvxcphw.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbmtiZmF6aGRlZGFxdnhjcGh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTE5NDksImV4cCI6MjA5MzI4Nzk0OX0.F_S6ORkFe-SuJPybs7FEFH94E6U2hZ5ern4vrg4kMOk');
+                return window._supabaseClient;
+            }
+            if (document.readyState === 'loading') await new Promise(resolve => document.addEventListener('DOMContentLoaded', resolve));
+            return window._supabaseClient;
+        }
 
         function parseCsvRows(text) {
             const rows = []; let row = []; let field = ''; let inQuotes = false;
@@ -179,16 +189,20 @@
             const mainContent = document.getElementById('main-content');
             const pageFooter = document.getElementById('page-footer');
             try {
-                const response = await fetch(SHEET_URL);
-                const rows = parseCsvRows(await response.text()).slice(1).map(normalizePlayer).filter(p => p.name).sort((a, b) => b.elo - a.elo);
+                const supabase = await getSupabaseClient();
+                if (!supabase) throw new Error('Supabase client not available');
+                const { data, error } = await supabase.from('player_rankings').select('name,elo').order('elo', { ascending: false });
+                if (error) throw error;
+                const rows = (data || []).map(r => ({ name: r.name, elo: r.elo })).filter(p => p.name).sort((a, b) => b.elo - a.elo);
                 const matchupData = { half2: buildHalfData(rows.slice(0, 16), true), half1: buildHalfData(rows.slice(16, 32), false) };
-                
+
                 document.querySelectorAll('[data-half-button]').forEach(btn => {
                     btn.addEventListener('click', () => renderHalfData(btn.dataset.halfButton, matchupData[btn.dataset.halfButton]));
                 });
                 renderHalfData('half2', matchupData.half2);
             } catch (e) {
                 console.error(e);
+                document.getElementById('matchup-container').innerHTML = '<div class="col-span-full p-6 text-red-500">Error loading matchups.</div>';
             } finally {
                 mainContent.classList.remove('opacity-0');
                 pageFooter.classList.remove('opacity-0');

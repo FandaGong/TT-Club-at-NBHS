@@ -75,18 +75,18 @@
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
             <div class="bg-white p-6 rounded-2xl border shadow-sm border-l-4 border-l-red-800 fade-up fade-up-d1">
                 <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Highest Ever Elo</p>
-                <p id="top-elo-val" class="text-2xl font-black text-red-900 mt-1">--</p>
-                <p id="top-elo-player" class="text-[10px] text-slate-500 font-bold uppercase mt-1">Loading...</p>
+                <p id="top-elo-val" class="text-2xl font-black text-red-900 mt-1">N/A</p>
+                <p id="top-elo-player" class="text-[10px] text-slate-500 font-bold uppercase mt-1">N/A</p>
             </div>
             <div class="bg-white p-6 rounded-2xl border shadow-sm border-l-4 border-l-green-600 fade-up fade-up-d2">
                 <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Most Match Wins</p>
-                <p id="top-wins-val" class="text-2xl font-black text-green-700 mt-1">--</p>
-                <p id="top-wins-player" class="text-[10px] text-slate-500 font-bold uppercase mt-1">Loading...</p>
+                <p id="top-wins-val" class="text-2xl font-black text-green-700 mt-1">N/A</p>
+                <p id="top-wins-player" class="text-[10px] text-slate-500 font-bold uppercase mt-1">N/A</p>
             </div>
             <div class="bg-white p-6 rounded-2xl border shadow-sm border-l-4 border-l-orange-500 fade-up fade-up-d3">
                 <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Biggest Upset</p>
-                <p id="top-upset-val" class="text-2xl font-black text-orange-600 mt-1">--</p>
-                <p id="top-upset-desc" class="text-[10px] text-slate-500 font-bold uppercase mt-1">Loading...</p>
+                <p id="top-upset-val" class="text-2xl font-black text-orange-600 mt-1">N/A</p>
+                <p id="top-upset-desc" class="text-[10px] text-slate-500 font-bold uppercase mt-1">N/A</p>
             </div>
         </div>
 
@@ -111,7 +111,16 @@
     </footer>
 
     <script>
-        const SEASONS_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ_UHoHNgToKV4yCuB_M56029JuMrOYWN-VkyxDiWkwXHJI1hhRnon_GMnvgvmQeHmL4F0gxkVz7IMP/pub?gid=662509425&output=csv";
+        // Use Supabase `season_records`, `player_rankings`, and `match_history`
+        async function getSupabaseClient() {
+            if (window._supabaseClient) return window._supabaseClient;
+            if (window.supabase) {
+                window._supabaseClient = window.supabase.createClient('https://ngnkbfazhdedaqvxcphw.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbmtiZmF6aGRlZGFxdnhjcGh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTE5NDksImV4cCI6MjA5MzI4Nzk0OX0.F_S6ORkFe-SuJPybs7FEFH94E6U2hZ5ern4vrg4kMOk');
+                return window._supabaseClient;
+            }
+            if (document.readyState === 'loading') await new Promise(resolve => document.addEventListener('DOMContentLoaded', resolve));
+            return window._supabaseClient;
+        }
 
         function parseCsv(text) {
             const rows = []; let row = []; let field = ''; let inQuotes = false;
@@ -129,59 +138,97 @@
             const grid = document.getElementById('season-grid');
             const mainContent = document.getElementById('main-content');
             const pageFooter = document.getElementById('page-footer');
+            const topEloVal = document.getElementById('top-elo-val');
+            const topEloPlayer = document.getElementById('top-elo-player');
+            const topWinsVal = document.getElementById('top-wins-val');
+            const topWinsPlayer = document.getElementById('top-wins-player');
+            const topUpsetVal = document.getElementById('top-upset-val');
+            const topUpsetDesc = document.getElementById('top-upset-desc');
+
+            const setEmptyState = (message) => {
+                if (topEloVal) topEloVal.innerText = 'N/A';
+                if (topEloPlayer) topEloPlayer.innerText = 'No data available';
+                if (topWinsVal) topWinsVal.innerText = 'N/A';
+                if (topWinsPlayer) topWinsPlayer.innerText = 'No data available';
+                if (topUpsetVal) topUpsetVal.innerText = 'N/A';
+                if (topUpsetDesc) topUpsetDesc.innerText = 'No data available';
+                if (grid) {
+                    grid.innerHTML = `<div class="col-span-full rounded-2xl border border-dashed border-slate-200 bg-white p-10 text-center text-slate-500">${message}</div>`;
+                }
+            };
 
             try {
-                const response = await fetch(SEASONS_URL);
-                const text = await response.text();
-                const allRows = parseCsv(text).filter(r => r.length >= 8);
-                const rows = allRows.slice(1);
+                const supabase = await getSupabaseClient();
+                if (!supabase) throw new Error('Supabase client not available');
 
-                if (rows.length === 0) {
-                    grid.innerHTML = "<div class='col-span-full text-center p-10 text-slate-400'>No records found.</div>";
+                // Season archives from `season_records`
+                const { data: seasons, error: sErr } = await supabase.from('season_records').select('*').order('created_at', { ascending: false });
+                if (sErr) throw sErr;
+
+                if (!seasons || seasons.length === 0) {
+                    setEmptyState('No records available yet.');
                 } else {
-                    let allTimeElo = 0, atEloP = "", allTimeWins = 0, atWinsP = "", maxUpsetVal = 0, maxUpsetDesc = "";
+                    // Top metrics: highest elo from player_rankings, most wins and biggest upset from match_history
+                    const [{ data: topPlayers }] = [await supabase.from('player_rankings').select('name,elo').order('elo', { ascending: false }).limit(1)];
+                    const { data: matches } = await supabase.from('match_history').select('player_1,player_2,winner,p1_elo_change,p2_elo_change,p1_new_elo,p2_new_elo');
 
-                    rows.forEach(row => {
-                        const elo = parseInt(String(row[2] || '').replace(/,/g, ''), 10);
-                        if (!Number.isNaN(elo) && elo > allTimeElo) { allTimeElo = elo; atEloP = `${row[1]} (${row[0]})`; }
-                        const wMatch = row[6].match(/\((\d+)\)/);
-                        if (wMatch && parseInt(wMatch[1]) > allTimeWins) { allTimeWins = parseInt(wMatch[1]); atWinsP = row[6]; }
-                        const uMatch = row[7].match(/\((\d+)\spts\)/);
-                        if (uMatch && parseInt(uMatch[1]) > maxUpsetVal) { maxUpsetVal = parseInt(uMatch[1]); maxUpsetDesc = row[7]; }
+                    const allTimeElo = (topPlayers && topPlayers[0]) ? topPlayers[0].elo : 0;
+                    const atEloP = (topPlayers && topPlayers[0]) ? `${topPlayers[0].name}` : '';
+
+                    // compute wins and biggest upset from match rows if available
+                    let winCounts = {}, maxUpsetVal = 0, maxUpsetDesc = '';
+                    (matches || []).forEach(m => {
+                        if (m.winner) winCounts[m.winner] = (winCounts[m.winner] || 0) + 1;
+                        const p1 = m.player_1 || '';
+                        const p2 = m.player_2 || '';
+                        const p1New = m.p1_new_elo || 0;
+                        const p2New = m.p2_new_elo || 0;
+                        const p1Old = p1New - (m.p1_elo_change || 0);
+                        const p2Old = p2New - (m.p2_elo_change || 0);
+                        const loserElo = m.winner === p1 ? p2Old : p1Old;
+                        const winnerElo = m.winner === p1 ? p1Old : p2Old;
+                        const gap = Math.max(0, loserElo - winnerElo);
+                        if (gap > maxUpsetVal) { maxUpsetVal = gap; maxUpsetDesc = `${m.winner} beat ${m.loser}`; }
                     });
 
-                    document.getElementById('top-elo-val').innerText = allTimeElo;
-                    document.getElementById('top-elo-player').innerText = atEloP;
-                    document.getElementById('top-wins-val').innerText = allTimeWins;
-                    document.getElementById('top-wins-player').innerText = atWinsP;
-                    document.getElementById('top-upset-val').innerText = `${maxUpsetVal} pts`;
-                    document.getElementById('top-upset-desc').innerText = maxUpsetDesc.split('(')[0];
+                    const allTimeWins = Object.values(winCounts).length ? Math.max(...Object.values(winCounts)) : 0;
+                    const atWinsP = Object.entries(winCounts).sort((a,b)=>b[1]-a[1])[0]?.[0] || '';
+
+                    if (topEloVal) topEloVal.innerText = Number.isFinite(allTimeElo) && allTimeElo > 0 ? String(allTimeElo) : 'N/A';
+                    if (topEloPlayer) topEloPlayer.innerText = atEloP || 'No data available';
+                    if (topWinsVal) topWinsVal.innerText = Number.isFinite(allTimeWins) && allTimeWins > 0 ? String(allTimeWins) : 'N/A';
+                    if (topWinsPlayer) topWinsPlayer.innerText = atWinsP || 'No data available';
+                    if (topUpsetVal) topUpsetVal.innerText = Number.isFinite(maxUpsetVal) && maxUpsetVal > 0 ? `${maxUpsetVal} pts` : 'N/A';
+                    if (topUpsetDesc) topUpsetDesc.innerText = maxUpsetDesc || 'No data available';
 
                     let delay = 5; // Start staggering from d5
-                    grid.innerHTML = rows.reverse().filter(cols => cols[0] && cols[0].trim()).map(cols => `
+                    grid.innerHTML = seasons.map(rec => `
                         <div class="bg-white rounded-2xl shadow-sm border overflow-hidden fade-up fade-up-d${delay++}">
                             <div class="bg-red-50 border-b p-4 flex justify-between items-center">
-                                <span class="font-bold text-red-900 italic uppercase">${cols[0]}</span>
-                                <span class="bg-red-100 text-red-700 text-[10px] px-2 py-1 rounded font-black uppercase">${cols[5]}</span>
+                                <span class="font-bold text-red-900 italic uppercase">${rec.season_name}</span>
+                                <span class="bg-red-100 text-red-700 text-[10px] px-2 py-1 rounded font-black uppercase">${rec.status || ''}</span>
                             </div>
                             <div class="p-6">
                                 <div class="flex justify-between items-center mb-4">
                                     <span class="text-sm font-semibold text-slate-500">Champion</span>
-                                    <span class="text-lg font-bold text-red-800">${cols[1]}</span>
+                                    <span class="text-lg font-bold text-red-800">${rec.champion || ''}</span>
                                 </div>
                                 <div class="grid grid-cols-2 gap-4 text-center border-t border-b py-4 mb-4">
-                                    <div><p class="text-[10px] font-bold text-slate-400 uppercase">Most Wins</p><p class="text-[11px] font-bold text-slate-700">${cols[6]}</p></div>
-                                    <div><p class="text-[10px] font-bold text-slate-400 uppercase">Biggest Upset</p><p class="text-[11px] font-bold text-slate-700">${cols[7]}</p></div>
+                                    <div><p class="text-[10px] font-bold text-slate-400 uppercase">Most Wins</p><p class="text-[11px] font-bold text-slate-700">${rec.most_wins || ''}</p></div>
+                                    <div><p class="text-[10px] font-bold text-slate-400 uppercase">Biggest Upset</p><p class="text-[11px] font-bold text-slate-700">${rec.biggest_upset || ''}</p></div>
                                 </div>
                                 <p class="text-[10px] font-bold text-slate-400 uppercase mb-2 text-center">Top 3 Players</p>
                                 <div class="flex flex-wrap justify-center gap-1">
-                                    ${cols[4].split(',').map(n => `<span class="bg-slate-100 px-2 py-0.5 rounded text-[10px] font-bold">${n.trim()}</span>`).join('')}
+                                    ${((rec.top_3_players || '')).split(',').map(n => `<span class="bg-slate-100 px-2 py-0.5 rounded text-[10px] font-bold">${n.trim()}</span>`).join('')}
                                 </div>
                             </div>
                         </div>
                     `).join('');
                 }
-            } catch (e) { console.error(e); }
+            } catch (e) {
+                console.error(e);
+                setEmptyState('No records available yet.');
+            }
             finally {
                 // CHANGE 4: Reveal logic
                 mainContent.classList.remove('opacity-0');
