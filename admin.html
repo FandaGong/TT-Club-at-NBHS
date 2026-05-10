@@ -182,6 +182,14 @@
                         <a href="rules.html" class="mt-auto text-red-600 font-semibold hover:underline text-sm">Edit
                             Rules &rarr;</a>
                     </div>
+                    <div class="bg-red-50 p-6 rounded-2xl shadow-sm border border-red-200 flex flex-col gap-4">
+                        <h3 class="font-bold text-lg text-red-900">Season Management</h3>
+                        <button onclick="finalizeSeason()"
+                            class="w-full bg-red-800 text-white px-4 py-2 rounded-lg font-bold">Finalize Season</button>
+                        <button onclick="resetSeason()"
+                            class="w-full bg-slate-800 text-white px-4 py-2 rounded-lg font-bold">Reset ELOs (New
+                            Term)</button>
+                    </div>
                 </div>
             </div>
         </section>
@@ -523,6 +531,94 @@
         _supabase.auth.getSession().then(({ data }) => updateUI(data.session));
         _supabase.auth.onAuthStateChange((_event, session) => updateUI(session));
         setDialogTab('admin-login');
+
+        // Replaces finalizeCurrentSeason()
+        async function finalizeSeason() {
+            const seasonName = prompt("Enter Season Name (e.g., 2026 Term 2):");
+            if (!seasonName) return;
+
+            try {
+                // 1. Get Top Players
+                const { data: players } = await _supabase.from('account')
+                    .select('email, elo, player_details(Full Name)')
+                    .order('elo', { ascending: false });
+
+                const champion = players[0].player_details['Full Name'] || players[0].email;
+                const peakElo = players[0].elo;
+                const top3 = players.slice(0, 3).map(p => p.player_details['Full Name'] || p.email).join(', ');
+
+                // 2. Get All Matches to find biggest upset
+                const { data: matches } = await _supabase.from('matches').select('*');
+
+                let maxDiff = 0;
+                let upsetText = "N/A";
+
+                matches.forEach(m => {
+                    const p1Start = m.P1_New_Elo - m.P1_Elo_Change;
+                    const p2Start = m.P2_New_Elo - m.P2_Elo_Change;
+
+                    if (m.winner_id === m.player1_id && p1Start < p2Start) {
+                        if (p2Start - p1Start > maxDiff) {
+                            maxDiff = p2Start - p1Start;
+                            upsetText = `P1 beat P2 (${maxDiff} pts)`; // You can join to player_details to get real names here
+                        }
+                    } else if (m.winner_id === m.player2_id && p2Start < p1Start) {
+                        if (p1Start - p2Start > maxDiff) {
+                            maxDiff = p1Start - p2Start;
+                            upsetText = `P2 beat P1 (${maxDiff} pts)`;
+                        }
+                    }
+                });
+
+                // 3. Save to Seasons table
+                const { error } = await _supabase.from('seasons').insert([{
+                    "Season Name": seasonName,
+                    "Champion": champion, // Ensure these column types match your DB (text vs int8)
+                    "Peak Elo": peakElo,
+                    "Total Matches": matches.length,
+                    "Top 3 Players": top3,
+                    "Status": "Finalized",
+                    "Biggest Upset": maxDiff // Storing the points as int8
+                }]);
+
+                if (error) throw error;
+                alert("Season finalized successfully!");
+
+            } catch (err) {
+                alert("Error finalizing season: " + err.message);
+            }
+        }
+
+        // Replaces resetSeasonStats()
+        async function resetSeason() {
+            if (!confirm("Are you SURE you want to reset all players to baseline Elos? This cannot be undone.")) return;
+
+            try {
+                // Fetch all players to determine their new baselines based on division/half
+                const { data: players } = await _supabase.from('account')
+                    .select('account_id, player_details(Half, Division)'); // Adjust column names based on your DB
+
+                const eloMap = {
+                    "Second": { "Division 1": 1000, "Division 2": 900, "Division 3": 800 },
+                    "First": { "Division 1": 700, "Division 2": 600, "Division 3": 500 }
+                };
+
+                // We loop through and update everyone to their baseline
+                for (const player of players) {
+                    const half = player.player_details?.Half || "First";
+                    const div = player.player_details?.Division || "Division 3";
+                    const newElo = (eloMap[half] && eloMap[half][div]) ? eloMap[half][div] : 600;
+
+                    await _supabase.from('account')
+                        .update({ elo: newElo }) // also reset wins: 0, losses: 0 here if you add those columns
+                        .eq('account_id', player.account_id);
+                }
+
+                alert("Season Reset Complete! All Elos set to baselines.");
+            } catch (err) {
+                alert("Error resetting season: " + err.message);
+            }
+        }
     </script>
 </body>
 
