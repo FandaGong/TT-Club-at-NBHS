@@ -26,28 +26,28 @@
             <!-- Login Container -->
             <div id="loginContainer" class="bg-white rounded-2xl shadow-sm border border-slate-100 p-8 max-w-2xl mx-auto fade-up-d1">
                 <div class="text-center mb-6">
-                    <h2 id="authPanelTitle" class="text-xl font-bold text-slate-800">Admin Login</h2>
-                    <p id="authPanelSubtitle" class="mt-2 text-sm text-slate-500">Admin access is login-only. Standard user login and account creation are available here.</p>
+                    <h2 class="text-xl font-bold text-slate-800">Account Access</h2>
+                    <p class="mt-2 text-sm text-slate-500">Admin access is login-only. Standard user login and account creation are available here.</p>
                 </div>
 
                 <div class="mb-5 grid grid-cols-1 sm:grid-cols-3 gap-2 rounded-2xl bg-slate-100 p-2">
                     <button id="dialogTabAdminLogin" type="button" data-tab="admin-login" class="rounded-xl bg-white px-4 py-3 text-sm font-semibold text-red-800 shadow-sm transition-colors">Admin Login</button>
-                    <button id="dialogTabStandardLogin" type="button" data-tab="standard-login" class="rounded-xl px-4 py-3 text-sm font-semibold text-slate-600 transition-colors hover:text-slate-900">Standard User Login</button>
-                    <button id="dialogTabCreateAccount" type="button" data-tab="create-account" class="rounded-xl px-4 py-3 text-sm font-semibold text-slate-600 transition-colors hover:text-slate-900">Account Creation</button>
+                    <button id="dialogTabStandardLogin" type="button" data-tab="standard-login" class="rounded-xl px-4 py-3 text-sm font-semibold text-slate-600 transition-colors hover:text-slate-900">Standard User</button>
+                    <button id="dialogTabCreateAccount" type="button" data-tab="create-account" class="rounded-xl px-4 py-3 text-sm font-semibold text-slate-600 transition-colors hover:text-slate-900">Create Account</button>
                 </div>
 
                 <!-- Admin Form -->
                 <div id="dialogPanelAdminLogin" class="space-y-4">
                     <form id="adminLoginForm" class="space-y-4" action="javascript:void(0);" onsubmit="handleDialogLogin(event, 'admin')">
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Email</label>
-                            <input id="adminEmail" type="email" placeholder="Admin email" class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500 text-sm">
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Admin Email</label>
+                            <input id="adminEmail" type="email" placeholder="admin@nbhs.com" class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500 text-sm">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1">Password</label>
                             <input id="adminPassword" type="password" placeholder="••••••••" class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500 text-sm">
                         </div>
-                        <button type="submit" class="w-full bg-red-800 text-white px-4 py-3 rounded-xl font-bold hover:bg-red-900 transition-colors">Admin Login</button>
+                        <button type="submit" class="w-full bg-red-800 text-white px-4 py-3 rounded-xl font-bold hover:bg-red-900 transition-colors shadow-sm">Admin Login</button>
                         <p id="adminLoginStatus" class="hidden text-sm font-medium text-center"></p>
                     </form>
                 </div>
@@ -56,25 +56,26 @@
                 <div id="dialogPanelStandardLogin" class="hidden space-y-4">
                     <form id="standardLoginForm" class="space-y-4" action="javascript:void(0);" onsubmit="handleDialogLogin(event, 'standard')">
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Email</label>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Student Email</label>
                             <input id="standardEmail" type="email" placeholder="you@example.com" class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500 text-sm">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1">Password</label>
                             <input id="standardPassword" type="password" placeholder="••••••••" class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500 text-sm">
                         </div>
-                        <button type="submit" class="w-full bg-slate-900 text-white px-4 py-3 rounded-xl font-bold hover:bg-slate-800 transition-colors">Standard User Login</button>
+                        <button type="submit" class="w-full bg-slate-900 text-white px-4 py-3 rounded-xl font-bold hover:bg-slate-800 transition-colors shadow-sm">Standard User Login</button>
                         <p id="standardLoginStatus" class="hidden text-sm font-medium text-center"></p>
                     </form>
                 </div>
 
                 <!-- Account Request Form -->
                 <div id="dialogPanelCreateAccount" class="hidden space-y-4">
+                    <p class="text-sm text-slate-600 mb-2">Account creation must be independently verified by an admin user before it will be approved.</p>
                     <form id="accountRequestForm" class="grid grid-cols-1 gap-3">
                         <input id="requestEmail" type="email" placeholder="Email to approve" required class="p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500">
                         <input id="requestPassword" type="password" placeholder="Create a password" required class="p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500">
                         <input id="requestConfirmPassword" type="password" placeholder="Confirm password" required class="p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500">
-                        <button type="submit" class="bg-red-600 text-white px-5 py-3 rounded-xl font-bold hover:bg-red-700 transition-colors">Submit Request</button>
+                        <button type="submit" class="bg-red-600 text-white px-5 py-3 rounded-xl font-bold hover:bg-red-700 transition-colors shadow-sm">Submit Request</button>
                         <p id="accountRequestStatus" class="hidden text-sm font-medium"></p>
                     </form>
                 </div>
@@ -134,6 +135,7 @@
 
     <div id="footer-placeholder"></div>
 
+    <!-- Account Requests Modal -->
     <div id="accountRequestsModal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
         <div class="bg-white rounded-2xl shadow-lg max-w-2xl w-full max-h-[80vh] overflow-auto">
             <div class="sticky top-0 bg-white border-b p-4 flex items-center justify-between">
@@ -141,30 +143,6 @@
                 <button id="closeAccountRequestsModalBtn" type="button" class="text-slate-500 hover:text-slate-700 text-2xl">&times;</button>
             </div>
             <div id="accountRequestsModalList" class="p-4 space-y-3"></div>
-        </div>
-    </div>
-
-    <!-- Profile Modal... -->
-    <div id="profileModal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-        <div class="bg-white rounded-2xl shadow-lg max-w-md w-full overflow-hidden">
-            <div class="bg-red-800 text-white p-4 flex items-center justify-between">
-                <h3 class="font-bold text-lg">Profile</h3>
-                <button id="closeProfileModalBtn" type="button" class="text-white hover:text-red-200 text-2xl leading-none">&times;</button>
-            </div>
-            <div class="p-6 space-y-4">
-                <div>
-                    <p class="text-sm text-slate-600 mb-1">Email</p>
-                    <p id="profileEmail" class="font-semibold text-slate-800">—</p>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-2">Change Password</label>
-                    <input id="newPasswordInput" type="password" placeholder="New password" class="w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-red-500 mb-2">
-                    <input id="confirmPasswordInput" type="password" placeholder="Confirm password" class="w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-red-500">
-                </div>
-                <button id="changePasswordBtn" type="button" class="w-full bg-red-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-700 transition-colors">Update Password</button>
-                <p id="passwordStatus" class="hidden text-sm font-medium text-center"></p>
-                <button id="profileLogoutBtn" type="button" class="w-full bg-slate-200 text-slate-800 px-4 py-2 rounded-lg font-semibold hover:bg-slate-300 transition-colors">Log Out</button>
-            </div>
         </div>
     </div>
 
@@ -178,7 +156,6 @@
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         
         const ADMIN_ALLOWLIST =['nbhsttclub@gmail.com', 'jonathanzhao111@gmail.com', 'damon.yuan@education.nsw.gov.au'];
-        let currentAccountRole = 'guest';
         let currentAccountEmail = '';
 
         function revealPage() {
@@ -191,7 +168,7 @@
             if (!email) return 'standard';
             if (ADMIN_ALLOWLIST.includes(email.toLowerCase())) return 'admin';
             
-            // EXACT SCHEMA MATCH: account_requests
+            // Check account_requests table
             const { data, error } = await _supabase.from('account_requests').select('role, status').ilike('email', email).order('created_at', { ascending: false }).limit(1);
             if (error || !data || data.length === 0) return 'standard';
             if ((data[0].status || '').toLowerCase() === 'approved') return (data[0].role || 'standard').toLowerCase();
@@ -210,7 +187,6 @@
                 document.getElementById('adminUserEmail').textContent = `Logged in as: ${email}`;
 
                 const role = await resolveAccountRole(email);
-                currentAccountRole = role;
                 const isAdmin = role === 'admin';
 
                 document.getElementById('dashboardAccessNote').textContent = isAdmin ? 'Admin access granted.' : 'Standard user access granted.';
@@ -218,21 +194,18 @@
                 document.getElementById('adminToolsContainer').classList.toggle('hidden', !isAdmin);
                 document.getElementById('pageTitle').textContent = isAdmin ? 'Admin Panel' : 'Dashboard';
                 
-                if (document.getElementById('profileEmail')) document.getElementById('profileEmail').textContent = email;
                 if (isAdmin) loadAccountRequests();
             } else {
-                currentAccountRole = 'guest';
                 currentAccountEmail = '';
                 loginContainer.classList.remove('hidden');
                 dashboardContainer.classList.add('hidden');
                 document.getElementById('pageTitle').textContent = 'Login';
-                document.getElementById('profileModal').classList.add('hidden');
             }
             revealPage();
         }
 
         function setDialogTab(tabName) {
-            const tabs = ['admin-login', 'standard-login', 'create-account'];
+            const tabs =['admin-login', 'standard-login', 'create-account'];
             tabs.forEach(t => {
                 const btn = document.getElementById('dialogTab' + t.split('-').map(s => s[0].toUpperCase() + s.slice(1)).join(''));
                 const panel = document.getElementById('dialogPanel' + t.split('-').map(s => s[0].toUpperCase() + s.slice(1)).join(''));
@@ -249,7 +222,9 @@
             const password = document.getElementById(isAdminLogin ? 'adminPassword' : 'standardPassword').value;
             const status = document.getElementById(isAdminLogin ? 'adminLoginStatus' : 'standardLoginStatus');
 
-            status.classList.remove('hidden'); status.textContent = 'Logging in...'; status.className = 'mt-2 text-sm font-medium text-blue-600 text-center block';
+            status.classList.remove('hidden');
+            status.textContent = 'Logging in...';
+            status.className = 'mt-2 text-sm font-medium text-blue-600 text-center block';
 
             try {
                 const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
@@ -260,10 +235,6 @@
                     await _supabase.auth.signOut();
                     throw new Error('That account is not approved as an admin account.');
                 }
-                if (!isAdminLogin && sessionRole === 'admin') {
-                    await _supabase.auth.signOut();
-                    throw new Error('This is an admin account. Use the Admin Login tab.');
-                }
                 
                 status.classList.add('hidden');
             } catch (error) {
@@ -272,6 +243,9 @@
             }
         }
 
+        // ==========================================
+        // FIXED ACCOUNT CREATION LOGIC
+        // ==========================================
         async function handleAccountRequest(event) {
             event.preventDefault();
             const emailInput = document.getElementById('requestEmail');
@@ -280,22 +254,28 @@
             const statusNode = document.getElementById('accountRequestStatus');
 
             if (passwordInput.value !== confirmPasswordInput.value) {
-                statusNode.classList.remove('hidden'); statusNode.textContent = 'Passwords do not match.'; statusNode.className = 'mt-2 text-sm font-medium text-red-600 text-center block'; return;
+                statusNode.classList.remove('hidden');
+                statusNode.textContent = 'Passwords do not match.';
+                statusNode.className = 'mt-2 text-sm font-medium text-red-600 text-center block';
+                return;
             }
 
-            statusNode.classList.remove('hidden'); statusNode.textContent = 'Submitting request...'; statusNode.className = 'mt-2 text-sm font-medium text-blue-600 text-center block';
+            statusNode.classList.remove('hidden');
+            statusNode.textContent = 'Submitting request...';
+            statusNode.className = 'mt-2 text-sm font-medium text-blue-600 text-center block';
 
             try {
                 const email = emailInput.value.trim().toLowerCase();
 
-                // EXACT SCHEMA MATCH: account_requests, checking request_id
+                // 1. Check if a request already exists
                 const { data: existingData } = await _supabase.from('account_requests').select('request_id').ilike('email', email).limit(1);
                 
                 if (existingData && existingData.length > 0) {
                     throw new Error('A request for this email already exists.');
                 }
 
-                // EXACT SCHEMA MATCH: Insert into account_requests (without linked_account_id)
+                // 2. Just save it to the database for Admin review.
+                // Notice we DO NOT pass 'linked_account_id' here, preventing the FK violation.
                 const { error } = await _supabase.from('account_requests').insert({
                     email: email,
                     password: passwordInput.value,
@@ -320,14 +300,15 @@
             if (!list) return;
             list.innerHTML = '<p class="text-slate-500">Loading requests...</p>';
 
-            // EXACT SCHEMA MATCH: select request_id
             const { data, error } = await _supabase.from('account_requests').select('request_id, email, role, status, created_at, reviewed_at, reviewed_by').order('created_at', { ascending: false });
 
             if (error) {
-                list.innerHTML = `<p class="text-red-600">Failed to load requests: ${error.message}</p>`; return;
+                list.innerHTML = `<p class="text-red-600">Failed to load requests: ${error.message}</p>`;
+                return;
             }
             if (!data.length) {
-                list.innerHTML = '<p class="text-slate-500">No account requests yet.</p>'; return;
+                list.innerHTML = '<p class="text-slate-500">No account requests yet.</p>';
+                return;
             }
 
             list.innerHTML = data.map((req) => {
@@ -342,14 +323,17 @@
                             <option value="standard" ${req.role === 'standard' ? 'selected' : ''}>Standard</option>
                             <option value="admin" ${req.role === 'admin' ? 'selected' : ''}>Admin</option>
                         </select>
-                        <button class="approve-request-btn bg-green-600 text-white px-3 py-2 rounded-lg text-sm font-bold" data-id="${req.request_id}" data-email="${req.email}">Approve</button>
-                        <button class="decline-request-btn bg-red-600 text-white px-3 py-2 rounded-lg text-sm font-bold" data-id="${req.request_id}" data-email="${req.email}">Decline</button>
+                        <button class="approve-request-btn bg-green-600 text-white px-3 py-2 rounded-lg text-sm font-bold shadow-sm" data-id="${req.request_id}" data-email="${req.email}">Approve</button>
+                        <button class="decline-request-btn bg-red-600 text-white px-3 py-2 rounded-lg text-sm font-bold shadow-sm" data-id="${req.request_id}" data-email="${req.email}">Decline</button>
                     </div>` : '';
 
                 return `
                     <div class="rounded-xl border border-slate-200 p-4 bg-slate-50">
                         <div class="flex justify-between items-start">
-                            <div><p class="font-bold text-slate-800">${req.email}</p><p class="text-xs text-slate-500 mt-1">${new Date(req.created_at).toLocaleDateString()}</p></div>
+                            <div>
+                                <p class="font-bold text-slate-800">${req.email}</p>
+                                <p class="text-xs text-slate-500 mt-1">${new Date(req.created_at).toLocaleDateString()}</p>
+                            </div>
                             <span class="px-2 py-1 rounded text-xs font-bold uppercase ${statusChip}">${status}</span>
                         </div>
                         ${actions}
@@ -368,48 +352,74 @@
         async function reviewAccountRequest(id, status, email, role) {
             if (!confirm(`Mark ${email} as ${status}?`)) return;
 
-            // EXACT SCHEMA MATCH: eq('request_id', id)
-            const { error: dbError } = await _supabase.from('account_requests').update({ status, reviewed_at: new Date().toISOString(), reviewed_by: currentAccountEmail, role }).eq('request_id', id);
-            if (dbError) { alert('Failed: ' + dbError.message); return; }
-
+            // 1. If approved, ADMIN calls signUp to officially create the auth account.
+            let linkedAccountId = null;
             if (status === 'approved') {
                 const { data: reqData } = await _supabase.from('account_requests').select('password').eq('request_id', id).single();
                 if (reqData && reqData.password) {
+                    
+                    // Save Admin Session before signing up the new user
                     const { data: sessionData } = await _supabase.auth.getSession();
                     const adminSession = sessionData?.session;
                     
                     // Create User Account in Auth
                     const { data: signUpData, error: signUpErr } = await _supabase.auth.signUp({ email, password: reqData.password });
+                    
                     if (signUpErr) {
-                        alert('Approved, but auth creation failed: ' + signUpErr.message);
-                    } else if (signUpData?.user) {
-                        // Insert row into 'account' table as required by the FK constraint in absence_reports
-                        await _supabase.from('account').insert({
-                            account_id: signUpData.user.id,
-                            email: email,
-                            role: role,
-                            status: 'active'
-                        });
+                        alert('Auth creation failed: ' + signUpErr.message);
+                        return;
                     }
 
+                    if (signUpData?.user) {
+                        linkedAccountId = signUpData.user.id;
+
+                        // Insert row into 'public.account' table to satisfy constraints
+                        const { error: accError } = await _supabase.from('account').insert({
+                            account_id: linkedAccountId,
+                            email: email,
+                            role: role,
+                            status: 'active',
+                            password: reqData.password
+                        });
+
+                        if (accError) {
+                            console.warn('Failed to insert into public.account:', accError);
+                        }
+                    }
+
+                    // Restore Admin Session
                     if (adminSession) {
                         await _supabase.auth.setSession({ access_token: adminSession.access_token, refresh_token: adminSession.refresh_token });
                     }
+                } else {
+                    alert("Couldn't find the password to automatically create the account.");
+                    return;
                 }
             }
+
+            // 2. Update Database Status (and attach the linked ID if approved)
+            const updatePayload = { status, reviewed_at: new Date().toISOString(), reviewed_by: currentAccountEmail, role };
+            if (linkedAccountId) {
+                updatePayload.linked_account_id = linkedAccountId;
+            }
+
+            const { error: dbError } = await _supabase.from('account_requests').update(updatePayload).eq('request_id', id);
+            
+            if (dbError) { 
+                alert('Failed to update request: ' + dbError.message); 
+            }
+
             await loadAccountRequests();
         }
 
         // Event Listeners
         document.getElementById('adminLogoutBtn').addEventListener('click', () => _supabase.auth.signOut());
-        document.getElementById('profileLogoutBtn').addEventListener('click', () => { document.getElementById('profileModal').classList.add('hidden'); _supabase.auth.signOut(); });
         document.getElementById('dialogTabAdminLogin').addEventListener('click', () => setDialogTab('admin-login'));
         document.getElementById('dialogTabStandardLogin').addEventListener('click', () => setDialogTab('standard-login'));
         document.getElementById('dialogTabCreateAccount').addEventListener('click', () => setDialogTab('create-account'));
         document.getElementById('accountRequestForm').addEventListener('submit', handleAccountRequest);
         document.getElementById('openAccountRequestsModalBtn')?.addEventListener('click', () => { document.getElementById('accountRequestsModal').classList.remove('hidden'); loadAccountRequests(); });
         document.getElementById('closeAccountRequestsModalBtn').addEventListener('click', () => document.getElementById('accountRequestsModal').classList.add('hidden'));
-        document.getElementById('closeProfileModalBtn').addEventListener('click', () => document.getElementById('profileModal').classList.add('hidden'));
 
         // Initialize state
         _supabase.auth.getSession().then(({ data }) => updateUI(data.session));
