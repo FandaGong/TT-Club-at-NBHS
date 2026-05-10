@@ -5,7 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Absence Report - NBHS Table Tennis</title>
+    <script src="tailwind-theme.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    
     <!-- Supabase required for both form and components.js -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
@@ -14,6 +16,7 @@
             emailjs.init({ publicKey: "e5NumK8MWzpAArS95" });
         })();
     </script>
+    
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="animations.css">
     <link rel="icon" type="image/png" href="favicon.png">
@@ -28,43 +31,30 @@
     <main id="main-content" class="max-w-4xl mx-auto p-6 flex-grow w-full opacity-0 transition-opacity duration-500">
         <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 fade-up-d1 card-hover">
             <h1 class="text-3xl font-bold text-red-900 mb-2">Club Absence Report</h1>
-            <p class="text-sm text-slate-600 mb-6">If you did not show up to club, submit your details so the team can
-                review your note. Note: you must be logged in to submit.</p>
+            <p class="text-sm text-slate-600 mb-6">If you did not show up to club, submit your details so the team can review your note. Note: you must be logged in to submit.</p>
 
             <!-- Login required notice -->
             <div id="loginRequiredNotice" class="text-center py-8">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-slate-300 mb-3" fill="none"
-                    viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-slate-300 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                 </svg>
                 <p class="text-slate-500 font-medium">You must be logged in to submit an absence report.</p>
-                <a href="admin.html"
-                    class="inline-block mt-3 text-sm font-semibold text-red-600 hover:text-red-800 transition-colors">Go
-                    to Login &rarr;</a>
+                <a href="admin.html" class="inline-block mt-3 text-sm font-semibold text-red-600 hover:text-red-800 transition-colors">Go to Login &rarr;</a>
             </div>
 
             <!-- Absence form -->
             <form id="absenceForm" class="hidden grid grid-cols-1 gap-3">
-                <input id="absenceName" type="text" placeholder="Your name" required
-                    class="p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500">
-                <input id="absenceEmail" type="email" placeholder="Email (auto-filled)" required readonly
-                    class="p-3 border rounded-xl outline-none bg-slate-50 text-slate-600 cursor-not-allowed">
-                <textarea id="absenceReason" rows="5" placeholder="Reason for absence" required
-                    class="p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500"></textarea>
-                <button type="submit"
-                    class="bg-red-600 text-white px-5 py-3 rounded-xl font-bold hover:bg-red-700 transition-colors">Submit
-                    Absence</button>
+                <input id="absenceName" type="text" placeholder="Your name" required class="p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500">
+                <input id="absenceEmail" type="email" placeholder="Email (auto-filled)" required readonly class="p-3 border rounded-xl outline-none bg-slate-50 text-slate-600 cursor-not-allowed">
+                <textarea id="absenceReason" rows="5" placeholder="Reason for absence" required class="p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500"></textarea>
+                <button type="submit" class="bg-red-600 text-white px-5 py-3 rounded-xl font-bold hover:bg-red-700 transition-colors shadow-sm">Submit Absence</button>
                 <p id="absenceSubmitStatus" class="hidden text-sm font-medium"></p>
             </form>
 
-            <div
-                class="mt-8 border-t border-slate-200 pt-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div class="mt-8 border-t border-slate-200 pt-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <p class="text-sm font-medium text-slate-500">Only club admins can view submitted reports.</p>
                 <div class="flex items-center gap-2">
-                    <button id="adminShowReportsBtn" type="button"
-                        class="hidden text-sm font-bold bg-red-600 text-white px-4 py-2 rounded-xl hover:bg-red-700 transition-colors shadow-sm"
-                        onclick="openAdminReports()">View Reports</button>
+                    <button id="adminShowReportsBtn" type="button" class="hidden text-sm font-bold bg-red-600 text-white px-4 py-2 rounded-xl hover:bg-red-700 transition-colors shadow-sm" onclick="openAdminReports()">View Reports</button>
                 </div>
             </div>
         </section>
@@ -74,19 +64,12 @@
     <div id="footer-placeholder"></div>
 
     <!-- Admin Reports Modal -->
-    <div id="adminReportsModal"
-        class="hidden fixed inset-0 z-[9999] bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
-        <div
-            class="bg-slate-50 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[85vh] flex flex-col overflow-hidden border border-slate-200/60">
+    <div id="adminReportsModal" class="hidden fixed inset-0 z-[9999] bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-slate-50 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[85vh] flex flex-col overflow-hidden border border-slate-200/60">
             <div class="flex items-center justify-between p-5 border-b border-slate-200 bg-white">
                 <h2 class="text-xl font-bold text-slate-800">Absence Reports Management</h2>
-                <button type="button" onclick="document.getElementById('adminReportsModal').classList.add('hidden')"
-                    class="text-slate-400 hover:text-slate-700 transition-colors p-1 bg-slate-100 hover:bg-slate-200 rounded-lg">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M6 18L18 6M6 6l12 12" />
-                    </svg>
+                <button type="button" onclick="document.getElementById('adminReportsModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-700 transition-colors p-1 bg-slate-100 hover:bg-slate-200 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
             </div>
             <div id="adminReportsList" class="p-6 overflow-y-auto flex-1 space-y-4 text-sm text-slate-700">
@@ -110,43 +93,17 @@
         }
 
         const ABSENCE_TABLE = "absence_reports";
-        const EMAILJS_SERVICE_ID = resolveEmailJsValue(
-            'service_r3qup2c',
-            window.EMAILJS_SERVICE_ID,
-            window.EMAILJS_CONFIG?.serviceId,
-            window.localStorage?.getItem('EMAILJS_SERVICE_ID'),
-            window.localStorage?.getItem('emailjs_service_id'),
-            document.querySelector('meta[name="emailjs-service-id"]')?.content
-        );
-        const EMAILJS_TEMPLATE_ID = resolveEmailJsValue(
-            window.EMAILJS_TEMPLATE_ID,
-            window.EMAILJS_CONFIG?.templateId,
-            window.localStorage?.getItem('EMAILJS_TEMPLATE_ID'),
-            window.localStorage?.getItem('emailjs_template_id'),
-            document.querySelector('meta[name="emailjs-template-id"]')?.content
-        );
-        const EMAILJS_ACCEPT_TEMPLATE_ID = resolveEmailJsValue(
-            'template_1g3bzms',
-            window.EMAILJS_ACCEPT_TEMPLATE_ID,
-            window.EMAILJS_CONFIG?.acceptTemplateId,
-            window.localStorage?.getItem('EMAILJS_ACCEPT_TEMPLATE_ID'),
-            window.localStorage?.getItem('emailjs_accept_template_id')
-        );
-        const EMAILJS_DECLINE_TEMPLATE_ID = resolveEmailJsValue(
-            'template_cll4zbl',
-            window.EMAILJS_DECLINE_TEMPLATE_ID,
-            window.EMAILJS_CONFIG?.declineTemplateId,
-            window.localStorage?.getItem('EMAILJS_DECLINE_TEMPLATE_ID'),
-            window.localStorage?.getItem('emailjs_decline_template_id')
-        );
+        const EMAILJS_SERVICE_ID = resolveEmailJsValue('service_r3qup2c', window.EMAILJS_SERVICE_ID);
+        const EMAILJS_TEMPLATE_ID = resolveEmailJsValue(window.EMAILJS_TEMPLATE_ID);
+        const EMAILJS_ACCEPT_TEMPLATE_ID = resolveEmailJsValue('template_1g3bzms', window.EMAILJS_ACCEPT_TEMPLATE_ID);
+        const EMAILJS_DECLINE_TEMPLATE_ID = resolveEmailJsValue('template_cll4zbl', window.EMAILJS_DECLINE_TEMPLATE_ID);
+        
         let supabaseClient = null;
         const absenceReportsById = new Map();
 
         function getSupabaseClient() {
             if (!supabaseClient) {
-                // Try to use shared client from components.js first
                 supabaseClient = window._supabaseClient;
-                // If components.js hasn't initialized yet, create one
                 if (!supabaseClient && window.supabase) {
                     const SUPABASE_URL = "https://ngnkbfazhdedaqvxcphw.supabase.co";
                     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbmtiZmF6aGRlZGFxdnhjcGh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTE5NDksImV4cCI6MjA5MzI4Nzk0OX0.F_S6ORkFe-SuJPybs7FEFH94E6U2hZ5ern4vrg4kMOk";
@@ -159,39 +116,19 @@
         // Helper functions
         function setStatus(t, e, s) { t && (t.textContent = e, t.className = `mt-2 text-sm font-medium ${s}`, t.classList.remove("hidden")) }
         function escapeHtml(t) { return String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;") }
-        function getEmailErrorReason(err) {
-            if (!err) return 'Unknown EmailJS error';
-            if (typeof err === 'string') return err;
-            const parts = [];
-            if (err.status) parts.push(`status ${err.status}`);
-            if (err.text) parts.push(err.text);
-            if (err.message) parts.push(err.message);
-            if (!parts.length) {
-                try {
-                    const json = JSON.stringify(err);
-                    if (json && json !== '{}') return json;
-                } catch (_e) {
-                    // Ignore stringify failures.
-                }
-                return 'Unknown EmailJS error';
-            }
-            return parts.join(' - ');
-        }
 
         async function submitAbsenceReport(name, email, reason) {
             const client = getSupabaseClient();
             if (!client) throw new Error('Supabase client not initialized');
 
-            // Get the current logged-in user's ID
             const { data: { session } } = await client.auth.getSession();
             const userId = session?.user?.id;
 
-            // Use the correct column names from your schema screenshot
             const { error } = await client.from(ABSENCE_TABLE).insert([{
                 name: name,
                 email: email,
                 reason: reason,
-                account_id: userId, // This links the report to the player
+                account_id: userId,
                 status: 'pending'
             }]);
 
@@ -199,65 +136,31 @@
         }
 
         async function sendAbsenceEmail(name, email, reason) {
-            if (!window.emailjs || !EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID) {
-                const missing = [];
-                if (!window.emailjs) missing.push('EmailJS library');
-                if (!EMAILJS_SERVICE_ID) missing.push('service ID');
-                if (!EMAILJS_TEMPLATE_ID) missing.push('template ID');
-                return { sent: false, reason: `Missing ${missing.join(', ')}` };
-            }
-
-            const templateParams = {
-                student_name: name,
-                student_email: email,
-                absence_reason: reason,
-                submitted_at: new Date().toLocaleString()
-            };
-
-            await window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
+            if (!window.emailjs || !EMAILJS_SERVICE_ID || !EMAILJS_TEMPLATE_ID) return { sent: false };
+            await window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+                student_name: name, student_email: email, absence_reason: reason, submitted_at: new Date().toLocaleString()
+            });
             return { sent: true };
         }
 
         async function sendReviewDecisionEmail(status, report, reviewedBy) {
-            if (!window.emailjs || !EMAILJS_SERVICE_ID) {
-                return { sent: false, reason: 'Missing EmailJS library or service ID' };
-            }
+            if (!window.emailjs || !EMAILJS_SERVICE_ID) return { sent: false };
 
             const templateId = status === 'approved' ? EMAILJS_ACCEPT_TEMPLATE_ID : EMAILJS_DECLINE_TEMPLATE_ID;
-            if (!templateId) {
-                return { sent: false, reason: `Missing ${status} template ID` };
-            }
-            const recipientEmail = (report?.email || '').trim();
-            if (!recipientEmail) {
-                return { sent: false, reason: 'Missing student email on report' };
-            }
+            if (!templateId) return { sent: false };
 
-            const templateParams = {
+            const recipientEmail = (report?.email || '').trim();
+            if (!recipientEmail) return { sent: false };
+
+            await window.emailjs.send(EMAILJS_SERVICE_ID, templateId, {
                 student_name: report?.name || 'Student',
                 student_email: recipientEmail,
                 absence_reason: report?.reason || '',
-                to_name: report?.name || 'Student',
-                to_email: recipientEmail,
-                name: report?.name || 'Student',
-                email: recipientEmail,
-                reason: report?.reason || '',
-                recipient: recipientEmail,
-                recipient_email: recipientEmail,
-                email_to: recipientEmail,
-                mail_to: recipientEmail,
-                user_email: recipientEmail,
-                reply_to: recipientEmail,
                 decision: status,
-                status,
-                result: status,
+                status: status,
                 reviewed_by: reviewedBy || 'unknown',
-                reviewed_at: new Date().toLocaleString(),
-                message: status === 'approved'
-                    ? 'Your absence report has been approved.'
-                    : 'Your absence report has been declined.'
-            };
-
-            await window.emailjs.send(EMAILJS_SERVICE_ID, templateId, templateParams);
+                message: status === 'approved' ? 'Your absence report has been approved.' : 'Your absence report has been declined.'
+            });
             return { sent: true };
         }
 
@@ -287,34 +190,38 @@
 
             absenceReportsById.clear();
             reports.forEach(r => {
-                if (r && r.id != null) absenceReportsById.set(String(r.id), r);
+                const pKey = r.report_id || r.id; // Support both just in case
+                if (pKey != null) absenceReportsById.set(String(pKey), r);
             });
 
             const isAdminView = !!window._isAdmin;
 
             list.innerHTML = reports.map(r => {
                 const status = (r.status || 'pending');
+                const pKey = r.report_id || r.id;
+                
                 const pendingActions = isAdminView ? `
                         <div class="mt-3 flex gap-2">
-                            <button data-id="${r.id}" data-status="approved" class="approve-absence-btn text-sm font-semibold bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700">Approve</button>
-                            <button data-id="${r.id}" data-status="declined" class="decline-absence-btn text-sm font-semibold bg-red-600 text-white px-3 py-2 rounded-lg hover:bg-red-700">Decline</button>
+                            <button data-id="${pKey}" data-status="approved" class="approve-absence-btn text-sm font-semibold bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 shadow-sm">Approve</button>
+                            <button data-id="${pKey}" data-status="declined" class="decline-absence-btn text-sm font-semibold bg-red-600 text-white px-3 py-2 rounded-lg hover:bg-red-700 shadow-sm">Decline</button>
                         </div>
                     ` : '';
                 const deleteAction = isAdminView ? `
-                        <div class="mt-2">
-                            <button data-id="${r.id}" class="delete-absence-btn text-sm font-semibold bg-slate-700 text-white px-3 py-2 rounded-lg hover:bg-slate-800">Delete</button>
+                        <div class="mt-2 text-right">
+                            <button data-id="${pKey}" class="delete-absence-btn text-xs font-semibold text-slate-400 hover:text-red-600">Delete Permanently</button>
                         </div>
                     ` : '';
 
                 return `
-                        <div class="border rounded-lg p-4 bg-white">
-                            <p><strong>Name:</strong> ${escapeHtml(r.name)}</p>
-                            <p><strong>Email:</strong> ${escapeHtml(r.email || 'unknown')}</p>
-                            <p><strong>Reason:</strong> ${escapeHtml(r.reason)}</p>
-                            <p class="text-xs text-slate-500 mt-2">Submitted: ${r.created_at ? escapeHtml(new Date(r.created_at).toLocaleString()) : 'unknown'}</p>
-                            <p class="text-xs text-slate-400 mt-2">Status: ${escapeHtml(status)}</p>
-                            ${status !== 'pending' ? `<p class="text-xs text-slate-400 mt-1">Reviewed by: ${escapeHtml(r.reviewed_by || 'unknown')}</p>` : ''}
-                            ${status !== 'pending' ? `<p class="text-xs text-slate-400 mt-1">Reviewed at: ${r.reviewed_at ? escapeHtml(new Date(r.reviewed_at).toLocaleString()) : 'unknown'}</p>` : ''}
+                        <div class="border border-slate-200 rounded-xl p-5 bg-white shadow-sm">
+                            <div class="flex justify-between items-start mb-2">
+                                <p class="text-lg font-bold text-slate-800">${escapeHtml(r.name)}</p>
+                                <span class="px-2 py-1 rounded text-[10px] font-bold uppercase ${status === 'approved' ? 'bg-green-100 text-green-700' : (status === 'declined' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700')}">${escapeHtml(status)}</span>
+                            </div>
+                            <p class="text-sm"><strong class="text-slate-600">Email:</strong> <a href="mailto:${escapeHtml(r.email)}" class="text-blue-600 hover:underline">${escapeHtml(r.email || 'unknown')}</a></p>
+                            <p class="text-sm mt-1"><strong class="text-slate-600">Reason:</strong> ${escapeHtml(r.reason)}</p>
+                            <p class="text-xs text-slate-400 mt-4 border-t border-slate-100 pt-2">Submitted: ${r.created_at ? escapeHtml(new Date(r.created_at).toLocaleString()) : 'unknown'}</p>
+                            ${status !== 'pending' ? `<p class="text-xs text-slate-400">Reviewed by: ${escapeHtml(r.reviewed_by || 'unknown')}</p>` : ''}
                             ${status === 'pending' ? pendingActions : ''}
                             ${deleteAction}
                         </div>
@@ -328,10 +235,7 @@
                         const id = e.currentTarget.getAttribute('data-id');
                         const newStatus = e.currentTarget.getAttribute('data-status');
                         try {
-                            const emailResult = await reviewAbsenceReport(id, newStatus, absenceReportsById.get(String(id)) || null);
-                            if (!emailResult.sent) {
-                                alert(`Report updated, but notification email was not sent (${emailResult.reason}).`);
-                            }
+                            await reviewAbsenceReport(id, newStatus, absenceReportsById.get(String(id)) || null);
                         } catch (err) {
                             console.error('Failed to update report status', err);
                             alert('Failed to update report: ' + (err.message || err));
@@ -355,36 +259,37 @@
             }
         }
 
-        // Open admin modal and set admin view flag
         function openAdminReports() {
             window._isAdmin = true;
             document.getElementById('adminReportsModal').classList.remove('hidden');
             refreshAdminPanel();
         }
 
-        // Update absence report status (approve/decline)
-        // 1. Update the Review function
         async function reviewAbsenceReport(id, status, report) {
             const client = getSupabaseClient();
-            // ... (keep session logic) ...
+            const { data: { session } } = await client.auth.getSession();
+            const adminEmail = session?.user?.email || 'Admin';
 
+            // Changed .eq('report_id', id) to match your schema
             const { error } = await client.from(ABSENCE_TABLE).update({
                 status,
-                reviewed_by: userEmail,
+                reviewed_by: adminEmail,
                 reviewed_at: new Date().toISOString()
-            }).eq('report_id', id); // CHANGE 'id' TO 'report_id'
+            }).eq('report_id', id);
 
             if (error) throw error;
-            // ... (keep email logic) ...
+            
+            // Try to send email, but don't crash if it fails
+            try {
+                await sendReviewDecisionEmail(status, report, adminEmail);
+            } catch(e) { console.warn("Email notice not sent:", e); }
+            
+            await refreshAdminPanel();
         }
 
-        // 2. Update the Delete function
         async function deleteAbsenceReport(id) {
             const client = getSupabaseClient();
-            const { error } = await client.from(ABSENCE_TABLE)
-                .delete()
-                .eq('report_id', id); // CHANGE 'id' TO 'report_id'
-
+            const { error } = await client.from(ABSENCE_TABLE).delete().eq('report_id', id);
             if (error) throw error;
             await refreshAdminPanel();
         }
@@ -398,6 +303,11 @@
                 const currentEmail = emailField.value;
                 const name = document.getElementById("absenceName").value;
                 const reason = document.getElementById("absenceReason").value;
+                
+                status.classList.remove('hidden');
+                status.className = 'mt-2 text-sm font-medium text-blue-600';
+                status.textContent = 'Submitting...';
+
                 try {
                     await submitAbsenceReport(name, currentEmail, reason);
                     try {
@@ -406,9 +316,9 @@
                         console.error('EmailJS send failed', emailErr);
                     }
                     e.target.reset();
-                    emailField.value = currentEmail;
-                    setStatus(status, "Absence submitted successfully.", "text-green-600");
-                } catch (err) { setStatus(status, "Error submitting report.", "text-red-600"); }
+                    emailField.value = currentEmail; // Restore email since it's readonly
+                    setStatus(status, "Absence submitted successfully. An admin will review it soon.", "text-green-600");
+                } catch (err) { setStatus(status, "Error submitting report. Please try again.", "text-red-600"); }
             });
 
             // Auth Logic & Reveal Trigger
@@ -418,17 +328,12 @@
             async function handleAuth(session) {
                 updateFormVisibility(session);
                 let isAdmin = false;
+                
                 if (session && session.user && session.user.email) {
                     const email = (session.user.email || '').toLowerCase();
-                    if (window._resolveAccountRole) {
-                        try {
-                            const role = await window._resolveAccountRole(email);
-                            isAdmin = role === 'admin';
-                        } catch (err) { isAdmin = false; }
-                    } else {
-                        const adminEmails = window._adminEmails || ['nbhsttclub@gmail.com'];
-                        isAdmin = adminEmails.includes(email);
-                    }
+                    // Basic admin check (add more emails to this list if needed)
+                    const adminAllowlist =['nbhsttclub@gmail.com', 'jonathanzhao111@gmail.com', 'damon.yuan@education.nsw.gov.au'];
+                    isAdmin = adminAllowlist.includes(email);
                 }
 
                 window._isAdmin = !!isAdmin;
@@ -440,7 +345,7 @@
                     adminBtn?.classList.add('hidden');
                 }
 
-                // REVEAL PAGE Logic
+                // REVEAL PAGE Logic (Fades everything in at once)
                 document.getElementById('main-content').classList.remove('opacity-0');
                 const footer = document.getElementById('page-footer');
                 if (footer) footer.classList.remove('opacity-0');
