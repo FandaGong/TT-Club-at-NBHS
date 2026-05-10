@@ -10,6 +10,10 @@
     <link rel="stylesheet" href="animations.css">
     <link rel="icon" type="image/png" href="favicon.png">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        window._testScript = true;
+        console.log('TEST: Inline script in HEAD executed');
+    </script>
 </head>
 
 <body class="bg-red-50 text-slate-900 font-sans min-h-screen flex flex-col">
@@ -168,8 +172,9 @@
                             <h3 class="font-bold text-lg text-slate-800">Absence Reports</h3>
                             <p class="text-slate-600 text-sm mt-1">Manage student absence submissions.</p>
                         </div>
-                        <a href="absence-report.html"
-                            class="mt-auto text-red-600 font-semibold hover:underline text-sm">View Reports &rarr;</a>
+                        <button id="openAbsenceReportsModalBtn" type="button"
+                            class="mt-auto text-red-600 font-semibold hover:underline text-sm cursor-pointer">View
+                            Reports &rarr;</button>
                     </div>
                     <div
                         class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-start gap-4">
@@ -238,6 +243,23 @@
                             class="mt-auto text-red-600 font-semibold hover:underline text-sm cursor-pointer">Browse
                             Matches &rarr;</button>
                     </div>
+                    <div
+                        class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-start gap-4">
+                        <div class="bg-blue-100 text-blue-700 p-3 rounded-xl">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg text-slate-800">Elo Adjustment</h3>
+                            <p class="text-slate-600 text-sm mt-1">Manually adjust a player's ELO rating.</p>
+                        </div>
+                        <button id="openEloAdjustmentModalBtn" type="button"
+                            class="mt-auto text-red-600 font-semibold hover:underline text-sm cursor-pointer">Adjust
+                            ELO &rarr;</button>
+                    </div>
                     <div class="bg-red-50 p-6 rounded-2xl shadow-sm border border-red-200 flex flex-col gap-4">
                         <h3 class="font-bold text-lg text-red-900">Season Management</h3>
                         <button onclick="finalizeSeason()"
@@ -256,14 +278,45 @@
 
     <!-- Modals (direct children of body) -->
     <div id="accountRequestsModal"
-        class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-        <div class="bg-white rounded-2xl shadow-lg max-w-3xl w-full max-h-[80vh] overflow-auto">
-            <div class="sticky top-0 bg-white border-b p-4 flex items-center justify-between">
-                <h3 class="font-bold text-lg text-slate-800">Account Requests</h3>
+        class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-black/55 backdrop-blur-sm p-4">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden border border-slate-200">
+            <div class="bg-gradient-to-r from-slate-800 to-red-800 text-white p-5 flex items-start justify-between gap-4">
+                <div>
+                    <p class="text-xs uppercase tracking-[0.24em] text-slate-200">Admin Tool</p>
+                    <h3 class="font-extrabold text-2xl mt-1">Account Requests</h3>
+                    <p class="text-slate-100/90 text-sm mt-1">Approve, decline, or review pending club account requests.</p>
+                </div>
                 <button id="closeAccountRequestsModalBtn" type="button"
-                    class="text-slate-500 hover:text-slate-700 text-2xl">&times;</button>
+                    class="shrink-0 rounded-full bg-white/10 hover:bg-white/20 text-white text-2xl leading-none h-11 w-11 inline-flex items-center justify-center">&times;</button>
             </div>
-            <div id="accountRequestsModalList" class="p-4 space-y-3"></div>
+            <div class="p-6 max-h-[calc(90vh-92px)] overflow-y-auto">
+                <div class="rounded-2xl bg-slate-50 border border-slate-200 p-4 text-sm text-slate-600 mb-4">
+                    Review each request card and choose the account role before approving.
+                </div>
+                <div id="accountRequestsModalList" class="space-y-3"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Absence Reports Modal -->
+    <div id="absenceReportsModal"
+        class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-black/55 backdrop-blur-sm p-4">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden border border-red-100">
+            <div class="bg-gradient-to-r from-red-700 to-orange-700 text-white p-5 flex items-start justify-between gap-4">
+                <div>
+                    <p class="text-xs uppercase tracking-[0.24em] text-red-100">Admin Tool</p>
+                    <h3 class="font-extrabold text-2xl mt-1">Absence Reports</h3>
+                    <p class="text-red-50/90 text-sm mt-1">Review submitted absence notes and mark them approved or declined.</p>
+                </div>
+                <button id="closeAbsenceReportsModalBtn" type="button"
+                    class="shrink-0 rounded-full bg-white/10 hover:bg-white/20 text-white text-2xl leading-none h-11 w-11 inline-flex items-center justify-center">&times;</button>
+            </div>
+            <div class="p-6 max-h-[calc(90vh-92px)] overflow-y-auto">
+                <div class="rounded-2xl bg-red-50 border border-red-100 p-4 text-sm text-red-900 mb-4">
+                    Each report card shows the student's note, status, and review actions.
+                </div>
+                <div id="absenceReportsModalList" class="space-y-3"></div>
+            </div>
         </div>
     </div>
 
@@ -341,6 +394,37 @@
                 <button id="profileLogoutBtn" type="button"
                     class="w-full bg-slate-200 text-slate-800 px-4 py-2 rounded-lg font-semibold hover:bg-slate-300 transition-colors">Log
                     Out</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ELO Adjustment Modal -->
+    <div id="eloAdjustmentModal"
+        class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+        <div class="bg-white rounded-2xl shadow-lg max-w-md w-full max-h-[90vh] flex flex-col overflow-hidden">
+            <div class="bg-blue-600 text-white p-4 flex items-center justify-between shrink-0">
+                <h3 class="font-bold text-lg">Adjust Player ELO</h3>
+                <button id="closeEloAdjustmentModalBtn" type="button"
+                    class="text-white hover:text-blue-200 text-2xl leading-none">&times;</button>
+            </div>
+            <div class="p-6 space-y-4 overflow-y-auto">
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">Player Name</label>
+                    <input id="eloAdjustmentPlayerInput" type="text" placeholder="Enter player name..."
+                        class="w-full p-3 border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">ELO Change</label>
+                    <div class="flex gap-2">
+                        <input id="eloAdjustmentValueInput" type="number" placeholder="e.g., +50 or -30"
+                            class="flex-1 p-3 border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <p class="text-xs text-slate-500 mt-1">Use + for increase, - for decrease (e.g., +50, -30)</p>
+                </div>
+                <button id="submitEloAdjustmentBtn" type="button"
+                    class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                    Adjust ELO</button>
+                <p id="eloAdjustmentStatus" class="hidden text-sm font-medium text-center"></p>
             </div>
         </div>
     </div>
@@ -494,12 +578,35 @@
 
     <script>
         window.manualPageReveal = true;
+        console.log('1. Script started');
+        const fallbackRevealTimer = setTimeout(() => {
+            const main = document.getElementById('main-content');
+            if (main && main.classList.contains('opacity-0')) {
+                main.classList.remove('opacity-0');
+                document.getElementById('page-footer')?.classList.remove('opacity-0');
+            }
+        }, 2500);
 
         const SUPABASE_URL = "https://ngnkbfazhdedaqvxcphw.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbmtiZmF6aGRlZGFxdnhjcGh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTE5NDksImV4cCI6MjA5MzI4Nzk0OX0.F_S6ORkFe-SuJPybs7FEFH94E6U2hZ5ern4vrg4kMOk";
-        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        console.log('2. Config loaded');
+        
+        // Create or reuse Supabase client
+        let _supabase = window._supabaseClient;
+        console.log('3. Supabase check:', !!_supabase, typeof supabase);
+        if (!_supabase && window.supabase) {
+            try {
+                _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                window._supabaseClient = _supabase;
+                console.log('4. Supabase created');
+            } catch (err) {
+                console.error('Supabase init failed:', err);
+            }
+        }
+        console.log('5. Supabase ready:', !!_supabase);
 
         const ADMIN_ALLOWLIST = ['nbhsttclub@gmail.com', 'jonathanzhao111@gmail.com', 'damon.yuan@education.nsw.gov.au'];
+        console.log('6. ADMIN_ALLOWLIST defined');
 
         let currentAccountRole = 'guest';
         let currentAccountEmail = '';
@@ -533,6 +640,14 @@
 
         function getAccountLabel(account) {
             return account?.display_name || account?.email || 'Account';
+        }
+
+        function getAccountRequestKey(request) {
+            return Object.prototype.hasOwnProperty.call(request || {}, 'request_id') ? 'request_id' : 'id';
+        }
+
+        function getAccountRequestId(request) {
+            return request?.request_id || request?.id || '';
         }
 
         function getManualMatchPlayerLabel(player) {
@@ -932,59 +1047,97 @@
         }
 
         function revealPage() {
+            clearTimeout(fallbackRevealTimer);
             document.getElementById('main-content').classList.remove('opacity-0');
             const footer = document.getElementById('page-footer');
             if (footer) footer.classList.remove('opacity-0');
         }
 
-        async function resolveAccountRole(email) {
+        async function resolveAccountRole(email, accountId) {
             if (!email) return 'standard';
             if (ADMIN_ALLOWLIST.includes(email.toLowerCase())) return 'admin';
 
+            if (accountId) {
+                const { data, error } = await _supabase
+                    .from('account')
+                    .select('role, status')
+                    .eq('account_id', accountId)
+                    .maybeSingle();
+                if (!error && data && (data.status || 'active').toLowerCase() === 'active') {
+                    return (data.role || 'standard').toLowerCase();
+                }
+            }
+
+            const { data: accountData, error: accountError } = await _supabase
+                .from('account')
+                .select('role, status')
+                .ilike('email', email)
+                .maybeSingle();
+            if (!accountError && accountData && (accountData.status || 'active').toLowerCase() === 'active') {
+                return (accountData.role || 'standard').toLowerCase();
+            }
+
             const { data, error } = await _supabase.from('account_requests').select('role, status').ilike('email', email).order('created_at', { ascending: false }).limit(1);
-            if (error || !data || data.length === 0) return 'standard';
-            if ((data[0].status || '').toLowerCase() === 'approved') return (data[0].role || 'standard').toLowerCase();
+            if (!error && data && data.length > 0 && (data[0].status || '').toLowerCase() === 'approved') {
+                return (data[0].role || 'standard').toLowerCase();
+            }
+
             return 'standard';
         }
 
         async function updateUI(session) {
-            const loginContainer = document.getElementById('loginContainer');
-            const dashboardContainer = document.getElementById('dashboardContainer');
+            try {
+                const loginContainer = document.getElementById('loginContainer');
+                const dashboardContainer = document.getElementById('dashboardContainer');
 
-            if (session) {
-                const email = session.user.email;
-                currentAccountEmail = email;
-                currentAccountId = session.user.id;
-                currentAccountDisplayName = session.user.user_metadata?.full_name || session.user.user_metadata?.name || email.split('@')[0] || '';
-                loginContainer.classList.add('hidden');
-                dashboardContainer.classList.remove('hidden');
-                document.getElementById('adminUserEmail').textContent = `Logged in as: ${email}`;
+                if (session) {
+                    const email = session.user.email;
+                    currentAccountEmail = email;
+                    currentAccountId = session.user.id;
+                    currentAccountDisplayName = session.user.user_metadata?.full_name || session.user.user_metadata?.name || email.split('@')[0] || '';
+                    loginContainer.classList.add('hidden');
+                    dashboardContainer.classList.remove('hidden');
+                    document.getElementById('adminUserEmail').textContent = `Logged in as: ${email}`;
 
-                const role = await resolveAccountRole(email);
-                currentAccountRole = role;
-                const isAdmin = role === 'admin';
+                    const role = await resolveAccountRole(email, session.user.id);
+                    currentAccountRole = role;
+                    const isAdmin = role === 'admin';
 
-                document.getElementById('dashboardAccessNote').textContent = isAdmin ? 'Admin access granted.' : 'Standard user access granted.';
-                document.getElementById('standardUserNotice').classList.toggle('hidden', isAdmin);
-                document.getElementById('adminToolsContainer').classList.toggle('hidden', !isAdmin);
-                document.getElementById('pageTitle').textContent = isAdmin ? 'Admin Panel' : 'Dashboard';
+                    document.getElementById('dashboardAccessNote').textContent = isAdmin ? 'Admin access granted.' : 'Standard user access granted.';
+                    document.getElementById('standardUserNotice').classList.toggle('hidden', isAdmin);
+                    document.getElementById('adminToolsContainer').classList.toggle('hidden', !isAdmin);
+                    document.getElementById('pageTitle').textContent = isAdmin ? 'Admin Panel' : 'Dashboard';
 
-                if (document.getElementById('profileEmail')) document.getElementById('profileEmail').textContent = email;
-                if (document.getElementById('profileNameInput') && !document.getElementById('profileNameInput').value) {
-                    document.getElementById('profileNameInput').value = currentAccountDisplayName;
+                    if (document.getElementById('profileEmail')) document.getElementById('profileEmail').textContent = email;
+                    if (document.getElementById('profileNameInput') && !document.getElementById('profileNameInput').value) {
+                        document.getElementById('profileNameInput').value = currentAccountDisplayName;
+                    }
+                    loadProfileSummary();
+                    if (isAdmin) loadAccountRequests();
+                } else {
+                    currentAccountRole = 'guest';
+                    currentAccountEmail = '';
+                    currentAccountId = '';
+                    loginContainer.classList.remove('hidden');
+                    dashboardContainer.classList.add('hidden');
+                    document.getElementById('pageTitle').textContent = 'Login';
+                    document.getElementById('profileModal').classList.add('hidden');
                 }
-                loadProfileSummary();
-                if (isAdmin) loadAccountRequests();
-            } else {
-                currentAccountRole = 'guest';
-                currentAccountEmail = '';
-                currentAccountId = '';
-                loginContainer.classList.remove('hidden');
-                dashboardContainer.classList.add('hidden');
-                document.getElementById('pageTitle').textContent = 'Login';
-                document.getElementById('profileModal').classList.add('hidden');
+            } catch (error) {
+                console.error('Failed to update admin UI:', error);
+                document.getElementById('loginContainer')?.classList.remove('hidden');
+                document.getElementById('dashboardContainer')?.classList.add('hidden');
+                const pageTitle = document.getElementById('pageTitle');
+                if (pageTitle) pageTitle.textContent = 'Login';
+                const statusNode = document.getElementById('adminLoginStatus') || document.getElementById('standardLoginStatus');
+                if (statusNode) {
+                    statusNode.classList.remove('hidden');
+                    statusNode.className = 'mt-2 text-sm font-medium text-red-600 text-center';
+                    statusNode.textContent = 'An error occurred while loading the page. Please refresh.';
+                }
+            } finally {
+                revealPage();
             }
-            revealPage();
         }
 
         function setDialogTab(tabName) {
@@ -1047,7 +1200,7 @@
                     }
                 }
 
-                const sessionRole = await resolveAccountRole(data.user.email);
+                const sessionRole = await resolveAccountRole(data.user.email, data.user.id);
                 if (isAdminLogin && sessionRole !== 'admin') {
                     await _supabase.auth.signOut();
                     throw new Error('That account is not approved as an admin account.');
@@ -1081,7 +1234,8 @@
                 const password = passwordInput.value;
 
                 // 1. Check for existing pending request
-                const { data: existingData } = await _supabase.from('account_requests').select('id').ilike('email', email).eq('status', 'pending').limit(1);
+                const { data: existingData, error: existingError } = await _supabase.from('account_requests').select('*').ilike('email', email).eq('status', 'pending').limit(1);
+                if (existingError) throw existingError;
 
                 if (existingData && existingData.length > 0) {
                     throw new Error('A pending request for this email already exists.');
@@ -1113,9 +1267,8 @@
             if (!list) return;
             list.innerHTML = '<p class="text-slate-500">Loading requests...</p>';
 
-            // Load 'linked_account_id' so we can update the 'account' table on approval
             const { data, error } = await _supabase.from('account_requests')
-                .select('request_id, linked_account_id, email, role, status, created_at, reviewed_at, reviewed_by')
+                .select('*')
                 .order('created_at', { ascending: false });
 
             if (error) {
@@ -1128,24 +1281,26 @@
             }
 
             list.innerHTML = data.map((req) => {
+                const requestKey = getAccountRequestKey(req);
+                const requestId = getAccountRequestId(req);
                 const status = (req.status || 'pending').toLowerCase();
                 let statusChip = 'bg-yellow-100 text-yellow-800';
                 if (status === 'approved') statusChip = 'bg-green-100 text-green-800';
                 if (status === 'declined') statusChip = 'bg-red-100 text-red-800';
 
                 const actions = status === 'pending' ? `
-                    <div class="mt-3 flex gap-2">
-                        <select class="request-role-select p-2 border rounded-lg text-sm bg-white" data-id="${req.request_id}">
+                    <div class="mt-4 flex flex-wrap gap-2">
+                        <select class="request-role-select p-2 border rounded-lg text-sm bg-white" data-id="${requestId}" data-key-column="${requestKey}">
                             <option value="standard" ${req.role === 'standard' ? 'selected' : ''}>Standard</option>
                             <option value="admin" ${req.role === 'admin' ? 'selected' : ''}>Admin</option>
                         </select>
-                        <button class="approve-request-btn bg-green-600 text-white px-3 py-2 rounded-lg text-sm font-bold shadow-sm" data-id="${req.request_id}" data-linked="${req.linked_account_id}" data-email="${req.email}">Approve</button>
-                        <button class="decline-request-btn bg-red-600 text-white px-3 py-2 rounded-lg text-sm font-bold shadow-sm" data-id="${req.request_id}" data-linked="${req.linked_account_id}" data-email="${req.email}">Decline</button>
+                        <button class="approve-request-btn bg-green-600 text-white px-3 py-2 rounded-lg text-sm font-bold shadow-sm" data-id="${requestId}" data-key-column="${requestKey}" data-linked="${req.linked_account_id || ''}" data-email="${req.email}">Approve</button>
+                        <button class="decline-request-btn bg-red-600 text-white px-3 py-2 rounded-lg text-sm font-bold shadow-sm" data-id="${requestId}" data-key-column="${requestKey}" data-linked="${req.linked_account_id || ''}" data-email="${req.email}">Decline</button>
                     </div>` : '';
 
                 return `
-                    <div class="rounded-xl border border-slate-200 p-4 bg-slate-50">
-                        <div class="flex flex-col md:flex-row justify-between md:items-start gap-2">
+                    <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                        <div class="flex flex-col md:flex-row justify-between md:items-start gap-3">
                             <div>
                                 <p class="font-bold text-slate-800">${req.email}</p>
                                 <p class="text-xs text-slate-500 mt-1">Requested: ${new Date(req.created_at).toLocaleString()}</p>
@@ -1159,11 +1314,86 @@
 
             list.querySelectorAll('.approve-request-btn').forEach(btn => btn.addEventListener('click', async () => {
                 const roleSelect = btn.parentElement.querySelector('.request-role-select');
-                await reviewAccountRequest(btn.dataset.id, btn.dataset.linked, 'approved', btn.dataset.email, roleSelect.value);
+                await reviewAccountRequest(btn.dataset.id, btn.dataset.keyColumn, btn.dataset.linked, 'approved', btn.dataset.email, roleSelect.value);
             }));
             list.querySelectorAll('.decline-request-btn').forEach(btn => btn.addEventListener('click', async () => {
-                await reviewAccountRequest(btn.dataset.id, btn.dataset.linked, 'declined', btn.dataset.email, 'standard');
+                await reviewAccountRequest(btn.dataset.id, btn.dataset.keyColumn, btn.dataset.linked, 'declined', btn.dataset.email, 'standard');
             }));
+        }
+
+        async function loadAbsenceReports() {
+            const list = document.getElementById('absenceReportsModalList');
+            if (!list) return;
+            list.innerHTML = '<p class="text-slate-500">Loading absence reports...</p>';
+
+            const { data, error } = await _supabase.from('absence_reports')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                list.innerHTML = `<p class="text-red-600">Failed to load reports: ${error.message}</p>`;
+                return;
+            }
+
+            if (!data.length) {
+                list.innerHTML = '<p class="text-slate-500">No absence reports yet.</p>';
+                return;
+            }
+
+            const keyColumn = Object.prototype.hasOwnProperty.call(data[0] || {}, 'id') ? 'id' : 'report_id';
+
+            list.innerHTML = data.map((report) => {
+                const status = (report.status || 'pending').toLowerCase();
+                let statusChip = 'bg-yellow-100 text-yellow-800';
+                if (status === 'approved') statusChip = 'bg-green-100 text-green-800';
+                if (status === 'declined') statusChip = 'bg-red-100 text-red-800';
+
+                const actions = status === 'pending' ? `
+                    <div class="mt-4 flex flex-wrap gap-2">
+                        <button class="approve-absence-btn bg-green-600 text-white px-3 py-2 rounded-lg text-sm font-bold shadow-sm" data-id="${report[keyColumn]}" data-key-column="${keyColumn}" data-status="approved">Approve</button>
+                        <button class="decline-absence-btn bg-red-600 text-white px-3 py-2 rounded-lg text-sm font-bold shadow-sm" data-id="${report[keyColumn]}" data-key-column="${keyColumn}" data-status="declined">Decline</button>
+                    </div>` : `<p class="text-xs text-slate-500 mt-3">Reviewed by: ${report.reviewed_by || 'unknown'}</p>`;
+
+                return `
+                    <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                        <div class="flex flex-col md:flex-row justify-between md:items-start gap-3">
+                            <div>
+                                <p class="font-bold text-slate-800">${report.name || 'Unknown Name'}</p>
+                                <p class="text-sm text-slate-500">${report.email || 'Unknown Email'}</p>
+                                <p class="text-xs text-slate-500 mt-1">Submitted: ${new Date(report.created_at).toLocaleString()}</p>
+                            </div>
+                            <span class="px-2 py-1 rounded text-[10px] font-bold uppercase self-start ${statusChip}">${status}</span>
+                        </div>
+                        <p class="text-sm text-slate-700 mt-4"><span class="font-semibold">Reason:</span> ${report.reason || 'No reason provided'}</p>
+                        ${actions}
+                    </div>`;
+            }).join('');
+
+            list.querySelectorAll('.approve-absence-btn').forEach(btn => btn.addEventListener('click', async (event) => {
+                await reviewAbsenceReport(event.currentTarget.dataset.id, event.currentTarget.dataset.status, event.currentTarget.dataset.keyColumn);
+            }));
+            list.querySelectorAll('.decline-absence-btn').forEach(btn => btn.addEventListener('click', async (event) => {
+                await reviewAbsenceReport(event.currentTarget.dataset.id, event.currentTarget.dataset.status, event.currentTarget.dataset.keyColumn);
+            }));
+        }
+
+        async function reviewAbsenceReport(id, status, keyColumn = 'id') {
+            if (!id) return;
+            if (!confirm(`Mark this report as ${status}?`)) return;
+
+            try {
+                const { error } = await _supabase.from('absence_reports').update({
+                    status,
+                    reviewed_by: currentAccountEmail,
+                    reviewed_at: new Date().toISOString()
+                }).eq(keyColumn || 'id', id);
+
+                if (error) throw error;
+
+                await loadAbsenceReports();
+            } catch (error) {
+                alert(`Error updating absence report: ${error.message}`);
+            }
         }
 
         async function loadNameLinkAccounts() {
@@ -1341,7 +1571,7 @@
                 const [{ data: accountData, error: accountError }, { data: rankingData, error: rankingError }, { data: matchData, error: matchError }] = await Promise.all([
                     _supabase.from('account').select('display_name, email').eq('account_id', currentAccountId).maybeSingle(),
                     _supabase.from('player_rankings').select('elo,wins,losses,division,half,name,account_id').order('elo', { ascending: false }).limit(250),
-                    _supabase.from('match_history').select('created_at,player_1,player_2,winner,score,player_1_account_id,player_2_account_id,winner_account_id').order('created_at', { ascending: false }).limit(250)
+                    _supabase.from('match_history').select('id,created_at,player_1,player_2,winner,score,player_1_account_id,player_2_account_id,winner_account_id').order('created_at', { ascending: false }).limit(250)
                 ]);
 
                 if (accountError) throw accountError;
@@ -1392,8 +1622,9 @@
                     }
 
                     profileMatches.innerHTML = recentMatches.map(match => {
-                        const opponent = match.player_1_account_id === currentAccountId ? match.player_2 : match.player_1;
-                        const isWinner = match.winner_account_id === currentAccountId;
+                        const isPlayer1 = match.player_1_account_id === currentAccountId || nameCandidates.includes(normalizeKey(match.player_1));
+                        const opponent = isPlayer1 ? match.player_2 : match.player_1;
+                        const isWinner = match.winner_account_id === currentAccountId || nameCandidates.includes(normalizeKey(match.winner));
                         const score = match.score || 'No score recorded';
                         return `
                             <div class="rounded-xl border border-slate-200 bg-white p-3">
@@ -1441,8 +1672,9 @@
             }
         }
 
-        async function reviewAccountRequest(id, linkedId, status, email, role) {
+        async function reviewAccountRequest(id, keyColumn, linkedId, status, email, role) {
             if (!confirm(`Mark ${email} as ${status}?`)) return;
+            const requestKeyColumn = keyColumn || 'request_id';
 
             try {
                 // If approving, create the auth account and account table entry
@@ -1451,7 +1683,7 @@
                     const { data: requestData, error: fetchErr } = await _supabase
                         .from('account_requests')
                         .select('password')
-                        .eq('request_id', id)
+                        .eq(requestKeyColumn, id)
                         .single();
 
                     if (fetchErr) throw new Error("Could not fetch password: " + fetchErr.message);
@@ -1497,7 +1729,7 @@
                     reviewed_by: currentAccountEmail,
                     role,
                     linked_account_id: linkedId && linkedId !== 'null' ? linkedId : null
-                }).eq('request_id', id);
+                }).eq(requestKeyColumn, id);
 
                 if (dbError) {
                     alert('Failed to update request status: ' + dbError.message);
@@ -1517,10 +1749,14 @@
         document.getElementById('dialogTabCreateAccount').addEventListener('click', () => setDialogTab('create-account'));
         document.getElementById('accountRequestForm').addEventListener('submit', handleAccountRequest);
         document.getElementById('openAccountRequestsModalBtn')?.addEventListener('click', () => { document.getElementById('accountRequestsModal').classList.remove('hidden'); loadAccountRequests(); });
+        document.getElementById('openAbsenceReportsModalBtn')?.addEventListener('click', () => { document.getElementById('absenceReportsModal').classList.remove('hidden'); loadAbsenceReports(); });
         document.getElementById('openProfileModalBtn')?.addEventListener('click', () => { document.getElementById('profileModal').classList.remove('hidden'); loadProfileSummary(); });
         document.getElementById('openMatchManagementModalBtn')?.addEventListener('click', () => { document.getElementById('matchManagementModal').classList.remove('hidden'); loadMatchManagementModal(); });
         document.getElementById('closeMatchManagementModalBtn')?.addEventListener('click', () => { document.getElementById('matchManagementModal').classList.add('hidden'); });
         document.getElementById('loadAllMatchesBtn')?.addEventListener('click', loadAllMatches);
+        document.getElementById('openEloAdjustmentModalBtn')?.addEventListener('click', () => { document.getElementById('eloAdjustmentModal').classList.remove('hidden'); });
+        document.getElementById('closeEloAdjustmentModalBtn')?.addEventListener('click', () => { document.getElementById('eloAdjustmentModal').classList.add('hidden'); });
+        document.getElementById('submitEloAdjustmentBtn')?.addEventListener('click', submitEloAdjustment);
         document.getElementById('openNameLinkModalBtn')?.addEventListener('click', () => {
             document.getElementById('nameLinkModal').classList.remove('hidden');
             document.getElementById('nameLinkSearchInput')?.focus();
@@ -1531,6 +1767,7 @@
             loadManualMatchPlayers();
         });
         document.getElementById('closeAccountRequestsModalBtn').addEventListener('click', () => document.getElementById('accountRequestsModal').classList.add('hidden'));
+        document.getElementById('closeAbsenceReportsModalBtn')?.addEventListener('click', () => document.getElementById('absenceReportsModal').classList.add('hidden'));
         document.getElementById('closeNameLinkModalBtn').addEventListener('click', () => document.getElementById('nameLinkModal').classList.add('hidden'));
         document.getElementById('closeManualMatchModalBtn')?.addEventListener('click', () => document.getElementById('manualMatchModal').classList.add('hidden'));
         document.getElementById('nameLinkSearchInput')?.addEventListener('input', renderNameLinkAccounts);
@@ -1626,9 +1863,17 @@
         document.getElementById('saveNameLinkBtn').addEventListener('click', saveNameLink);
 
         // Initialize state
-        _supabase.auth.getSession().then(({ data }) => updateUI(data.session));
-        _supabase.auth.onAuthStateChange((_event, session) => updateUI(session));
-        setDialogTab('admin-login');
+        if (_supabase) {
+            _supabase.auth.getSession().then(({ data }) => updateUI(data?.session)).catch((error) => {
+                console.error('Failed to load auth session:', error);
+                updateUI(null);
+            });
+            _supabase.auth.onAuthStateChange((_event, session) => updateUI(session));
+            setDialogTab('admin-login');
+        } else {
+            console.warn('Supabase client unavailable. Showing the login surface without auth state.');
+            updateUI(null);
+        }
 
         // Replaces finalizeCurrentSeason()
         // Replaces finalizeCurrentSeason()
@@ -1637,20 +1882,23 @@
             if (!seasonName) return;
 
             try {
-                // 1. Get Top Players
-                const { data: players, error: playerError } = await _supabase.from('account')
-                    .select('email, elo, player_details("Full Name")')
+                const { data: players, error: playerError } = await _supabase.from('player_rankings')
+                    .select('name, elo, wins')
                     .order('elo', { ascending: false });
 
-                if (playerError) throw new Error("Database rejected player query: " + playerError.message);
-                if (!players || players.length === 0) throw new Error("No players found in the account table.");
+                if (playerError) throw new Error("Database rejected ranking query: " + playerError.message);
+                if (!players || players.length === 0) throw new Error("No players found in player rankings.");
 
-                const champion = players[0].player_details?.["Full Name"] || players[0].email;
+                const champion = players[0].name;
                 const peakElo = players[0].elo || 0;
-                const top3 = players.slice(0, 3).map(p => p.player_details?.["Full Name"] || p.email).join(', ');
+                const top3 = players.slice(0, 3).map(p => p.name).join(', ');
+                const mostWins = players
+                    .slice()
+                    .sort((a, b) => (b.wins || 0) - (a.wins || 0))[0];
 
-                // 2. Get All Matches to find biggest upset
-                const { data: matches, error: matchError } = await _supabase.from('matches').select('*');
+                const { data: matches, error: matchError } = await _supabase
+                    .from('match_history')
+                    .select('player_1, player_2, winner, p1_elo_change, p2_elo_change, p1_new_elo, p2_new_elo');
                 if (matchError) throw new Error("Database rejected matches query: " + matchError.message);
 
                 let maxDiff = 0;
@@ -1658,35 +1906,36 @@
 
                 if (matches && matches.length > 0) {
                     matches.forEach(m => {
-                        const p1Start = m.P1_New_Elo - m.P1_Elo_Change;
-                        const p2Start = m.P2_New_Elo - m.P2_Elo_Change;
+                        const p1Start = (m.p1_new_elo || 0) - (m.p1_elo_change || 0);
+                        const p2Start = (m.p2_new_elo || 0) - (m.p2_elo_change || 0);
+                        const winnerKey = normalizeKey(m.winner);
 
-                        if (m.winner_id === m.player1_id && p1Start < p2Start) {
+                        if (winnerKey === normalizeKey(m.player_1) && p1Start < p2Start) {
                             if (p2Start - p1Start > maxDiff) {
                                 maxDiff = p2Start - p1Start;
-                                upsetText = `P1 beat P2 (${maxDiff} pts)`;
+                                upsetText = `${m.player_1 || 'Player 1'} beat ${m.player_2 || 'Player 2'} (${maxDiff} pts)`;
                             }
-                        } else if (m.winner_id === m.player2_id && p2Start < p1Start) {
+                        } else if (winnerKey === normalizeKey(m.player_2) && p2Start < p1Start) {
                             if (p1Start - p2Start > maxDiff) {
                                 maxDiff = p1Start - p2Start;
-                                upsetText = `P2 beat P1 (${maxDiff} pts)`;
+                                upsetText = `${m.player_2 || 'Player 2'} beat ${m.player_1 || 'Player 1'} (${maxDiff} pts)`;
                             }
                         }
                     });
                 }
 
-                // 3. Save to Seasons table
-                const { error: insertError } = await _supabase.from('seasons').insert([{
-                    "Season Name": seasonName,
-                    "Champion": champion,
-                    "Peak Elo": peakElo,
-                    "Total Matches": matches ? matches.length : 0,
-                    "Top 3 Players": top3,
-                    "Status": "Finalized",
-                    "Biggest Upset": maxDiff
+                const { error: insertError } = await _supabase.from('season_records').insert([{
+                    season_name: seasonName,
+                    champion: champion,
+                    peak_elo: peakElo,
+                    total_matches: matches ? matches.length : 0,
+                    top_3_players: top3,
+                    status: "Finalized",
+                    most_wins: mostWins ? `${mostWins.name} (${mostWins.wins || 0})` : null,
+                    biggest_upset: upsetText
                 }]);
 
-                if (insertError) throw new Error("Failed to save to seasons table: " + insertError.message);
+                if (insertError) throw new Error("Failed to save to season_records table: " + insertError.message);
 
                 alert("Season finalized successfully!");
 
@@ -1702,11 +1951,11 @@
             if (!confirm("Are you SURE you want to reset all players to baseline Elos and clear records? This cannot be undone.")) return;
 
             try {
-                const { data: players, error: playerError } = await _supabase.from('account')
-                    .select('account_id, "Half", "Division"');
+                const { data: players, error: playerError } = await _supabase.from('player_rankings')
+                    .select('id, half, division');
 
                 if (playerError) throw new Error("Database rejected player query: " + playerError.message);
-                if (!players || players.length === 0) throw new Error("No players found in the account table.");
+                if (!players || players.length === 0) throw new Error("No players found in player rankings.");
 
                 // We use simple numbers for the division keys to make matching foolproof
                 const eloMap = {
@@ -1719,8 +1968,8 @@
                 // Loop through and calculate each player's correct baseline
                 for (const player of players) {
                     // 1. Grab raw strings from the database (or defaults)
-                    const rawHalf = (player.Half || "First").trim();
-                    const rawDiv = (player.Division || "3").toString().trim();
+                    const rawHalf = (player.half || "First").trim();
+                    const rawDiv = (player.division || "3").toString().trim();
 
                     // 2. Extract just the number (Fixes the "Div 1" vs "Division 1" mismatch)
                     let divNum = "3";
@@ -1736,13 +1985,13 @@
                     const newElo = eloMap[halfKey][divNum] || 600;
 
                     // 5. Update the Database (Elo updated, wins and losses cleared to 0)
-                    const { error: updateError } = await _supabase.from('account')
+                    const { error: updateError } = await _supabase.from('player_rankings')
                         .update({
                             elo: newElo,
                             wins: 0,
                             losses: 0
                         })
-                        .eq('account_id', player.account_id);
+                        .eq('id', player.id);
 
                     if (updateError) {
                         throw new Error(`Blocked updating a player: ${updateError.message}`);
@@ -1816,6 +2065,70 @@
                 if (statusNode) statusNode.textContent = `Error loading matches: ${error.message}`;
             }
         }
-    </script>
+
+            async function submitEloAdjustment() {
+                const playerNameInput = document.getElementById('eloAdjustmentPlayerInput');
+                const eloChangeInput = document.getElementById('eloAdjustmentValueInput');
+                const statusNode = document.getElementById('eloAdjustmentStatus');
+                const playerName = (playerNameInput?.value || '').trim();
+                const eloChangeStr = (eloChangeInput?.value || '').trim();
+
+                if (!playerName) {
+                    if (statusNode) {
+                        statusNode.textContent = 'Please enter a player name';
+                        statusNode.classList.remove('hidden');
+                    }
+                    return;
+                }
+
+                if (!eloChangeStr) {
+                    if (statusNode) {
+                        statusNode.textContent = 'Please enter an ELO change';
+                        statusNode.classList.remove('hidden');
+                    }
+                    return;
+                }
+
+                const eloChange = parseInt(eloChangeStr, 10);
+                if (isNaN(eloChange)) {
+                    if (statusNode) {
+                        statusNode.textContent = 'ELO change must be a valid number';
+                        statusNode.classList.remove('hidden');
+                    }
+                    return;
+                }
+
+                try {
+                    if (statusNode) {
+                        statusNode.textContent = 'Adjusting ELO...';
+                        statusNode.classList.remove('hidden');
+                    }
+
+                    const { error } = await _supabase.rpc('adjust_player_elo', {
+                        p_player_name: playerName,
+                        p_elo_change: eloChange
+                    });
+
+                    if (error) throw error;
+
+                    if (statusNode) {
+                        statusNode.textContent = `✓ ELO adjusted by ${eloChange > 0 ? '+' : ''}${eloChange} for ${playerName}`;
+                        statusNode.classList.remove('hidden');
+                    }
+
+                    setTimeout(() => {
+                        playerNameInput.value = '';
+                        eloChangeInput.value = '';
+                        statusNode.classList.add('hidden');
+                        document.getElementById('eloAdjustmentModal').classList.add('hidden');
+                    }, 1500);
+                } catch (error) {
+                    if (statusNode) {
+                        statusNode.textContent = `Error: ${error.message}`;
+                        statusNode.classList.remove('hidden');
+                    }
+                }
+            }
+    </script>\n
 </body>
 </html>

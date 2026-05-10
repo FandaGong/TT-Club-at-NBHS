@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NBHS Table Tennis Club - Rules</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="animations.css">
     <link rel="icon" type="image/png" href="favicon.png">
@@ -15,11 +14,11 @@
 <!-- CHANGE 1: Added flex flex-col for sticky footer -->
 <body class="bg-red-50 text-slate-900 font-sans min-h-screen flex flex-col">
 
-    <header class="bg-red-800 text-white shadow-md fade-in relative">
-        <nav class="max-w-6xl mx-auto flex flex-wrap items-center justify-between px-4 py-4">
-            <a href="index.html" class="text-xl font-bold transition-opacity duration-200 hover:opacity-80 shrink-0">NBHS TT Hub</a>
+    <header class="site-header bg-red-800 text-white shadow-md fade-in relative">
+        <nav class="site-nav max-w-6xl mx-auto flex flex-wrap items-center justify-between px-4 py-4">
+            <a href="index.html" class="site-brand text-xl font-bold transition-opacity duration-200 hover:opacity-80 shrink-0">NBHS TT Hub</a>
             <button id="rankingNavToggle" type="button"
-                class="sm:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl border border-red-600 bg-red-700 text-white hover:bg-red-600 focus:outline-none transition-colors duration-200 overflow-hidden transform-gpu shrink-0"
+                class="site-nav-toggle sm:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl border border-red-600 bg-red-700 text-white hover:bg-red-600 focus:outline-none transition-colors duration-200 overflow-hidden transform-gpu shrink-0"
                 style="backface-visibility: hidden; transform: translateZ(0);"
                 aria-label="Toggle navigation" aria-controls="rankingNavLinks" aria-expanded="false">
                 <svg id="menu-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -29,26 +28,28 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
             </button>
-            <div id="rankingNavLinks" class="hidden w-full flex-col gap-1 mt-4 pt-4 border-t border-red-700/50 sm:flex sm:w-auto sm:flex-row sm:items-center sm:gap-2 sm:mt-0 sm:pt-0 sm:border-0 transition-all">
-                <a href="player-ranking.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; transform: translateZ(0);">
+            <div id="rankingNavLinks" class="site-nav-links hidden w-full flex-col gap-1 mt-4 pt-4 border-t border-red-700/50 sm:flex sm:w-auto sm:flex-row sm:items-center sm:gap-2 sm:mt-0 sm:pt-0 sm:border-0 transition-all">
+                <a href="player-ranking.html" class="site-nav-link block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; transform: translateZ(0);">
                     <svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v18" /><path d="M17 3v18" /><path d="M7 7h10" /><path d="M7 11h10" /><path d="M7 15h10" /></svg>Rankings</a>
-                <a href="player-matchup-ladder.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; transform: translateZ(0);">
+                <a href="player-matchup-ladder.html" class="site-nav-link block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; transform: translateZ(0);">
                     <svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3M3 11h18M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>Matchups</a>
-                <a href="club-analytics.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; transform: translateZ(0);">
+                <a href="club-analytics.html" class="site-nav-link block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; transform: translateZ(0);">
                     <svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3v18h18M8 7v10M12 11v6M16 5v12" /></svg>Analytics</a>
-                <a href="past-records.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; transform: translateZ(0);">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8" /><path d="M12 8v4" /><path d="M12 12l3 2" /></svg>Past Records</a>
-                <a href="absence-report.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; transform: translateZ(0);">
+                <a href="past-records.html" class="site-nav-link block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; transform: translateZ(0);">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8" /><path d="M12 8v4" /><path d="M12 12l3 2" /></svg>Records</a>
+                <a href="matches.html" class="site-nav-link block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; transform: translateZ(0);">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>Matches</a>
+                <a href="absence-report.html" class="site-nav-link block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; transform: translateZ(0);">
                     <svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h8M8 11h8M8 15h5" /><rect x="4" y="3" width="16" height="18" rx="2" ry="2" /></svg>Absence</a>
-                <a href="rules.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; transform: translateZ(0);">
+                <a href="rules.html" class="site-nav-link block rounded-lg px-3 py-3 sm:py-2 bg-transparent hover:bg-white/10 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; transform: translateZ(0);">
                     <svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>Rules</a>
-                <a id="navLoginLink" href="admin.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-white/10 hover:bg-white/20 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; transform: translateZ(0);">
+                <a id="navLoginLink" href="admin.html" class="site-nav-link site-nav-login block rounded-lg px-3 py-3 sm:py-2 bg-white/10 hover:bg-white/20 transition-colors duration-200 overflow-hidden transform-gpu" style="backface-visibility: hidden; transform: translateZ(0);">
                     <svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg><span id="navLoginLinkText">Login</span></a>
             </div>
         </nav>
     </header>
 
-    <main id="main-content" class="max-w-4xl mx-auto p-6">
+    <main id="main-content" class="max-w-4xl mx-auto p-6 opacity-0 transition-opacity duration-300">
         <section class="space-y-8">
             <div class="text-center py-10 fade-up">
                 <h1 class="text-4xl font-extrabold text-red-900 uppercase italic tracking-tight">Rules & Regulations</h1>
@@ -105,7 +106,7 @@
     </main>
 
     <!-- CHANGE 3: Added id, mt-auto, and opacity-0 -->
-    <footer id="page-footer" class="bg-slate-800 text-slate-400 mt-auto transition-opacity duration-300">
+    <footer id="page-footer" class="bg-slate-800 text-slate-400 mt-auto opacity-0 transition-opacity duration-300">
         <div class="max-w-6xl mx-auto flex items-center justify-between p-4 text-sm">
             <p>&copy; <span id="current-year">2024</span> NBHS Table Tennis Hub. All Rights Reserved.</p>
             <a href="#" class="hover:text-white transition-colors">Back to Top &uarr;</a>
@@ -117,18 +118,41 @@
         const SUPABASE_URL = "https://ngnkbfazhdedaqvxcphw.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbmtiZmF6aGRlZGFxdnhjcGh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTE5NDksImV4cCI6MjA5MzI4Nzk0OX0.F_S6ORkFe-SuJPybs7FEFH94E6U2hZ5ern4vrg4kMOk";
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        const ADMIN_ALLOWLIST = [];
+        const ADMIN_ALLOWLIST = ['nbhsttclub@gmail.com', 'jonathanzhao111@gmail.com', 'damon.yuan@education.nsw.gov.au'];
         const ACCOUNT_REQUESTS_TABLES = ['account_requests_v2', 'account_requests'];
 
         const container = document.getElementById('custom-rules-container');
         let customRules = [];
         let isAdmin = false;
         let editingRuleId = null;
+        let rulesLoaded = false;
+        let rulesLoadMessage = '';
 
-        async function resolveAccountRole(email) {
-            if (ADMIN_ALLOWLIST.includes(email.toLowerCase())) {
-                return 'admin';
+        async function resolveAccountRole(email, accountId) {
+            if (ADMIN_ALLOWLIST.includes((email || '').toLowerCase())) return 'admin';
+
+            if (accountId) {
+                const { data, error } = await _supabase
+                    .from('account')
+                    .select('role, status')
+                    .eq('account_id', accountId)
+                    .maybeSingle();
+                if (!error && data && (data.status || 'active').toLowerCase() === 'active') {
+                    return (data.role || 'standard').toLowerCase();
+                }
             }
+
+            if (email) {
+                const { data, error } = await _supabase
+                    .from('account')
+                    .select('role, status')
+                    .ilike('email', email)
+                    .maybeSingle();
+                if (!error && data && (data.status || 'active').toLowerCase() === 'active') {
+                    return (data.role || 'standard').toLowerCase();
+                }
+            }
+
             for (const tableName of ACCOUNT_REQUESTS_TABLES) {
                 const { data, error } = await _supabase
                     .from(tableName)
@@ -138,11 +162,11 @@
                     .limit(1);
                 if (!error) {
                     const request = data && data[0];
-                    if (!request) return 'standard';
+                    if (!request) continue;
                     if ((request.status || '').toLowerCase() === 'approved') {
                         return (request.role || 'standard').toLowerCase();
                     }
-                    return 'standard';
+                    continue;
                 }
                 const code = (error?.code || '').toUpperCase();
                 const message = (error?.message || '').toLowerCase();
@@ -153,6 +177,18 @@
                 }
             }
             return 'standard';
+        }
+
+        window._resolveAccountRole = resolveAccountRole;
+
+        function escapeHtml(value) {
+            return String(value || '').replace(/[&<>"']/g, character => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            }[character]));
         }
 
         // Reveal logic
@@ -181,8 +217,29 @@
         // ... Helpers (rulesToText, textToRules, encode/decode, normalize) ...
         function rulesToText(e){let t=[];for(const n of e){t.push("#".repeat(n.level||1)+" "+(n.title||"")),n.description&&t.push(n.description),t.push("")}return t.join("\n").trim()}function textToRules(e){const t=e.split("\n"),n=[];let l=null;for(const o of t){const r=o.match(/^(#{1,3})\s+(.+)$/);r?(l&&(l.description=l.description.join("\n").trim(),n.push(l)),l={title:r[2].trim(),level:r[1].length,is_section:1===r[1].length,description:[]}):l&&l.description.push(o)}return l&&(l.description=l.description.join("\n").trim(),n.push(l)),n}function encodeRuleTitle(e,t){return`[[level:${t}]]${e}`}function decodeRuleTitle(e){const t=String(e||"").match(/^\[\[level:(\d+)\]\](.*)$/);return t?{level:Math.max(1,Math.min(3,Number.parseInt(t[1],10)||1)),title:t[2]||""}:{level:1,title:String(e||"")}}function normalizeRule(e){const t=decodeRuleTitle(e.title);return{...e,title:t.title,level:t.level,is_section:1===t.level}}function buildOutlineNumber(e,t){for(let n=1;n<e;n++)t[n]||(t[n]=1);return t[e]=(t[e]||0)+1,t.fill(0,e+1),t.slice(1,e+1).join(".")}
 
-        function renderRules() {
+        function renderRules(message = rulesLoadMessage) {
             container.innerHTML = '';
+
+            if (message) {
+                container.innerHTML = `
+                    <div class="bg-white rounded-3xl border border-red-100 shadow-sm p-6 md:p-8 fade-up">
+                        <h2 class="text-xl font-black text-red-900 uppercase italic">Rules unavailable</h2>
+                        <p class="mt-2 text-sm text-slate-600">${escapeHtml(message)}</p>
+                    </div>
+                `;
+                return;
+            }
+
+            if (!customRules.length) {
+                container.innerHTML = `
+                    <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 md:p-8 fade-up">
+                        <h2 class="text-xl font-black text-red-900 uppercase italic">No rules published yet</h2>
+                        <p class="mt-2 text-sm text-slate-600">${isAdmin ? 'Use the editor below to add the first club rule.' : 'Ask a club admin to publish the current club rules.'}</p>
+                    </div>
+                `;
+                return;
+            }
+
             const counters = [0, 0, 0, 0];
             let delay = 1;
 
@@ -207,7 +264,15 @@
         async function loadRules() {
             try {
                 const { data, error } = await _supabase.from('custom_rules').select('*').order('id', { ascending: true });
+                if (error) throw error;
                 if (data) customRules = data.map(normalizeRule);
+                rulesLoaded = true;
+                rulesLoadMessage = '';
+                renderRules();
+            } catch (error) {
+                console.error('Rules load error:', error);
+                rulesLoaded = true;
+                rulesLoadMessage = error.message || 'The club rules could not be loaded from Supabase.';
                 renderRules();
             } finally {
                 revealPage();
@@ -223,8 +288,13 @@
             }
             const t = document.getElementById('rule-title').value, d = document.getElementById('rule-desc').value, l = parseInt(document.getElementById('rule-level').value);
             const payload = { title: encodeRuleTitle(t, l), description: d, is_section: l === 1 };
-            if (editingRuleId) await _supabase.from('custom_rules').update(payload).eq('id', editingRuleId);
-            else await _supabase.from('custom_rules').insert([payload]);
+            const { error } = editingRuleId
+                ? await _supabase.from('custom_rules').update(payload).eq('id', editingRuleId)
+                : await _supabase.from('custom_rules').insert([payload]);
+            if (error) {
+                alert(`Failed to save rule: ${error.message}`);
+                return;
+            }
             location.reload();
         });
 
@@ -251,7 +321,11 @@
                 return;
             }
             if (confirm('Delete rule?')) {
-                await _supabase.from('custom_rules').delete().eq('id', id);
+                const { error } = await _supabase.from('custom_rules').delete().eq('id', id);
+                if (error) {
+                    alert(`Failed to delete rule: ${error.message}`);
+                    return;
+                }
                 location.reload();
             }
         };
@@ -263,21 +337,31 @@
             }
             const btn = document.getElementById('save-text-btn'); btn.disabled = true;
             const parsed = textToRules(document.getElementById('text-editor').value);
-            await _supabase.from('custom_rules').delete().gte('id', 0);
-            await _supabase.from('custom_rules').insert(parsed.map(r => ({ title: encodeRuleTitle(r.title, r.level), description: r.description, is_section: r.is_section })));
+            const { error: deleteError } = await _supabase.from('custom_rules').delete().gte('id', 0);
+            if (deleteError) {
+                alert(`Failed to clear existing rules: ${deleteError.message}`);
+                btn.disabled = false;
+                return;
+            }
+            const { error: insertError } = await _supabase.from('custom_rules').insert(parsed.map(r => ({ title: encodeRuleTitle(r.title, r.level), description: r.description, is_section: r.is_section })));
+            if (insertError) {
+                alert(`Failed to save rules: ${insertError.message}`);
+                btn.disabled = false;
+                return;
+            }
             location.reload();
         };
 
         // Shared Logic — now uses resolveAccountRole instead of isAdminEmail
         async function updateAdminState(session) {
             if (session?.user?.email) {
-                const role = await resolveAccountRole(session.user.email);
+                const role = await resolveAccountRole(session.user.email, session.user.id);
                 isAdmin = role === 'admin';
             } else {
                 isAdmin = false;
             }
             document.getElementById('admin-form-container').classList.toggle('hidden', !isAdmin);
-            renderRules();
+            if (rulesLoaded) renderRules();
         }
 
         _supabase.auth.onAuthStateChange((_event, session) => {
@@ -290,19 +374,17 @@
         (function(){const y=document.getElementById('current-year'); if(y) y.textContent=new Date().getFullYear();})();
 
         loadRules();
+        // Fallback: reveal the page after 5s even if Supabase hasn't responded
+        setTimeout(revealPage, 5000);
     </script>
 <script>
 (function() {
     if (window.__nbhsNavLoginTextInit__) return;
     window.__nbhsNavLoginTextInit__ = true;
 
-    const adminUrl = 'admin.html';
-    const defaultLabel = 'Login';
     const profileLabel = 'Profile';
     const adminLabel = 'Admin Portal';
-    const adminAllowlist = ['nbhsttclub@gmail.com'];
-    const supabaseUrl = 'https://ngnkbfazhdedaqvxcphw.supabase.co';
-    const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbmtiZmF6aGRlZGFxdnhjcGh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTE5NDksImV4cCI6MjA5MzI4Nzk0OX0.F_S6ORkFe-SuJPybs7FEFH94E6U2hZ5ern4vrg4kMOk';
+    const defaultLabel = 'Login';
 
     const loginLink = document.getElementById('navLoginLink');
     if (!loginLink) return;
@@ -326,34 +408,20 @@
         }
         try {
             if (window._resolveAccountRole) {
-                const role = await window._resolveAccountRole(email);
+                const role = await window._resolveAccountRole(email, session.user.id);
                 setLabel(role === 'admin' ? adminLabel : profileLabel);
                 return;
             }
         } catch (err) {
             // ignore and fallback
         }
-        setLabel(adminAllowlist.includes(email) ? adminLabel : profileLabel);
+        setLabel(defaultLabel);
     }
 
-    function initializeSupabase() {
-        if (!window.supabase) {
-            const script = document.createElement('script');
-            script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
-            script.onload = initializeSupabase;
-            document.head.appendChild(script);
-            return;
-        }
-
-        const client = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
-        client.auth.getSession().then(({ data }) => updateLabel(data?.session)).catch(() => setLabel(defaultLabel));
-        client.auth.onAuthStateChange((_event, session) => updateLabel(session));
-    }
-
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initializeSupabase);
-    } else {
-        initializeSupabase();
+    // Reuse the existing _supabase client instead of creating a new one
+    if (window._supabase) {
+        _supabase.auth.getSession().then(({ data }) => updateLabel(data?.session)).catch(() => setLabel(defaultLabel));
+        _supabase.auth.onAuthStateChange((_event, session) => updateLabel(session));
     }
 })();
 </script>

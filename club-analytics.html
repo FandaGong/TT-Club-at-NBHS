@@ -113,6 +113,21 @@
         function parseScoreDiff(score) { const match = (score || '').toString().replace(/\u2011/g, '-').match(/(\d+)\D+(\d+)/); if (!match) return null; return Math.abs(parseInt(match[1], 10) - parseInt(match[2], 10)); }
         function formatMatch(match) { return `${match.winner} beat ${match.loser} ${match.score} (${match.diff} pt${match.diff === 1 ? '' : 's'})`; }
         function addCard(container, title, value, detail) { const card = document.createElement('div'); card.className = 'bg-white rounded-3xl border border-slate-200 shadow-sm p-6'; card.innerHTML = `<p class="text-sm uppercase tracking-[0.22em] text-slate-500 font-semibold">${title}</p><p class="text-3xl font-bold text-slate-900 mt-4">${value}</p><p class="mt-3 text-slate-600 text-sm">${detail}</p>`; container.appendChild(card); }
+        function normalizeKey(value) { return (value || '').toString().toLowerCase().replace(/[^a-z0-9]+/g, ''); }
+        function getUpset(match) {
+            const p1Name = match.player_1 || '';
+            const p2Name = match.player_2 || '';
+            const winner = match.winner || '';
+            const p1Old = (match.p1_new_elo || 0) - (match.p1_elo_change || 0);
+            const p2Old = (match.p2_new_elo || 0) - (match.p2_elo_change || 0);
+            const p1Won = normalizeKey(winner) === normalizeKey(p1Name);
+            const p2Won = normalizeKey(winner) === normalizeKey(p2Name);
+            const winnerOld = p1Won ? p1Old : p2Won ? p2Old : 0;
+            const loserOld = p1Won ? p2Old : p2Won ? p1Old : 0;
+            const loser = p1Won ? p2Name : p2Won ? p1Name : '';
+            const margin = Math.max(0, loserOld - winnerOld);
+            return { ...match, loser, margin };
+        }
 
         async function loadAnalytics() {
             const summary = document.getElementById('analytics-summary');
@@ -141,7 +156,10 @@
                 });
 
                 const activePlayers = Object.entries(counts).map(([name, count]) => ({ name, count })).sort((a, b) => b.count - a.count);
-                const biggestUpset = (matches || []).filter(m => (m.loserElo || m.loser_elo || 0) > (m.winnerElo || m.winner_elo || 0)).sort((a, b) => ((b.loserElo || 0) - (b.winnerElo || 0)) - ((a.loserElo || 0) - (a.winnerElo || 0)))[0];
+                const biggestUpset = (matches || [])
+                    .map(getUpset)
+                    .filter(upset => upset.margin > 0)
+                    .sort((a, b) => b.margin - a.margin)[0];
                 const topWinner = Object.entries(winCounts).sort((a, b) => b[1] - a[1])[0];
                 const topActive = activePlayers[0];
 
@@ -153,8 +171,7 @@
 
                 highlights.innerHTML = '';
                 if (biggestUpset) {
-                    const margin = Math.abs((biggestUpset.loserElo || 0) - (biggestUpset.winnerElo || 0));
-                    addCard(highlights, 'Biggest Upset', `${biggestUpset.winner} vs ${biggestUpset.loser}`, `Overcame a ${margin} Elo point gap!`);
+                    addCard(highlights, 'Biggest Upset', `${biggestUpset.winner} vs ${biggestUpset.loser}`, `Overcame a ${biggestUpset.margin} Elo point gap!`);
                 }
                 activeList.innerHTML = activePlayers.slice(0, 5).map(p => `<li class="text-slate-700 font-medium">${p.name} — <span class="text-red-600 font-bold">${p.count}</span> matches</li>`).join('');
 

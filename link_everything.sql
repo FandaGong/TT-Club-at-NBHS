@@ -183,6 +183,8 @@ set search_path = public
 as $$
 declare
   v_match record;
+  v_player_1_old_elo integer;
+  v_player_2_old_elo integer;
 begin
   if not exists (
     select 1
@@ -195,7 +197,7 @@ begin
     where u.id = auth.uid()
       and lower(u.email) in ('nbhsttclub@gmail.com', 'jonathanzhao111@gmail.com', 'damon.yuan@education.nsw.gov.au')
   ) then
-    raise exception 'Not authorized to delete matches.';
+    raise exception 'Not authorized to de matches.';
   end if;
 
   select * into v_match from public.match_history where id = p_match_id;
@@ -203,7 +205,81 @@ begin
     raise exception 'Match not found.';
   end if;
 
+  -- Reverse Elo changes by calculating what they were before
+  -- new_elo - change = old_elo
+  v_player_1_old_elo := v_match.p1_new_elo - v_match.p1_elo_change;
+  v_player_2_old_elo := v_match.p2_new_elo - v_match.p2_elo_change;
+
+  -- Update player_rankings to revert Elo and adjust win/loss counts
+  update public.player_rankings
+  set
+    elo = case
+      when normalize_key(name) = normalize_key(v_match.player_1) then v_player_1_old_elo
+      when normalize_key(name) = normalize_key(v_match.player_2) then v_player_2_old_elo
+      else elo
+    end,
+    wins = wins - case when normalize_key(name) = normalize_key(v_match.winner) then 1 else 0 end,
+    losses = losses - case when normalize_key(name) <> normalize_key(v_match.winner) and (normalize_key(name) = normalize_key(v_match.player_1) or normalize_key(name) = normalize_key(v_match.player_2)) then 1 else 0 end
+  where normalize_key(name) in (normalize_key(v_match.player_1), normalize_key(v_match.player_2));
+
+  -- Update account table to revert Elo and adjust win/loss counts
+  if v_match.player_1_account_id is not null then
+    update public.account
+    set
+      elo = v_player_1_old_elo,
+      wins = wins - case when normalize_key(v_match.winner) = normalize_key(v_match.player_1) then 1 else 0 end,
+      losses = losses - case when normalize_key(v_match.winner) <> normalize_key(v_match.player_1) then 1 else 0 end
+    where account_id = v_match.player_1_account_id;
+  end if;
+
+  if v_match.player_2_account_id is not null then
+    update public.account
+    set
+      elo = v_player_2_old_elo,
+      wins = wins - case when normalize_key(v_match.winner) = normalize_key(v_match.player_2) then 1 else 0 end,
+      losses = losses - case when normalize_key(v_match.winner) <> normalize_key(v_match.player_2) then 1 else 0 end
+    where account_id = v_match.player_2_account_id;
+  end if;
+
+  -- Delete the match
   delete from public.match_history where id = p_match_id;
+end;
+$$;
+
+create or replace function public.adjust_player_elo(p_player_name text, p_elo_change integer)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if not exists (
+    select 1
+    from public.account a
+    where a.account_id = auth.uid()
+      and lower(a.role) = 'admin'
+  ) and not exists (
+    select 1
+    from auth.users u
+    where u.id = auth.uid()
+      and lower(u.email) in ('nbhsttclub@gmail.com', 'jonathanzhao111@gmail.com', 'damon.yuan@education.nsw.gov.au')
+  ) then
+    raise exception 'Not authorized to adjust player ELO.';
+  end if;
+
+  if p_player_name is null or trim(p_player_name) = '' then
+    raise exception 'Player name cannot be empty.';
+  end if;
+
+  update public.player_rankings
+  set elo = elo + p_elo_change
+  where normalize_key(name) = normalize_key(p_player_name);
+
+  update public.account
+  set elo = elo + p_elo_change
+  where normalize_key(display_name) = normalize_key(p_player_name) or (display_name is null and normalize_key((
+    select name from public.player_rankings where normalize_key(name) = normalize_key(p_player_name) limit 1
+  )) = normalize_key(p_player_name));
 end;
 $$;
 
