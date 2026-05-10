@@ -338,4 +338,36 @@ begin
 end;
 $$;
 
+create or replace function public.delete_match(p_match_id uuid)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_match record;
+begin
+  if not exists (
+    select 1
+    from public.account a
+    where a.account_id = auth.uid()
+      and lower(a.role) = 'admin'
+  ) and not exists (
+    select 1
+    from auth.users u
+    where u.id = auth.uid()
+      and lower(u.email) in ('nbhsttclub@gmail.com', 'jonathanzhao111@gmail.com', 'damon.yuan@education.nsw.gov.au')
+  ) then
+    raise exception 'Not authorized to delete matches.';
+  end if;
+
+  select * into v_match from public.match_history where id = p_match_id;
+  if v_match is null then
+    raise exception 'Match not found.';
+  end if;
+
+  delete from public.match_history where id = p_match_id;
+end;
+$$;
+
 -- End of migrations

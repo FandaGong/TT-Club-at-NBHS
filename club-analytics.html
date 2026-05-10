@@ -134,9 +134,9 @@
                 const counts = {}, winCounts = {};
                 (matches || []).forEach(m => {
                     const winner = m.winner || '';
-                    const loser = m.loser || '';
-                    counts[winner] = (counts[winner] || 0) + 1;
-                    counts[loser] = (counts[loser] || 0) + 1;
+                    const loser = (winner === m.player_1 ? m.player_2 : m.player_1) || '';
+                    if (winner) counts[winner] = (counts[winner] || 0) + 1;
+                    if (loser) counts[loser] = (counts[loser] || 0) + 1;
                     if (winner) winCounts[winner] = (winCounts[winner] || 0) + 1;
                 });
 

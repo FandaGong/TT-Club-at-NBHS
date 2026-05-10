@@ -185,10 +185,11 @@
                         const p2New = m.p2_new_elo || 0;
                         const p1Old = p1New - (m.p1_elo_change || 0);
                         const p2Old = p2New - (m.p2_elo_change || 0);
+                        const loser = m.winner === p1 ? p2 : p1;
                         const loserElo = m.winner === p1 ? p2Old : p1Old;
                         const winnerElo = m.winner === p1 ? p1Old : p2Old;
                         const gap = Math.max(0, loserElo - winnerElo);
-                        if (gap > maxUpsetVal) { maxUpsetVal = gap; maxUpsetDesc = `${m.winner} beat ${m.loser}`; }
+                        if (gap > maxUpsetVal) { maxUpsetVal = gap; maxUpsetDesc = `${m.winner} beat ${loser}`; }
                     });
 
                     const allTimeWins = Object.values(winCounts).length ? Math.max(...Object.values(winCounts)) : 0;

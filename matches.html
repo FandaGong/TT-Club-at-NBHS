@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Matches - NBHS Table Tennis Club</title>
+    <script src="tailwind-theme.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="animations.css">
+    <link rel="icon" type="image/png" href="favicon.png">
+</head>
+
+<body class="bg-red-50 text-slate-900 font-sans min-h-screen flex flex-col">
+
+    <!-- 1. HEADER PLACEHOLDER -->
+    <div id="header-placeholder"></div>
+
+    <!-- 2. MAIN WITH ID AND OPACITY -->
+    <main id="main-content" class="max-w-4xl mx-auto p-6 flex-grow w-full opacity-0 transition-opacity duration-500">
+        <section class="space-y-6">
+            <div class="text-center py-10 fade-up">
+                <h1 class="text-4xl font-extrabold text-red-900">All Matches</h1>
+                <p class="text-slate-600 mt-2">Complete history of all recorded matches.</p>
+            </div>
+
+            <!-- Filters -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 fade-up">
+                <h2 class="text-lg font-bold mb-4">Filter Matches</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">Term & Week</label>
+                        <select id="matchTermWeekFilterPublic" class="w-full p-3 border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-red-500">
+                            <option value="">All Matches</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">Player</label>
+                        <input type="text" id="matchPlayerFilterPublic" placeholder="Search player name..." class="w-full p-3 border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-red-500">
+                    </div>
+                </div>
+                <button id="loadPublicMatchesBtn" type="button" class="w-full mt-4 bg-red-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-700 transition-colors">Load Matches</button>
+            </div>
+
+            <!-- Status Message -->
+            <div id="matchesStatusPublic" class="text-center text-slate-600 text-sm">Select filters and click Load to display matches</div>
+
+            <!-- Matches List -->
+            <div id="matchesListPublic" class="space-y-3"></div>
+        </section>
+    </main>
+
+    <!-- 3. FOOTER PLACEHOLDER -->
+    <div id="footer-placeholder"></div>
+
+    <script src="components.js"></script>
+    <script>
+        let _supabase;
+        let _currentSession = null;
+        let _userRole = 'standard';
+
+        async function initMatches() {
+            _supabase = window._supabaseClient;
+            if (!_supabase) return;
+
+            // Get current session
+            const { data } = await _supabase.auth.getSession();
+            _currentSession = data.session;
+
+            // Resolve user role
+            if (_currentSession && _currentSession.user && _currentSession.user.email) {
+                const email = (_currentSession.user.email || '').toLowerCase();
+                if (window._resolveAccountRole) {
+                    _userRole = await window._resolveAccountRole(email);
+                }
+            }
+
+            await loadTermWeekOptions();
+        }
+
+        async function loadTermWeekOptions() {
+            const statusNode = document.getElementById('matchesStatusPublic');
+            const filterSelect = document.getElementById('matchTermWeekFilterPublic');
+            if (statusNode) statusNode.textContent = 'Loading filter options...';
+
+            try {
+                const { data, error } = await _supabase.from('match_history').select('term_and_week').order('term_and_week', { ascending: false });
+                if (error) throw error;
+
+                const termWeeks = [...new Set((data || []).map(m => m.term_and_week).filter(Boolean))].sort().reverse();
+                if (filterSelect && termWeeks.length > 0) {
+                    filterSelect.innerHTML = '<option value="">All Matches</option>' + termWeeks.map(tw => `<option value="${tw}">${tw}</option>`).join('');
+                }
+                if (statusNode) statusNode.textContent = 'Select filters and click Load to display matches';
+            } catch (error) {
+                if (statusNode) statusNode.textContent = `Error loading filter options: ${error.message}`;
+            }
+        }
+
+        async function loadPublicMatches() {
+            const statusNode = document.getElementById('matchesStatusPublic');
+            const listNode = document.getElementById('matchesListPublic');
+            const filterTermWeek = document.getElementById('matchTermWeekFilterPublic')?.value || '';
+            const filterPlayer = document.getElementById('matchPlayerFilterPublic')?.value.toLowerCase().trim() || '';
+
+            if (statusNode) statusNode.textContent = 'Loading matches...';
+            if (listNode) listNode.innerHTML = '';
+
+            try {
+                let query = _supabase.from('match_history').select('id,player_1,player_2,winner,score,division,half,term_and_week,created_at').order('created_at', { ascending: false });
+                
+                if (filterTermWeek) {
+                    query = query.eq('term_and_week', filterTermWeek);
+                }
+                
+                const { data, error } = await query;
+                if (error) throw error;
+
+                let matches = (data || []);
+
+                // Client-side player filter
+                if (filterPlayer) {
+                    matches = matches.filter(m => {
+                        const p1 = (m.player_1 || '').toLowerCase();
+                        const p2 = (m.player_2 || '').toLowerCase();
+                        return p1.includes(filterPlayer) || p2.includes(filterPlayer);
+                    });
+                }
+
+                if (matches.length === 0) {
+                    if (statusNode) statusNode.textContent = 'No matches found.';
+                    return;
+                }
+
+                if (listNode) {
+                    listNode.innerHTML = matches.map(m => {
+                        const loser = m.player_1 === m.winner ? m.player_2 : m.player_1;
+                        const deleteBtn = _userRole === 'admin' ? `<button class="match-delete-btn-public flex-shrink-0 text-[10px] font-bold uppercase px-2 py-1 rounded bg-red-100 text-red-700 hover:bg-red-200 transition-colors whitespace-nowrap" data-id="${m.id}">Delete</button>` : '';
+                        
+                        return `
+                            <div class="rounded-lg border border-slate-200 bg-slate-50 p-4 flex items-start justify-between gap-3">
+                                <div class="min-w-0 flex-grow">
+                                    <p class="text-sm font-semibold text-slate-800">${m.winner} beat ${loser}</p>
+                                    <p class="text-xs text-slate-500 mt-1">Score: ${m.score || 'N/A'} | ${m.division || 'N/A'} ${m.half || ''} | ${m.term_and_week || 'N/A'}</p>
+                                    <p class="text-[10px] text-slate-400 mt-1">${new Date(m.created_at).toLocaleString()}</p>
+                                </div>
+                                ${deleteBtn}
+                            </div>
+                        `;
+                    }).join('');
+
+                    // Wire delete buttons only for admins
+                    if (_userRole === 'admin') {
+                        listNode.querySelectorAll('.match-delete-btn-public').forEach(btn => btn.addEventListener('click', () => deleteMatchPublic(btn.dataset.id)));
+                    }
+                }
+                if (statusNode) statusNode.textContent = `Found ${matches.length} match${matches.length !== 1 ? 'es' : ''}`;
+            } catch (error) {
+                if (statusNode) statusNode.textContent = `Error loading matches: ${error.message}`;
+            }
+        }
+
+        async function deleteMatchPublic(matchId) {
+            if (!matchId) return;
+            if (!confirm('Delete this match? This cannot be undone.')) return;
+
+            try {
+                const { error } = await _supabase.rpc('delete_match', { p_match_id: matchId });
+                if (error) throw error;
+                
+                alert('✓ Match deleted successfully!');
+                await loadPublicMatches();
+            } catch (error) {
+                alert(`Failed to delete match: ${error.message}`);
+            }
+        }
+
+        // Event listeners
+        document.getElementById('loadPublicMatchesBtn')?.addEventListener('click', loadPublicMatches);
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', initMatches);
+    </script>
+</body>
+
+</html>
