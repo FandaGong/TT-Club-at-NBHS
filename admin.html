@@ -22,62 +22,87 @@
         <section class="space-y-8">
             <div class="text-center py-10 fade-up">
                 <h1 id="pageTitle" class="text-4xl font-extrabold text-red-900">Login</h1>
-                <p id="pageSubtitle" class="text-slate-600 mt-2">Log in to submit absence reports and manage the club.</p>
+                <p id="pageSubtitle" class="text-slate-600 mt-2">Log in to submit absence reports and manage the club.
+                </p>
             </div>
 
             <!-- Login Container -->
-            <div id="loginContainer" class="bg-white rounded-2xl shadow-sm border border-slate-100 p-8 max-w-2xl mx-auto fade-up-d1">
+            <div id="loginContainer"
+                class="bg-white rounded-2xl shadow-sm border border-slate-100 p-8 max-w-2xl mx-auto fade-up-d1">
                 <div class="text-center mb-6">
                     <h2 id="authPanelTitle" class="text-xl font-bold text-slate-800">Account Access</h2>
-                    <p id="authPanelSubtitle" class="mt-2 text-sm text-slate-500">Admin access is login-only. Standard user login and account creation are available here.</p>
+                    <p id="authPanelSubtitle" class="mt-2 text-sm text-slate-500">Admin access is login-only. Standard
+                        user login and account creation are available here.</p>
                 </div>
 
                 <div class="mb-5 grid grid-cols-1 sm:grid-cols-3 gap-2 rounded-2xl bg-slate-100 p-2">
-                    <button id="dialogTabAdminLogin" type="button" data-tab="admin-login" class="rounded-xl bg-white px-4 py-3 text-sm font-semibold text-red-800 shadow-sm transition-colors">Admin Login</button>
-                    <button id="dialogTabStandardLogin" type="button" data-tab="standard-login" class="rounded-xl px-4 py-3 text-sm font-semibold text-slate-600 transition-colors hover:text-slate-900">Standard User</button>
-                    <button id="dialogTabCreateAccount" type="button" data-tab="create-account" class="rounded-xl px-4 py-3 text-sm font-semibold text-slate-600 transition-colors hover:text-slate-900">Create Account</button>
+                    <button id="dialogTabAdminLogin" type="button" data-tab="admin-login"
+                        class="rounded-xl bg-white px-4 py-3 text-sm font-semibold text-red-800 shadow-sm transition-colors">Admin
+                        Login</button>
+                    <button id="dialogTabStandardLogin" type="button" data-tab="standard-login"
+                        class="rounded-xl px-4 py-3 text-sm font-semibold text-slate-600 transition-colors hover:text-slate-900">Standard
+                        User</button>
+                    <button id="dialogTabCreateAccount" type="button" data-tab="create-account"
+                        class="rounded-xl px-4 py-3 text-sm font-semibold text-slate-600 transition-colors hover:text-slate-900">Create
+                        Account</button>
                 </div>
 
                 <!-- Admin Form -->
                 <div id="dialogPanelAdminLogin" class="space-y-4">
-                    <form id="adminLoginForm" class="space-y-4" action="javascript:void(0);" onsubmit="handleDialogLogin(event, 'admin')">
+                    <form id="adminLoginForm" class="space-y-4" action="javascript:void(0);"
+                        onsubmit="handleDialogLogin(event, 'admin')">
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1">Admin Email</label>
-                            <input id="adminEmail" type="email" placeholder="admin@nbhs.com" class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500 text-sm">
+                            <input id="adminEmail" type="email" placeholder="admin@nbhs.com"
+                                class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500 text-sm">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1">Password</label>
-                            <input id="adminPassword" type="password" placeholder="••••••••" class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500 text-sm">
+                            <input id="adminPassword" type="password" placeholder="••••••••"
+                                class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500 text-sm">
                         </div>
-                        <button type="submit" class="w-full bg-red-800 text-white px-4 py-3 rounded-xl font-bold hover:bg-red-900 transition-colors shadow-sm">Admin Login</button>
+                        <button type="submit"
+                            class="w-full bg-red-800 text-white px-4 py-3 rounded-xl font-bold hover:bg-red-900 transition-colors shadow-sm">Admin
+                            Login</button>
                         <p id="adminLoginStatus" class="hidden text-sm font-medium text-center"></p>
                     </form>
                 </div>
 
                 <!-- Standard Form -->
                 <div id="dialogPanelStandardLogin" class="hidden space-y-4">
-                    <form id="standardLoginForm" class="space-y-4" action="javascript:void(0);" onsubmit="handleDialogLogin(event, 'standard')">
+                    <form id="standardLoginForm" class="space-y-4" action="javascript:void(0);"
+                        onsubmit="handleDialogLogin(event, 'standard')">
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1">Student Email</label>
-                            <input id="standardEmail" type="email" placeholder="you@example.com" class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500 text-sm">
+                            <input id="standardEmail" type="email" placeholder="you@example.com"
+                                class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500 text-sm">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1">Password</label>
-                            <input id="standardPassword" type="password" placeholder="••••••••" class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500 text-sm">
+                            <input id="standardPassword" type="password" placeholder="••••••••"
+                                class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500 text-sm">
                         </div>
-                        <button type="submit" class="w-full bg-slate-900 text-white px-4 py-3 rounded-xl font-bold hover:bg-slate-800 transition-colors shadow-sm">Standard User Login</button>
+                        <button type="submit"
+                            class="w-full bg-slate-900 text-white px-4 py-3 rounded-xl font-bold hover:bg-slate-800 transition-colors shadow-sm">Standard
+                            User Login</button>
                         <p id="standardLoginStatus" class="hidden text-sm font-medium text-center"></p>
                     </form>
                 </div>
 
                 <!-- Account Request Form -->
                 <div id="dialogPanelCreateAccount" class="hidden space-y-4">
-                    <p class="text-sm text-slate-600 mb-2">Account creation must be independently verified by an admin user before it will be approved.</p>
+                    <p class="text-sm text-slate-600 mb-2">Account creation must be independently verified by an admin
+                        user before it will be approved.</p>
                     <form id="accountRequestForm" class="grid grid-cols-1 gap-3">
-                        <input id="requestEmail" type="email" placeholder="Email to approve" required class="p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500">
-                        <input id="requestPassword" type="password" placeholder="Create a password" required class="p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500">
-                        <input id="requestConfirmPassword" type="password" placeholder="Confirm password" required class="p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500">
-                        <button type="submit" class="bg-red-600 text-white px-5 py-3 rounded-xl font-bold hover:bg-red-700 transition-colors shadow-sm">Submit Request</button>
+                        <input id="requestEmail" type="email" placeholder="Email to approve" required
+                            class="p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500">
+                        <input id="requestPassword" type="password" placeholder="Create a password" required
+                            class="p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500">
+                        <input id="requestConfirmPassword" type="password" placeholder="Confirm password" required
+                            class="p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500">
+                        <button type="submit"
+                            class="bg-red-600 text-white px-5 py-3 rounded-xl font-bold hover:bg-red-700 transition-colors shadow-sm">Submit
+                            Request</button>
                         <p id="accountRequestStatus" class="hidden text-sm font-medium"></p>
                     </form>
                 </div>
@@ -85,52 +110,77 @@
 
             <!-- Dashboard Container -->
             <div id="dashboardContainer" class="hidden space-y-6 fade-up-d1">
-                <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                <div
+                    class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
                     <div class="space-y-1">
                         <span class="text-slate-700 font-semibold" id="adminUserEmail">Logged in as: ...</span>
                         <p id="dashboardAccessNote" class="text-sm text-slate-500">Loading account type...</p>
                     </div>
-                    <button id="adminLogoutBtn" type="button" class="text-sm font-bold text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 px-4 py-2 rounded-lg transition-colors border border-red-100">Log Out</button>
+                    <button id="adminLogoutBtn" type="button"
+                        class="text-sm font-bold text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 px-4 py-2 rounded-lg transition-colors border border-red-100">Log
+                        Out</button>
                 </div>
 
                 <!-- Standard User Dashboard View -->
                 <div id="standardUserNotice" class="hidden bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
                     <h3 class="font-bold text-lg text-slate-800">Standard User Dashboard</h3>
-                    <p class="text-slate-600 text-sm mt-1">You are signed in. You can now submit Absence Reports without filling in your email.</p>
-                    <a href="absence-report.html" class="inline-block mt-4 text-red-600 font-semibold hover:underline text-sm">Go to Absence Reports &rarr;</a>
+                    <p class="text-slate-600 text-sm mt-1">You are signed in. You can now submit Absence Reports without
+                        filling in your email.</p>
+                    <a href="absence-report.html"
+                        class="inline-block mt-4 text-red-600 font-semibold hover:underline text-sm">Go to Absence
+                        Reports &rarr;</a>
                 </div>
 
                 <!-- Admin Dashboard View -->
                 <div id="adminToolsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-start gap-4">
+                    <div
+                        class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-start gap-4">
                         <div class="bg-purple-100 text-purple-700 p-3 rounded-xl">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                            </svg>
                         </div>
                         <div>
                             <h3 class="font-bold text-lg text-slate-800">Account Requests</h3>
                             <p class="text-slate-600 text-sm mt-1">Review pending account approvals.</p>
                         </div>
-                        <button id="openAccountRequestsModalBtn" type="button" class="mt-auto text-red-600 font-semibold hover:underline text-sm cursor-pointer">Review Requests &rarr;</button>
+                        <button id="openAccountRequestsModalBtn" type="button"
+                            class="mt-auto text-red-600 font-semibold hover:underline text-sm cursor-pointer">Review
+                            Requests &rarr;</button>
                     </div>
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-start gap-4">
+                    <div
+                        class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-start gap-4">
                         <div class="bg-red-100 text-red-700 p-3 rounded-xl">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
                         </div>
                         <div>
                             <h3 class="font-bold text-lg text-slate-800">Absence Reports</h3>
                             <p class="text-slate-600 text-sm mt-1">Manage student absence submissions.</p>
                         </div>
-                        <a href="absence-report.html" class="mt-auto text-red-600 font-semibold hover:underline text-sm">View Reports &rarr;</a>
+                        <a href="absence-report.html"
+                            class="mt-auto text-red-600 font-semibold hover:underline text-sm">View Reports &rarr;</a>
                     </div>
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-start gap-4">
+                    <div
+                        class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-start gap-4">
                         <div class="bg-slate-100 text-slate-700 p-3 rounded-xl">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                            </svg>
                         </div>
                         <div>
                             <h3 class="font-bold text-lg text-slate-800">Club Rules</h3>
                             <p class="text-slate-600 text-sm mt-1">Edit and review club rules and guidelines.</p>
                         </div>
-                        <a href="rules.html" class="mt-auto text-red-600 font-semibold hover:underline text-sm">Edit Rules &rarr;</a>
+                        <a href="rules.html" class="mt-auto text-red-600 font-semibold hover:underline text-sm">Edit
+                            Rules &rarr;</a>
                     </div>
                 </div>
             </div>
@@ -141,22 +191,26 @@
     <div id="footer-placeholder"></div>
 
     <!-- Modals (direct children of body) -->
-    <div id="accountRequestsModal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+    <div id="accountRequestsModal"
+        class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
         <div class="bg-white rounded-2xl shadow-lg max-w-3xl w-full max-h-[80vh] overflow-auto">
             <div class="sticky top-0 bg-white border-b p-4 flex items-center justify-between">
                 <h3 class="font-bold text-lg text-slate-800">Account Requests</h3>
-                <button id="closeAccountRequestsModalBtn" type="button" class="text-slate-500 hover:text-slate-700 text-2xl">&times;</button>
+                <button id="closeAccountRequestsModalBtn" type="button"
+                    class="text-slate-500 hover:text-slate-700 text-2xl">&times;</button>
             </div>
             <div id="accountRequestsModalList" class="p-4 space-y-3"></div>
         </div>
     </div>
 
     <!-- Profile Modal -->
-    <div id="profileModal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+    <div id="profileModal"
+        class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
         <div class="bg-white rounded-2xl shadow-lg max-w-md w-full overflow-hidden">
             <div class="bg-red-800 text-white p-4 flex items-center justify-between">
                 <h3 class="font-bold text-lg">Profile</h3>
-                <button id="closeProfileModalBtn" type="button" class="text-white hover:text-red-200 text-2xl leading-none">&times;</button>
+                <button id="closeProfileModalBtn" type="button"
+                    class="text-white hover:text-red-200 text-2xl leading-none">&times;</button>
             </div>
             <div class="p-6 space-y-4">
                 <div>
@@ -165,12 +219,18 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-slate-700 mb-2">Change Password</label>
-                    <input id="newPasswordInput" type="password" placeholder="New password" class="w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-red-500 mb-2">
-                    <input id="confirmPasswordInput" type="password" placeholder="Confirm password" class="w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-red-500">
+                    <input id="newPasswordInput" type="password" placeholder="New password"
+                        class="w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-red-500 mb-2">
+                    <input id="confirmPasswordInput" type="password" placeholder="Confirm password"
+                        class="w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-red-500">
                 </div>
-                <button id="changePasswordBtn" type="button" class="w-full bg-red-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-700 transition-colors">Update Password</button>
+                <button id="changePasswordBtn" type="button"
+                    class="w-full bg-red-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-700 transition-colors">Update
+                    Password</button>
                 <p id="passwordStatus" class="hidden text-sm font-medium text-center"></p>
-                <button id="profileLogoutBtn" type="button" class="w-full bg-slate-200 text-slate-800 px-4 py-2 rounded-lg font-semibold hover:bg-slate-300 transition-colors">Log Out</button>
+                <button id="profileLogoutBtn" type="button"
+                    class="w-full bg-slate-200 text-slate-800 px-4 py-2 rounded-lg font-semibold hover:bg-slate-300 transition-colors">Log
+                    Out</button>
             </div>
         </div>
     </div>
@@ -184,8 +244,8 @@
         const SUPABASE_URL = "https://ngnkbfazhdedaqvxcphw.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbmtiZmF6aGRlZGFxdnhjcGh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTE5NDksImV4cCI6MjA5MzI4Nzk0OX0.F_S6ORkFe-SuJPybs7FEFH94E6U2hZ5ern4vrg4kMOk";
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        
-        const ADMIN_ALLOWLIST =['nbhsttclub@gmail.com', 'jonathanzhao111@gmail.com', 'damon.yuan@education.nsw.gov.au'];
+
+        const ADMIN_ALLOWLIST = ['nbhsttclub@gmail.com', 'jonathanzhao111@gmail.com', 'damon.yuan@education.nsw.gov.au'];
 
         let currentAccountRole = 'guest';
         let currentAccountEmail = '';
@@ -193,13 +253,13 @@
         function revealPage() {
             document.getElementById('main-content').classList.remove('opacity-0');
             const footer = document.getElementById('page-footer');
-            if(footer) footer.classList.remove('opacity-0');
+            if (footer) footer.classList.remove('opacity-0');
         }
 
         async function resolveAccountRole(email) {
             if (!email) return 'standard';
             if (ADMIN_ALLOWLIST.includes(email.toLowerCase())) return 'admin';
-            
+
             const { data, error } = await _supabase.from('account_requests').select('role, status').ilike('email', email).order('created_at', { ascending: false }).limit(1);
             if (error || !data || data.length === 0) return 'standard';
             if ((data[0].status || '').toLowerCase() === 'approved') return (data[0].role || 'standard').toLowerCase();
@@ -209,7 +269,7 @@
         async function updateUI(session) {
             const loginContainer = document.getElementById('loginContainer');
             const dashboardContainer = document.getElementById('dashboardContainer');
-            
+
             if (session) {
                 const email = session.user.email;
                 currentAccountEmail = email;
@@ -225,7 +285,7 @@
                 document.getElementById('standardUserNotice').classList.toggle('hidden', isAdmin);
                 document.getElementById('adminToolsContainer').classList.toggle('hidden', !isAdmin);
                 document.getElementById('pageTitle').textContent = isAdmin ? 'Admin Panel' : 'Dashboard';
-                
+
                 if (document.getElementById('profileEmail')) document.getElementById('profileEmail').textContent = email;
                 if (isAdmin) loadAccountRequests();
             } else {
@@ -268,7 +328,7 @@
                     await _supabase.auth.signOut();
                     throw new Error('That account is not approved as an admin account.');
                 }
-                
+
                 status.classList.add('hidden');
             } catch (error) {
                 status.textContent = error.message || 'Login failed. Check credentials.';
@@ -297,7 +357,7 @@
 
                 // 1. Check for existing pending request
                 const { data: existingData } = await _supabase.from('account_requests').select('request_id').ilike('email', email).eq('status', 'pending').limit(1);
-                
+
                 if (existingData && existingData.length > 0) {
                     throw new Error('A pending request for this email already exists.');
                 }
@@ -312,9 +372,6 @@
                 const userId = signUpData?.user?.id;
                 if (!userId) throw new Error("Could not fetch User ID.");
 
-                // Sign out immediately so they aren't logged in while unapproved
-                await _supabase.auth.signOut();
-
                 // 3. Create the Row in the 'account' table (Status: Pending) to satisfy the Foreign Key
                 const { error: accError } = await _supabase.from('account').insert({
                     account_id: userId,
@@ -323,7 +380,7 @@
                     status: 'pending',
                     password: passwordInput.value
                 });
-                
+
                 if (accError && !accError.message.includes('duplicate')) throw accError;
 
                 // 4. Create the Request Row WITH the linked account ID
@@ -337,11 +394,16 @@
 
                 if (reqError) throw reqError;
 
+                // 5. NOW sign out, after the database inserts are complete
+                await _supabase.auth.signOut();
+
                 statusNode.textContent = 'Request submitted! An admin must approve it before you can log in.';
                 statusNode.className = 'mt-2 text-sm font-medium text-green-600 text-center block';
                 emailInput.value = ''; passwordInput.value = ''; confirmPasswordInput.value = '';
 
             } catch (error) {
+                // If it fails, sign them out just in case
+                await _supabase.auth.signOut();
                 statusNode.textContent = error.message || 'Request submission failed.';
                 statusNode.className = 'mt-2 text-sm font-medium text-red-600 text-center block';
             }
@@ -419,16 +481,16 @@
             }
 
             // 2. Update the 'account_requests' log
-            const { error: dbError } = await _supabase.from('account_requests').update({ 
-                status, 
-                reviewed_at: new Date().toISOString(), 
-                reviewed_by: currentAccountEmail, 
-                role 
+            const { error: dbError } = await _supabase.from('account_requests').update({
+                status,
+                reviewed_at: new Date().toISOString(),
+                reviewed_by: currentAccountEmail,
+                role
             }).eq('request_id', id);
 
-            if (dbError) { 
-                alert('Failed to update request status: ' + dbError.message); 
-                return; 
+            if (dbError) {
+                alert('Failed to update request status: ' + dbError.message);
+                return;
             }
 
             await loadAccountRequests();
@@ -453,7 +515,7 @@
             if (n !== c) { s.textContent = 'Passwords do not match.'; s.className = 'mt-2 text-sm text-red-600 block text-center'; return; }
             s.textContent = 'Updating...'; s.className = 'mt-2 text-sm text-blue-600 block text-center';
             const { error } = await _supabase.auth.updateUser({ password: n });
-            if (error) { s.textContent = error.message; s.className = 'mt-2 text-sm text-red-600 block text-center'; } 
+            if (error) { s.textContent = error.message; s.className = 'mt-2 text-sm text-red-600 block text-center'; }
             else { s.textContent = 'Success!'; s.className = 'mt-2 text-sm text-green-600 block text-center'; document.getElementById('newPasswordInput').value = ''; document.getElementById('confirmPasswordInput').value = ''; }
         });
 
@@ -463,4 +525,5 @@
         setDialogTab('admin-login');
     </script>
 </body>
+
 </html>
