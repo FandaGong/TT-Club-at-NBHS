@@ -606,7 +606,7 @@
                 // Fetch players directly with the Half and Division columns from the account table
                 // (Wrapped in quotes to protect Capital letters)
                 const { data: players, error: playerError } = await _supabase.from('account')
-                    .select('account_id, "Half", "Division"');
+                    .select('account_id, "half", "division"');
 
                 if (playerError) throw new Error("Database rejected player query: " + playerError.message);
                 if (!players || players.length === 0) throw new Error("No players found in the account table.");
