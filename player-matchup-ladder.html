@@ -193,7 +193,17 @@
                 if (!supabase) throw new Error('Supabase client not available');
                 const { data, error } = await supabase.from('player_rankings').select('name,elo').order('elo', { ascending: false });
                 if (error) throw error;
-                const rows = (data || []).map(r => ({ name: r.name, elo: r.elo })).filter(p => p.name).sort((a, b) => b.elo - a.elo);
+                const rows = (data || [])
+                    .map(r => ({ name: r.name, elo: r.elo }))
+                    .filter(p => p.name)
+                    .sort((a, b) => {
+                        const eloDiff = (b.elo || 0) - (a.elo || 0);
+                        if (eloDiff !== 0) return eloDiff;
+                        const aOscar = (a.name || '').toLowerCase().replace(/[^a-z0-9]+/g, '') === 'oscarpan';
+                        const bOscar = (b.name || '').toLowerCase().replace(/[^a-z0-9]+/g, '') === 'oscarpan';
+                        if (aOscar !== bOscar) return aOscar ? -1 : 1;
+                        return (a.name || '').localeCompare(b.name || '');
+                    });
                 const matchupData = { half2: buildHalfData(rows.slice(0, 16), true), half1: buildHalfData(rows.slice(16, 32), false) };
 
                 document.querySelectorAll('[data-half-button]').forEach(btn => {

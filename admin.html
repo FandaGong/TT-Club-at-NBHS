@@ -116,9 +116,14 @@
                         <span class="text-slate-700 font-semibold" id="adminUserEmail">Logged in as: ...</span>
                         <p id="dashboardAccessNote" class="text-sm text-slate-500">Loading account type...</p>
                     </div>
-                    <button id="adminLogoutBtn" type="button"
-                        class="text-sm font-bold text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 px-4 py-2 rounded-lg transition-colors border border-red-100">Log
-                        Out</button>
+                    <div class="flex flex-wrap gap-2">
+                        <button id="openProfileModalBtn" type="button"
+                            class="text-sm font-bold text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 px-4 py-2 rounded-lg transition-colors border border-slate-200">My
+                            Profile</button>
+                        <button id="adminLogoutBtn" type="button"
+                            class="text-sm font-bold text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 px-4 py-2 rounded-lg transition-colors border border-red-100">Log
+                            Out</button>
+                    </div>
                 </div>
 
                 <!-- Standard User Dashboard View -->
@@ -182,6 +187,23 @@
                         <a href="rules.html" class="mt-auto text-red-600 font-semibold hover:underline text-sm">Edit
                             Rules &rarr;</a>
                     </div>
+                    <div
+                        class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-start gap-4">
+                        <div class="bg-emerald-100 text-emerald-700 p-3 rounded-xl">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17 20h5v-2a4 4 0 00-5-4m-4 6H2v-2a4 4 0 014-4h8m-4-4a4 4 0 100-8 4 4 0 000 8zm6 4a4 4 0 100-8 4 4 0 000 8z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg text-slate-800">Name Linking</h3>
+                            <p class="text-slate-600 text-sm mt-1">Assign a display name to any account and link existing rows by that name.</p>
+                        </div>
+                        <button id="openNameLinkModalBtn" type="button"
+                            class="mt-auto text-red-600 font-semibold hover:underline text-sm cursor-pointer">Link
+                            Names &rarr;</button>
+                    </div>
                     <div class="bg-red-50 p-6 rounded-2xl shadow-sm border border-red-200 flex flex-col gap-4">
                         <h3 class="font-bold text-lg text-red-900">Season Management</h3>
                         <button onclick="finalizeSeason()"
@@ -212,18 +234,40 @@
     </div>
 
     <!-- Profile Modal -->
-    <div id="profileModal"
-        class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-        <div class="bg-white rounded-2xl shadow-lg max-w-md w-full overflow-hidden">
-            <div class="bg-red-800 text-white p-4 flex items-center justify-between">
-                <h3 class="font-bold text-lg">Profile</h3>
-                <button id="closeProfileModalBtn" type="button"
-                    class="text-white hover:text-red-200 text-2xl leading-none">&times;</button>
-            </div>
-            <div class="p-6 space-y-4">
+    <!-- Profile Modal -->
+<div id="profileModal"
+    class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+    <div class="bg-white rounded-2xl shadow-lg max-w-md w-full max-h-[90vh] flex flex-col overflow-hidden">
+        <div class="bg-red-800 text-white p-4 flex items-center justify-between shrink-0">
+            <h3 class="font-bold text-lg">Profile</h3>
+            <button id="closeProfileModalBtn" type="button"
+                class="text-white hover:text-red-200 text-2xl leading-none">&times;</button>
+        </div>
+        <div class="p-6 space-y-4 overflow-y-auto">
+
                 <div>
                     <p class="text-sm text-slate-600 mb-1">Email</p>
                     <p id="profileEmail" class="font-semibold text-slate-800">—</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-2">Display Name</label>
+                    <input id="profileNameInput" type="text" placeholder="Your name"
+                        class="w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-red-500 mb-2">
+                    <button id="saveProfileNameBtn" type="button"
+                        class="w-full bg-slate-900 text-white px-4 py-2 rounded-lg font-semibold hover:bg-slate-800 transition-colors">Save
+                        Name</button>
+                    <p id="nameStatus" class="hidden text-sm font-medium text-center mt-2"></p>
+                </div>
+                <div>
+                    <p id="profileMeta" class="text-sm text-slate-500">Loading your results...</p>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold uppercase tracking-wide text-slate-500 mb-2">Your Stats</h4>
+                    <div id="profileStats" class="space-y-3"></div>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold uppercase tracking-wide text-slate-500 mb-2">Recent Matches</h4>
+                    <div id="profileMatches" class="space-y-3 max-h-56 overflow-auto pr-1"></div>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-slate-700 mb-2">Change Password</label>
@@ -243,6 +287,35 @@
         </div>
     </div>
 
+    <!-- Name Linking Modal -->
+    <div id="nameLinkModal"
+        class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+        <div class="bg-white rounded-2xl shadow-lg max-w-lg w-full overflow-hidden">
+            <div class="bg-emerald-700 text-white p-4 flex items-center justify-between">
+                <h3 class="font-bold text-lg">Name Linking</h3>
+                <button id="closeNameLinkModalBtn" type="button"
+                    class="text-white hover:text-emerald-200 text-2xl leading-none">&times;</button>
+            </div>
+            <div class="p-6 space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-2">Select Account</label>
+                    <select id="nameLinkAccountSelect" class="w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 bg-white"></select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-2">Existing Ranking Name</label>
+                    <select id="nameLinkRankingSelect" class="w-full p-3 border rounded-lg outline-none focus:ring-2 focus:ring-emerald-500 bg-white"></select>
+                </div>
+                <div class="rounded-xl bg-slate-50 border border-slate-200 p-3 text-sm text-slate-600">
+                    Saving this will update the account name and link existing rankings and match history rows that already use that ranking name.
+                </div>
+                <button id="saveNameLinkBtn" type="button"
+                    class="w-full bg-emerald-700 text-white px-4 py-2 rounded-lg font-semibold hover:bg-emerald-800 transition-colors">Save
+                    Name Link</button>
+                <p id="nameLinkStatus" class="hidden text-sm font-medium text-center"></p>
+            </div>
+        </div>
+    </div>
+
     <!-- 4. LOAD COMPONENTS SCRIPT -->
     <script src="components.js"></script>
 
@@ -257,6 +330,12 @@
 
         let currentAccountRole = 'guest';
         let currentAccountEmail = '';
+        let currentAccountId = '';
+        let currentAccountDisplayName = '';
+
+        function normalizeKey(value) {
+            return (value || '').toLowerCase().replace(/[^a-z0-9]+/g, '');
+        }
 
         function revealPage() {
             document.getElementById('main-content').classList.remove('opacity-0');
@@ -281,6 +360,8 @@
             if (session) {
                 const email = session.user.email;
                 currentAccountEmail = email;
+                currentAccountId = session.user.id;
+                currentAccountDisplayName = session.user.user_metadata?.full_name || session.user.user_metadata?.name || email.split('@')[0] || '';
                 loginContainer.classList.add('hidden');
                 dashboardContainer.classList.remove('hidden');
                 document.getElementById('adminUserEmail').textContent = `Logged in as: ${email}`;
@@ -295,10 +376,15 @@
                 document.getElementById('pageTitle').textContent = isAdmin ? 'Admin Panel' : 'Dashboard';
 
                 if (document.getElementById('profileEmail')) document.getElementById('profileEmail').textContent = email;
+                if (document.getElementById('profileNameInput') && !document.getElementById('profileNameInput').value) {
+                    document.getElementById('profileNameInput').value = currentAccountDisplayName;
+                }
+                loadProfileSummary();
                 if (isAdmin) loadAccountRequests();
             } else {
                 currentAccountRole = 'guest';
                 currentAccountEmail = '';
+                currentAccountId = '';
                 loginContainer.classList.remove('hidden');
                 dashboardContainer.classList.add('hidden');
                 document.getElementById('pageTitle').textContent = 'Login';
@@ -486,6 +572,229 @@
             }));
         }
 
+        async function loadNameLinkAccounts() {
+            const select = document.getElementById('nameLinkAccountSelect');
+            const rankSelect = document.getElementById('nameLinkRankingSelect');
+            const statusNode = document.getElementById('nameLinkStatus');
+            if (!select) return;
+
+            select.innerHTML = '<option value="">Loading accounts...</option>';
+            if (rankSelect) rankSelect.innerHTML = '<option value="">Loading ranking names...</option>';
+            if (statusNode) {
+                statusNode.textContent = 'Loading accounts and ranking names...';
+                statusNode.className = 'mt-2 text-sm text-blue-600 block text-center';
+                statusNode.classList.remove('hidden');
+            }
+
+            try {
+                const [{ data: accountData, error: accountError }, { data: rankingData, error: rankingError }] = await Promise.all([
+                    _supabase.from('account').select('account_id, email, display_name').order('email', { ascending: true }),
+                    _supabase.from('player_rankings').select('name, elo').order('elo', { ascending: false })
+                ]);
+
+                if (accountError) throw accountError;
+                if (rankingError) throw rankingError;
+
+                if (!accountData || !accountData.length) {
+                    select.innerHTML = '<option value="">No accounts found</option>';
+                    if (statusNode) {
+                        statusNode.textContent = 'No accounts available.';
+                        statusNode.className = 'mt-2 text-sm text-red-600 block text-center';
+                    }
+                    return;
+                }
+
+                const seenEmails = new Set();
+const uniqueAccounts = accountData.filter(account => {
+    const key = (account.email || '').toLowerCase();
+    if (seenEmails.has(key)) return false;
+    seenEmails.add(key);
+    return true;
+});
+
+select.innerHTML = uniqueAccounts.map(account => {
+    const email = account.email || '';
+    const label = email || 'Account';
+    return `<option value="${account.account_id}" data-name="${account.display_name || ''}" data-email="${email}">${label}</option>`;
+}).join('');
+
+
+                const uniqueNames = [];
+                const seenNames = new Set();
+                (rankingData || []).forEach(row => {
+                    const clean = normalizeKey(row.name);
+                    if (!clean || seenNames.has(clean)) return;
+                    seenNames.add(clean);
+                    uniqueNames.push(row);
+                });
+
+                if (rankSelect) {
+                    if (uniqueNames.length) {
+                        rankSelect.innerHTML = uniqueNames.map(row => {
+                            const rawName = row.name || '';
+                            const label = rawName.includes('@') ? rawName.split('@')[0] : rawName;
+                            return `<option value="${rawName}">${label}</option>`;
+                        }).join('');
+                        rankSelect.value = uniqueNames[0].name;
+                    } else {
+                        rankSelect.innerHTML = '<option value="">No ranking names found</option>';
+                    }
+                }
+
+                if (!select.value) select.value = accountData[0].account_id;
+                const selected = accountData.find(account => account.account_id === select.value) || accountData[0];
+                if (rankSelect && selected?.display_name) {
+                    const match = uniqueNames.find(row => normalizeKey(row.name) === normalizeKey(selected.display_name));
+                    if (match) rankSelect.value = match.name;
+                }
+
+                if (statusNode) {
+                    statusNode.textContent = 'Pick an account and an existing ranking name, then save to link them.';
+                    statusNode.className = 'mt-2 text-sm text-slate-500 block text-center';
+                }
+            } catch (error) {
+                select.innerHTML = `<option value="">Failed to load accounts: ${error.message}</option>`;
+                if (rankSelect) rankSelect.innerHTML = `<option value="">Failed to load ranking names: ${error.message}</option>`;
+                if (statusNode) {
+                    statusNode.textContent = `Load failed: ${error.message}`;
+                    statusNode.className = 'mt-2 text-sm text-red-600 block text-center';
+                }
+                return;
+            }
+        }
+
+        async function saveNameLink() {
+            const statusNode = document.getElementById('nameLinkStatus');
+            const select = document.getElementById('nameLinkAccountSelect');
+            const rankSelect = document.getElementById('nameLinkRankingSelect');
+            const accountId = select?.value;
+            const displayName = (rankSelect?.value || '').trim();
+
+            if (!accountId) {
+                statusNode.textContent = 'Pick an account first.';
+                statusNode.className = 'mt-2 text-sm text-red-600 block text-center';
+                statusNode.classList.remove('hidden');
+                return;
+            }
+
+            if (!displayName) {
+                statusNode.textContent = 'Pick an existing ranking name first.';
+                statusNode.className = 'mt-2 text-sm text-red-600 block text-center';
+                statusNode.classList.remove('hidden');
+                return;
+            }
+
+            statusNode.textContent = 'Linking name...';
+            statusNode.className = 'mt-2 text-sm text-blue-600 block text-center';
+            statusNode.classList.remove('hidden');
+
+            const { error } = await _supabase.rpc('link_account_name', {
+                p_account_id: accountId,
+                p_display_name: displayName
+            });
+
+            if (error) {
+                statusNode.textContent = error.message;
+                statusNode.className = 'mt-2 text-sm text-red-600 block text-center';
+                return;
+            }
+
+            statusNode.textContent = 'Linked. Existing rows with that ranking name were matched.';
+            statusNode.className = 'mt-2 text-sm text-green-600 block text-center';
+            await loadNameLinkAccounts();
+            await loadProfileSummary();
+        }
+
+        async function loadProfileSummary() {
+            if (!currentAccountId) return;
+
+            const profileMeta = document.getElementById('profileMeta');
+            const profileStats = document.getElementById('profileStats');
+            const profileMatches = document.getElementById('profileMatches');
+            const profileNameInput = document.getElementById('profileNameInput');
+
+            if (profileMeta) profileMeta.textContent = 'Loading your results...';
+            if (profileStats) profileStats.innerHTML = '';
+            if (profileMatches) profileMatches.innerHTML = '<p class="text-slate-500 text-sm">Loading recent matches...</p>';
+
+            try {
+                const [{ data: accountData, error: accountError }, { data: rankingData, error: rankingError }, { data: matchData, error: matchError }] = await Promise.all([
+                    _supabase.from('account').select('display_name, email').eq('account_id', currentAccountId).maybeSingle(),
+                    _supabase.from('player_rankings').select('elo,wins,losses,division,half,name,account_id').order('elo', { ascending: false }).limit(250),
+                    _supabase.from('match_history').select('created_at,player_1,player_2,winner,score,player_1_account_id,player_2_account_id,winner_account_id').order('created_at', { ascending: false }).limit(250)
+                ]);
+
+                if (accountError) throw accountError;
+                if (rankingError) throw rankingError;
+                if (matchError) throw matchError;
+
+                currentAccountDisplayName = profileNameInput?.value?.trim() || accountData?.display_name || currentAccountDisplayName || currentAccountEmail.split('@')[0];
+                if (profileNameInput && !profileNameInput.value.trim()) profileNameInput.value = currentAccountDisplayName;
+
+                const nameCandidates = [currentAccountDisplayName, accountData?.display_name, currentAccountEmail, currentAccountEmail.split('@')[0]]
+                    .filter(Boolean)
+                    .map(normalizeKey);
+                const ranking = (rankingData || []).find(row =>
+                    row.account_id === currentAccountId || nameCandidates.includes(normalizeKey(row.name))
+                ) || null;
+
+                if (profileMeta) {
+                    profileMeta.textContent = ranking
+                        ? `Showing your current club stats${ranking.name ? ` for ${ranking.name}` : ''}.`
+                        : 'No ranking row found for this account yet.';
+                }
+
+                if (profileStats) {
+                    profileStats.innerHTML = ranking ? `
+                        <div class="grid grid-cols-2 gap-3 text-sm">
+                            <div class="rounded-xl bg-slate-50 p-3"><p class="text-slate-500 text-xs uppercase font-bold">ELO</p><p class="font-bold text-slate-900 text-lg">${ranking.elo ?? 0}</p></div>
+                            <div class="rounded-xl bg-slate-50 p-3"><p class="text-slate-500 text-xs uppercase font-bold">Wins</p><p class="font-bold text-slate-900 text-lg">${ranking.wins ?? 0}</p></div>
+                            <div class="rounded-xl bg-slate-50 p-3"><p class="text-slate-500 text-xs uppercase font-bold">Losses</p><p class="font-bold text-slate-900 text-lg">${ranking.losses ?? 0}</p></div>
+                            <div class="rounded-xl bg-slate-50 p-3"><p class="text-slate-500 text-xs uppercase font-bold">Division</p><p class="font-bold text-slate-900 text-lg">${ranking.division || '—'}</p></div>
+                            <div class="rounded-xl bg-slate-50 p-3 col-span-2"><p class="text-slate-500 text-xs uppercase font-bold">Half</p><p class="font-bold text-slate-900 text-lg">${ranking.half || '—'}</p></div>
+                        </div>
+                    ` : '<p class="text-sm text-slate-500">Your stats will appear here once your ranking row exists.</p>';
+                }
+
+                if (profileMatches) {
+                    const recentMatches = (matchData || []).filter(match =>
+                        match.player_1_account_id === currentAccountId ||
+                        match.player_2_account_id === currentAccountId ||
+                        match.winner_account_id === currentAccountId ||
+                        nameCandidates.includes(normalizeKey(match.player_1)) ||
+                        nameCandidates.includes(normalizeKey(match.player_2)) ||
+                        nameCandidates.includes(normalizeKey(match.winner))
+                    ).slice(0, 5);
+
+                    if (!recentMatches.length) {
+                        profileMatches.innerHTML = '<p class="text-sm text-slate-500">No recent matches found for this account.</p>';
+                        return;
+                    }
+
+                    profileMatches.innerHTML = recentMatches.map(match => {
+                        const opponent = match.player_1_account_id === currentAccountId ? match.player_2 : match.player_1;
+                        const isWinner = match.winner_account_id === currentAccountId;
+                        const score = match.score || 'No score recorded';
+                        return `
+                            <div class="rounded-xl border border-slate-200 bg-white p-3">
+                                <div class="flex items-start justify-between gap-3">
+                                    <div>
+                                        <p class="font-semibold text-slate-800">${isWinner ? 'Win' : 'Match'} vs ${opponent || 'Unknown opponent'}</p>
+                                        <p class="text-xs text-slate-500 mt-1">${new Date(match.created_at).toLocaleString()}</p>
+                                    </div>
+                                    <span class="text-[10px] font-bold uppercase px-2 py-1 rounded ${isWinner ? 'bg-green-100 text-green-800' : 'bg-slate-100 text-slate-700'}">${isWinner ? 'Winner' : 'Played'}</span>
+                                </div>
+                                <p class="text-sm text-slate-600 mt-2">Score: ${score}</p>
+                            </div>
+                        `;
+                    }).join('');
+                }
+            } catch (error) {
+                if (profileMeta) profileMeta.textContent = `Failed to load your results: ${error.message}`;
+                if (profileMatches) profileMatches.innerHTML = '<p class="text-red-600 text-sm">Unable to load recent matches.</p>';
+            }
+        }
+
         async function reviewAccountRequest(id, linkedId, status, email, role) {
             if (!confirm(`Mark ${email} as ${status}?`)) return;
 
@@ -562,7 +871,10 @@
         document.getElementById('dialogTabCreateAccount').addEventListener('click', () => setDialogTab('create-account'));
         document.getElementById('accountRequestForm').addEventListener('submit', handleAccountRequest);
         document.getElementById('openAccountRequestsModalBtn')?.addEventListener('click', () => { document.getElementById('accountRequestsModal').classList.remove('hidden'); loadAccountRequests(); });
+        document.getElementById('openProfileModalBtn')?.addEventListener('click', () => { document.getElementById('profileModal').classList.remove('hidden'); loadProfileSummary(); });
+        document.getElementById('openNameLinkModalBtn')?.addEventListener('click', () => { document.getElementById('nameLinkModal').classList.remove('hidden'); loadNameLinkAccounts(); });
         document.getElementById('closeAccountRequestsModalBtn').addEventListener('click', () => document.getElementById('accountRequestsModal').classList.add('hidden'));
+        document.getElementById('closeNameLinkModalBtn').addEventListener('click', () => document.getElementById('nameLinkModal').classList.add('hidden'));
 
         // Profile Listeners
         document.getElementById('closeProfileModalBtn').addEventListener('click', () => document.getElementById('profileModal').classList.add('hidden'));
@@ -576,6 +888,45 @@
             const { error } = await _supabase.auth.updateUser({ password: n });
             if (error) { s.textContent = error.message; s.className = 'mt-2 text-sm text-red-600 block text-center'; }
             else { s.textContent = 'Success!'; s.className = 'mt-2 text-sm text-green-600 block text-center'; document.getElementById('newPasswordInput').value = ''; document.getElementById('confirmPasswordInput').value = ''; }
+        });
+
+        document.getElementById('saveProfileNameBtn').addEventListener('click', async () => {
+            const s = document.getElementById('nameStatus');
+            const nameInput = document.getElementById('profileNameInput');
+            const nextName = (nameInput?.value || '').trim();
+            if (!nextName) {
+                s.textContent = 'Enter a name first.';
+                s.className = 'mt-2 text-sm text-red-600 block text-center';
+                s.classList.remove('hidden');
+                return;
+            }
+            s.textContent = 'Saving name...';
+            s.className = 'mt-2 text-sm text-blue-600 block text-center';
+            s.classList.remove('hidden');
+            const { error } = await _supabase.from('account').upsert({
+                account_id: currentAccountId,
+                email: currentAccountEmail,
+                display_name: nextName,
+                status: 'active'
+            }, { onConflict: 'account_id' });
+            if (error) {
+                s.textContent = error.message;
+                s.className = 'mt-2 text-sm text-red-600 block text-center';
+                return;
+            }
+            currentAccountDisplayName = nextName;
+            s.textContent = 'Saved. Your profile will use this name now.';
+            s.className = 'mt-2 text-sm text-green-600 block text-center';
+            loadProfileSummary();
+        });
+
+        document.getElementById('saveNameLinkBtn').addEventListener('click', saveNameLink);
+        document.getElementById('nameLinkAccountSelect').addEventListener('change', () => {
+            const select = document.getElementById('nameLinkAccountSelect');
+            const input = document.getElementById('nameLinkDisplayName');
+            const selected = select?.selectedOptions?.[0];
+            if (!input || !selected) return;
+            input.value = selected.getAttribute('data-name') || selected.textContent.split(' - ').pop() || '';
         });
 
         // Initialize state

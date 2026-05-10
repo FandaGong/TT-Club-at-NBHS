@@ -4,6 +4,7 @@
 -- absence_reports
 create table if not exists public.absence_reports (
   id uuid primary key default gen_random_uuid(),
+  account_id uuid references auth.users(id) on delete set null,
   name text not null,
   email text not null,
   reason text not null,
@@ -20,6 +21,18 @@ create policy "Anyone can insert absence reports"
   for insert
   to anon, authenticated
   with check (true);
+
+create policy "Authenticated users can read their own absence reports"
+  on public.absence_reports
+  for select
+  to authenticated
+  using (auth.uid() = account_id or account_id is null);
+
+create policy "Authenticated users can update their own absence reports"
+  on public.absence_reports
+  for update
+  to authenticated
+  using (auth.uid() = account_id);
 
 create policy "Authenticated users can read absence reports"
   on public.absence_reports
@@ -120,6 +133,7 @@ create policy "Authenticated users can delete account_requests_v2"
 -- player_rankings (Google Sheets leaderboard export)
 create table if not exists public.player_rankings (
   id uuid primary key default gen_random_uuid(),
+  account_id uuid references auth.users(id) on delete set null,
   name text not null unique,
   elo integer not null default 0,
   wins integer not null default 0,
@@ -177,6 +191,9 @@ create policy "Anyone can read season records"
 -- match_history (Google Sheets match archive export)
 create table if not exists public.match_history (
   id uuid primary key default gen_random_uuid(),
+  player_1_account_id uuid references auth.users(id) on delete set null,
+  player_2_account_id uuid references auth.users(id) on delete set null,
+  winner_account_id uuid references auth.users(id) on delete set null,
   player_1 text,
   player_2 text,
   winner text,

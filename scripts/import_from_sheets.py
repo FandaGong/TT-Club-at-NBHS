@@ -155,6 +155,50 @@ def fetch_first_row(rest_base: str, table: str, headers: dict[str, str]) -> dict
     return data[0]
 
 
+def fetch_account_lookup(rest_base: str, headers: dict[str, str]) -> dict[str, str]:
+    """Build a name/email -> account_id map from the public account table when available."""
+
+    ctx = rest_context()
+    candidates = [
+        "account?select=account_id,email,player_details",
+        "account?select=account_id,email",
+    ]
+    rows: list[dict[str, Any]] | None = None
+    for query in candidates:
+        url = f"{rest_base.rstrip('/')}/{query}"
+        req = urllib.request.Request(url, headers={**headers, "Accept": "application/json"}, method="GET")
+        try:
+            with urllib.request.urlopen(req, context=ctx, timeout=30) as response:
+                rows = json.loads(response.read().decode("utf-8"))
+            break
+        except urllib.error.HTTPError:
+            continue
+
+    lookup: dict[str, str] = {}
+    if not rows:
+        return lookup
+
+    for row in rows:
+        account_id = clean(row.get("account_id"))
+        email = clean(row.get("email")).lower()
+        if account_id and email:
+            lookup[email] = account_id
+
+        details = row.get("player_details")
+        if isinstance(details, dict):
+            full_name = clean(details.get("Full Name") or details.get("full_name") or details.get("name")).lower()
+            if account_id and full_name:
+                lookup[full_name] = account_id
+        elif isinstance(details, list):
+            for item in details:
+                if isinstance(item, dict):
+                    full_name = clean(item.get("Full Name") or item.get("full_name") or item.get("name")).lower()
+                    if account_id and full_name:
+                        lookup[full_name] = account_id
+
+    return lookup
+
+
 def import_seasons(rows: list[list[str]]) -> list[dict[str, str]]:
     data_rows: list[dict[str, str]] = []
     for row in rows[1:]:
@@ -189,7 +233,7 @@ def import_schedule(rows: list[list[str]]) -> list[str]:
     return [clean(row[0]) for row in rows if row and clean(row[0])]
 
 
-def import_player_details(rows: list[list[str]]) -> list[dict[str, str]]:
+def import_player_details(rows: list[list[str]], account_lookup: dict[str, str]) -> list[dict[str, str]]:
     normalized: list[dict[str, str]] = []
     for row in rows[1:]:
         if not non_empty(row):
@@ -204,6 +248,7 @@ def import_player_details(rows: list[list[str]]) -> list[dict[str, str]]:
             continue
         normalized.append(
             {
+                "account_id": account_lookup.get(name.lower()),
                 "name": name,
                 "elo": parse_int(elo),
                 "wins": parse_int(wins),
@@ -215,7 +260,7 @@ def import_player_details(rows: list[list[str]]) -> list[dict[str, str]]:
     return normalized
 
 
-def import_matches(rows: list[list[str]]) -> list[dict[str, str]]:
+def import_matches(rows: list[list[str]], account_lookup: dict[str, str]) -> list[dict[str, str]]:
     matches: list[dict[str, str]] = []
     for row in rows[1:]:
         if not non_empty(row):
@@ -236,6 +281,9 @@ def import_matches(rows: list[list[str]]) -> list[dict[str, str]]:
             continue
         matches.append(
             {
+                "player_1_account_id": account_lookup.get(player1.lower()),
+                "player_2_account_id": account_lookup.get(player2.lower()),
+                "winner_account_id": account_lookup.get(winner.lower()),
                 "player_1": player1,
                 "player_2": player2,
                 "winner": winner,
@@ -267,6 +315,7 @@ def main() -> int:
     }
 
     imported: list[ImportResult] = []
+    account_lookup = fetch_account_lookup(rest_base, headers)
 
     for table_name in ["season_records", "schedule_dates", "player_rankings", "match_history"]:
         source_name = {
@@ -293,7 +342,7 @@ def main() -> int:
             insert_rows(rest_base, table_name, [{"session_date": date} for date in dates], headers)
             imported.append(ImportResult(table_name, 0, len(dates)))
         elif table_name == "player_rankings":
-            data_rows = import_player_details(csv_rows)
+            data_rows = import_player_details(csv_rows, account_lookup)
             if not data_rows:
                 imported.append(ImportResult(table_name, 0, 0))
                 continue
@@ -301,7 +350,7 @@ def main() -> int:
             insert_rows(rest_base, table_name, data_rows, headers)
             imported.append(ImportResult(table_name, 0, len(data_rows)))
         elif table_name == "match_history":
-            data_rows = import_matches(csv_rows)
+            data_rows = import_matches(csv_rows, account_lookup)
             if not data_rows:
                 imported.append(ImportResult(table_name, 0, 0))
                 continue

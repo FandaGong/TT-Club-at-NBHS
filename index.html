@@ -147,7 +147,16 @@
             if (!supabase) return;
             const { data, error } = await supabase.from('player_rankings').select('name,elo,wins,losses').order('elo', { ascending: false });
             if (error) { console.error('Supabase error:', error); return; }
-            players = (data || []).map(r => ({ name: r.name || 'Unknown', elo: r.elo || 0, wins: r.wins || 0, losses: r.losses || 0 }));
+            players = (data || [])
+                .map(r => ({ name: r.name || 'Unknown', elo: r.elo || 0, wins: r.wins || 0, losses: r.losses || 0 }))
+                .sort((a, b) => {
+                    const eloDiff = (b.elo || 0) - (a.elo || 0);
+                    if (eloDiff !== 0) return eloDiff;
+                    const aOscar = (a.name || '').toLowerCase().replace(/[^a-z0-9]+/g, '') === 'oscarpan';
+                    const bOscar = (b.name || '').toLowerCase().replace(/[^a-z0-9]+/g, '') === 'oscarpan';
+                    if (aOscar !== bOscar) return aOscar ? -1 : 1;
+                    return (a.name || '').localeCompare(b.name || '');
+                });
         }
 
         function searchPlayer(event) {

@@ -139,13 +139,28 @@
             return null;
         }
 
+        function normalizeKey(value) {
+            return (value || '').toLowerCase().replace(/[^a-z0-9]+/g, '');
+        }
+
+        function sortPlayers(rows) {
+            return rows.slice().sort((a, b) => {
+                const eloDiff = (b.elo || 0) - (a.elo || 0);
+                if (eloDiff !== 0) return eloDiff;
+                const aOscar = normalizeKey(a.name) === 'oscarpan';
+                const bOscar = normalizeKey(b.name) === 'oscarpan';
+                if (aOscar !== bOscar) return aOscar ? -1 : 1;
+                return (a.name || '').localeCompare(b.name || '');
+            });
+        }
+
         async function loadRankings() {
             const mainContent = document.getElementById('main-content');
             const pageFooter = document.getElementById('page-footer');
-            const table = document.getElementById('ladder-table');
+            const ladderTable = document.getElementById('ladder-table');
 
-            if (table) {
-                table.innerHTML = `<tr><td colspan="5" class="p-10 text-center text-slate-500">Loading rankings...</td></tr>`;
+            if (ladderTable) {
+                ladderTable.innerHTML = `<tr><td colspan="5" class="p-10 text-center text-slate-500">Loading rankings...</td></tr>`;
             }
 
             try {
@@ -153,10 +168,69 @@
                 if (!supabase) throw new Error('Supabase client not available');
                 const { data, error } = await supabase.from('player_rankings').select('name,elo,wins,losses').order('elo', { ascending: false });
                 if (error) throw error;
-                const players = (data || []).map(r => ({ name: r.name || 'Unknown', elo: r.elo || 0, wins: r.wins || 0, losses: r.losses || 0 }));
 
-                const table = document.getElementById('ladder-table');
-                table.innerHTML = players.map((p, i) => `
+                const players = sortPlayers((data || []).map(r => ({
+                    name: r.name || 'Unknown',
+                    elo: r.elo || 0,
+                    wins: r.wins || 0,
+                    losses: r.losses || 0
+                })));
+
+                if (ladderTable) {
+                    ladderTable.innerHTML = players.map((p, i) => `
+                <tr class="border-b hover:bg-slate-50 transition-colors">
+                    <td class="p-4 text-slate-400 font-bold">#${i + 1}</td>
+                    <td class="p-4 font-semibold text-slate-800">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <a href="player-analysis.html?name=${encodeURIComponent(p.name)}" class="text-red-600 hover:underline">
+                                ${p.name}
+                            </a>
+                            ${renderPlayerTags(p.name)}
+                        </div>
+                    </td>
+                    <td class="p-4 text-center text-green-600 font-bold">${p.wins}</td>
+                    <td class="p-4 text-center text-red-500 font-bold">${p.losses}</td>
+                    <td class="p-4 text-right font-mono font-bold text-red-600">${p.elo}</td>
+                </tr>
+            `).join('');
+                }
+            } catch (err) {
+                console.error("Data error:", err);
+                if (ladderTable) {
+                    ladderTable.innerHTML = `<tr><td colspan="5" class="p-10 text-center text-red-500">Error loading data. Check your internet or Supabase configuration.</td></tr>`;
+                }
+            } finally {
+                if (mainContent) mainContent.classList.remove('opacity-0');
+                if (pageFooter) pageFooter.classList.remove('opacity-0');
+            }
+        }
+
+        loadRankings();
+
+        // Standardized Navbar logic
+        async function loadRankings() {
+            const mainContent = document.getElementById('main-content');
+            const pageFooter = document.getElementById('page-footer');
+            const ladderTable = document.getElementById('ladder-table');
+
+            if (ladderTable) {
+                ladderTable.innerHTML = `<tr><td colspan="5" class="p-10 text-center text-slate-500">Loading rankings...</td></tr>`;
+            }
+
+            try {
+                const supabase = await getSupabaseClient();
+                if (!supabase) throw new Error('Supabase client not available');
+                const { data, error } = await supabase.from('player_rankings').select('name,elo,wins,losses').order('elo', { ascending: false });
+                if (error) throw error;
+
+                const players = sortPlayers((data || []).map(r => ({
+                    name: r.name || 'Unknown',
+                    elo: r.elo || 0,
+                    wins: r.wins || 0,
+                    losses: r.losses || 0
+                })));
+
+                ladderTable.innerHTML = players.map((p, i) => `
                 <tr class="border-b hover:bg-slate-50 transition-colors">
                     <td class="p-4 text-slate-400 font-bold">#${i + 1}</td>
                     <td class="p-4 font-semibold text-slate-800">
@@ -174,68 +248,15 @@
             `).join('');
             } catch (err) {
                 console.error("Data error:", err);
-                document.getElementById('ladder-table').innerHTML = `<tr><td colspan="5" class="p-10 text-center text-red-500">Error loading data. Check your internet or Supabase configuration.</td></tr>`;
+                if (ladderTable) {
+                    ladderTable.innerHTML = `<tr><td colspan="5" class="p-10 text-center text-red-500">Error loading data. Check your internet or Supabase configuration.</td></tr>`;
+                }
+            } finally {
+                if (mainContent) mainContent.classList.remove('opacity-0');
+                if (pageFooter) pageFooter.classList.remove('opacity-0');
             }
-    }
-
-        loadRankings();
-
-        // Standardized Navbar logic
-        (function () {
-            const t=document.getElementById("rankingNavToggle"),e=document.getElementById("rankingNavLinks"),n=document.getElementById("menu-icon"),o=document.getElementById("close-icon");
-            if(t&&e)t.addEventListener("click",()=>{const s=e.classList.contains("hidden");s?(e.classList.remove("hidden"),e.classList.add("flex","animate-[fadeIn_0.2s_ease-in-out]"),n.classList.add("hidden"),o.classList.remove("hidden"),t.setAttribute("aria-expanded","true")):(e.classList.add("hidden"),e.classList.remove("flex","animate-[fadeIn_0.2s_ease-in-out]"),n.classList.remove("hidden"),o.classList.add("hidden"),t.setAttribute("aria-expanded","false"))})
-        })();
-
-        (function () {
-            const yearEl = document.getElementById('current-year');
-            if (yearEl) yearEl.textContent = new Date().getFullYear();
-        })();
-    </script>
-<script>
-(function() {
-    if (window.__nbhsNavLoginTextInit__) return;
-    window.__nbhsNavLoginTextInit__ = true;
-
-    const adminUrl = 'admin.html';
-    const defaultLabel = 'Login';
-    const profileLabel = 'Profile';
-    const adminLabel = 'Admin Portal';
-    const adminAllowlist = [];
-    const supabaseUrl = 'https://ngnkbfazhdedaqvxcphw.supabase.co';
-    const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbmtiZmF6aGRlZGFxdnhjcGh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTE5NDksImV4cCI6MjA5MzI4Nzk0OX0.F_S6ORkFe-SuJPybs7FEFH94E6U2hZ5ern4vrg4kMOk';
-
-    const loginLink = document.getElementById('navLoginLink');
-    if (!loginLink) return;
-    let loginText = document.getElementById('navLoginLinkText');
-    if (!loginText) {
-        loginText = document.createElement('span');
-        loginText.id = 'navLoginLinkText';
-        loginText.textContent = defaultLabel;
-        loginLink.appendChild(loginText);
-    }
-
-    function setLabel(label) {
-        loginText.textContent = label;
-    }
-
-    async function updateLabel(session) {
-        const email = session?.user?.email?.toLowerCase();
-        if (!email) {
-            setLabel(defaultLabel);
-            return;
         }
-        try {
-            if (window._resolveAccountRole) {
-                const role = await window._resolveAccountRole(email);
-                setLabel(role === 'admin' ? adminLabel : profileLabel);
-                return;
-            }
-        } catch (err) {
-            // ignore and fallback
-        }
-        setLabel(adminAllowlist.includes(email) ? adminLabel : profileLabel);
-    }
-
+    (function () {
     function initializeSupabase() {
         if (!window.supabase) {
             const script = document.createElement('script');

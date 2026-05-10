@@ -117,6 +117,7 @@
             if (!nameValue) throw new Error('Please enter your name.');
 
             const { error } = await supabaseClient.from(ABSENCE_TABLE).insert([{
+                account_id: session.user.id,
                 name: nameValue,
                 email: emailValue,
                 reason: reason,
