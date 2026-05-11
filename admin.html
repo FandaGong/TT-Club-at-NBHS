@@ -260,6 +260,23 @@
                             class="mt-auto text-red-600 font-semibold hover:underline text-sm cursor-pointer">Adjust
                             ELO &rarr;</button>
                     </div>
+                    <div
+                        class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-start gap-4">
+                        <div class="bg-violet-100 text-violet-700 p-3 rounded-xl">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg text-slate-800">Win/Loss Editor</h3>
+                            <p class="text-slate-600 text-sm mt-1">Manually edit a player's wins and losses record.</p>
+                        </div>
+                        <button id="openWinLossEditorModalBtn" type="button"
+                            class="mt-auto text-red-600 font-semibold hover:underline text-sm cursor-pointer">Edit
+                            Wins/Losses &rarr;</button>
+                    </div>
                     <div class="bg-red-50 p-6 rounded-2xl shadow-sm border border-red-200 flex flex-col gap-4">
                         <h3 class="font-bold text-lg text-red-900">Season Management</h3>
                         <button onclick="finalizeSeason()"
@@ -395,30 +412,110 @@
     <!-- ELO Adjustment Modal -->
     <div id="eloAdjustmentModal"
         class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-        <div class="bg-white rounded-2xl shadow-lg max-w-md w-full max-h-[90vh] flex flex-col overflow-hidden">
-            <div class="bg-blue-600 text-white p-4 flex items-center justify-between shrink-0">
-                <h3 class="font-bold text-lg">Adjust Player ELO</h3>
+        <div class="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden border border-blue-100">
+            <div class="bg-gradient-to-r from-blue-600 to-cyan-600 text-white p-5 flex items-start justify-between gap-4">
+                <div>
+                    <p class="text-xs uppercase tracking-[0.24em] text-blue-100">Admin Tool</p>
+                    <h3 class="font-extrabold text-2xl mt-1">ELO Adjustment</h3>
+                    <p class="text-sm text-blue-100 mt-2">Increase or decrease player ratings</p>
+                </div>
                 <button id="closeEloAdjustmentModalBtn" type="button"
-                    class="text-white hover:text-blue-200 text-2xl leading-none">&times;</button>
+                    class="text-white hover:text-blue-100 text-2xl leading-none shrink-0">&times;</button>
             </div>
-            <div class="p-6 space-y-4 overflow-y-auto">
-                <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">Player Name</label>
-                    <input id="eloAdjustmentPlayerInput" type="text" placeholder="Enter player name..."
-                        class="w-full p-3 border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500">
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-2">ELO Change</label>
-                    <div class="flex gap-2">
-                        <input id="eloAdjustmentValueInput" type="number" placeholder="e.g., +50 or -30"
-                            class="flex-1 p-3 border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500">
+            <div class="grid grid-cols-5 gap-0 overflow-hidden max-h-[calc(90vh-120px)]">
+                <!-- Left Panel: Player Search & Cards -->
+                <div class="col-span-3 border-r border-slate-100 flex flex-col">
+                    <div class="border-b border-slate-100 p-4 shrink-0">
+                        <input id="eloSearchInput" type="text" placeholder="Search players..."
+                            class="w-full px-4 py-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-400 transition-all">
+                        <p id="eloPlayerCount" class="text-xs text-slate-500 mt-2 font-semibold">0 players</p>
                     </div>
-                    <p class="text-xs text-slate-500 mt-1">Use + for increase, - for decrease (e.g., +50, -30)</p>
+                    <div id="eloPlayerList" class="overflow-y-auto flex-1 p-4 space-y-2">
+                    </div>
+                    <p id="eloPlayerEmpty" class="hidden text-center text-slate-500 p-4 text-sm">No players match that search.</p>
                 </div>
-                <button id="submitEloAdjustmentBtn" type="button"
-                    class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
-                    Adjust ELO</button>
-                <p id="eloAdjustmentStatus" class="hidden text-sm font-medium text-center"></p>
+                <!-- Right Panel: ELO Adjustment Form -->
+                <div class="col-span-2 bg-gradient-to-b from-blue-50 to-cyan-50 p-6 flex flex-col overflow-y-auto">
+                    <div id="eloPlayerSummary" class="text-sm text-slate-600 mb-6 p-4 bg-white rounded-lg border border-blue-100 italic">
+                        Select a player to view and adjust their ELO.
+                    </div>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs uppercase font-bold text-slate-700 mb-2">ELO Change</label>
+                            <div class="flex gap-2">
+                                <input id="eloAdjustmentValueInput" type="number" placeholder="e.g., +50 or -30"
+                                    class="flex-1 px-4 py-3 border border-blue-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                            </div>
+                            <p class="text-xs text-slate-500 mt-1">Use + for increase, - for decrease</p>
+                        </div>
+                        <button id="submitEloAdjustmentBtn" type="button"
+                            class="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-4 py-3 rounded-lg font-bold hover:from-blue-700 hover:to-cyan-700 transition-all shadow-md hover:shadow-lg">
+                            Adjust ELO
+                        </button>
+                        <p id="eloAdjustmentStatus" class="hidden text-sm font-medium text-center text-slate-700"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Win/Loss Editor Modal -->
+    <div id="winLossEditorModal"
+        class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden border border-violet-100">
+            <div class="bg-gradient-to-r from-violet-700 to-purple-700 text-white p-5 flex items-start justify-between gap-4">
+                <div>
+                    <p class="text-xs uppercase tracking-[0.24em] text-violet-100">Admin Tool</p>
+                    <h3 class="font-extrabold text-2xl mt-1">Win/Loss Editor</h3>
+                    <p class="text-violet-50/90 text-sm mt-1">Search for a player and manually update their wins and losses record.</p>
+                </div>
+                <button id="closeWinLossEditorModalBtn" type="button"
+                    class="shrink-0 rounded-full bg-white/10 hover:bg-white/20 text-white text-2xl leading-none h-11 w-11 inline-flex items-center justify-center">&times;</button>
+            </div>
+            <div class="p-6 space-y-5 max-h-[calc(90vh-92px)] overflow-y-auto">
+                <div class="grid grid-cols-1 lg:grid-cols-5 gap-5">
+                    <div class="lg:col-span-3 space-y-3">
+                        <div class="flex items-center justify-between gap-3">
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-1">Choose a player</label>
+                                <p class="text-xs text-slate-500">Search or scan the cards below to select a player.</p>
+                            </div>
+                            <span id="winLossPlayerCount" class="text-xs font-semibold text-violet-700 bg-violet-50 border border-violet-100 px-3 py-1 rounded-full">0 players</span>
+                        </div>
+                        <div class="flex items-center gap-3 px-1 py-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35m1.85-5.15a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                            <span class="text-sm font-semibold text-slate-500 shrink-0">Search</span>
+                            <input id="winLossSearchInput" type="search" placeholder="by name or division"
+                                class="min-w-0 flex-1 bg-transparent outline-none text-sm text-slate-800 placeholder:text-slate-400">
+                        </div>
+                        <div id="winLossPlayerSummary" class="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
+                            Select a player to view their current stats.
+                        </div>
+                        <div id="winLossPlayerList" class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[50vh] overflow-y-auto pr-1"></div>
+                        <p id="winLossPlayerEmpty" class="hidden rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-5 text-sm text-slate-500 text-center">No players match that search.</p>
+                    </div>
+                    <div class="lg:col-span-2 space-y-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">Wins</label>
+                            <input id="winLossWinsInput" type="number" placeholder="0" min="0"
+                                class="w-full p-3 border border-slate-300 rounded-2xl outline-none focus:ring-2 focus:ring-violet-500 bg-white shadow-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">Losses</label>
+                            <input id="winLossLossesInput" type="number" placeholder="0" min="0"
+                                class="w-full p-3 border border-slate-300 rounded-2xl outline-none focus:ring-2 focus:ring-violet-500 bg-white shadow-sm">
+                        </div>
+                        <div class="rounded-2xl bg-violet-50 border border-violet-100 p-4 text-sm text-violet-900 leading-relaxed">
+                            Saving will update the player's record in both rankings and accounts.
+                        </div>
+                        <button id="submitWinLossBtn" type="button"
+                            class="w-full bg-violet-700 text-white px-4 py-3 rounded-2xl font-semibold hover:bg-violet-800 transition-colors shadow-sm">Save
+                            Win/Loss Changes</button>
+                        <p id="winLossStatus" class="hidden text-sm font-medium text-center"></p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -1732,15 +1829,14 @@
                     const userId = signUpData?.user?.id;
                     if (!userId) throw new Error("Could not fetch User ID.");
 
-                    // 3. Create account table entry
-                    const { error: accError } = await _supabase.from('account').insert({
-                        account_id: userId,
-                        email: email,
-                        role: role,
-                        status: 'active'
+                    // 3. Create account table entry via stored function
+                    const { error: accError } = await _supabase.rpc('create_account_entry', {
+                        p_account_id: userId,
+                        p_email: email,
+                        p_role: role
                     });
 
-                    if (accError && !accError.message.includes('duplicate')) {
+                    if (accError) {
                         throw new Error("Failed to create account entry: " + accError.message);
                     }
 
@@ -1791,9 +1887,22 @@
         document.getElementById('openMatchManagementModalBtn')?.addEventListener('click', () => { document.getElementById('matchManagementModal').classList.remove('hidden'); loadMatchManagementModal(); });
         document.getElementById('closeMatchManagementModalBtn')?.addEventListener('click', () => { document.getElementById('matchManagementModal').classList.add('hidden'); });
         document.getElementById('loadAllMatchesBtn')?.addEventListener('click', loadAllMatches);
-        document.getElementById('openEloAdjustmentModalBtn')?.addEventListener('click', () => { document.getElementById('eloAdjustmentModal').classList.remove('hidden'); });
+        document.getElementById('openEloAdjustmentModalBtn')?.addEventListener('click', () => {
+            document.getElementById('eloAdjustmentModal').classList.remove('hidden');
+            document.getElementById('eloSearchInput')?.focus();
+            loadEloPlayers();
+        });
         document.getElementById('closeEloAdjustmentModalBtn')?.addEventListener('click', () => { document.getElementById('eloAdjustmentModal').classList.add('hidden'); });
         document.getElementById('submitEloAdjustmentBtn')?.addEventListener('click', submitEloAdjustment);
+        document.getElementById('eloSearchInput')?.addEventListener('input', renderEloPlayers);
+        document.getElementById('openWinLossEditorModalBtn')?.addEventListener('click', () => {
+            document.getElementById('winLossEditorModal').classList.remove('hidden');
+            document.getElementById('winLossSearchInput')?.focus();
+            loadWinLossPlayers();
+        });
+        document.getElementById('closeWinLossEditorModalBtn')?.addEventListener('click', () => { document.getElementById('winLossEditorModal').classList.add('hidden'); });
+        document.getElementById('submitWinLossBtn')?.addEventListener('click', submitWinLoss);
+        document.getElementById('winLossSearchInput')?.addEventListener('input', renderWinLossPlayers);
         document.getElementById('openNameLinkModalBtn')?.addEventListener('click', () => {
             document.getElementById('nameLinkModal').classList.remove('hidden');
             document.getElementById('nameLinkSearchInput')?.focus();
@@ -2075,20 +2184,144 @@
             }
         }
 
+            let eloPlayers = [];
+            let eloSelectedPlayer = null;
+
+            function renderEloPlayers() {
+                const list = document.getElementById('eloPlayerList');
+                const emptyState = document.getElementById('eloPlayerEmpty');
+                const summary = document.getElementById('eloPlayerSummary');
+                const count = document.getElementById('eloPlayerCount');
+                const searchValue = (document.getElementById('eloSearchInput')?.value || '').trim().toLowerCase();
+
+                if (!list) return;
+
+                const filteredPlayers = eloPlayers.filter(player => {
+                    const haystack = `${player.name || ''} ${player.division || ''} ${player.half || ''}`.toLowerCase();
+                    return !searchValue || haystack.includes(searchValue);
+                });
+
+                if (count) count.textContent = `${eloPlayers.length} player${eloPlayers.length === 1 ? '' : 's'}`;
+
+                if (!filteredPlayers.length) {
+                    list.innerHTML = '';
+                    if (emptyState) emptyState.classList.remove('hidden');
+                    if (summary) summary.textContent = 'No players match that search.';
+                    return;
+                }
+
+                if (emptyState) emptyState.classList.add('hidden');
+
+                list.innerHTML = filteredPlayers.map(player => {
+                    const isSelected = eloSelectedPlayer && normalizeKey(eloSelectedPlayer.name) === normalizeKey(player.name);
+                    const initials = (player.name?.slice(0, 2) || 'P').toUpperCase();
+                    const division = player.division ? ` · ${player.division}` : '';
+                    const half = player.half ? ` · ${player.half}` : '';
+                    return `
+                        <button type="button" data-player-name="${escapeHtml(player.name)}"
+                            class="text-left rounded-2xl border p-4 transition-all shadow-sm hover:shadow-md ${isSelected ? 'border-blue-400 bg-blue-50 ring-2 ring-blue-200' : 'border-slate-200 bg-white hover:border-blue-200'}">
+                            <div class="flex items-start gap-3">
+                                <div class="h-12 w-12 rounded-2xl ${isSelected ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-600'} flex items-center justify-center font-extrabold text-sm shrink-0">${escapeHtml(initials)}</div>
+                                <div class="min-w-0 flex-1">
+                                    <p class="font-bold text-slate-800 truncate">${escapeHtml(player.name)}</p>
+                                    <p class="text-xs text-slate-500 truncate mt-0.5">${player.elo ?? 0} Elo · W${player.wins ?? 0}/L${player.losses ?? 0}${division}${half}</p>
+                                </div>
+                            </div>
+                        </button>
+                    `;
+                }).join('');
+
+                list.querySelectorAll('button').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const playerName = btn.dataset.playerName;
+                        eloSelectedPlayer = eloPlayers.find(p => normalizeKey(p.name) === normalizeKey(playerName));
+                        renderEloPlayers();
+                        updateEloSummary();
+                    });
+                });
+            }
+
+            function updateEloSummary() {
+                const summary = document.getElementById('eloPlayerSummary');
+                const eloInput = document.getElementById('eloAdjustmentValueInput');
+
+                if (!eloSelectedPlayer) {
+                    if (summary) summary.textContent = 'Select a player to view and adjust their ELO.';
+                    if (eloInput) eloInput.value = '';
+                    return;
+                }
+
+                if (summary) {
+                    summary.innerHTML = `
+                        <div class="space-y-3">
+                            <div>
+                                <p class="text-xs uppercase font-bold text-slate-500">Player</p>
+                                <p class="text-lg font-bold text-slate-900 mt-1">${escapeHtml(eloSelectedPlayer.name)}</p>
+                            </div>
+                            <div class="grid grid-cols-3 gap-2 text-sm">
+                                <div class="rounded-lg bg-white p-2 border border-blue-100">
+                                    <p class="text-xs font-bold text-blue-600">Current ELO</p>
+                                    <p class="font-bold text-slate-900">${eloSelectedPlayer.elo ?? 0}</p>
+                                </div>
+                                <div class="rounded-lg bg-green-50 p-2 border border-green-100">
+                                    <p class="text-xs font-bold text-green-600">Wins</p>
+                                    <p class="font-bold text-green-900">${eloSelectedPlayer.wins ?? 0}</p>
+                                </div>
+                                <div class="rounded-lg bg-red-50 p-2 border border-red-100">
+                                    <p class="text-xs font-bold text-red-600">Losses</p>
+                                    <p class="font-bold text-red-900">${eloSelectedPlayer.losses ?? 0}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                if (eloInput) eloInput.value = '';
+            }
+
+            async function loadEloPlayers() {
+                const statusNode = document.getElementById('eloAdjustmentStatus');
+                if (statusNode) {
+                    statusNode.textContent = 'Loading players...';
+                    statusNode.classList.remove('hidden');
+                }
+
+                try {
+                    const { data, error } = await _supabase.from('player_rankings').select('name, elo, wins, losses, division, half').order('elo', { ascending: false });
+                    if (error) throw error;
+
+                    eloPlayers = (data || []).filter(player => player.name).sort((a, b) => (b.elo || 0) - (a.elo || 0));
+                    eloSelectedPlayer = null;
+                    renderEloPlayers();
+
+                    if (statusNode) {
+                        statusNode.textContent = eloPlayers.length ? '' : 'No players found.';
+                        if (!eloPlayers.length) statusNode.classList.remove('hidden');
+                        else statusNode.classList.add('hidden');
+                    }
+                } catch (error) {
+                    eloPlayers = [];
+                    renderEloPlayers();
+                    if (statusNode) {
+                        statusNode.textContent = `Failed to load players: ${error.message}`;
+                        statusNode.classList.remove('hidden');
+                    }
+                }
+            }
+
             async function submitEloAdjustment() {
-                const playerNameInput = document.getElementById('eloAdjustmentPlayerInput');
                 const eloChangeInput = document.getElementById('eloAdjustmentValueInput');
                 const statusNode = document.getElementById('eloAdjustmentStatus');
-                const playerName = (playerNameInput?.value || '').trim();
-                const eloChangeStr = (eloChangeInput?.value || '').trim();
 
-                if (!playerName) {
+                if (!eloSelectedPlayer) {
                     if (statusNode) {
-                        statusNode.textContent = 'Please enter a player name';
+                        statusNode.textContent = 'Please select a player first';
                         statusNode.classList.remove('hidden');
                     }
                     return;
                 }
+
+                const eloChangeStr = (eloChangeInput?.value || '').trim();
 
                 if (!eloChangeStr) {
                     if (statusNode) {
@@ -2114,22 +2347,227 @@
                     }
 
                     const { error } = await _supabase.rpc('adjust_player_elo', {
-                        p_player_name: playerName,
+                        p_player_name: eloSelectedPlayer.name,
                         p_elo_change: eloChange
                     });
 
                     if (error) throw error;
 
                     if (statusNode) {
-                        statusNode.textContent = `✓ ELO adjusted by ${eloChange > 0 ? '+' : ''}${eloChange} for ${playerName}`;
+                        statusNode.textContent = `✓ ELO adjusted by ${eloChange > 0 ? '+' : ''}${eloChange} for ${eloSelectedPlayer.name}`;
                         statusNode.classList.remove('hidden');
                     }
 
                     setTimeout(() => {
-                        playerNameInput.value = '';
+                        eloSelectedPlayer = null;
                         eloChangeInput.value = '';
                         statusNode.classList.add('hidden');
-                        document.getElementById('eloAdjustmentModal').classList.add('hidden');
+                        loadEloPlayers();
+                    }, 1500);
+                } catch (error) {
+                    if (statusNode) {
+                        statusNode.textContent = `Error: ${error.message}`;
+                        statusNode.classList.remove('hidden');
+                    }
+                }
+            }
+
+            let winLossPlayers = [];
+            let winLossSelectedPlayer = null;
+
+            function renderWinLossPlayers() {
+                const list = document.getElementById('winLossPlayerList');
+                const emptyState = document.getElementById('winLossPlayerEmpty');
+                const summary = document.getElementById('winLossPlayerSummary');
+                const count = document.getElementById('winLossPlayerCount');
+                const searchValue = (document.getElementById('winLossSearchInput')?.value || '').trim().toLowerCase();
+
+                if (!list) return;
+
+                const filteredPlayers = winLossPlayers.filter(player => {
+                    const haystack = `${player.name || ''} ${player.division || ''} ${player.half || ''}`.toLowerCase();
+                    return !searchValue || haystack.includes(searchValue);
+                });
+
+                if (count) count.textContent = `${winLossPlayers.length} player${winLossPlayers.length === 1 ? '' : 's'}`;
+
+                if (!filteredPlayers.length) {
+                    list.innerHTML = '';
+                    if (emptyState) emptyState.classList.remove('hidden');
+                    if (summary) summary.textContent = 'No players match that search.';
+                    return;
+                }
+
+                if (emptyState) emptyState.classList.add('hidden');
+
+                list.innerHTML = filteredPlayers.map(player => {
+                    const isSelected = winLossSelectedPlayer && normalizeKey(winLossSelectedPlayer.name) === normalizeKey(player.name);
+                    const initials = (player.name?.slice(0, 2) || 'P').toUpperCase();
+                    const division = player.division ? ` · ${player.division}` : '';
+                    const half = player.half ? ` · ${player.half}` : '';
+                    return `
+                        <button type="button" data-player-name="${escapeHtml(player.name)}"
+                            class="text-left rounded-2xl border p-4 transition-all shadow-sm hover:shadow-md ${isSelected ? 'border-violet-400 bg-violet-50 ring-2 ring-violet-200' : 'border-slate-200 bg-white hover:border-violet-200'}">
+                            <div class="flex items-start gap-3">
+                                <div class="h-12 w-12 rounded-2xl ${isSelected ? 'bg-violet-600 text-white' : 'bg-slate-100 text-slate-600'} flex items-center justify-center font-extrabold text-sm shrink-0">${escapeHtml(initials)}</div>
+                                <div class="min-w-0 flex-1">
+                                    <p class="font-bold text-slate-800 truncate">${escapeHtml(player.name)}</p>
+                                    <p class="text-xs text-slate-500 truncate mt-0.5">W${player.wins ?? 0} / L${player.losses ?? 0} · ${player.elo ?? 0} Elo${division}${half}</p>
+                                </div>
+                            </div>
+                        </button>
+                    `;
+                }).join('');
+
+                list.querySelectorAll('button').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const playerName = btn.dataset.playerName;
+                        winLossSelectedPlayer = winLossPlayers.find(p => normalizeKey(p.name) === normalizeKey(playerName));
+                        renderWinLossPlayers();
+                        updateWinLossSummary();
+                    });
+                });
+            }
+
+            function updateWinLossSummary() {
+                const summary = document.getElementById('winLossPlayerSummary');
+                const winsInput = document.getElementById('winLossWinsInput');
+                const lossesInput = document.getElementById('winLossLossesInput');
+
+                if (!winLossSelectedPlayer) {
+                    if (summary) summary.textContent = 'Select a player to view and edit their stats.';
+                    if (winsInput) winsInput.value = '';
+                    if (lossesInput) lossesInput.value = '';
+                    return;
+                }
+
+                if (summary) {
+                    summary.innerHTML = `
+                        <div class="space-y-3">
+                            <div>
+                                <p class="text-xs uppercase font-bold text-slate-500">Player</p>
+                                <p class="text-lg font-bold text-slate-900 mt-1">${escapeHtml(winLossSelectedPlayer.name)}</p>
+                            </div>
+                            <div class="grid grid-cols-3 gap-2 text-sm">
+                                <div class="rounded-lg bg-white p-2 border border-violet-100">
+                                    <p class="text-xs font-bold text-slate-500">ELO</p>
+                                    <p class="font-bold text-slate-900">${winLossSelectedPlayer.elo ?? 0}</p>
+                                </div>
+                                <div class="rounded-lg bg-green-50 p-2 border border-green-100">
+                                    <p class="text-xs font-bold text-green-600">Current Wins</p>
+                                    <p class="font-bold text-green-900">${winLossSelectedPlayer.wins ?? 0}</p>
+                                </div>
+                                <div class="rounded-lg bg-red-50 p-2 border border-red-100">
+                                    <p class="text-xs font-bold text-red-600">Current Losses</p>
+                                    <p class="font-bold text-red-900">${winLossSelectedPlayer.losses ?? 0}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                if (winsInput) winsInput.value = winLossSelectedPlayer.wins ?? 0;
+                if (lossesInput) lossesInput.value = winLossSelectedPlayer.losses ?? 0;
+            }
+
+            async function loadWinLossPlayers() {
+                const statusNode = document.getElementById('winLossStatus');
+                if (statusNode) {
+                    statusNode.textContent = 'Loading players...';
+                    statusNode.classList.remove('hidden');
+                }
+
+                try {
+                    const { data, error } = await _supabase.from('player_rankings').select('name, elo, wins, losses, division, half').order('elo', { ascending: false });
+                    if (error) throw error;
+
+                    winLossPlayers = (data || []).filter(player => player.name).sort((a, b) => (b.elo || 0) - (a.elo || 0));
+                    winLossSelectedPlayer = null;
+                    renderWinLossPlayers();
+
+                    if (statusNode) {
+                        statusNode.textContent = winLossPlayers.length ? '' : 'No players found.';
+                        if (!winLossPlayers.length) statusNode.classList.remove('hidden');
+                        else statusNode.classList.add('hidden');
+                    }
+                } catch (error) {
+                    winLossPlayers = [];
+                    renderWinLossPlayers();
+                    if (statusNode) {
+                        statusNode.textContent = `Failed to load players: ${error.message}`;
+                        statusNode.classList.remove('hidden');
+                    }
+                }
+            }
+
+            async function submitWinLoss() {
+                const winsInput = document.getElementById('winLossWinsInput');
+                const lossesInput = document.getElementById('winLossLossesInput');
+                const statusNode = document.getElementById('winLossStatus');
+
+                if (!winLossSelectedPlayer) {
+                    if (statusNode) {
+                        statusNode.textContent = 'Please select a player first';
+                        statusNode.classList.remove('hidden');
+                    }
+                    return;
+                }
+
+                const winsStr = (winsInput?.value || '').trim();
+                const lossesStr = (lossesInput?.value || '').trim();
+
+                if (!winsStr || !lossesStr) {
+                    if (statusNode) {
+                        statusNode.textContent = 'Please enter both wins and losses';
+                        statusNode.classList.remove('hidden');
+                    }
+                    return;
+                }
+
+                const wins = parseInt(winsStr, 10);
+                const losses = parseInt(lossesStr, 10);
+
+                if (isNaN(wins) || isNaN(losses)) {
+                    if (statusNode) {
+                        statusNode.textContent = 'Wins and losses must be valid numbers';
+                        statusNode.classList.remove('hidden');
+                    }
+                    return;
+                }
+
+                if (wins < 0 || losses < 0) {
+                    if (statusNode) {
+                        statusNode.textContent = 'Wins and losses cannot be negative';
+                        statusNode.classList.remove('hidden');
+                    }
+                    return;
+                }
+
+                try {
+                    if (statusNode) {
+                        statusNode.textContent = 'Updating wins/losses...';
+                        statusNode.classList.remove('hidden');
+                    }
+
+                    const { error } = await _supabase.rpc('update_player_wins_losses', {
+                        p_player_name: winLossSelectedPlayer.name,
+                        p_wins: wins,
+                        p_losses: losses
+                    });
+
+                    if (error) throw error;
+
+                    if (statusNode) {
+                        statusNode.textContent = `✓ Updated ${winLossSelectedPlayer.name} to W${wins}/L${losses}`;
+                        statusNode.classList.remove('hidden');
+                    }
+
+                    setTimeout(() => {
+                        winLossSelectedPlayer = null;
+                        winsInput.value = '';
+                        lossesInput.value = '';
+                        statusNode.classList.add('hidden');
+                        loadWinLossPlayers();
                     }, 1500);
                 } catch (error) {
                     if (statusNode) {

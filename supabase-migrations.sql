@@ -9,6 +9,71 @@ as $$
   select regexp_replace(lower(coalesce(input, '')), '[^a-z0-9]+', '', 'g');
 $$;
 
+-- account (user account data)
+create table if not exists public.account (
+  account_id uuid primary key references auth.users(id) on delete cascade,
+  email text not null unique,
+  role text not null default 'standard',
+  display_name text,
+  status text not null default 'active',
+  elo integer not null default 0,
+  wins integer not null default 0,
+  losses integer not null default 0,
+  created_at timestamptz not null default now()
+);
+
+alter table public.account enable row level security;
+
+create policy "Anyone can read account info"
+  on public.account
+  for select
+  to anon, authenticated
+  using (true);
+
+create policy "Users can read their own account"
+  on public.account
+  for select
+  to authenticated
+  using (auth.uid() = account_id);
+
+create policy "Users can update their own account"
+  on public.account
+  for update
+  to authenticated
+  using (auth.uid() = account_id);
+
+create policy "Admins can insert accounts"
+  on public.account
+  for insert
+  to authenticated
+  with check (
+    exists (
+      select 1 from public.account a
+      where a.account_id = auth.uid()
+        and lower(a.role) = 'admin'
+    )
+    or auth.uid() in (
+      select id from auth.users
+      where lower(email) in ('nbhsttclub@gmail.com', 'jonathanzhao111@gmail.com', 'damon.yuan@education.nsw.gov.au')
+    )
+  );
+
+create policy "Admins can update any account"
+  on public.account
+  for update
+  to authenticated
+  using (
+    exists (
+      select 1 from public.account a
+      where a.account_id = auth.uid()
+        and lower(a.role) = 'admin'
+    )
+    or auth.uid() in (
+      select id from auth.users
+      where lower(email) in ('nbhsttclub@gmail.com', 'jonathanzhao111@gmail.com', 'damon.yuan@education.nsw.gov.au')
+    )
+  );
+
 -- absence_reports
 create table if not exists public.absence_reports (
   id uuid primary key default gen_random_uuid(),
@@ -492,6 +557,47 @@ begin
 
   update public.account
   set elo = elo + p_elo_change
+  where normalize_key(display_name) = normalize_key(p_player_name) or (display_name is null and normalize_key((
+    select name from public.player_rankings where normalize_key(name) = normalize_key(p_player_name) limit 1
+  )) = normalize_key(p_player_name));
+end;
+$$;
+
+create or replace function public.update_player_wins_losses(p_player_name text, p_wins integer, p_losses integer)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if not exists (
+    select 1
+    from public.account a
+    where a.account_id = auth.uid()
+      and lower(a.role) = 'admin'
+  ) and not exists (
+    select 1
+    from auth.users u
+    where u.id = auth.uid()
+      and lower(u.email) in ('nbhsttclub@gmail.com', 'jonathanzhao111@gmail.com', 'damon.yuan@education.nsw.gov.au')
+  ) then
+    raise exception 'Not authorized to update player wins/losses.';
+  end if;
+
+  if p_player_name is null or trim(p_player_name) = '' then
+    raise exception 'Player name cannot be empty.';
+  end if;
+
+  if p_wins < 0 or p_losses < 0 then
+    raise exception 'Wins and losses cannot be negative.';
+  end if;
+
+  update public.player_rankings
+  set wins = p_wins, losses = p_losses
+  where normalize_key(name) = normalize_key(p_player_name);
+
+  update public.account
+  set wins = p_wins, losses = p_losses
   where normalize_key(display_name) = normalize_key(p_player_name) or (display_name is null and normalize_key((
     select name from public.player_rankings where normalize_key(name) = normalize_key(p_player_name) limit 1
   )) = normalize_key(p_player_name));
