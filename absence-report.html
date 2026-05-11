@@ -7,6 +7,7 @@
     <title>Absence Report - NBHS Table Tennis</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="animations.css">
     <link rel="icon" type="image/png" href="favicon.png">
@@ -68,7 +69,16 @@
         const SUPABASE_URL = "https://ngnkbfazhdedaqvxcphw.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbmtiZmF6aGRlZGFxdnhjcGh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTE5NDksImV4cCI6MjA5MzI4Nzk0OX0.F_S6ORkFe-SuJPybs7FEFH94E6U2hZ5ern4vrg4kMOk";
         const ABSENCE_TABLE = "absence_reports";
-        let supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // Prefer the shared client initialized in components.js when present
+        let supabaseClient = window._supabaseClient || window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // Optional EmailJS configuration. Fill these with your EmailJS keys to enable email notifications.
+        const EMAILJS_USER_ID = window._EMAILJS_USER_ID || '';
+        const EMAILJS_SERVICE_ID = window._EMAILJS_SERVICE_ID || '';
+        const EMAILJS_TEMPLATE_ID = window._EMAILJS_TEMPLATE_ID || '';
+        if (window.emailjs && EMAILJS_USER_ID) {
+            try { emailjs.init(EMAILJS_USER_ID); } catch (e) { /* ignore init errors */ }
+        }
 
         async function resolveCurrentRole(email) {
             if (!email) return 'standard';
@@ -132,15 +142,35 @@
 
             if (!nameValue) throw new Error('Please enter your name.');
 
-            const { error } = await supabaseClient.from(ABSENCE_TABLE).insert([{
+            const { error, data: insertData } = await supabaseClient.from(ABSENCE_TABLE).insert([{
                 account_id: session.user.id,
                 name: nameValue,
                 email: emailValue,
                 reason: reason,
                 status: 'pending'
-            }]);
+            }]).select();
 
             if (error) throw error;
+
+            // Send notification email via EmailJS if configured (non-blocking)
+            try {
+                if (window.emailjs && EMAILJS_SERVICE_ID && EMAILJS_TEMPLATE_ID) {
+                    const templateParams = {
+                        student_name: nameValue,
+                        student_email: emailValue,
+                        reason: reason,
+                        submitted_at: new Date().toLocaleString()
+                    };
+                    // fire-and-forget; handle errors silently
+                    emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
+                        .then(() => console.log('Absence notification sent via EmailJS'))
+                        .catch(err => console.warn('EmailJS send failed:', err));
+                }
+            } catch (e) {
+                console.warn('EmailJS error:', e);
+            }
+
+            return insertData && insertData[0];
         }
 
         async function refreshAdminPanel() {
