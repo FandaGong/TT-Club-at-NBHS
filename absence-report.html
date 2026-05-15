@@ -18,7 +18,7 @@
     <div id="header-placeholder"></div>
 
     <main id="main-content" class="max-w-4xl mx-auto p-6 flex-grow w-full opacity-0 transition-opacity duration-500">
-        <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 fade-up-d1 card-hover">
+        <section class="bg-white/85 p-6 sm:p-8 rounded-[2rem] shadow-[0_18px_55px_rgba(127,29,29,0.08)] border border-red-100 backdrop-blur-sm fade-up-d1 card-hover">
             <h1 class="text-3xl font-bold text-red-900 mb-2">Club Absence Report</h1>
             <p class="text-sm text-slate-600 mb-6">If you did not show up to club, submit your details so the team can
                 review your note. Note: you must be logged in to submit.</p>
@@ -50,7 +50,7 @@
 
     <!-- Admin Reports Modal -->
     <div id="adminReportsModal" class="hidden fixed inset-0 z-[9999] bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-slate-50 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[85vh] flex flex-col overflow-hidden border border-slate-200/60">
+        <div class="bg-slate-50 p-4 w-full max-w-4xl max-h-[85vh] flex flex-col overflow-hidden border border-slate-300">
             <div class="flex items-center justify-between p-5 border-b border-slate-200 bg-white">
                 <h2 class="text-xl font-bold text-slate-800">Absence Reports Management</h2>
                 <button type="button" onclick="document.getElementById('adminReportsModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-700 transition-colors p-1 bg-slate-100 hover:bg-slate-200 rounded-lg"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button>

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=JetBrains+Mono:wght@500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=JetBrains+Mono:wght@500;700&family=Newsreader:wght@500;600;700&display=swap');
 
 /* Central theme variables (non-invasive)
    This file defines CSS variables and optional helper classes.
@@ -16,17 +16,17 @@
    --color-muted: #6b7280;
    --color-border: rgba(0,0,0,0.1);
 
-    /* Radii - increased for a softer, rounded look */
-    --radius-sm: 6px;
-    --radius-md: 12px;
-    --radius-lg: 18px;
+    /* Radii - refined modern edges, 3-4px */
+    --radius-sm: 3px;
+    --radius-md: 3px;
+    --radius-lg: 4px;
 
    /* Fonts */
 /* Professional Sans-Serif for readability */
    --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
    
    /* Bold, impactful font for headings */
-   --font-heading: 'Inter', sans-serif;
+    --font-heading: 'Newsreader', Georgia, serif;
 
    /* Sharp, technical font for Elo and match stats */
    --font-mono: 'JetBrains Mono', monospace;
@@ -51,7 +51,64 @@ html, body {
 }
 
 /* Apply fonts globally */
-body { font-family: var(--font-sans); }
+body {
+    font-family: var(--font-sans);
+    min-height: 100vh;
+    color: var(--color-body-text);
+    background-color: #fdf6f4;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
+}
+
+::selection {
+    background: rgba(153, 27, 27, 0.16);
+    color: var(--color-body-text);
+}
+
+:where(a, button, input, textarea, select, summary):focus-visible {
+    outline: 2px solid rgba(153, 27, 27, 0.55);
+    outline-offset: 3px;
+}
+
+/* Modern button styling */
+button, input[type="button"], input[type="submit"], .btn-hover {
+    border-radius: var(--radius-md) !important;
+    box-shadow: none !important;
+    border: 1px solid transparent !important;
+    transition: all 0.2s ease !important;
+}
+
+button:hover, input[type="button"]:hover, input[type="submit"]:hover, .btn-hover:hover {
+    box-shadow: none !important;
+}
+
+/* Modern input styling */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="date"],
+textarea,
+select {
+    border-radius: var(--radius-md) !important;
+    box-shadow: none !important;
+    border: 1px solid #cbd5e1 !important;
+    transition: border-color 0.2s ease !important;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus,
+input[type="date"]:focus,
+textarea:focus,
+select:focus {
+    box-shadow: 0 0 0 3px rgba(153, 27, 27, 0.08) !important;
+    border-color: #991b1b !important;
+}
+
 h1, h2, h3, .font-bold { 
     font-family: var(--font-heading) !important; 
     font-weight: 800; 
@@ -92,6 +149,11 @@ h1, h2, h3, .font-bold {
 .site-btn:focus { outline: 2px solid rgba(59,130,246,0.3); outline-offset: 2px; }
 .site-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
+.site-btn:focus-visible {
+    outline: 2px solid rgba(153, 27, 27, 0.55);
+    outline-offset: 3px;
+}
+
 /* Small utilities */
 .site-border { border: 1px solid var(--color-border); }
 .site-muted { color: var(--color-muted); }
@@ -107,11 +169,11 @@ h1, h2, h3, .font-bold {
 .rounded { border-radius: var(--radius-md) !important; }
 .rounded-sm { border-radius: var(--radius-sm) !important; }
 .rounded-md { border-radius: var(--radius-md) !important; }
-.rounded-lg { border-radius: var(--radius-lg) !important; }
-.rounded-xl { border-radius: calc(var(--radius-lg) + 2px) !important; }
-.rounded-2xl { border-radius: calc(var(--radius-lg) + 4px) !important; }
-.rounded-3xl { border-radius: calc(var(--radius-lg) + 8px) !important; }
-.rounded-full { border-radius: 9999px !important; }
+.rounded-lg { border-radius: 3px !important; }
+.rounded-xl { border-radius: 2px !important; }
+.rounded-2xl { border-radius: 2px !important; }
+.rounded-3xl { border-radius: 2px !important; }
+.rounded-full { border-radius: 2px !important; }
 
 /* Colors */
 .bg-blue-800 { background-color: var(--color-primary) !important; }
@@ -206,6 +268,120 @@ header nav a svg {
 .site-nav-link svg {
     flex: 0 0 auto;
     margin-right: 0 !important;
+}
+
+.navbar-inner,
+#main-content > section,
+.max-w-4xl > section > .bg-white,
+.max-w-4xl > section > .bg-gradient-to-br {
+    backdrop-filter: blur(10px);
+}
+
+.home-hero,
+.home-panel,
+.home-cta {
+    border-radius: 0.75rem;
+}
+
+.home-hero {
+    background: #fff;
+    border: 1px solid #e5d7d5;
+    padding: 1rem 1rem 1.1rem;
+}
+
+.home-hero h1 {
+    letter-spacing: -0.03em !important;
+}
+
+.home-panel {
+    border-radius: 2px;
+}
+
+.home-cta {
+    border-radius: 2px;
+}
+
+.max-w-4xl > section > .bg-white,
+.max-w-4xl > section > .bg-gradient-to-br,
+.max-w-4xl > section > .text-center {
+    border-color: rgba(153, 27, 27, 0.12);
+}
+
+.max-w-4xl > section > .text-center {
+    background: #fff;
+    border: 1px solid #e5d7d5;
+    border-radius: 2px;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.max-w-4xl > section > .text-center h1 {
+    letter-spacing: -0.04em !important;
+}
+
+.max-w-4xl > section > .text-center p {
+    max-width: 60ch;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.max-w-4xl .bg-white,
+.max-w-4xl .bg-slate-50 {
+    border: 1px solid #e5d7d5;
+}
+
+#countdown-container {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, rgba(40, 40, 40, 0.95) 0%, rgba(30, 30, 30, 0.98) 100%);
+    border: 1px solid #555;
+}
+
+#countdown-container::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(circle at top right, rgba(239, 68, 68, 0.12), transparent 40%),
+        radial-gradient(circle at bottom left, rgba(255, 255, 255, 0.04), transparent 35%);
+    pointer-events: none;
+}
+
+#countdown-container > * {
+    position: relative;
+    z-index: 1;
+}
+
+#countdown-container .countdown-unit {
+    min-width: 4.75rem;
+    padding: 0.8rem 0.85rem;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(2px);
+}
+
+#countdown-container .countdown-num {
+    line-height: 1;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.12);
+}
+
+#countdown-container .countdown-sep {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1rem;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.34);
+    font-size: 2.25rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+#next-date-label {
+    color: rgba(254, 226, 226, 0.95);
 }
 
 @media (min-width: 640px) and (max-width: 1120px) {

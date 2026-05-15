@@ -10,10 +10,6 @@
     <link rel="stylesheet" href="animations.css">
     <link rel="icon" type="image/png" href="favicon.png">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
-        window._testScript = true;
-        console.log('TEST: Inline script in HEAD executed');
-    </script>
 </head>
 
 <body class="bg-red-50 text-slate-900 font-sans min-h-screen flex flex-col">
@@ -24,7 +20,7 @@
     <!-- 2. MAIN CONTENT -->
     <main id="main-content" class="max-w-4xl mx-auto p-6 flex-grow w-full opacity-0 transition-opacity duration-500">
         <section class="space-y-8">
-            <div class="text-center py-10 fade-up">
+            <div class="text-center py-10 px-6 sm:px-10 rounded-[2rem] border border-red-100 bg-white/80 shadow-[0_18px_55px_rgba(127,29,29,0.08)] backdrop-blur-sm fade-up">
                 <h1 id="pageTitle" class="text-4xl font-extrabold text-red-900">Login</h1>
                 <p id="pageSubtitle" class="text-slate-600 mt-2">Log in to submit absence reports and manage the club.
                 </p>
@@ -32,14 +28,14 @@
 
             <!-- Login Container -->
             <div id="loginContainer"
-                class="bg-white rounded-2xl shadow-sm border border-slate-100 p-8 max-w-2xl mx-auto fade-up-d1">
+                class="bg-white p-4 border border-slate-200 max-w-2xl mx-auto fade-up-d1">
                 <div class="text-center mb-6">
                     <h2 id="authPanelTitle" class="text-xl font-bold text-slate-800">Account Access</h2>
                     <p id="authPanelSubtitle" class="mt-2 text-sm text-slate-500">Admin access is login-only. Standard
                         user login and account creation are available here.</p>
                 </div>
 
-                <div class="mb-5 grid grid-cols-1 sm:grid-cols-3 gap-2 rounded-2xl bg-slate-100 p-2">
+                <div class="mb-3 grid grid-cols-1 sm:grid-cols-3 gap-1 bg-slate-100 p-1">
                     <button id="dialogTabAdminLogin" type="button" data-tab="admin-login"
                         class="rounded-xl bg-white px-4 py-3 text-sm font-semibold text-red-800 shadow-sm transition-colors">Admin
                         Login</button>
@@ -262,7 +258,7 @@
                     </div>
                     <div
                         class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-start gap-4">
-                        <div class="bg-violet-100 text-violet-700 p-3 rounded-xl">
+                        <div class="bg-red-100 text-red-700 p-3 rounded-xl">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                                 stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -295,7 +291,7 @@
 
     <!-- Modals (direct children of body) -->
     <div id="accountRequestsModal"
-        class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-black/55 backdrop-blur-sm p-4">
+        class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/55 backdrop-blur-sm p-4">
         <div class="bg-white rounded-3xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden border border-slate-200">
             <div class="bg-gradient-to-r from-slate-800 to-red-800 text-white p-5 flex items-start justify-between gap-4">
                 <div>
@@ -307,7 +303,7 @@
                     class="shrink-0 rounded-full bg-white/10 hover:bg-white/20 text-white text-2xl leading-none h-11 w-11 inline-flex items-center justify-center">&times;</button>
             </div>
             <div class="p-6 max-h-[calc(90vh-92px)] overflow-y-auto">
-                <div class="rounded-2xl bg-slate-50 border border-slate-200 p-4 text-sm text-slate-600 mb-4">
+                <div class="p-3 bg-slate-50 border border-slate-200 text-xs text-slate-600 mb-3">
                     Review each request card and choose the account role before approving.
                 </div>
                 <div id="accountRequestsModalList" class="space-y-3"></div>
@@ -317,7 +313,7 @@
 
     <!-- Absence Reports Modal -->
     <div id="absenceReportsModal"
-        class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-black/55 backdrop-blur-sm p-4">
+        class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/55 backdrop-blur-sm p-4">
         <div class="bg-white rounded-3xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden border border-red-100">
             <div class="bg-gradient-to-r from-red-700 to-orange-700 text-white p-5 flex items-start justify-between gap-4">
                 <div>
@@ -329,7 +325,7 @@
                     class="shrink-0 rounded-full bg-white/10 hover:bg-white/20 text-white text-2xl leading-none h-11 w-11 inline-flex items-center justify-center">&times;</button>
             </div>
             <div class="p-6 max-h-[calc(90vh-92px)] overflow-y-auto">
-                <div class="rounded-2xl bg-red-50 border border-red-100 p-4 text-sm text-red-900 mb-4">
+                <div class="p-3 bg-red-50 border border-red-200 text-xs text-red-900 mb-3">
                     Each report card shows the student's note, status, and review actions.
                 </div>
                 <div id="absenceReportsModalList" class="space-y-3"></div>
@@ -338,8 +334,8 @@
     </div>
 
 <!-- Match Management Modal -->
-<div id="matchManagementModal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-    <div class="bg-white rounded-2xl shadow-lg max-w-4xl w-full max-h-[90vh] flex flex-col overflow-hidden">
+<div id="matchManagementModal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/50 backdrop-blur-sm p-4">
+    <div class="bg-white border border-slate-200 max-w-4xl w-full max-h-[90vh] flex flex-col overflow-hidden">
         <div class="bg-orange-600 text-white p-4 flex items-center justify-between shrink-0">
             <h3 class="font-bold text-lg">Match Management</h3>
             <button id="closeMatchManagementModalBtn" type="button" class="text-white hover:text-orange-200 text-2xl leading-none">&times;</button>
@@ -364,8 +360,8 @@
     <!-- Profile Modal -->
     <!-- Profile Modal -->
 <div id="profileModal"
-    class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-    <div class="bg-white rounded-2xl shadow-lg max-w-md w-full max-h-[90vh] flex flex-col overflow-hidden">
+    class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/50 backdrop-blur-sm p-4">
+    <div class="bg-white border border-slate-200 max-w-md w-full max-h-[90vh] flex flex-col overflow-hidden">
         <div class="bg-red-800 text-white p-4 flex items-center justify-between shrink-0">
             <h3 class="font-bold text-lg">Profile</h3>
             <button id="closeProfileModalBtn" type="button"
@@ -411,7 +407,7 @@
 
     <!-- ELO Adjustment Modal -->
     <div id="eloAdjustmentModal"
-        class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+        class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/50 backdrop-blur-sm p-4">
         <div class="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden border border-blue-100">
             <div class="bg-gradient-to-r from-blue-600 to-cyan-600 text-white p-5 flex items-start justify-between gap-4">
                 <div>
@@ -435,7 +431,7 @@
                     <p id="eloPlayerEmpty" class="hidden text-center text-slate-500 p-4 text-sm">No players match that search.</p>
                 </div>
                 <!-- Right Panel: ELO Adjustment Form -->
-                <div class="col-span-2 bg-gradient-to-b from-blue-50 to-cyan-50 p-6 flex flex-col overflow-y-auto">
+                <div class="col-span-2 bg-slate-50 p-3 flex flex-col overflow-y-auto">
                     <div id="eloPlayerSummary" class="text-sm text-slate-600 mb-6 p-4 bg-white rounded-lg border border-blue-100 italic">
                         Select a player to view and adjust their ELO.
                     </div>
@@ -449,7 +445,7 @@
                             <p class="text-xs text-slate-500 mt-1">Use + for increase, - for decrease</p>
                         </div>
                         <button id="submitEloAdjustmentBtn" type="button"
-                            class="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white px-4 py-3 rounded-lg font-bold hover:from-blue-700 hover:to-cyan-700 transition-all shadow-md hover:shadow-lg">
+                            class="w-full bg-blue-600 text-white px-3 py-2 rounded font-bold hover:bg-blue-700 transition-all border border-blue-700">
                             Adjust ELO
                         </button>
                         <p id="eloAdjustmentStatus" class="hidden text-sm font-medium text-center text-slate-700"></p>
@@ -461,13 +457,13 @@
 
     <!-- Win/Loss Editor Modal -->
     <div id="winLossEditorModal"
-        class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-        <div class="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden border border-violet-100">
-            <div class="bg-gradient-to-r from-violet-700 to-purple-700 text-white p-5 flex items-start justify-between gap-4">
+        class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/50 backdrop-blur-sm p-4">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden border border-red-100">
+            <div class="bg-gradient-to-r from-red-800 to-slate-800 text-white p-5 flex items-start justify-between gap-4">
                 <div>
-                    <p class="text-xs uppercase tracking-[0.24em] text-violet-100">Admin Tool</p>
+                    <p class="text-xs uppercase tracking-[0.24em] text-red-100">Admin Tool</p>
                     <h3 class="font-extrabold text-2xl mt-1">Win/Loss Editor</h3>
-                    <p class="text-violet-50/90 text-sm mt-1">Search for a player and manually update their wins and losses record.</p>
+                    <p class="text-red-50/90 text-sm mt-1">Search for a player and manually update their wins and losses record.</p>
                 </div>
                 <button id="closeWinLossEditorModalBtn" type="button"
                     class="shrink-0 rounded-full bg-white/10 hover:bg-white/20 text-white text-2xl leading-none h-11 w-11 inline-flex items-center justify-center">&times;</button>
@@ -480,7 +476,7 @@
                                 <label class="block text-sm font-semibold text-slate-700 mb-1">Choose a player</label>
                                 <p class="text-xs text-slate-500">Search or scan the cards below to select a player.</p>
                             </div>
-                            <span id="winLossPlayerCount" class="text-xs font-semibold text-violet-700 bg-violet-50 border border-violet-100 px-3 py-1 rounded-full">0 players</span>
+                            <span id="winLossPlayerCount" class="text-xs font-semibold text-red-700 bg-red-50 border border-red-100 px-3 py-1 rounded-full">0 players</span>
                         </div>
                         <div class="flex items-center gap-3 px-1 py-1">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -490,28 +486,28 @@
                             <input id="winLossSearchInput" type="search" placeholder="by name or division"
                                 class="min-w-0 flex-1 bg-transparent outline-none text-sm text-slate-800 placeholder:text-slate-400">
                         </div>
-                        <div id="winLossPlayerSummary" class="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
+                        <div id="winLossPlayerSummary" class="border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600">
                             Select a player to view their current stats.
                         </div>
                         <div id="winLossPlayerList" class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[50vh] overflow-y-auto pr-1"></div>
-                        <p id="winLossPlayerEmpty" class="hidden rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-5 text-sm text-slate-500 text-center">No players match that search.</p>
+                        <p id="winLossPlayerEmpty" class="hidden border border-dashed border-slate-300 bg-slate-50 p-3 text-xs text-slate-500 text-center">No players match that search.</p>
                     </div>
                     <div class="lg:col-span-2 space-y-4">
                         <div>
                             <label class="block text-sm font-semibold text-slate-700 mb-2">Wins</label>
                             <input id="winLossWinsInput" type="number" placeholder="0" min="0"
-                                class="w-full p-3 border border-slate-300 rounded-2xl outline-none focus:ring-2 focus:ring-violet-500 bg-white shadow-sm">
+                                class="w-full p-3 border border-slate-300 rounded-2xl outline-none focus:ring-2 focus:ring-red-500 bg-white shadow-sm">
                         </div>
                         <div>
                             <label class="block text-sm font-semibold text-slate-700 mb-2">Losses</label>
                             <input id="winLossLossesInput" type="number" placeholder="0" min="0"
-                                class="w-full p-3 border border-slate-300 rounded-2xl outline-none focus:ring-2 focus:ring-violet-500 bg-white shadow-sm">
+                                class="w-full p-3 border border-slate-300 rounded-2xl outline-none focus:ring-2 focus:ring-red-500 bg-white shadow-sm">
                         </div>
-                        <div class="rounded-2xl bg-violet-50 border border-violet-100 p-4 text-sm text-violet-900 leading-relaxed">
+                        <div class="p-3 bg-red-50 border border-red-200 text-xs text-red-900 leading-relaxed">
                             Saving will update the player's record in both rankings and accounts.
                         </div>
                         <button id="submitWinLossBtn" type="button"
-                            class="w-full bg-violet-700 text-white px-4 py-3 rounded-2xl font-semibold hover:bg-violet-800 transition-colors shadow-sm">Save
+                            class="w-full bg-red-800 text-white px-3 py-2 rounded font-semibold hover:bg-red-900 transition-colors border border-red-900">Save
                             Win/Loss Changes</button>
                         <p id="winLossStatus" class="hidden text-sm font-medium text-center"></p>
                     </div>
@@ -522,7 +518,7 @@
 
     <!-- Name Linking Modal -->
     <div id="nameLinkModal"
-        class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+        class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/50 backdrop-blur-sm p-4">
         <div class="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden border border-emerald-100">
             <div class="bg-gradient-to-r from-emerald-700 to-teal-700 text-white p-5 flex items-start justify-between gap-4">
                 <div>
@@ -551,23 +547,23 @@
                             <input id="nameLinkSearchInput" type="search" placeholder="by email or display name"
                                 class="min-w-0 flex-1 bg-transparent outline-none text-sm text-slate-800 placeholder:text-slate-400">
                         </div>
-                        <div id="nameLinkAccountSummary" class="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
+                        <div id="nameLinkAccountSummary" class="border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600">
                             Select an account to preview who will be linked.
                         </div>
                         <div id="nameLinkAccountList" class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[50vh] overflow-y-auto pr-1"></div>
-                        <p id="nameLinkAccountEmpty" class="hidden rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-5 text-sm text-slate-500 text-center">No accounts match that search.</p>
+                        <p id="nameLinkAccountEmpty" class="hidden border border-dashed border-slate-300 bg-slate-50 p-3 text-xs text-slate-500 text-center">No accounts match that search.</p>
                     </div>
                     <div class="lg:col-span-2 space-y-4">
                         <div>
                             <label class="block text-sm font-semibold text-slate-700 mb-2">Existing ranking name</label>
-                            <select id="nameLinkRankingSelect" class="w-full p-3 border rounded-2xl outline-none focus:ring-2 focus:ring-emerald-500 bg-white shadow-sm"></select>
+                            <select id="nameLinkRankingSelect" class="w-full p-2 border outline-none focus:ring-2 focus:ring-emerald-500 bg-white"></select>
                             <p class="mt-2 text-xs text-slate-500">Already-linked ranking names are hidden so you only pick from unused names.</p>
                         </div>
-                        <div class="rounded-2xl bg-emerald-50 border border-emerald-100 p-4 text-sm text-emerald-900 leading-relaxed">
+                        <div class="p-3 bg-emerald-50 border border-emerald-200 text-xs text-emerald-900 leading-relaxed">
                             Saving will update the account's display name and attach any matching ranking and match history rows to the same name.
                         </div>
                         <button id="saveNameLinkBtn" type="button"
-                            class="w-full bg-emerald-700 text-white px-4 py-3 rounded-2xl font-semibold hover:bg-emerald-800 transition-colors shadow-sm">Save
+                            class="w-full bg-emerald-600 text-white px-3 py-2 rounded font-semibold hover:bg-emerald-700 transition-colors border border-emerald-700">Save
                             Name Link</button>
                         <p id="nameLinkStatus" class="hidden text-sm font-medium text-center"></p>
                     </div>
@@ -578,7 +574,7 @@
 
     <!-- Name Linking Success Modal -->
     <div id="nameLinkSuccessModal"
-        class="hidden fixed inset-0 z-[10000] flex items-center justify-center bg-black/55 backdrop-blur-sm p-4">
+        class="hidden fixed inset-0 z-[10000] flex items-center justify-center bg-slate-950/55 backdrop-blur-sm p-4">
         <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden border border-emerald-100">
             <div class="bg-gradient-to-r from-emerald-600 to-teal-600 text-white p-5 flex items-start justify-between gap-4">
                 <div>
@@ -590,18 +586,18 @@
             </div>
             <div class="p-6 space-y-4">
                 <p id="nameLinkSuccessMessage" class="text-slate-700 text-sm leading-6"></p>
-                <div class="rounded-2xl bg-emerald-50 border border-emerald-100 p-4 text-sm text-emerald-900">
+                <div class="p-3 bg-emerald-50 border border-emerald-200 text-xs text-emerald-900">
                     Existing ranking and match history rows using that name were updated automatically.
                 </div>
                 <button id="closeNameLinkSuccessActionBtn" type="button"
-                    class="w-full bg-slate-900 text-white px-4 py-3 rounded-2xl font-semibold hover:bg-slate-800 transition-colors">Close</button>
+                    class="w-full bg-slate-900 text-white px-3 py-2 rounded font-semibold hover:bg-slate-800 transition-colors border border-slate-800">Close</button>
             </div>
         </div>
     </div>
 
     <!-- Manual Match Entry Modal -->
     <div id="manualMatchModal"
-        class="hidden fixed inset-0 z-[10000] flex items-center justify-center bg-black/55 backdrop-blur-sm p-4">
+        class="hidden fixed inset-0 z-[10000] flex items-center justify-center bg-slate-950/55 backdrop-blur-sm p-4">
         <div class="bg-white rounded-3xl shadow-2xl max-w-5xl w-full max-h-[92vh] overflow-hidden border border-cyan-100">
             <div class="bg-gradient-to-r from-cyan-700 to-sky-700 text-white p-5 flex items-start justify-between gap-4">
                 <div>
@@ -618,37 +614,37 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-semibold text-slate-700 mb-2">Division</label>
-                                <select id="manualMatchDivisionSelect" class="w-full p-3 border rounded-2xl outline-none focus:ring-2 focus:ring-cyan-500 bg-white shadow-sm"></select>
+                                <select id="manualMatchDivisionSelect" class="w-full p-2 border outline-none focus:ring-2 focus:ring-cyan-500 bg-white"></select>
                             </div>
                             <div>
                                 <label class="block text-sm font-semibold text-slate-700 mb-2">Half</label>
-                                <select id="manualMatchHalfSelect" class="w-full p-3 border rounded-2xl outline-none focus:ring-2 focus:ring-cyan-500 bg-white shadow-sm"></select>
+                                <select id="manualMatchHalfSelect" class="w-full p-2 border outline-none focus:ring-2 focus:ring-cyan-500 bg-white"></select>
                             </div>
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-semibold text-slate-700 mb-2">Player 1</label>
-                                <select id="manualMatchPlayer1Select" class="w-full p-3 border rounded-2xl outline-none focus:ring-2 focus:ring-cyan-500 bg-white shadow-sm"></select>
+                                <select id="manualMatchPlayer1Select" class="w-full p-2 border outline-none focus:ring-2 focus:ring-cyan-500 bg-white"></select>
                             </div>
                             <div>
                                 <label class="block text-sm font-semibold text-slate-700 mb-2">Player 2</label>
-                                <select id="manualMatchPlayer2Select" class="w-full p-3 border rounded-2xl outline-none focus:ring-2 focus:ring-cyan-500 bg-white shadow-sm"></select>
+                                <select id="manualMatchPlayer2Select" class="w-full p-2 border outline-none focus:ring-2 focus:ring-cyan-500 bg-white"></select>
                             </div>
                             <div class="sm:col-span-2">
                                 <label class="block text-sm font-semibold text-slate-700 mb-2">Winner</label>
-                                <select id="manualMatchWinnerSelect" class="w-full p-3 border rounded-2xl outline-none focus:ring-2 focus:ring-cyan-500 bg-white shadow-sm"></select>
+                                <select id="manualMatchWinnerSelect" class="w-full p-2 border outline-none focus:ring-2 focus:ring-cyan-500 bg-white"></select>
                             </div>
                             <div>
                                 <label class="block text-sm font-semibold text-slate-700 mb-2">Score</label>
-                                <input id="manualMatchScoreInput" type="text" placeholder="e.g. 3-1" class="w-full p-3 border rounded-2xl outline-none focus:ring-2 focus:ring-cyan-500 bg-white shadow-sm">
+                                <input id="manualMatchScoreInput" type="text" placeholder="e.g. 3-1" class="w-full p-2 border outline-none focus:ring-2 focus:ring-cyan-500 bg-white">
                             </div>
                             <div class="sm:col-span-2">
                                 <label class="block text-sm font-semibold text-slate-700 mb-2">Term / week</label>
-                                <input id="manualMatchTermInput" type="text" placeholder="Term 2 Week 4" class="w-full p-3 border rounded-2xl outline-none focus:ring-2 focus:ring-cyan-500 bg-white shadow-sm">
+                                <input id="manualMatchTermInput" type="text" placeholder="Term 2 Week 4" class="w-full p-2 border outline-none focus:ring-2 focus:ring-cyan-500 bg-white">
                             </div>
                         </div>
                         <button id="saveManualMatchBtn" type="button"
-                            class="w-full bg-cyan-700 text-white px-4 py-3 rounded-2xl font-semibold hover:bg-cyan-800 transition-colors shadow-sm">Save Match Result</button>
+                            class="w-full bg-cyan-600 text-white px-3 py-2 rounded font-semibold hover:bg-cyan-700 transition-colors border border-cyan-700">Save Match Result</button>
                         <p id="manualMatchStatus" class="hidden text-sm font-medium text-center"></p>
                     </div>
                     <div class="lg:col-span-2 space-y-4">
@@ -1364,12 +1360,20 @@
                 const email = emailInput.value.trim().toLowerCase();
                 const password = passwordInput.value;
 
-                // 1. Check for existing pending request
-                const { data: existingData, error: existingError } = await _supabase.from('account_requests').select('*').ilike('email', email).eq('status', 'pending').limit(1);
-                if (existingError) throw existingError;
+                // 1. Check for existing pending request only when this client can read requests.
+                const { data: sessionData } = await _supabase.auth.getSession();
+                if (sessionData?.session) {
+                    const { data: existingData, error: existingError } = await _supabase
+                        .from('account_requests')
+                        .select('*')
+                        .ilike('email', email)
+                        .eq('status', 'pending')
+                        .limit(1);
+                    if (existingError) throw existingError;
 
-                if (existingData && existingData.length > 0) {
-                    throw new Error('A pending request for this email already exists.');
+                    if (existingData && existingData.length > 0) {
+                        throw new Error('A pending request for this email already exists.');
+                    }
                 }
 
                 // 2. Create the Request Row (do NOT create auth account yet - wait for admin approval)
@@ -1803,48 +1807,85 @@
 
         async function reviewAccountRequest(id, keyColumn, linkedId, status, email, role) {
             if (!confirm(`Mark ${email} as ${status}?`)) return;
-            const requestKeyColumn = keyColumn || 'request_id';
 
             try {
                 // If approving, create the auth account and account table entry
                 if (status === 'approved' && (!linkedId || linkedId === 'null')) {
-                    // 1. Fetch the request to get the password
+                    // 1. Fetch the request to get the password by email
                     const { data: requestData, error: fetchErr } = await _supabase
                         .from('account_requests')
                         .select('password')
-                        .eq(requestKeyColumn, id)
+                        .eq('email', email)
+                        .order('created_at', { ascending: false })
+                        .limit(1)
                         .single();
 
                     if (fetchErr) throw new Error("Could not fetch password: " + fetchErr.message);
                     if (!requestData?.password) throw new Error("No password found for this request.");
 
-                    // 2. Create auth account
-                    const approvalClient = createEphemeralSupabaseClient();
-                    const { data: signUpData, error: signUpErr } = await approvalClient.auth.signUp({
-                        email,
-                        password: requestData.password
-                    });
-                    if (signUpErr) throw new Error("Failed to create auth account: " + signUpErr.message);
+                    let userId;
+                    let approvalClient;
+                    
+                    // 2. Check if account already exists in the database (orphaned from deleted auth)
+                    const { data: existingAccount } = await _supabase
+                        .from('account')
+                        .select('account_id')
+                        .eq('email', email)
+                        .maybeSingle();
+                    
+                    if (existingAccount) {
+                        // Use the existing account ID instead of creating new one
+                        userId = existingAccount.account_id;
+                    } else {
+                        // 3. Create new auth account
+                        approvalClient = createEphemeralSupabaseClient();
+                        const { data: signUpData, error: signUpErr } = await approvalClient.auth.signUp({
+                            email,
+                            password: requestData.password
+                        });
+                        
+                        if (signUpErr) {
+                            // If "already registered", try to get the user ID from admin API
+                            if (signUpErr.message && signUpErr.message.includes('already registered')) {
+                                try {
+                                    const { data: { users }, error: listErr } = await _supabase.auth.admin.listUsers();
+                                    if (!listErr && users) {
+                                        const existingUser = users.find(u => u.email === email);
+                                        if (existingUser) {
+                                            userId = existingUser.id;
+                                        }
+                                    }
+                                } catch (e) {
+                                    console.warn("Could not retrieve user from admin API:", e.message);
+                                }
+                            }
+                            
+                            if (!userId) {
+                                throw new Error("Failed to create auth account: " + signUpErr.message);
+                            }
+                        } else {
+                            userId = signUpData?.user?.id;
+                        }
+                        
+                        if (!userId) throw new Error("Could not get User ID.");
+                        
+                        // Sign out ephemeral client immediately to restore admin session for insert
+                        if (approvalClient?.auth?.signOut) {
+                            await approvalClient.auth.signOut();
+                        }
+                        
+                        // 4. Create account table entry via RPC (bypasses RLS with SECURITY DEFINER)
+                        const { error: accError } = await _supabase.rpc('create_account_entry', {
+                            p_account_id: userId,
+                            p_email: email,
+                            p_role: role
+                        });
 
-                    const userId = signUpData?.user?.id;
-                    if (!userId) throw new Error("Could not fetch User ID.");
-
-                    // 3. Create account table entry via stored function
-                    const { error: accError } = await _supabase.rpc('create_account_entry', {
-                        p_account_id: userId,
-                        p_email: email,
-                        p_role: role
-                    });
-
-                    if (accError) {
-                        throw new Error("Failed to create account entry: " + accError.message);
+                        if (accError) {
+                            throw new Error("Failed to create account entry: " + accError.message);
+                        }
                     }
 
-                    if (approvalClient.auth?.signOut) {
-                        await approvalClient.auth.signOut();
-                    }
-
-                    // 4. Update the request with the linked_account_id
                     linkedId = userId;
                 } else if (status === 'declined' && linkedId && linkedId !== 'null') {
                     // If declining and account was created, delete it
@@ -1855,20 +1896,27 @@
                     if (accErr) console.warn("Warning: Could not delete account entry:", accErr.message);
                 }
 
-                // 5. Update the 'account_requests' log
-                const { error: dbError } = await _supabase.from('account_requests').update({
+                // 5. Update the 'account_requests' table directly by email
+                const updatePayload = {
                     status,
                     reviewed_at: new Date().toISOString(),
                     reviewed_by: currentAccountEmail,
                     role,
                     linked_account_id: linkedId && linkedId !== 'null' ? linkedId : null
-                }).eq(requestKeyColumn, id);
+                };
+
+                const { error: dbError } = await _supabase
+                    .from('account_requests')
+                    .update(updatePayload)
+                    .eq('email', email);
 
                 if (dbError) {
-                    alert('Failed to update request status: ' + dbError.message);
-                    return;
+                    throw new Error('Failed to update request status: ' + dbError.message);
                 }
 
+                alert(`✓ Account ${status} for ${email}`);
+
+                // Refresh the list
                 await loadAccountRequests();
             } catch (err) {
                 alert('Error processing request: ' + err.message);
@@ -2407,9 +2455,9 @@
                     const half = player.half ? ` · ${player.half}` : '';
                     return `
                         <button type="button" data-player-name="${escapeHtml(player.name)}"
-                            class="text-left rounded-2xl border p-4 transition-all shadow-sm hover:shadow-md ${isSelected ? 'border-violet-400 bg-violet-50 ring-2 ring-violet-200' : 'border-slate-200 bg-white hover:border-violet-200'}">
+                            class="text-left rounded-2xl border p-4 transition-all shadow-sm hover:shadow-md ${isSelected ? 'border-red-400 bg-red-50 ring-2 ring-red-200' : 'border-slate-200 bg-white hover:border-red-200'}">
                             <div class="flex items-start gap-3">
-                                <div class="h-12 w-12 rounded-2xl ${isSelected ? 'bg-violet-600 text-white' : 'bg-slate-100 text-slate-600'} flex items-center justify-center font-extrabold text-sm shrink-0">${escapeHtml(initials)}</div>
+                                <div class="h-12 w-12 rounded-2xl ${isSelected ? 'bg-red-800 text-white' : 'bg-slate-100 text-slate-600'} flex items-center justify-center font-extrabold text-sm shrink-0">${escapeHtml(initials)}</div>
                                 <div class="min-w-0 flex-1">
                                     <p class="font-bold text-slate-800 truncate">${escapeHtml(player.name)}</p>
                                     <p class="text-xs text-slate-500 truncate mt-0.5">W${player.wins ?? 0} / L${player.losses ?? 0} · ${player.elo ?? 0} Elo${division}${half}</p>
@@ -2449,7 +2497,7 @@
                                 <p class="text-lg font-bold text-slate-900 mt-1">${escapeHtml(winLossSelectedPlayer.name)}</p>
                             </div>
                             <div class="grid grid-cols-3 gap-2 text-sm">
-                                <div class="rounded-lg bg-white p-2 border border-violet-100">
+                                <div class="rounded-lg bg-white p-2 border border-red-100">
                                     <p class="text-xs font-bold text-slate-500">ELO</p>
                                     <p class="font-bold text-slate-900">${winLossSelectedPlayer.elo ?? 0}</p>
                                 </div>

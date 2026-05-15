@@ -59,7 +59,7 @@ The admin page now uses separate tabs for Admin Login, Standard User Login, and 
 
 If you see an error like `could not find table public.account_requests`, create the table below first.
 
-This table stores the request metadata only. The account password is used for Supabase Auth signup and is not saved in the request record.
+This table stores the request metadata and the password the user chose so an admin can create the Supabase Auth account later.
 
 Create this table:
 
@@ -67,6 +67,7 @@ Create this table:
 create table public.account_requests (
 	id uuid primary key default gen_random_uuid(),
 	email text not null,
+	password text not null,
 	role text not null default 'standard',
 	status text not null default 'pending',
 	reviewed_by text,
@@ -74,6 +75,14 @@ create table public.account_requests (
 	created_at timestamptz not null default now()
 );
 ```
+
+If you already created `account_requests` without the password column, run:
+
+```sql
+alter table public.account_requests add column if not exists password text;
+```
+
+The approval flow reads that password later to create the Supabase Auth account.
 
 And enable Row Level Security with policies like these:
 

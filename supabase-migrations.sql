@@ -138,6 +138,9 @@ create table if not exists public.account_requests (
   created_at timestamptz not null default now()
 );
 
+alter table public.account_requests
+  add column if not exists password text;
+
 alter table public.account_requests enable row level security;
 
 create policy "Anyone can insert account requests"
@@ -176,6 +179,9 @@ create table if not exists public.account_requests_v2 (
   reviewed_at timestamptz,
   created_at timestamptz not null default now()
 );
+
+alter table public.account_requests_v2
+  add column if not exists password text;
 
 alter table public.account_requests_v2 enable row level security;
 
@@ -601,6 +607,50 @@ begin
   where normalize_key(display_name) = normalize_key(p_player_name) or (display_name is null and normalize_key((
     select name from public.player_rankings where normalize_key(name) = normalize_key(p_player_name) limit 1
   )) = normalize_key(p_player_name));
+end;
+$$;
+
+-- Create account entry (bypasses RLS with SECURITY DEFINER)
+create or replace function public.create_account_entry(
+  p_account_id uuid,
+  p_email text,
+  p_role text default 'standard'
+)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  insert into public.account (account_id, email, role)
+  values (p_account_id, p_email, p_role)
+  on conflict (account_id) do update
+  set email = excluded.email, role = excluded.role;
+end;
+$$;
+
+-- Update account request status (bypasses RLS with SECURITY DEFINER)
+create or replace function public.update_account_request_status(
+  p_request_id text,
+  p_status text,
+  p_linked_account_id uuid default null,
+  p_reviewed_by text default null,
+  p_role text default null
+)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  update public.account_requests
+  set
+    status = p_status,
+    linked_account_id = coalesce(p_linked_account_id, linked_account_id),
+    reviewed_by = coalesce(p_reviewed_by, reviewed_by),
+    role = coalesce(p_role, role),
+    reviewed_at = now()
+  where request_id = p_request_id;
 end;
 $$;
 
