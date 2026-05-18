@@ -14,7 +14,10 @@ window._adminEmails = (window._adminEmails || [
 const headerHTML = `
 <header class="bg-red-800 text-white shadow-md fade-in relative z-50">
     <nav class="max-w-6xl mx-auto flex flex-wrap items-center justify-between px-4 py-4">
-        <a href="index.html" class="text-xl font-bold transition-opacity duration-200 hover:opacity-80 shrink-0">NBHS TT Hub</a>
+        <a href="index.html" class="text-xl font-bold transition-opacity duration-200 hover:opacity-80 shrink-0">
+            <img src="favicon.png" alt="NBHS TT" class="header-favicon inline align-middle mr-2" />
+            NBHS TT Hub
+        </a>
         
         <button id="rankingNavToggle" type="button" class="sm:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl border border-red-600 bg-red-700 text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 transition-colors duration-200 overflow-hidden transform-gpu shrink-0">
             <svg id="menu-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M4 6h16M4 12h16M4 18h16" /></svg>
@@ -32,7 +35,7 @@ const headerHTML = `
             
             <a id="navLoginLink" href="admin.html" class="block rounded-lg px-3 py-3 sm:py-2 bg-white/10 hover:bg-white/20 transition-colors overflow-hidden transform-gpu" style="backface-visibility: hidden; transform: translateZ(0);">
                 <svg xmlns="http://www.w3.org/2000/svg" class="inline align-middle h-5 w-5 sm:h-4 sm:w-4 mr-3 sm:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-                <span id="navLoginLinkText">Login</span>
+                <span id="navLoginLinkText" style="opacity:0;">&nbsp;</span>
             </a>
         </div>
     </nav>
@@ -57,6 +60,7 @@ async function updateAuthUI(session) {
             if (window._resolveAccountRole) {
                 const role = await window._resolveAccountRole(email);
                 loginText.textContent = role === 'admin' ? 'Admin Portal' : 'Profile';
+                loginText.style.opacity = '1';
                 return;
             }
         } catch (err) {
@@ -65,8 +69,10 @@ async function updateAuthUI(session) {
         // Fallback display
         const adminEmails = (window._adminEmails || []).slice();
         loginText.textContent = adminEmails.includes(email) ? "Admin Portal" : "Profile";
+        loginText.style.opacity = '1';
     } else {
         loginText.textContent = "Login";
+        loginText.style.opacity = '1';
     }
 }
 

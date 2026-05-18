@@ -218,12 +218,14 @@
     if (!loginText) {
         loginText = document.createElement('span');
         loginText.id = 'navLoginLinkText';
-        loginText.textContent = defaultLabel;
+        loginText.style.opacity = '0';
+        loginText.textContent = '';
         loginLink.appendChild(loginText);
     }
 
     function setLabel(label) {
         loginText.textContent = label;
+        loginText.style.opacity = '1';
     }
 
     function updateLabel(session) {

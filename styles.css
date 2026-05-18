@@ -37,9 +37,20 @@
    --space-md: 0.6rem; /* ~10px */
    --space-lg: 1rem;   /* replaces larger paddings like p-6 */
    /* Header icon vertical nudge (change this to manually adjust alignment) */
-   --header-icon-nudge: -1px;
+    --header-icon-nudge: 1px;
    /* Header icon horizontal offset (positive moves icon right) */
-   --header-icon-offset-x: 0px;
+   --header-icon-offset-x: 3px;
+}
+
+.header-favicon {
+    width: 1.25rem;
+    height: 1.25rem;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    vertical-align: middle;
+    
+    /* Adds offset: X (horizontal) and Y (vertical) */
+    translate: 6px -1.5px; 
 }
 
 .font-sans {
@@ -246,6 +257,35 @@ input, textarea, select, button {
 /* Compact utilities for common layout containers */
 .max-w-4xl.p-6 { padding-left: var(--space-lg); padding-right: var(--space-lg); }
 .mb-8 { margin-bottom: calc(var(--space-lg)); }
+
+/* ------------------------------------------------------------------
+   Final enforcement: ensure all card-like elements use the theme radius
+   This block appears last so it overrides earlier conflicted rules.
+   Targets common card utilities and any rounded-* utilities inside
+   the main content area and modals.
+   ------------------------------------------------------------------ */
+#main-content .rounded-2xl,
+#main-content .rounded-3xl,
+#main-content [class*="rounded-"],
+#main-content [class*="rounded\["],
+#main-content .bg-white,
+#main-content .shadow-sm,
+#main-content .card-hover,
+#main-content .home-panel,
+#main-content #analytics-summary div,
+#main-content #analytics-highlights div,
+#main-content .rounded {
+    border-radius: var(--radius-md) !important;
+}
+
+[id$="Modal"] .rounded-2xl,
+[id$="Modal"] .rounded-3xl,
+[id$="Modal"] [class*="rounded-"],
+[id$="Modal"] .bg-white,
+[id$="Modal"] .shadow-sm,
+[id$="Modal"] .card-hover {
+    border-radius: var(--radius-md) !important;
+}
 
 /* Header icon alignment: nudge small inline SVGs in text links to vertically center with text */
 header nav a svg {

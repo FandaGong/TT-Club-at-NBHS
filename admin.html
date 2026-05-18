@@ -1252,7 +1252,10 @@
                     // Ensure header login link reflects current session state (Profile/Admin Portal)
                     try {
                         const navText = document.getElementById('navLoginLinkText');
-                        if (navText) navText.textContent = isAdmin ? 'Admin Portal' : 'Profile';
+                        if (navText) {
+                            navText.textContent = isAdmin ? 'Admin Portal' : 'Profile';
+                            navText.style.opacity = '1';
+                        }
                     } catch (e) { /* ignore if header not yet initialized */ }
 
                     if (document.getElementById('profileEmail')) document.getElementById('profileEmail').textContent = email;
@@ -1267,7 +1270,10 @@
                     document.getElementById('pageTitle').textContent = 'Login';
                     try {
                         const navText = document.getElementById('navLoginLinkText');
-                        if (navText) navText.textContent = 'Login';
+                        if (navText) {
+                            navText.textContent = 'Login';
+                            navText.style.opacity = '1';
+                        }
                     } catch (e) { /* ignore if header not yet initialized */ }
                     document.getElementById('profileModal').classList.add('hidden');
                 }
