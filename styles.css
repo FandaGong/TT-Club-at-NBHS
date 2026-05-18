@@ -169,11 +169,40 @@ h1, h2, h3, .font-bold {
 .rounded { border-radius: var(--radius-md) !important; }
 .rounded-sm { border-radius: var(--radius-sm) !important; }
 .rounded-md { border-radius: var(--radius-md) !important; }
-.rounded-lg { border-radius: 3px !important; }
-.rounded-xl { border-radius: 2px !important; }
-.rounded-2xl { border-radius: 2px !important; }
-.rounded-3xl { border-radius: 2px !important; }
-.rounded-full { border-radius: 2px !important; }
+.rounded-lg { border-radius: var(--radius-lg) !important; }
+.rounded-xl { border-radius: calc(var(--radius-lg) + 4px) !important; }
+.rounded-2xl { border-radius: calc(var(--radius-lg) + 8px) !important; }
+.rounded-3xl { border-radius: calc(var(--radius-lg) + 12px) !important; }
+.rounded-full { border-radius: 9999px !important; }
+
+/* Override arbitrary bracketed Tailwind-style radii like `rounded-[2rem]` so
+   they don't produce inconsistent, very large radii. This targets only
+   classes that include a `rounded-[` pattern. */
+[class*="rounded-["] {
+    border-radius: var(--radius-md) !important;
+}
+
+/* ------------------------------------------------------------------
+   Force consistent, sharp radii for all container-like elements inside
+   the main content area and common modal/dialog containers.
+   This is intentionally opinionated: it applies `--radius-md` everywhere
+   in the content area so no element appears out-of-place.
+   If you'd like exceptions (badges, avatars), I can whitelist them.
+   ------------------------------------------------------------------ */
+#main-content, #main-content * {
+    border-radius: var(--radius-md) !important;
+}
+
+/* Also ensure modals / overlays follow the same sharp radius */
+[id$="Modal"], .modal, .modal * {
+    border-radius: var(--radius-md) !important;
+}
+
+/* Keep interactive controls visually consistent too */
+input, textarea, select, button {
+    border-radius: var(--radius-md) !important;
+}
+
 
 /* Colors */
 .bg-blue-800 { background-color: var(--color-primary) !important; }

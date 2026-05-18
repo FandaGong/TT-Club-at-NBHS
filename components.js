@@ -180,4 +180,46 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('main-content')?.classList.remove('opacity-0');
         document.getElementById('page-footer')?.classList.remove('opacity-0');
     }
+
+    // Page transition helpers: enter animation and intercept internal links for exit animation
+    (function setupPageTransitions() {
+        try {
+            if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+            const bodyEl = document.body || document.documentElement;
+
+            // Enter animation
+            bodyEl.classList.add('page-transition-enter');
+            requestAnimationFrame(() => {
+                bodyEl.classList.add('page-transition-enter-active');
+                bodyEl.classList.remove('page-transition-exit', 'page-transition-exit-active');
+            });
+            setTimeout(() => {
+                bodyEl.classList.remove('page-transition-enter', 'page-transition-enter-active');
+            }, 520);
+
+            // Intercept internal link clicks for exit animation
+            document.addEventListener('click', (evt) => {
+                const a = evt.target.closest && evt.target.closest('a');
+                if (!a) return;
+                const href = a.getAttribute('href');
+                if (!href || href.startsWith('mailto:') || href.startsWith('tel:') || a.target === '_blank' || a.hasAttribute('download')) return;
+                // Allow hash-only navigation on same page
+                try {
+                    const url = new URL(a.href, window.location.href);
+                    if (url.origin !== window.location.origin) return; // external
+                    if (url.pathname === window.location.pathname && url.hash && url.hash !== '') return; // same-page anchor
+                } catch (e) {
+                    return; // malformed URL - don't intercept
+                }
+
+                // Intercept navigation and play exit animation
+                evt.preventDefault();
+                bodyEl.classList.add('page-transition-exit');
+                requestAnimationFrame(() => bodyEl.classList.add('page-transition-exit-active'));
+                const navigateTo = a.href;
+                const delay = 420; // matches CSS timing
+                setTimeout(() => { window.location.href = navigateTo; }, delay);
+            }, { capture: true });
+        } catch (e) { /* non-fatal */ }
+    })();
 });
