@@ -1151,36 +1151,43 @@
         }
 
         async function forceLogout() {
-            try {
-                await _supabase.auth.signOut();
-            } catch (error) {
-                console.warn('Logout error (may be expected if account was deleted):', error.message);
+            // Use local client if available, otherwise fallback to global client
+            const client = (typeof _supabase !== 'undefined' && _supabase) ? _supabase : (window._supabaseClient || null);
+            if (client && client.auth && client.auth.signOut) {
+                try {
+                    await client.auth.signOut();
+                } catch (error) {
+                    console.warn('Logout error (may be expected if account was deleted):', error && error.message ? error.message : error);
+                }
             }
+
             // Clear all local auth state
             currentAccountRole = 'guest';
             currentAccountEmail = '';
             currentAccountId = '';
             currentAccountDisplayName = '';
-            
-            // Clear any localStorage/sessionStorage auth tokens
+
+            // Clear any localStorage/sessionStorage auth tokens safely
             try {
-                localStorage.removeItem('sb-' + _supabase.supabaseUrl.split('//')[1].split('.')[0] + '-auth-token');
-                sessionStorage.removeItem('sb-' + _supabase.supabaseUrl.split('//')[1].split('.')[0] + '-auth-token');
+                // Remove any localStorage keys that look like Supabase auth tokens (sb-<project>-auth-token)
+                Object.keys(localStorage).forEach(k => { if (k && k.startsWith('sb-') && k.endsWith('-auth-token')) localStorage.removeItem(k); });
+                Object.keys(sessionStorage).forEach(k => { if (k && k.startsWith('sb-') && k.endsWith('-auth-token')) sessionStorage.removeItem(k); });
             } catch (e) {
                 console.log('Could not clear storage tokens:', e);
             }
-            
+
             // Close profile modal
             const profileModal = document.getElementById('profileModal');
             if (profileModal) profileModal.classList.add('hidden');
-            
-            // Force UI update
-            await updateUI(null);
-            
-            // Navigate to homepage to fully reset
-            setTimeout(() => {
-                window.location.href = window.location.origin;
-            }, 500);
+
+            // Force UI update (ensure it always runs)
+            try { await updateUI(null); } catch (e) { console.warn('updateUI on logout failed:', e); }
+
+            // Notify header component to update login label if present
+            try { if (window.updateAuthUI) window.updateAuthUI(null); } catch (e) { /* ignore */ }
+
+            // Soft navigate to homepage to fully reset application state
+            setTimeout(() => { window.location.href = window.location.origin; }, 450);
         }
 
         async function resolveAccountRole(email, accountId) {
@@ -1229,14 +1236,24 @@
                     dashboardContainer.classList.remove('hidden');
                     document.getElementById('adminUserEmail').textContent = `Logged in as: ${email}`;
 
-                    const role = await resolveAccountRole(email, session.user.id);
+                    // Resolve account role but avoid hanging indefinitely — fall back to 'standard' after 3s
+                    const role = await Promise.race([
+                        resolveAccountRole(email, session.user.id),
+                        new Promise(resolve => setTimeout(() => resolve('standard'), 3000))
+                    ]);
                     currentAccountRole = role;
                     const isAdmin = role === 'admin';
 
                     document.getElementById('dashboardAccessNote').textContent = isAdmin ? 'Admin access granted.' : 'Standard user access granted.';
                     document.getElementById('standardUserNotice').classList.toggle('hidden', isAdmin);
                     document.getElementById('adminToolsContainer').classList.toggle('hidden', !isAdmin);
-                    document.getElementById('pageTitle').textContent = isAdmin ? 'Admin Panel' : 'Dashboard';
+                    document.getElementById('pageTitle').textContent = isAdmin ? 'Admin Panel' : 'Profile';
+
+                    // Ensure header login link reflects current session state (Profile/Admin Portal)
+                    try {
+                        const navText = document.getElementById('navLoginLinkText');
+                        if (navText) navText.textContent = isAdmin ? 'Admin Portal' : 'Profile';
+                    } catch (e) { /* ignore if header not yet initialized */ }
 
                     if (document.getElementById('profileEmail')) document.getElementById('profileEmail').textContent = email;
                     loadProfileSummary();
@@ -1248,6 +1265,10 @@
                     loginContainer.classList.remove('hidden');
                     dashboardContainer.classList.add('hidden');
                     document.getElementById('pageTitle').textContent = 'Login';
+                    try {
+                        const navText = document.getElementById('navLoginLinkText');
+                        if (navText) navText.textContent = 'Login';
+                    } catch (e) { /* ignore if header not yet initialized */ }
                     document.getElementById('profileModal').classList.add('hidden');
                 }
             } catch (error) {

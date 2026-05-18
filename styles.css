@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=JetBrains+Mono:wght@500;700&family=Newsreader:wght@500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=JetBrains+Mono:wght@500;700&family=Exo 2:wght@500;600;700&family=Plus Jakarta Sans:wght@500;600;700&display=swap');
 
 /* Central theme variables (non-invasive)
    This file defines CSS variables and optional helper classes.
@@ -23,10 +23,10 @@
 
    /* Fonts */
 /* Professional Sans-Serif for readability */
-   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+   --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
    
    /* Bold, impactful font for headings */
-    --font-heading: 'Newsreader', Georgia, serif;
+    --font-heading: 'Exo 2', Georgia, serif;
 
    /* Sharp, technical font for Elo and match stats */
    --font-mono: 'JetBrains Mono', monospace;
@@ -197,7 +197,7 @@ h1, h2, h3, .font-bold {
    expand the mappings or switch to a Tailwind config approach. */
 
 /* Spacing (compact mappings) */
-.p-6 { padding: var(--space-lg) !important; }
+.p-6 { padding: 0.6rem !important; }
 .p-5 { padding: calc(var(--space-lg) - 0.25rem) !important; }
 .p-3 { padding: var(--space-md) !important; }
 .p-2 { padding: var(--space-sm) !important; }
@@ -205,6 +205,14 @@ h1, h2, h3, .font-bold {
 .py-4 { padding-top: 0.5rem !important; padding-bottom: 0.5rem !important; }
 .px-6 { padding-left: calc(var(--space-lg)) !important; padding-right: calc(var(--space-lg)) !important; }
 .py-3 { padding-top: var(--space-md) !important; padding-bottom: var(--space-md) !important; }
+
+/* Reduce large grid gaps and card paddings so tiles sit closer together */
+.gap-6 { gap: 0.6rem !important; }
+.grid.gap-6 { gap: 0.6rem !important; }
+
+/* Make home panels and dynamically created cards more compact by default */
+.home-panel { padding: 0.6rem !important; }
+.bg-white.rounded-3xl, #analytics-summary div, #analytics-highlights div { padding: 0.6rem !important; }
 
 /* Compact utilities for common layout containers */
 .max-w-4xl.p-6 { padding-left: var(--space-lg); padding-right: var(--space-lg); }
