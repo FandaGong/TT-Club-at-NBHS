@@ -1,0 +1,23 @@
+name: Deploy to Surge
+on:
+  push:
+    branches:
+      - main  # Runs every time you push code to the main branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Surge
+        run: npm install --global surge
+
+      - name: Deploy to Surge
+        run: surge . nbhsttclub.surge.sh --token ${{ secrets.SURGE_TOKEN }}
