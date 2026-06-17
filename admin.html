@@ -417,20 +417,20 @@
                 <button id="closeEloAdjustmentModalBtn" type="button"
                     class="text-white hover:text-blue-100 text-2xl leading-none shrink-0">&times;</button>
             </div>
-            <div class="grid grid-cols-5 gap-0 overflow-hidden max-h-[calc(90vh-120px)]">
+            <div class="grid grid-cols-5 gap-0 overflow-hidden max-h-[calc(90vh-120px)] min-h-0">
                 <!-- Left Panel: Player Search & Cards -->
-                <div class="col-span-3 border-r border-slate-100 flex flex-col">
+                <div class="col-span-3 border-r border-slate-100 flex flex-col min-h-0">
                     <div class="border-b border-slate-100 p-4 shrink-0">
                         <input id="eloSearchInput" type="text" placeholder="Search players..."
                             class="w-full px-4 py-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-400 transition-all">
                         <p id="eloPlayerCount" class="text-xs text-slate-500 mt-2 font-semibold">0 players</p>
                     </div>
-                    <div id="eloPlayerList" class="overflow-y-auto flex-1 p-4 space-y-2">
+                    <div id="eloPlayerList" class="grid grid-cols-1 md:grid-cols-2 gap-2 overflow-y-auto flex-1 min-h-0 p-4 pr-3 content-start">
                     </div>
-                    <p id="eloPlayerEmpty" class="hidden text-center text-slate-500 p-4 text-sm">No players match that search.</p>
+                    <p id="eloPlayerEmpty" class="hidden text-center text-slate-500 p-4 text-sm shrink-0">No players match that search.</p>
                 </div>
                 <!-- Right Panel: ELO Adjustment Form -->
-                <div class="col-span-2 bg-slate-50 p-3 flex flex-col overflow-y-auto">
+                <div class="col-span-2 bg-slate-50 p-3 flex flex-col overflow-y-auto min-h-0">
                     <div id="eloPlayerSummary" class="text-sm text-slate-600 mb-6 p-4 bg-white rounded-lg border border-blue-100 italic">
                         Select a player to view and adjust their ELO.
                     </div>
@@ -2293,7 +2293,7 @@
                     const half = player.half ? ` · ${player.half}` : '';
                     return `
                         <button type="button" data-player-name="${escapeHtml(player.name)}"
-                            class="text-left rounded-2xl border p-4 transition-all shadow-sm hover:shadow-md ${isSelected ? 'border-blue-400 bg-blue-50 ring-2 ring-blue-200' : 'border-slate-200 bg-white hover:border-blue-200'}">
+                            class="text-left rounded-2xl border p-4 transition-all shadow-sm hover:shadow-md min-w-0 ${isSelected ? 'border-blue-400 bg-blue-50 ring-2 ring-blue-200' : 'border-slate-200 bg-white hover:border-blue-200'}">
                             <div class="flex items-start gap-3">
                                 <div class="h-12 w-12 rounded-2xl ${isSelected ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-600'} flex items-center justify-center font-extrabold text-sm shrink-0">${escapeHtml(initials)}</div>
                                 <div class="min-w-0 flex-1">
