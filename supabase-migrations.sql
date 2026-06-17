@@ -1,3 +1,51 @@
+create or replace function public.sync_player_divisions()
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if not exists (
+    select 1
+    from public.account a
+    where a.account_id = auth.uid()
+      and lower(a.role) = 'admin'
+  ) and not exists (
+    select 1
+    from auth.users u
+    where u.id = auth.uid()
+      and lower(u.email) in ('nbhsttclub@gmail.com', 'jonathanzhao111@gmail.com', 'damon.yuan@education.nsw.gov.au')
+  ) then
+    raise exception 'Not authorized to sync player divisions.';
+  end if;
+
+  with ranked_players as (
+    select
+      id,
+      row_number() over (
+        partition by case
+          when lower(coalesce(half, '')) like '%second%' then 'Second'
+          else 'First'
+        end
+        order by elo desc, lower(coalesce(name, '')) asc, id asc
+      ) as rank_position
+    from public.player_rankings
+  )
+  update public.player_rankings pr
+  set division = case
+    when ranked_players.rank_position <= 4 then 'Division 1'
+    when ranked_players.rank_position <= 7 then 'Division 2'
+    else 'Division 3'
+  end
+  from ranked_players
+  where pr.id = ranked_players.id
+    and pr.division is distinct from case
+      when ranked_players.rank_position <= 4 then 'Division 1'
+      when ranked_players.rank_position <= 7 then 'Division 2'
+      else 'Division 3'
+    end;
+end;
+$$;
 -- Supabase migrations for TT-Club
 -- Run these in Supabase SQL editor to create required tables and RLS policies.
 
@@ -6,48 +54,6 @@ returns text
 language sql
 immutable
 as $$
-  select regexp_replace(lower(coalesce(input, '')), '[^a-z0-9]+', '', 'g');
-$$;
-
--- account (user account data)
-create table if not exists public.account (
-  account_id uuid primary key references auth.users(id) on delete cascade,
-  email text not null unique,
-  role text not null default 'standard',
-  display_name text,
-  status text not null default 'active',
-  elo integer not null default 0,
-  wins integer not null default 0,
-  losses integer not null default 0,
-  created_at timestamptz not null default now()
-);
-
-alter table public.account enable row level security;
-
-create policy "Anyone can read account info"
-  on public.account
-  for select
-  to anon, authenticated
-  using (true);
-
-create policy "Users can read their own account"
-  on public.account
-  for select
-  to authenticated
-  using (auth.uid() = account_id);
-
-create policy "Users can update their own account"
-  on public.account
-  for update
-  to authenticated
-  using (auth.uid() = account_id);
-
-create policy "Admins can insert accounts"
-  on public.account
-  for insert
-  to authenticated
-  with check (
-    exists (
       select 1 from public.account a
       where a.account_id = auth.uid()
         and lower(a.role) = 'admin'
@@ -427,6 +433,8 @@ begin
     losses = losses + case when normalize_key(name) = normalize_key(loser_name) then 1 else 0 end
   where normalize_key(name) in (normalize_key(p_player_1_name), normalize_key(p_player_2_name));
 
+  perform public.sync_player_divisions();
+
   if p_player_1_account_id is not null then
     update public.account
     set
@@ -494,6 +502,8 @@ begin
     losses = greatest(losses - case when normalize_key(name) <> normalize_key(v_match.winner) and (normalize_key(name) = normalize_key(v_match.player_1) or normalize_key(name) = normalize_key(v_match.player_2)) then 1 else 0 end, 0)
   where normalize_key(name) in (normalize_key(v_match.player_1), normalize_key(v_match.player_2));
 
+  perform public.sync_player_divisions();
+
   -- Update account table to revert Elo and adjust win/loss counts
   if v_match.player_1_account_id is not null then
     update public.account
@@ -560,6 +570,8 @@ begin
   update public.player_rankings
   set elo = elo + p_elo_change
   where normalize_key(name) = normalize_key(p_player_name);
+
+  perform public.sync_player_divisions();
 
   update public.account
   set elo = elo + p_elo_change

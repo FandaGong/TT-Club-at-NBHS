@@ -19,26 +19,27 @@
     </style>
 </head>
 
-<body class="bg-red-50 text-slate-900 min-h-screen">
+<body class="site-surface text-slate-900 min-h-screen">
     <div id="header-placeholder"></div>
 
-    <main class="max-w-4xl mx-auto p-6">
-        <div id="player-header" class="mb-8">
+    <main class="site-shell max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div id="player-header" class="page-hero text-center p-6 sm:p-8 mb-8">
             <div class="flex flex-wrap items-center gap-3">
-                <h1 id="player-name" class="text-4xl font-black text-red-900 uppercase italic">Loading...</h1>
+                <p class="page-hero-label">Player Profile</p>
+                <h1 id="player-name" class="page-hero-title text-4xl font-black uppercase italic">Loading...</h1>
                 <div id="player-tags" class="flex flex-wrap gap-2"></div>
             </div>
-            <div id="quick-stats" class="flex gap-6 mt-4 font-bold"></div>
+            <div id="quick-stats" class="flex gap-6 mt-4 font-bold justify-center flex-wrap"></div>
         </div>
 
-        <div class="bg-white p-6 rounded-2xl border mb-8 shadow-sm">
-            <h2 class="text-lg font-bold mb-4 uppercase text-slate-500 italic">Elo Progress</h2>
+        <div class="section-card p-6 rounded-2xl mb-8">
+            <h2 class="section-heading mb-4 uppercase italic text-slate-500">Elo Progress</h2>
             <div class="relative h-[300px] w-full">
                 <canvas id="eloChart"></canvas>
             </div>
         </div>
 
-        <div class="bg-white p-4 border border-slate-200 overflow-x-auto">
+        <div class="table-shell p-4 overflow-x-auto">
             <h2 class="p-4 bg-slate-50 border-b font-bold uppercase text-slate-500">Match History</h2>
             <table class="w-full min-w-max text-left">
                 <thead class="bg-slate-50 text-xs uppercase font-bold text-slate-400">

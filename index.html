@@ -14,20 +14,21 @@
     <link rel="icon" type="image/png" href="favicon.png">
 </head>
 
-<body class="bg-red-50 text-slate-900 font-sans min-h-screen flex flex-col">
+<body class="site-surface text-slate-900 font-sans min-h-screen flex flex-col">
 
     <!-- 1. HEADER PLACEHOLDER -->
     <div id="header-placeholder"></div>
 
     <!-- 2. MAIN WITH ID AND OPACITY (Keeps content identical) -->
-    <main id="main-content" class="max-w-4xl mx-auto p-6 flex-grow w-full opacity-0 transition-opacity duration-500">
+    <main id="main-content" class="site-shell max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow w-full opacity-0 transition-opacity duration-500">
         <section class="space-y-8">
-            <div class="home-hero text-center py-6 px-4 sm:px-6 fade-up">
-                <h1 class="text-4xl font-extrabold text-red-900">Welcome, Players</h1>
-                <p class="text-slate-600 mt-2">Access the official Normanhurst Boys Table Tennis ranking system.</p>
+            <div class="home-hero page-hero text-center py-8 px-4 sm:px-8 fade-up">
+                <p class="page-hero-label">NBHS Table Tennis</p>
+                <h1 class="page-hero-title text-4xl font-extrabold mt-3">Welcome, Players</h1>
+                <p class="page-hero-copy mt-3">Access the official Normanhurst Boys Table Tennis ranking system.</p>
             </div>
 
-            <div id="countdown-container" class="hidden p-5 text-white text-center mb-6 fade-up-d1">
+            <div id="countdown-container" class="hidden p-5 text-white text-center mb-6 fade-up-d1 panel-card">
                 <h2 class="text-sm uppercase tracking-widest font-bold opacity-80 mb-2">Next Session In</h2>
                 <div class="flex justify-center gap-3 text-center">
                     <div class="countdown-unit"><span id="days" class="text-4xl font-black block countdown-num">00</span><span class="text-[10px] uppercase opacity-70">Days</span></div>
@@ -39,18 +40,18 @@
                 <p id="next-date-label" class="mt-3 text-red-200 text-xs font-medium"></p>
             </div>
 
-            <div class="home-panel bg-white p-4 border border-slate-200 fade-up-d2 card-hover">
-                <h2 class="text-lg font-bold mb-3"><svg xmlns="http://www.w3.org/2000/svg" class="inline h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"/></svg>Quick Player Search</h2>
+            <div class="home-panel panel-card p-4 fade-up-d2 card-hover">
+                <h2 class="section-heading mb-3"><svg xmlns="http://www.w3.org/2000/svg" class="inline h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"/></svg>Quick Player Search</h2>
                 <form id="searchForm" class="flex flex-col sm:flex-row gap-2">
-                    <input type="text" id="searchInput" placeholder="Enter name (e.g. Fanda)..." class="flex-1 p-2 border border-slate-200 rounded outline-none focus:ring-2 focus:ring-red-500 input-focus">
-                    <button type="submit" class="home-cta w-full sm:w-auto bg-red-600 text-white px-4 py-2 rounded font-bold btn-hover">Search</button>
+                    <input type="text" id="searchInput" placeholder="Enter name (e.g. Fanda)..." class="compact-input flex-1 p-2 rounded outline-none focus:ring-2 focus:ring-red-500 input-focus">
+                    <button type="submit" class="home-cta w-full sm:w-auto bg-red-700 text-white px-4 py-2 rounded font-bold btn-hover">Search</button>
                 </form>
-                <div id="searchResult" class="hidden mt-4 p-3 bg-red-50 border border-red-100 rounded"></div>
+                <div id="searchResult" class="hidden mt-4 p-3 bg-red-50 border border-red-100 rounded-lg"></div>
             </div>
 
-            <div class="home-panel bg-white p-4 border border-slate-200 fade-up-d3 card-hover">
-                <h2 class="text-lg font-bold mb-2">Club Runners & Supervisors</h2>
-                <p class="text-slate-500 text-sm mb-3">Club runners and those who supervise sessions. Contact these people on teams if there is any issue.</p>
+            <div class="home-panel panel-card p-4 fade-up-d3 card-hover">
+                <h2 class="section-heading mb-2">Club Runners & Supervisors</h2>
+                <p class="section-subhead text-sm mb-3">Club runners and those who supervise sessions. Contact these people on teams if there is any issue.</p>
                 <div class="space-y-3">
                     <div class="flex flex-wrap items-center gap-2"><span class="font-semibold text-slate-800">Mr Siu</span><span class="inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">Teacher Supervisor</span></div>
                     <div class="flex flex-wrap items-center gap-2"><span class="font-semibold text-slate-800">Fanda Gong</span><span class="inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">Club Runner</span><span class="inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">Founder</span></div>
@@ -61,32 +62,32 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <a href="player-ranking.html" class="home-panel bg-white p-5 border border-slate-200 hover:border-red-400 text-center card-hover fade-up-d1 transition-colors">
+                <a href="player-ranking.html" class="home-panel panel-card p-5 text-center card-hover fade-up-d1 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-8 w-8 mb-2 text-red-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v18"/><path d="M17 3v18"/><path d="M7 7h10"/><path d="M7 11h10"/><path d="M7 15h10"/></svg>
                     <h3 class="font-bold text-xl">View Ranking Ladder</h3>
                     <p class="text-slate-500 text-sm">Check current Elo ratings and club standings.</p>
                 </a>
-                <a href="player-matchup-ladder.html" class="home-panel bg-white p-5 border border-slate-200 hover:border-red-400 text-center card-hover fade-up-d2 transition-colors">
+                <a href="player-matchup-ladder.html" class="home-panel panel-card p-5 text-center card-hover fade-up-d2 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-8 w-8 mb-2 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3M3 11h18M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                     <h3 class="font-bold text-xl">Weekly Matchups</h3>
                     <p class="text-slate-500 text-sm">See bracket placements for the next session.</p>
                 </a>
-                <a href="club-analytics.html" class="home-panel bg-white p-5 border border-slate-200 hover:border-red-400 text-center card-hover fade-up-d3 transition-colors">
+                <a href="club-analytics.html" class="home-panel panel-card p-5 text-center card-hover fade-up-d3 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-8 w-8 mb-2 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3v18h18M8 7v10M12 11v6M16 5v12"/></svg>
                     <h3 class="font-bold text-xl">Club Analytics</h3>
                     <p class="text-slate-500 text-sm">View live club metrics like wins, upsets, and Elo highs.</p>
                 </a>
-                <a href="past-records.html" class="home-panel bg-white p-5 border border-slate-200 hover:border-red-400 text-center card-hover fade-up-d4 transition-colors">
+                <a href="past-records.html" class="home-panel panel-card p-5 text-center card-hover fade-up-d4 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-8 w-8 mb-2 text-red-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4"/><path d="M12 12l3 2"/></svg>
                     <h3 class="font-bold text-xl">Past Records</h3>
                     <p class="text-slate-500 text-sm">Archive completed season records for easy comparison.</p>
                 </a>
-                <a href="absence-report.html" class="home-panel bg-white p-5 border border-slate-200 hover:border-red-400 text-center card-hover fade-up-d5 transition-colors">
+                <a href="absence-report.html" class="home-panel panel-card p-5 text-center card-hover fade-up-d5 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-8 w-8 mb-2 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h8M8 11h8M8 15h5"/><rect x="4" y="3" width="16" height="18" rx="2" ry="2"/></svg>
                     <h3 class="font-bold text-xl">Absence Report</h3>
                     <p class="text-slate-500 text-sm">Submit a missed-session note and let admins review it.</p>
                 </a>
-                <a href="rules.html" class="home-panel bg-white p-5 border border-slate-200 hover:border-red-400 text-center card-hover fade-up-d6 transition-colors">
+                <a href="rules.html" class="home-panel panel-card p-5 text-center card-hover fade-up-d6 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-8 w-8 mb-2 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
                     <h3 class="font-bold text-xl">Club Rules</h3>
                     <p class="text-slate-500 text-sm">Review club guidelines, policies, and match rules.</p>

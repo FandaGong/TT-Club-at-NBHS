@@ -73,6 +73,353 @@ body {
     scroll-behavior: smooth;
 }
 
+.site-surface {
+    background:
+        radial-gradient(circle at top left, rgba(153, 27, 27, 0.08), transparent 28%),
+        radial-gradient(circle at top right, rgba(15, 23, 42, 0.05), transparent 24%),
+        linear-gradient(180deg, oklch(98.3% 0.008 28) 0%, oklch(96.6% 0.01 28) 100%);
+}
+
+.site-shell {
+    position: relative;
+    z-index: 1;
+}
+
+.page-hero {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(148, 163, 184, 0.24);
+    border-radius: 1.75rem;
+    background:
+        linear-gradient(180deg, rgba(255,255,255,0.94), rgba(255,251,249,0.92)),
+        linear-gradient(135deg, rgba(153, 27, 27, 0.04), transparent 48%);
+    box-shadow: 0 24px 60px rgba(15, 23, 42, 0.08);
+}
+
+.page-hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(125deg, rgba(153, 27, 27, 0.06), transparent 40%, rgba(234, 88, 12, 0.04));
+    pointer-events: none;
+}
+
+.page-hero > * {
+    position: relative;
+    z-index: 1;
+}
+
+.page-hero-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.45rem 0.8rem;
+    border-radius: 9999px;
+    border: 1px solid rgba(148, 163, 184, 0.28);
+    background: rgba(255,255,255,0.76);
+    color: oklch(38% 0.06 25);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+}
+
+.page-hero-title {
+    color: oklch(22% 0.025 260);
+    letter-spacing: -0.04em;
+}
+
+.page-hero-copy {
+    max-width: 68ch;
+    margin-left: auto;
+    margin-right: auto;
+    color: oklch(40% 0.02 255);
+    line-height: 1.7;
+}
+
+.section-card,
+.panel-card,
+.metric-card,
+.table-shell,
+.form-shell,
+.archive-card,
+.match-card {
+    position: relative;
+    overflow: hidden;
+    background:
+        linear-gradient(180deg, rgba(255,255,255,0.98), rgba(255,252,250,0.96)),
+        linear-gradient(135deg, rgba(153, 27, 27, 0.03), transparent 50%);
+    border: 1px solid rgba(148, 163, 184, 0.22);
+    box-shadow: 0 16px 40px rgba(15, 23, 42, 0.06);
+}
+
+.section-card::after,
+.panel-card::after,
+.metric-card::after,
+.table-shell::after,
+.form-shell::after,
+.archive-card::after,
+.match-card::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 3px;
+    background: linear-gradient(90deg, rgba(153, 27, 27, 0.62), rgba(234, 88, 12, 0.22));
+    opacity: 0.72;
+}
+
+.section-card:hover,
+.panel-card:hover,
+.metric-card:hover,
+.table-shell:hover,
+.form-shell:hover,
+.archive-card:hover,
+.match-card:hover {
+    border-color: rgba(153, 27, 27, 0.18);
+    box-shadow: 0 18px 44px rgba(15, 23, 42, 0.08);
+}
+
+.section-heading {
+    font-size: 1.05rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: oklch(23% 0.028 260);
+}
+
+.section-subhead {
+    color: oklch(44% 0.02 255);
+    line-height: 1.65;
+}
+
+.action-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: oklch(38% 0.13 25);
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.action-link:hover {
+    color: oklch(32% 0.15 25);
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+}
+
+.action-link:focus-visible {
+    outline: 2px solid rgba(153, 27, 27, 0.55);
+    outline-offset: 3px;
+    border-radius: 9999px;
+}
+
+.stat-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    border: 1px solid rgba(148, 163, 184, 0.24);
+    background: rgba(255,255,255,0.78);
+    color: oklch(35% 0.03 255);
+}
+
+.table-shell table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.table-shell thead th {
+    background: rgba(248, 250, 252, 0.92);
+    color: oklch(43% 0.02 255);
+}
+
+.table-shell tbody tr:hover {
+    background: rgba(153, 27, 27, 0.03);
+}
+
+.compact-input,
+.compact-select,
+.compact-textarea {
+    background: rgba(255,255,255,0.94) !important;
+    border: 1px solid rgba(148, 163, 184, 0.38) !important;
+    box-shadow: none !important;
+}
+
+.compact-input:focus,
+.compact-select:focus,
+.compact-textarea:focus {
+    border-color: rgba(153, 27, 27, 0.58) !important;
+    box-shadow: 0 0 0 3px rgba(153, 27, 27, 0.08) !important;
+}
+
+.soft-note {
+    color: oklch(44% 0.02 255);
+}
+
+.admin-surface {
+    background:
+        radial-gradient(circle at top left, rgba(153, 27, 27, 0.10), transparent 32%),
+        radial-gradient(circle at top right, rgba(15, 23, 42, 0.06), transparent 26%),
+        linear-gradient(180deg, oklch(98.2% 0.008 28) 0%, oklch(96.4% 0.010 28) 100%);
+    position: relative;
+    isolation: isolate;
+}
+
+.admin-surface::before,
+.admin-surface::after {
+    content: '';
+    position: fixed;
+    inset: auto;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.admin-surface::before {
+    top: 4rem;
+    right: -6rem;
+    width: 18rem;
+    height: 18rem;
+    border-radius: 9999px;
+    background: radial-gradient(circle, rgba(153, 27, 27, 0.08), transparent 68%);
+    filter: blur(8px);
+}
+
+.admin-surface::after {
+    bottom: -5rem;
+    left: -4rem;
+    width: 22rem;
+    height: 22rem;
+    border-radius: 9999px;
+    background: radial-gradient(circle, rgba(15, 23, 42, 0.05), transparent 68%);
+    filter: blur(10px);
+}
+
+.admin-main {
+    position: relative;
+    z-index: 1;
+}
+
+.admin-hero {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(148, 163, 184, 0.28);
+    border-radius: 1.75rem;
+    background:
+        linear-gradient(180deg, rgba(255,255,255,0.92), rgba(255,249,247,0.94)),
+        linear-gradient(135deg, rgba(153, 27, 27, 0.04), transparent 42%);
+    box-shadow: 0 28px 70px rgba(15, 23, 42, 0.09);
+}
+
+.admin-hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(120deg, rgba(153, 27, 27, 0.06), transparent 38%),
+        radial-gradient(circle at 50% 0, rgba(255,255,255,0.85), transparent 58%);
+    pointer-events: none;
+}
+
+.admin-hero > * {
+    position: relative;
+    z-index: 1;
+}
+
+.admin-hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.45rem 0.8rem;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.72);
+    border: 1px solid rgba(148, 163, 184, 0.32);
+    color: oklch(38% 0.06 25);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+}
+
+.admin-hero-lead {
+    max-width: 68ch;
+    margin-left: auto;
+    margin-right: auto;
+    color: oklch(41% 0.02 255);
+    font-size: 1.05rem;
+    line-height: 1.7;
+}
+
+.admin-login-shell {
+    border-radius: 1.5rem;
+    box-shadow: 0 24px 64px rgba(15, 23, 42, 0.08);
+}
+
+.admin-dashboard-banner {
+    border-radius: 1.5rem;
+}
+
+.admin-tool-card {
+    position: relative;
+    overflow: hidden;
+    transition:
+        transform 240ms cubic-bezier(0.16, 1, 0.3, 1),
+        box-shadow 240ms cubic-bezier(0.16, 1, 0.3, 1),
+        border-color 240ms cubic-bezier(0.16, 1, 0.3, 1);
+    background:
+        linear-gradient(180deg, rgba(255,255,255,0.98), rgba(255,252,251,0.96)),
+        linear-gradient(135deg, rgba(153, 27, 27, 0.03), transparent 48%);
+}
+
+.admin-tool-card::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 3px;
+    background: linear-gradient(90deg, rgba(153, 27, 27, 0.66), rgba(234, 88, 12, 0.22));
+    opacity: 0.75;
+}
+
+.admin-tool-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 18px 36px rgba(15, 23, 42, 0.09);
+    border-color: rgba(153, 27, 27, 0.18);
+}
+
+.admin-tool-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.42);
+}
+
+.admin-tool-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-weight: 800;
+    color: oklch(38% 0.13 25);
+    text-decoration: none;
+}
+
+.admin-tool-link:hover {
+    color: oklch(32% 0.15 25);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+}
+
+.admin-tool-link:focus-visible {
+    outline: 2px solid rgba(153, 27, 27, 0.55);
+    outline-offset: 3px;
+    border-radius: 9999px;
+}
+
+.admin-login-shell .rounded-xl,
+.admin-login-shell .rounded-lg,
+.admin-dashboard-banner,
+.admin-tool-card,
+.admin-hero {
+    border-radius: 1.5rem !important;
+}
+
 ::selection {
     background: rgba(153, 27, 27, 0.16);
     color: var(--color-body-text);

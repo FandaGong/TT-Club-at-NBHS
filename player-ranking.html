@@ -14,19 +14,20 @@
 </head>
 
 <!-- CHANGE 1: flex flex-col for sticky footer -->
-<body class="bg-red-50 text-slate-900 font-sans min-h-screen flex flex-col">
+<body class="site-surface text-slate-900 font-sans min-h-screen flex flex-col">
 
     <div id="header-placeholder"></div>
 
-    <main id="main-content" class="max-w-6xl mx-auto p-6 flex-grow w-full transition-opacity duration-300">
-        <div class="mb-6 fade-up">
-            <h1 class="text-4xl font-bold text-red-900">Player Rankings</h1>
-            <p class="mt-2 text-slate-600">Live Elo leaderboard.</p>
+    <main id="main-content" class="site-shell max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow w-full transition-opacity duration-300">
+        <div class="page-hero text-center py-8 px-4 sm:px-8 mb-6 fade-up">
+            <p class="page-hero-label">Leaderboard</p>
+            <h1 class="page-hero-title text-4xl font-bold mt-3">Player Rankings</h1>
+            <p class="page-hero-copy mt-3">Live Elo leaderboard.</p>
         </div>
 
-        <div class="overflow-x-auto rounded-3xl bg-white border border-slate-200 shadow-sm fade-up">
+        <div class="table-shell overflow-x-auto rounded-3xl fade-up">
             <table class="min-w-full text-left">
-                <thead class="bg-slate-100 text-slate-600 uppercase text-xs tracking-[0.16em]">
+                <thead class="text-slate-600 uppercase text-xs tracking-[0.16em]">
                     <tr>
                         <th class="px-4 py-4">Rank</th>
                         <th class="px-4 py-4">Player</th>

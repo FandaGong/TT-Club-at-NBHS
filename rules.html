@@ -12,29 +12,30 @@
 </head>
 
 <!-- CHANGE 1: Added flex flex-col for sticky footer -->
-<body class="bg-red-50 text-slate-900 font-sans min-h-screen flex flex-col">
+<body class="site-surface text-slate-900 font-sans min-h-screen flex flex-col">
         <div id="header-placeholder"></div>
 
-    <main id="main-content" class="max-w-4xl mx-auto p-6 opacity-0 transition-opacity duration-300">
+    <main id="main-content" class="site-shell max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 opacity-0 transition-opacity duration-300">
         <section class="space-y-8">
-            <div class="text-center py-10 fade-up">
-                <h1 class="text-4xl font-extrabold text-red-900 uppercase italic tracking-tight">Rules & Regulations</h1>
-                <p class="text-slate-600 mt-2 font-medium">Official club guidelines for tournament play and casual spars.</p>
+            <div class="page-hero text-center py-10 fade-up">
+                <p class="page-hero-label">Club Standards</p>
+                <h1 class="page-hero-title text-4xl font-extrabold uppercase italic tracking-tight mt-3">Rules & Regulations</h1>
+                <p class="page-hero-copy mt-2 font-medium">Official club guidelines for tournament play and casual spars.</p>
             </div>
 
             <!-- All Rules Loaded from Database -->
             <div id="custom-rules-container" class="space-y-6"></div>
 
             <!-- Admin Editor (Red Themed) -->
-            <div id="admin-form-container" class="hidden bg-white border border-slate-200 rounded-3xl p-8 mt-8 shadow-sm fade-up">
+            <div id="admin-form-container" class="hidden form-shell rounded-3xl p-8 mt-8 fade-up">
                 <div class="flex items-center gap-3 mb-6">
-                    <button type="button" id="mode-form-btn" onclick="switchMode('form')" class="px-4 py-2 rounded-xl text-sm font-bold bg-red-800 text-white transition shadow-sm">Form Mode</button>
+                    <button type="button" id="mode-form-btn" onclick="switchMode('form')" class="px-4 py-2 rounded-xl text-sm font-bold bg-red-800 text-white transition shadow-sm btn-hover">Form Mode</button>
                     <button type="button" id="mode-text-btn" onclick="switchMode('text')" class="px-4 py-2 rounded-xl text-sm font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">Text Editor</button>
                 </div>
 
                 <div id="form-mode">
-                    <h3 id="form-container-title" class="text-xl font-bold text-slate-800 mb-2">Add a Club Rule</h3>
-                    <p id="form-container-subtitle" class="text-sm text-slate-500 mb-6">Changes made here sync instantly to the club database.</p>
+                    <h3 id="form-container-title" class="section-heading mb-2">Add a Club Rule</h3>
+                    <p id="form-container-subtitle" class="section-subhead text-sm mb-6">Changes made here sync instantly to the club database.</p>
                     <form id="add-rule-form" class="space-y-4">
                         <div>
                             <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1">Rule Title</label>

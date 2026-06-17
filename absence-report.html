@@ -13,34 +13,35 @@
     <link rel="icon" type="image/png" href="favicon.png">
 </head>
 
-<body class="bg-red-50 text-slate-900 font-sans min-h-screen flex flex-col">
+<body class="site-surface text-slate-900 font-sans min-h-screen flex flex-col">
 
     <div id="header-placeholder"></div>
 
-    <main id="main-content" class="max-w-4xl mx-auto p-6 flex-grow w-full opacity-0 transition-opacity duration-500">
-        <section class="bg-white/85 p-6 sm:p-8 site-radius-lg shadow-[0_18px_55px_rgba(127,29,29,0.08)] border border-red-100 backdrop-blur-sm fade-up-d1 card-hover">
-            <h1 class="text-3xl font-bold text-red-900 mb-2">Club Absence Report</h1>
-            <p class="text-sm text-slate-600 mb-6">If you did not show up to club, submit your details so the team can
+    <main id="main-content" class="site-shell max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow w-full opacity-0 transition-opacity duration-500">
+        <section class="form-shell bg-white/85 p-6 sm:p-8 site-radius-lg shadow-[0_18px_55px_rgba(127,29,29,0.08)] border border-red-100 backdrop-blur-sm fade-up-d1 card-hover">
+            <p class="page-hero-label">Attendance</p>
+            <h1 class="page-hero-title text-3xl font-bold mt-3 mb-2">Club Absence Report</h1>
+            <p class="section-subhead text-sm mb-6">If you did not show up to club, submit your details so the team can
                 review your note. Note: you must be logged in to submit.</p>
 
             <div id="loginRequiredNotice" class="text-center py-8">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-slate-300 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
                 <p class="text-slate-500 font-medium">You must be logged in to submit an absence report.</p>
-                <a href="admin.html" class="inline-block mt-3 text-sm font-semibold text-red-600 hover:text-red-800 transition-colors">Go to Login &rarr;</a>
+                <a href="admin.html" class="action-link inline-block mt-3 text-sm">Go to Login &rarr;</a>
             </div>
 
             <form id="absenceForm" class="hidden grid grid-cols-1 gap-3">
-                <input id="absenceName" type="text" placeholder="Submit your name" required class="p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500">
-                <input id="absenceEmail" type="email" placeholder="Your email" readonly class="p-3 border rounded-xl bg-slate-50 text-slate-700 outline-none">
-                <textarea id="absenceReason" rows="5" placeholder="Reason for absence" required class="p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500"></textarea>
-                <button type="submit" class="bg-red-600 text-white px-5 py-3 rounded-xl font-bold hover:bg-red-700 transition-colors">Submit Absence</button>
+                <input id="absenceName" type="text" placeholder="Submit your name" required class="compact-input p-3 rounded-xl outline-none focus:ring-2 focus:ring-red-500">
+                <input id="absenceEmail" type="email" placeholder="Your email" readonly class="compact-input p-3 rounded-xl bg-slate-50 text-slate-700 outline-none">
+                <textarea id="absenceReason" rows="5" placeholder="Reason for absence" required class="compact-textarea p-3 rounded-xl outline-none focus:ring-2 focus:ring-red-500"></textarea>
+                <button type="submit" class="bg-red-700 text-white px-5 py-3 rounded-xl font-bold btn-hover">Submit Absence</button>
                 <p id="absenceSubmitStatus" class="hidden text-sm font-medium"></p>
             </form>
 
             <div class="mt-8 border-t border-slate-200 pt-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <p class="text-sm font-medium text-slate-500">Only club admins can view submitted reports.</p>
                 <div class="flex items-center gap-2">
-                    <button id="adminShowReportsBtn" type="button" class="hidden text-sm font-bold bg-red-600 text-white px-4 py-2 rounded-xl hover:bg-red-700 transition-colors shadow-sm" onclick="openAdminReports()">View Reports</button>
+                    <button id="adminShowReportsBtn" type="button" class="hidden text-sm font-bold bg-red-700 text-white px-4 py-2 rounded-xl btn-hover" onclick="openAdminReports()">View Reports</button>
                 </div>
             </div>
         </section>
@@ -50,7 +51,7 @@
 
     <!-- Admin Reports Modal -->
     <div id="adminReportsModal" class="hidden fixed inset-0 z-[9999] bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-slate-50 p-4 w-full max-w-4xl max-h-[85vh] flex flex-col overflow-hidden border border-slate-300">
+        <div class="section-card bg-slate-50 p-4 w-full max-w-4xl max-h-[85vh] flex flex-col overflow-hidden border border-slate-300">
             <div class="flex items-center justify-between p-5 border-b border-slate-200 bg-white">
                 <h2 class="text-xl font-bold text-slate-800">Absence Reports Management</h2>
                 <button type="button" onclick="document.getElementById('adminReportsModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-700 transition-colors p-1 bg-slate-100 hover:bg-slate-200 rounded-lg"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button>

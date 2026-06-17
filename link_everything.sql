@@ -1,16 +1,4 @@
--- Link all account-owned data to Supabase Auth users
--- Run this once in the Supabase SQL editor.
--- It creates the missing account table if needed, adds link columns, and backfills rows.
-
-create or replace function public.normalize_key(input text)
-returns text
-language sql
-immutable
-as $$
-  select regexp_replace(lower(coalesce(input, '')), '[^a-z0-9]+', '', 'g');
-$$;
-
-create or replace function public.link_account_name(p_account_id uuid, p_display_name text)
+create or replace function public.sync_player_divisions()
 returns void
 language plpgsql
 security definer
@@ -28,27 +16,45 @@ begin
     where u.id = auth.uid()
       and lower(u.email) in ('nbhsttclub@gmail.com', 'jonathanzhao111@gmail.com', 'damon.yuan@education.nsw.gov.au')
   ) then
-    raise exception 'Not authorized to link account names.';
+    raise exception 'Not authorized to sync player divisions.';
   end if;
 
-  update public.account
-  set display_name = p_display_name
-  where account_id = p_account_id;
-
+  with ranked_players as (
+    select
+      id,
+      row_number() over (
+        partition by case
+          when lower(coalesce(half, '')) like '%second%' then 'Second'
+          else 'First'
+        end
+        order by elo desc, lower(coalesce(name, '')) asc, id asc
+      ) as rank_position
+    from public.player_rankings
+  )
   update public.player_rankings pr
-  set account_id = p_account_id
-  where pr.account_id is null
-    and normalize_key(pr.name) = normalize_key(p_display_name);
+  set division = case
+    when ranked_players.rank_position <= 4 then 'Division 1'
+    when ranked_players.rank_position <= 7 then 'Division 2'
+    else 'Division 3'
+  end
+  from ranked_players
+  where pr.id = ranked_players.id
+    and pr.division is distinct from case
+      when ranked_players.rank_position <= 4 then 'Division 1'
+      when ranked_players.rank_position <= 7 then 'Division 2'
+      else 'Division 3'
+    end;
+end;
+$$;
+-- Link all account-owned data to Supabase Auth users
+-- Run this once in the Supabase SQL editor.
+-- It creates the missing account table if needed, adds link columns, and backfills rows.
 
-  update public.match_history mh
-  set player_1_account_id = p_account_id
-  where mh.player_1_account_id is null
-    and normalize_key(mh.player_1) = normalize_key(p_display_name);
-
-  update public.match_history mh
-  set player_2_account_id = p_account_id
-  where mh.player_2_account_id is null
-    and normalize_key(mh.player_2) = normalize_key(p_display_name);
+create or replace function public.normalize_key(input text)
+returns text
+language sql
+immutable
+as $$
 
   update public.match_history mh
   set winner_account_id = p_account_id
@@ -155,6 +161,8 @@ begin
     losses = losses + case when normalize_key(name) = normalize_key(loser_name) then 1 else 0 end
   where normalize_key(name) in (normalize_key(p_player_1_name), normalize_key(p_player_2_name));
 
+  perform public.sync_player_divisions();
+
   if p_player_1_account_id is not null then
     update public.account
     set
@@ -222,6 +230,8 @@ begin
     losses = greatest(losses - case when normalize_key(name) <> normalize_key(v_match.winner) and (normalize_key(name) = normalize_key(v_match.player_1) or normalize_key(name) = normalize_key(v_match.player_2)) then 1 else 0 end, 0)
   where normalize_key(name) in (normalize_key(v_match.player_1), normalize_key(v_match.player_2));
 
+  perform public.sync_player_divisions();
+
   -- Update account table to revert Elo and adjust win/loss counts
   if v_match.player_1_account_id is not null then
     update public.account
@@ -288,6 +298,8 @@ begin
   update public.player_rankings
   set elo = elo + p_elo_change
   where normalize_key(name) = normalize_key(p_player_name);
+
+  perform public.sync_player_divisions();
 
   update public.account
   set elo = elo + p_elo_change

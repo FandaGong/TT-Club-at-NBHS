@@ -12,23 +12,22 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
-<body class="bg-red-50 text-slate-900 font-sans min-h-screen flex flex-col">
+<body class="admin-surface text-slate-900 font-sans min-h-screen flex flex-col">
 
     <!-- 1. HEADER PLACEHOLDER -->
     <div id="header-placeholder"></div>
 
     <!-- 2. MAIN CONTENT -->
-    <main id="main-content" class="max-w-4xl mx-auto p-6 flex-grow w-full opacity-0 transition-opacity duration-500">
+    <main id="main-content" class="admin-main max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow w-full opacity-0 transition-opacity duration-500">
         <section class="space-y-8">
-            <div class="text-center py-10 px-6 sm:px-10 site-radius-lg border border-red-100 bg-white/80 shadow-[0_18px_55px_rgba(127,29,29,0.08)] backdrop-blur-sm fade-up">
-                <h1 id="pageTitle" class="text-4xl font-extrabold text-red-900">Login</h1>
-                <p id="pageSubtitle" class="text-slate-600 mt-2">Log in to submit absence reports and manage the club.
-                </p>
+            <div class="admin-hero text-center py-10 px-6 sm:px-10 fade-up">
+                <p class="admin-hero-eyebrow">Standard / Admin Login Console</p>
+                <h1 id="pageTitle" class="text-4xl font-extrabold text-slate-950 mt-2">Login</h1>
+                <p id="pageSubtitle" class="admin-hero-lead mt-3">Log in to as an admin to manage club stats and data or log in as a standard user to view personal stats and profile.</p>
             </div>
 
             <!-- Login Container -->
-            <div id="loginContainer"
-                class="bg-white p-4 border border-slate-200 max-w-2xl mx-auto fade-up-d1">
+            <div id="loginContainer" class="admin-login-shell bg-white/90 p-4 sm:p-6 border border-slate-200 max-w-3xl mx-auto fade-up-d1 shadow-[0_22px_60px_rgba(15,23,42,0.08)] backdrop-blur-sm">
                 <div class="text-center mb-6">
                     <h2 id="authPanelTitle" class="text-xl font-bold text-slate-800">Account Access</h2>
                     <p id="authPanelSubtitle" class="mt-2 text-sm text-slate-500">Admin access is login-only. Standard
@@ -73,7 +72,7 @@
                     <form id="standardLoginForm" class="space-y-4" action="javascript:void(0);"
                         onsubmit="handleDialogLogin(event, 'standard')">
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Student Email</label>
+                            <label class="block text-sm font-medium text-slate-700 mb-1"> Email</label>
                             <input id="standardEmail" type="email" placeholder="you@example.com"
                                 class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500 text-sm">
                         </div>
@@ -111,7 +110,7 @@
             <!-- Dashboard Container -->
             <div id="dashboardContainer" class="hidden space-y-6 fade-up-d1">
                 <div
-                    class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                    class="admin-dashboard-banner flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 bg-white/90 p-4 sm:p-5 border border-slate-200 shadow-[0_18px_50px_rgba(15,23,42,0.08)] backdrop-blur-sm">
                     <div class="space-y-1">
                         <span class="text-slate-700 font-semibold" id="adminUserEmail">Logged in as: ...</span>
                         <p id="dashboardAccessNote" class="text-sm text-slate-500">Loading account type...</p>
@@ -127,7 +126,7 @@
                 </div>
 
                 <!-- Standard User Dashboard View -->
-                <div id="standardUserNotice" class="hidden bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                <div id="standardUserNotice" class="hidden bg-white/90 p-6 rounded-2xl shadow-sm border border-slate-100 backdrop-blur-sm">
                     <h3 class="font-bold text-lg text-slate-800">Standard User Dashboard</h3>
                     <p class="text-slate-600 text-sm mt-1">You are signed in. You can now submit Absence Reports without
                         filling in your email.</p>
@@ -139,8 +138,8 @@
                 <!-- Admin Dashboard View -->
                 <div id="adminToolsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <div
-                        class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-start gap-4">
-                        <div class="bg-purple-100 text-purple-700 p-3 rounded-xl">
+                        class="admin-tool-card bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-start gap-4">
+                        <div class="admin-tool-icon bg-purple-100 text-purple-700 p-3 rounded-xl">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                                 stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -152,12 +151,12 @@
                             <p class="text-slate-600 text-sm mt-1">Review pending account approvals.</p>
                         </div>
                         <button id="openAccountRequestsModalBtn" type="button"
-                            class="mt-auto text-red-600 font-semibold hover:underline text-sm cursor-pointer">Review
+                            class="admin-tool-link mt-auto text-sm cursor-pointer">Review
                             Requests &rarr;</button>
                     </div>
                     <div
-                        class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-start gap-4">
-                        <div class="bg-red-100 text-red-700 p-3 rounded-xl">
+                        class="admin-tool-card bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-start gap-4">
+                        <div class="admin-tool-icon bg-red-100 text-red-700 p-3 rounded-xl">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                                 stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -169,12 +168,12 @@
                             <p class="text-slate-600 text-sm mt-1">Manage student absence submissions.</p>
                         </div>
                         <button id="openAbsenceReportsModalBtn" type="button"
-                            class="mt-auto text-red-600 font-semibold hover:underline text-sm cursor-pointer">View
+                            class="admin-tool-link mt-auto text-sm cursor-pointer">View
                             Reports &rarr;</button>
                     </div>
                     <div
-                        class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-start gap-4">
-                        <div class="bg-slate-100 text-slate-700 p-3 rounded-xl">
+                        class="admin-tool-card bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-start gap-4">
+                        <div class="admin-tool-icon bg-slate-100 text-slate-700 p-3 rounded-xl">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                                 stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -185,12 +184,12 @@
                             <h3 class="font-bold text-lg text-slate-800">Club Rules</h3>
                             <p class="text-slate-600 text-sm mt-1">Edit and review club rules and guidelines.</p>
                         </div>
-                        <a href="rules.html" class="mt-auto text-red-600 font-semibold hover:underline text-sm">Edit
+                        <a href="rules.html" class="admin-tool-link mt-auto text-sm">Edit
                             Rules &rarr;</a>
                     </div>
                     <div
-                        class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-start gap-4">
-                        <div class="bg-emerald-100 text-emerald-700 p-3 rounded-xl">
+                        class="admin-tool-card bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-start gap-4">
+                        <div class="admin-tool-icon bg-emerald-100 text-emerald-700 p-3 rounded-xl">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                                 stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -202,12 +201,12 @@
                             <p class="text-slate-600 text-sm mt-1">Assign a display name to any account and link existing rows by that name.</p>
                         </div>
                         <button id="openNameLinkModalBtn" type="button"
-                            class="mt-auto text-red-600 font-semibold hover:underline text-sm cursor-pointer">Link
+                            class="admin-tool-link mt-auto text-sm cursor-pointer">Link
                             Names &rarr;</button>
                     </div>
                     <div
-                        class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-start gap-4">
-                        <div class="bg-cyan-100 text-cyan-700 p-3 rounded-xl">
+                        class="admin-tool-card bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-start gap-4">
+                        <div class="admin-tool-icon bg-cyan-100 text-cyan-700 p-3 rounded-xl">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                                 stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -219,12 +218,12 @@
                             <p class="text-slate-600 text-sm mt-1">Record a finished match and sync rankings, stats, and analytics together.</p>
                         </div>
                         <button id="openManualMatchModalBtn" type="button"
-                            class="mt-auto text-red-600 font-semibold hover:underline text-sm cursor-pointer">Add
+                            class="admin-tool-link mt-auto text-sm cursor-pointer">Add
                             Match Result &rarr;</button>
                     </div>
                     <div
-                        class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-start gap-4">
-                        <div class="bg-orange-100 text-orange-700 p-3 rounded-xl">
+                        class="admin-tool-card bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-start gap-4">
+                        <div class="admin-tool-icon bg-orange-100 text-orange-700 p-3 rounded-xl">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                                 stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -236,12 +235,12 @@
                             <p class="text-slate-600 text-sm mt-1">View all matches, filter by term/week, and delete records.</p>
                         </div>
                         <button id="openMatchManagementModalBtn" type="button"
-                            class="mt-auto text-red-600 font-semibold hover:underline text-sm cursor-pointer">Browse
+                            class="admin-tool-link mt-auto text-sm cursor-pointer">Browse
                             Matches &rarr;</button>
                     </div>
                     <div
-                        class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-start gap-4">
-                        <div class="bg-blue-100 text-blue-700 p-3 rounded-xl">
+                        class="admin-tool-card bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-start gap-4">
+                        <div class="admin-tool-icon bg-blue-100 text-blue-700 p-3 rounded-xl">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                                 stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -253,12 +252,12 @@
                             <p class="text-slate-600 text-sm mt-1">Manually adjust a player's ELO rating.</p>
                         </div>
                         <button id="openEloAdjustmentModalBtn" type="button"
-                            class="mt-auto text-red-600 font-semibold hover:underline text-sm cursor-pointer">Adjust
+                            class="admin-tool-link mt-auto text-sm cursor-pointer">Adjust
                             ELO &rarr;</button>
                     </div>
                     <div
-                        class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-start gap-4">
-                        <div class="bg-red-100 text-red-700 p-3 rounded-xl">
+                        class="admin-tool-card bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-start gap-4">
+                        <div class="admin-tool-icon bg-red-100 text-red-700 p-3 rounded-xl">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                                 stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -270,15 +269,15 @@
                             <p class="text-slate-600 text-sm mt-1">Manually edit a player's wins and losses record.</p>
                         </div>
                         <button id="openWinLossEditorModalBtn" type="button"
-                            class="mt-auto text-red-600 font-semibold hover:underline text-sm cursor-pointer">Edit
+                            class="admin-tool-link mt-auto text-sm cursor-pointer">Edit
                             Wins/Losses &rarr;</button>
                     </div>
-                    <div class="bg-red-50 p-6 rounded-2xl shadow-sm border border-red-200 flex flex-col gap-4">
+                    <div class="admin-tool-card bg-red-50 p-6 rounded-2xl shadow-sm border border-red-200 flex flex-col gap-4">
                         <h3 class="font-bold text-lg text-red-900">Season Management</h3>
                         <button onclick="finalizeSeason()"
-                            class="w-full bg-red-800 text-white px-4 py-2 rounded-lg font-bold">Finalize Season</button>
+                            class="w-full bg-red-800 text-white px-4 py-2 rounded-lg font-bold btn-hover">Finalize Season</button>
                         <button onclick="resetSeason()"
-                            class="w-full bg-slate-800 text-white px-4 py-2 rounded-lg font-bold">Reset ELOs (New
+                            class="w-full bg-slate-800 text-white px-4 py-2 rounded-lg font-bold btn-hover">Reset ELOs (New
                             Term)</button>
                     </div>
                 </div>
