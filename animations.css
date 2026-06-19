@@ -25,29 +25,28 @@ header {
     animation: fadeIn 0.3s ease both;
 }
 
-/* Card hover */
+/* Card hover — border only, no shadow */
 .card-hover {
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: border-color 0.15s ease;
 }
 .card-hover:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(127, 29, 29, 0.1);
+    border-color: var(--gray-300, #d1d5db);
 }
 
 /* Button hover */
 .btn-hover {
-    transition: transform 0.15s ease, background-color 0.15s ease;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
 }
 .btn-hover:hover {
-    transform: translateY(-1px);
+    transform: none;
 }
 
 /* Input focus */
 .input-focus {
-    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    transition: border-color 0.15s ease;
 }
 .input-focus:focus {
-    box-shadow: 0 0 0 3px rgba(153, 27, 27, 0.08);
+    box-shadow: none;
 }
 
 /* Table row hover */

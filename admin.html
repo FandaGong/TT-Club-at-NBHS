@@ -27,7 +27,7 @@
             </div>
 
             <!-- Login Container -->
-            <div id="loginContainer" class="admin-login-shell bg-white/90 p-4 sm:p-6 border border-slate-200 max-w-3xl mx-auto fade-up-d1 shadow-[0_22px_60px_rgba(15,23,42,0.08)] backdrop-blur-sm">
+            <div id="loginContainer" class="admin-login-shell bg-white/90 p-4 sm:p-6 border border-slate-200 max-w-3xl mx-auto fade-up-d1 backdrop-blur-sm">
                 <div class="text-center mb-6">
                     <h2 id="authPanelTitle" class="text-xl font-bold text-slate-800">Account Access</h2>
                     <p id="authPanelSubtitle" class="mt-2 text-sm text-slate-500">Admin access is login-only. Standard
@@ -36,13 +36,13 @@
 
                 <div class="mb-3 grid grid-cols-1 sm:grid-cols-3 gap-1 bg-slate-100 p-1">
                     <button id="dialogTabAdminLogin" type="button" data-tab="admin-login"
-                        class="rounded-xl bg-white px-4 py-3 text-sm font-semibold text-red-800 shadow-sm transition-colors">Admin
+                        class="bg-white px-4 py-3 text-sm font-semibold text-red-800 border border-slate-200 transition-colors">Admin
                         Login</button>
                     <button id="dialogTabStandardLogin" type="button" data-tab="standard-login"
-                        class="rounded-xl px-4 py-3 text-sm font-semibold text-slate-600 transition-colors hover:text-slate-900">Standard
+                        class="px-4 py-3 text-sm font-semibold text-slate-600 transition-colors hover:text-slate-900 border border-transparent">Standard
                         User</button>
                     <button id="dialogTabCreateAccount" type="button" data-tab="create-account"
-                        class="rounded-xl px-4 py-3 text-sm font-semibold text-slate-600 transition-colors hover:text-slate-900">Create
+                        class="px-4 py-3 text-sm font-semibold text-slate-600 transition-colors hover:text-slate-900 border border-transparent">Create
                         Account</button>
                 </div>
 
@@ -52,17 +52,17 @@
                         onsubmit="handleDialogLogin(event, 'admin')">
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1">Admin Email</label>
-                            <input id="adminEmail" type="email" placeholder="admin@nbhs.com"
-                                class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500 text-sm">
+                             <input id="adminEmail" type="email" placeholder="admin@nbhs.com"
+                                class="w-full p-3 border outline-none focus:ring-2 focus:ring-red-500 text-sm">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1">Password</label>
-                            <input id="adminPassword" type="password" placeholder="••••••••"
-                                class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500 text-sm">
+                             <input id="adminPassword" type="password" placeholder="••••••••"
+                                class="w-full p-3 border outline-none focus:ring-2 focus:ring-red-500 text-sm">
                         </div>
-                        <button type="submit"
-                            class="w-full bg-red-800 text-white px-4 py-3 rounded-xl font-bold hover:bg-red-900 transition-colors shadow-sm">Admin
-                            Login</button>
+                            <button type="submit"
+                                class="w-full bg-red-800 text-white px-4 py-3 font-bold hover:bg-red-900 transition-colors border border-red-900">Admin
+                                Login</button>
                         <p id="adminLoginStatus" class="hidden text-sm font-medium text-center"></p>
                     </form>
                 </div>
@@ -73,17 +73,17 @@
                         onsubmit="handleDialogLogin(event, 'standard')">
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1"> Email</label>
-                            <input id="standardEmail" type="email" placeholder="you@example.com"
-                                class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500 text-sm">
+                             <input id="standardEmail" type="email" placeholder="you@example.com"
+                                class="w-full p-3 border outline-none focus:ring-2 focus:ring-red-500 text-sm">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1">Password</label>
-                            <input id="standardPassword" type="password" placeholder="••••••••"
-                                class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500 text-sm">
+                             <input id="standardPassword" type="password" placeholder="••••••••"
+                                class="w-full p-3 border outline-none focus:ring-2 focus:ring-red-500 text-sm">
                         </div>
-                        <button type="submit"
-                            class="w-full bg-slate-900 text-white px-4 py-3 rounded-xl font-bold hover:bg-slate-800 transition-colors shadow-sm">Standard
-                            User Login</button>
+                            <button type="submit"
+                                class="w-full bg-slate-900 text-white px-4 py-3 font-bold hover:bg-slate-800 transition-colors border border-slate-800">Standard
+                                User Login</button>
                         <p id="standardLoginStatus" class="hidden text-sm font-medium text-center"></p>
                     </form>
                 </div>
@@ -93,15 +93,15 @@
                     <p class="text-sm text-slate-600 mb-2">Account creation must be independently verified by an admin
                         user before it will be approved.</p>
                     <form id="accountRequestForm" class="grid grid-cols-1 gap-3">
-                        <input id="requestEmail" type="email" placeholder="Email to approve" required
-                            class="p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500">
-                        <input id="requestPassword" type="password" placeholder="Create a password" required
-                            class="p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500">
-                        <input id="requestConfirmPassword" type="password" placeholder="Confirm password" required
-                            class="p-3 border rounded-xl outline-none focus:ring-2 focus:ring-red-500">
-                        <button type="submit"
-                            class="bg-red-600 text-white px-5 py-3 rounded-xl font-bold hover:bg-red-700 transition-colors shadow-sm">Submit
-                            Request</button>
+                         <input id="requestEmail" type="email" placeholder="Email to approve" required
+                             class="p-3 border outline-none focus:ring-2 focus:ring-red-500">
+                         <input id="requestPassword" type="password" placeholder="Create a password" required
+                             class="p-3 border outline-none focus:ring-2 focus:ring-red-500">
+                         <input id="requestConfirmPassword" type="password" placeholder="Confirm password" required
+                             class="p-3 border outline-none focus:ring-2 focus:ring-red-500">
+                            <button type="submit"
+                                class="bg-red-600 text-white px-5 py-3 font-bold hover:bg-red-700 transition-colors border border-red-700">Submit
+                                Request</button>
                         <p id="accountRequestStatus" class="hidden text-sm font-medium"></p>
                     </form>
                 </div>
@@ -110,23 +110,23 @@
             <!-- Dashboard Container -->
             <div id="dashboardContainer" class="hidden space-y-6 fade-up-d1">
                 <div
-                    class="admin-dashboard-banner flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 bg-white/90 p-4 sm:p-5 border border-slate-200 shadow-[0_18px_50px_rgba(15,23,42,0.08)] backdrop-blur-sm">
+                    class="admin-dashboard-banner flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 bg-white/90 p-4 sm:p-5 border border-slate-200 backdrop-blur-sm">
                     <div class="space-y-1">
                         <span class="text-slate-700 font-semibold" id="adminUserEmail">Logged in as: ...</span>
                         <p id="dashboardAccessNote" class="text-sm text-slate-500">Loading account type...</p>
                     </div>
                     <div class="flex flex-wrap gap-2">
                         <button id="openProfileModalBtn" type="button"
-                            class="text-sm font-bold text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 px-4 py-2 rounded-lg transition-colors border border-slate-200">My
+                            class="text-sm font-bold text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 px-4 py-2 transition-colors border border-slate-200">My
                             Profile</button>
                         <button id="adminLogoutBtn" type="button"
-                            class="text-sm font-bold text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 px-4 py-2 rounded-lg transition-colors border border-red-100">Log
+                            class="text-sm font-bold text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 px-4 py-2 transition-colors border border-red-100">Log
                             Out</button>
                     </div>
                 </div>
 
                 <!-- Standard User Dashboard View -->
-                <div id="standardUserNotice" class="hidden bg-white/90 p-6 rounded-2xl shadow-sm border border-slate-100 backdrop-blur-sm">
+                <div id="standardUserNotice" class="hidden bg-white/90 p-6 border border-slate-100 backdrop-blur-sm">
                     <h3 class="font-bold text-lg text-slate-800">Standard User Dashboard</h3>
                     <p class="text-slate-600 text-sm mt-1">You are signed in. You can now submit Absence Reports without
                         filling in your email.</p>

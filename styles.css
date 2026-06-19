@@ -1,7 +1,7 @@
 /* ── Design System ──
    Crisp, intentional. No AI tropes.
    Spacing follows an 8px / 4px grid.
-   Border-radius: 6px standard, 8px for cards, 12px for hero sections.
+   Border-radius: 0px everywhere. Sharp 90-degree corners only.
    No pill shapes, no floating elements, no muddy shadows.
    ────────────────── */
 
@@ -29,11 +29,11 @@
   --white: #ffffff;
   --body-bg: #faf7f5;
 
-  /* Radii — crisp and consistent */
-  --radius-sm: 4px;
-  --radius-md: 6px;
-  --radius-lg: 8px;
-  --radius-xl: 12px;
+  /* Radii — all zero for strict rectangular aesthetic */
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
 
   /* Fonts */
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
@@ -126,7 +126,7 @@ a:hover {
   width: 1.25rem;
   height: 1.25rem;
   object-fit: cover;
-  border-radius: var(--radius-sm);
+  border-radius: 0px;
   vertical-align: middle;
   margin-right: var(--space-2);
 }
@@ -151,7 +151,7 @@ a:hover {
   align-items: center;
   gap: var(--space-2);
   padding: var(--space-2) var(--space-3);
-  border-radius: var(--radius-md);
+  border-radius: 0px;
   font-size: 0.875rem;
   font-weight: 600;
   color: rgba(255, 255, 255, 0.9);
@@ -194,7 +194,7 @@ a:hover {
     justify-content: center;
     width: 2.5rem;
     height: 2.5rem;
-    border-radius: var(--radius-md);
+    border-radius: 0px;
     border: 1px solid rgba(255, 255, 255, 0.2);
     background: transparent;
     color: var(--white);
@@ -225,7 +225,7 @@ a:hover {
 .page-hero {
   background: var(--white);
   border: 1px solid var(--gray-200);
-  border-radius: var(--radius-xl);
+  border-radius: 0px;
   padding: var(--space-8) var(--space-6);
   text-align: center;
 }
@@ -233,7 +233,7 @@ a:hover {
 .page-hero-label {
   display: inline-block;
   padding: var(--space-1) var(--space-3);
-  border-radius: var(--radius-md);
+  border-radius: 0px;
   background: var(--red-50);
   color: var(--red-800);
   font-size: 0.75rem;
@@ -270,7 +270,7 @@ a:hover {
 .match-card {
   background: var(--white);
   border: 1px solid var(--gray-200);
-  border-radius: var(--radius-lg);
+  border-radius: 0px;
 }
 
 .section-card:hover,
@@ -299,7 +299,7 @@ a:hover {
 .home-hero {
   background: var(--white);
   border: 1px solid var(--gray-200);
-  border-radius: var(--radius-xl);
+  border-radius: 0px;
   padding: var(--space-6);
   text-align: center;
 }
@@ -307,19 +307,19 @@ a:hover {
 .home-panel {
   background: var(--white);
   border: 1px solid var(--gray-200);
-  border-radius: var(--radius-lg);
+  border-radius: 0px;
   padding: var(--space-4);
 }
 
 .home-cta {
-  border-radius: var(--radius-md);
+  border-radius: 0px;
 }
 
 /* ── Grid cards (home page nav grid) ── */
 .grid-card {
   background: var(--white);
   border: 1px solid var(--gray-200);
-  border-radius: var(--radius-lg);
+  border-radius: 0px;
   padding: var(--space-5);
   text-align: center;
   transition: border-color 0.15s ease;
@@ -391,7 +391,7 @@ input[type="submit"],
   align-items: center;
   justify-content: center;
   padding: var(--space-2) var(--space-4);
-  border-radius: var(--radius-md);
+  border-radius: 0px;
   font-size: 0.875rem;
   font-weight: 600;
   line-height: 1;
@@ -432,12 +432,12 @@ textarea,
 select {
   width: 100%;
   padding: var(--space-2) var(--space-3);
-  border-radius: var(--radius-md);
+  border-radius: 0px;
   border: 1px solid var(--gray-300);
   background: var(--white);
   font-size: 0.875rem;
   color: var(--gray-800);
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition: border-color 0.15s ease;
 }
 
 input:focus,
@@ -445,7 +445,6 @@ textarea:focus,
 select:focus {
   outline: none;
   border-color: var(--red-800);
-  box-shadow: 0 0 0 2px rgba(153, 27, 27, 0.12);
 }
 
 .compact-input,
@@ -461,7 +460,7 @@ select:focus {
   display: inline-flex;
   align-items: center;
   padding: 0.125rem var(--space-3);
-  border-radius: var(--radius-md);
+  border-radius: 0px;
   font-size: 0.75rem;
   font-weight: 600;
   border: 1px solid var(--gray-200);
@@ -498,14 +497,14 @@ select:focus {
 .admin-hero {
   background: var(--white);
   border: 1px solid var(--gray-200);
-  border-radius: var(--radius-xl);
+  border-radius: 0px;
   padding: var(--space-6);
 }
 
 .admin-hero-eyebrow {
   display: inline-block;
   padding: var(--space-1) var(--space-3);
-  border-radius: var(--radius-md);
+  border-radius: 0px;
   background: var(--red-50);
   color: var(--red-800);
   font-size: 0.75rem;
@@ -524,14 +523,14 @@ select:focus {
 .admin-login-shell {
   background: var(--white);
   border: 1px solid var(--gray-200);
-  border-radius: var(--radius-xl);
+  border-radius: 0px;
   padding: var(--space-6);
 }
 
 .admin-tool-card {
   background: var(--white);
   border: 1px solid var(--gray-200);
-  border-radius: var(--radius-lg);
+  border-radius: 0px;
   padding: var(--space-4);
   transition: border-color 0.15s ease;
 }
@@ -546,7 +545,7 @@ select:focus {
   justify-content: center;
   width: 2.5rem;
   height: 2.5rem;
-  border-radius: var(--radius-md);
+  border-radius: 0px;
   background: var(--red-50);
   color: var(--red-800);
 }
@@ -568,7 +567,7 @@ select:focus {
 #countdown-container {
   background: var(--gray-900);
   border: 1px solid var(--gray-700);
-  border-radius: var(--radius-lg);
+  border-radius: 0px;
   padding: var(--space-5);
   text-align: center;
   color: var(--white);
@@ -589,7 +588,7 @@ select:focus {
   align-items: center;
   min-width: 4rem;
   padding: var(--space-3) var(--space-2);
-  border-radius: var(--radius-md);
+  border-radius: 0px;
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
@@ -687,14 +686,14 @@ select:focus {
 }
 
 /* ── Override mappings for Tailwind classes used in HTML ── */
-.rounded { border-radius: var(--radius-md); }
-.rounded-sm { border-radius: var(--radius-sm); }
-.rounded-md { border-radius: var(--radius-md); }
-.rounded-lg { border-radius: var(--radius-lg); }
-.rounded-xl { border-radius: var(--radius-xl); }
-.rounded-2xl { border-radius: var(--radius-xl); }
-.rounded-3xl { border-radius: var(--radius-xl); }
-.rounded-full { border-radius: var(--radius-md); }
+.rounded { border-radius: 0px !important; }
+.rounded-sm { border-radius: 0px !important; }
+.rounded-md { border-radius: 0px !important; }
+.rounded-lg { border-radius: 0px !important; }
+.rounded-xl { border-radius: 0px !important; }
+.rounded-2xl { border-radius: 0px !important; }
+.rounded-3xl { border-radius: 0px !important; }
+.rounded-full { border-radius: 0px !important; }
 
 .p-2 { padding: var(--space-2); }
 .p-3 { padding: var(--space-3); }
@@ -735,9 +734,11 @@ select:focus {
 .border-slate-200 { border-color: var(--gray-200); }
 .border-blue-100 { border-color: rgba(153, 27, 27, 0.1); }
 
-.shadow-sm { box-shadow: none; }
-.shadow-md { box-shadow: none; }
-.shadow-lg { box-shadow: none; }
+.shadow-sm { box-shadow: none !important; }
+.shadow-md { box-shadow: none !important; }
+.shadow-lg { box-shadow: none !important; }
+.shadow-xl { box-shadow: none !important; }
+.shadow-2xl { box-shadow: none !important; }
 
 .max-w-4xl { max-width: 56rem; }
 .max-w-6xl { max-width: 72rem; }
