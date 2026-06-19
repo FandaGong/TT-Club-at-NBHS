@@ -20,24 +20,24 @@
 
     <!-- CHANGE 2: Added id, flex-grow, and opacity-0 -->
     <main id="main-content" class="site-shell max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow w-full transition-opacity duration-300">
-        <div class="page-hero flex justify-between items-center mb-6 fade-up p-6 sm:p-8">
-            <div>
+        <div class="page-hero flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6 fade-up p-6 sm:p-8">
+            <div class="text-left">
                 <p class="page-hero-label">Session Ladder</p>
                 <h1 class="page-hero-title text-3xl font-bold mt-3">Weekly Matchups</h1>
             </div>
-            <span class="stat-chip text-xs font-bold px-3 py-1 uppercase">Term 2 - Week 4</span>
+            <span class="stat-chip self-start sm:self-center text-xs font-bold px-3 py-1 uppercase">Term 2 - Week 4</span>
         </div>
 
         <div class="flex flex-col gap-4 mb-6">
-            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 fade-up">
-                <div>
+            <div class="flex flex-col gap-3 md:flex-row md:items-end md:justify-between fade-up">
+                <div class="text-left">
                     <p class="text-sm uppercase tracking-[0.18em] text-slate-500 font-bold">View half</p>
-                    <div class="inline-flex rounded-xl bg-white border border-slate-200 p-1 mt-2" role="group">
-                        <button id="half2Btn" type="button" class="px-4 py-2 rounded-lg text-sm font-semibold transition-colors">Half 2</button>
-                        <button id="half1Btn" type="button" class="px-4 py-2 rounded-lg text-sm font-semibold transition-colors">Half 1</button>
+                    <div class="inline-flex bg-white border border-slate-200 p-1 mt-2" role="group">
+                        <button id="half2Btn" type="button" class="px-4 py-2 text-sm font-semibold transition-colors">Half 2</button>
+                        <button id="half1Btn" type="button" class="px-4 py-2 text-sm font-semibold transition-colors">Half 1</button>
                     </div>
                 </div>
-                <div class="section-card rounded-xl p-4 text-sm text-slate-600 shadow-sm">
+                <div class="section-card p-4 text-sm text-slate-600 w-full md:max-w-2xl">
                     <p class="font-semibold text-slate-800">Table assignments</p>
                     <p class="mt-1">Div 1 → Table 1 · Div 2 → Tables 2 &amp; 3 · Div 3 → Table 4</p>
                 </div>
