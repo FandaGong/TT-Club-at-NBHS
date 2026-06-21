@@ -273,6 +273,23 @@
                             class="admin-tool-link mt-auto text-sm cursor-pointer">Edit
                             Wins/Losses &rarr;</button>
                     </div>
+                    <div
+                        class="admin-tool-card bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-start gap-4">
+                        <div class="admin-tool-icon bg-indigo-100 text-indigo-700 p-3 rounded-xl">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg text-slate-800">CSV Import</h3>
+                            <p class="text-slate-600 text-sm mt-1">Upload a CSV of players with ELO, division, and half. Auto-detects division from ELO.</p>
+                        </div>
+                        <button id="openCsvImportModalBtn" type="button"
+                            class="admin-tool-link mt-auto text-sm cursor-pointer">Import
+                            CSV &rarr;</button>
+                    </div>
                     <div class="admin-tool-card bg-red-50 p-6 rounded-2xl shadow-sm border border-red-200 flex flex-col gap-4">
                         <h3 class="font-bold text-lg text-red-900">Season Management</h3>
                         <button onclick="finalizeSeason()"
@@ -437,16 +454,23 @@
                     </div>
                     <div class="space-y-4">
                         <div>
-                            <label class="block text-xs uppercase font-bold text-slate-700 mb-2">ELO Change</label>
+                            <label class="block text-xs uppercase font-bold text-slate-700 mb-2">Mode</label>
+                            <select id="eloModeSelect" class="w-full p-2 border border-blue-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 bg-white text-sm">
+                                <option value="adjust">Adjust (add/subtract)</option>
+                                <option value="set">Set (exact value)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase font-bold text-slate-700 mb-2">ELO Value</label>
                             <div class="flex gap-2">
-                                <input id="eloAdjustmentValueInput" type="number" placeholder="e.g., +50 or -30"
+                                <input id="eloAdjustmentValueInput" type="number" placeholder="e.g., +50 or 1200"
                                     class="flex-1 px-4 py-3 border border-blue-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 transition-all">
                             </div>
-                            <p class="text-xs text-slate-500 mt-1">Use + for increase, - for decrease</p>
+                            <p id="eloModeHint" class="text-xs text-slate-500 mt-1">Adjust mode: use + for increase, - for decrease. Set mode: enter exact ELO value.</p>
                         </div>
                         <button id="submitEloAdjustmentBtn" type="button"
                             class="w-full bg-blue-600 text-white px-3 py-2 rounded font-bold hover:bg-blue-700 transition-all border border-blue-700">
-                            Adjust ELO
+                            Apply
                         </button>
                         <p id="eloAdjustmentStatus" class="hidden text-sm font-medium text-center text-slate-700"></p>
                     </div>
@@ -591,6 +615,80 @@
                 </div>
                 <button id="closeNameLinkSuccessActionBtn" type="button"
                     class="w-full bg-slate-900 text-white px-3 py-2 rounded font-semibold hover:bg-slate-800 transition-colors border border-slate-800">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CSV Import Modal -->
+    <div id="csvImportModal"
+        class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/50 backdrop-blur-sm p-4">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden border border-indigo-100">
+            <div class="bg-gradient-to-r from-indigo-700 to-purple-700 text-white p-5 flex items-start justify-between gap-4">
+                <div>
+                    <p class="text-xs uppercase tracking-[0.24em] text-white/80">Admin Tool</p>
+                    <h3 class="font-extrabold text-2xl mt-1 text-white">CSV Import</h3>
+                    <p class="text-white/90 text-sm mt-1">Upload a CSV of players with ELO, division, and half. Auto-detects division from ELO.</p>
+                </div>
+                <button id="closeCsvImportModalBtn" type="button"
+                    class="shrink-0 rounded-full bg-white/10 hover:bg-white/20 text-white text-2xl leading-none h-11 w-11 inline-flex items-center justify-center">&times;</button>
+            </div>
+            <div class="p-6 space-y-5 max-h-[calc(90vh-92px)] overflow-y-auto">
+                <!-- Upload Section -->
+                <div class="border-2 border-dashed border-indigo-200 bg-indigo-50/30 rounded-2xl p-8 text-center">
+                    <input type="file" id="csvFileInput" accept=".csv" class="hidden">
+                    <div id="csvUploadArea" class="cursor-pointer">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                        </svg>
+                        <p class="mt-4 text-sm font-semibold text-indigo-700">Click to select a CSV file or drag & drop</p>
+                        <p class="mt-1 text-xs text-slate-500">Expected columns: Name, Rating, Unrated Mean, Standard Deviation</p>
+                    </div>
+                    <div id="csvFileSelected" class="hidden">
+                        <p class="text-sm font-semibold text-indigo-700" id="csvFileName">No file selected</p>
+                        <button id="csvChangeFileBtn" type="button" class="mt-2 text-xs text-indigo-500 hover:text-indigo-700 underline">Change file</button>
+                    </div>
+                </div>
+
+                <!-- Preview Table -->
+                <div id="csvPreviewSection" class="hidden space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-sm font-bold uppercase tracking-wide text-slate-500">Preview (<span id="csvPreviewCount">0</span> rows)</h4>
+                        <div class="flex gap-2">
+                            <button id="csvAutoDetectDivisionsBtn" type="button"
+                                class="text-xs font-semibold text-indigo-600 hover:text-indigo-800 bg-indigo-50 px-3 py-1.5 border border-indigo-200">
+                                Auto-Detect Divisions
+                            </button>
+                            <button id="csvImportBtn" type="button"
+                                class="text-xs font-bold text-white bg-indigo-600 px-4 py-1.5 hover:bg-indigo-700 border border-indigo-700">
+                                Import to Database
+                            </button>
+                        </div>
+                    </div>
+                    <div class="max-h-60 overflow-y-auto border border-slate-200">
+                        <table class="w-full text-xs">
+                            <thead class="bg-slate-100 sticky top-0">
+                                <tr>
+                                    <th class="text-left p-2 font-bold text-slate-600">#</th>
+                                    <th class="text-left p-2 font-bold text-slate-600">Name</th>
+                                    <th class="text-right p-2 font-bold text-slate-600">ELO</th>
+                                    <th class="text-right p-2 font-bold text-slate-600">Std Dev</th>
+                                    <th class="text-left p-2 font-bold text-slate-600">Division</th>
+                                    <th class="text-left p-2 font-bold text-slate-600">Half</th>
+                                    <th class="text-right p-2 font-bold text-slate-600">Wins</th>
+                                    <th class="text-right p-2 font-bold text-slate-600">Losses</th>
+                                </tr>
+                            </thead>
+                            <tbody id="csvPreviewBody"></tbody>
+                        </table>
+                    </div>
+                    <div class="p-3 bg-amber-50 border border-amber-200 text-xs text-amber-900 leading-relaxed">
+                        <strong>⚠ Auto-Detect:</strong> Automatically assigns divisions based on ELO ranking within each half.
+                        Players with the top ELOs get higher divisions. This uses the same logic as the season reset.
+                        If division is missing from the CSV, it will be auto-detected on import.
+                    </div>
+                </div>
+
+                <p id="csvImportStatus" class="hidden text-sm font-medium text-center"></p>
             </div>
         </div>
     </div>
@@ -1983,6 +2081,26 @@
             document.getElementById('nameLinkSearchInput')?.focus();
             loadNameLinkAccounts();
         });
+        // CSV Import Listeners
+        document.getElementById('openCsvImportModalBtn')?.addEventListener('click', () => {
+            document.getElementById('csvImportModal').classList.remove('hidden');
+            csvParsedPlayers = [];
+            document.getElementById('csvFileSelected').classList.add('hidden');
+            document.getElementById('csvUploadArea').classList.remove('hidden');
+            document.getElementById('csvPreviewSection').classList.add('hidden');
+            document.getElementById('csvImportStatus').classList.add('hidden');
+            document.getElementById('csvFileInput').value = '';
+        });
+        document.getElementById('closeCsvImportModalBtn')?.addEventListener('click', () => document.getElementById('csvImportModal').classList.add('hidden'));
+        document.getElementById('csvUploadArea')?.addEventListener('click', () => document.getElementById('csvFileInput').click());
+        document.getElementById('csvChangeFileBtn')?.addEventListener('click', () => document.getElementById('csvFileInput').click());
+        document.getElementById('csvFileInput')?.addEventListener('change', (event) => {
+            const file = event.target.files?.[0];
+            if (file) handleCsvFile(file);
+        });
+        document.getElementById('csvAutoDetectDivisionsBtn')?.addEventListener('click', autoDetectCsvDivisions);
+        document.getElementById('csvImportBtn')?.addEventListener('click', submitCsvImport);
+
         document.getElementById('openManualMatchModalBtn')?.addEventListener('click', () => {
             document.getElementById('manualMatchModal').classList.remove('hidden');
             loadManualMatchPlayers();
@@ -2570,6 +2688,391 @@
                     renderWinLossPlayers();
                     if (statusNode) {
                         statusNode.textContent = `Failed to load players: ${error.message}`;
+                        statusNode.classList.remove('hidden');
+                    }
+                }
+            }
+
+            // ==============================================
+            // CSV IMPORT FUNCTIONS
+            // ==============================================
+            let csvParsedPlayers = [];
+
+            // Proper CSV row parser that handles quoted fields (commas inside quotes)
+            function parseCsvRow(line) {
+                const cols = [];
+                let current = '';
+                let inQuotes = false;
+                for (let i = 0; i < line.length; i++) {
+                    const ch = line[i];
+                    if (inQuotes) {
+                        if (ch === '"') {
+                            inQuotes = false;
+                        } else {
+                            current += ch;
+                        }
+                    } else {
+                        if (ch === '"') {
+                            inQuotes = true;
+                        } else if (ch === ',') {
+                            cols.push(current.trim());
+                            current = '';
+                        } else {
+                            current += ch;
+                        }
+                    }
+                }
+                cols.push(current.trim());
+                return cols;
+            }
+
+            function handleCsvFile(file) {
+                const statusNode = document.getElementById('csvImportStatus');
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const text = e.target.result;
+                        const lines = text.split('\n').filter(line => line.trim());
+                        if (lines.length < 2) {
+                            if (statusNode) {
+                                statusNode.textContent = 'CSV must have a header row and at least one data row.';
+                                statusNode.className = 'mt-2 text-sm text-red-600 block text-center';
+                                statusNode.classList.remove('hidden');
+                            }
+                            return;
+                        }
+
+                        // Parse header using proper CSV parser (handles quoted fields)
+                        const headerCells = parseCsvRow(lines[0]);
+                        const header = headerCells.map(h => h.replace(/^"|"$/g, '').toLowerCase().trim());
+                        const nameIdx = header.findIndex(h => h === 'name' || h === 'player' || h === 'player name');
+                        // TT Australia format: "Rating" is the primary rating, "Unrated Mean" is fallback for unrated players
+                        const ratingIdx = header.findIndex(h => h === 'rating');
+                        const unratedMeanIdx = header.findIndex(h => h === 'unrated mean' || h === 'unrated_mean');
+                        const stdDevIdx = header.findIndex(h => h === 'standard deviation' || h === 'std deviation' || h === 'std_deviation');
+                        const eloIdx = header.findIndex(h => h === 'elo' || h === 'elO');
+                        const divIdx = header.findIndex(h => h === 'division' || h === 'div' || h === 'divison');
+                        const halfIdx = header.findIndex(h => h === 'half' || h === 'session' || h === 'term half');
+                        const winsIdx = header.findIndex(h => h === 'wins' || h === 'win' || h === 'w');
+                        const lossesIdx = header.findIndex(h => h === 'losses' || h === 'loss' || h === 'l');
+
+                        if (nameIdx === -1) {
+                            if (statusNode) {
+                                statusNode.textContent = 'CSV must have a "Name" column.';
+                                statusNode.className = 'mt-2 text-sm text-red-600 block text-center';
+                                statusNode.classList.remove('hidden');
+                            }
+                            return;
+                        }
+
+                        csvParsedPlayers = [];
+                        for (let i = 1; i < lines.length; i++) {
+                            const cols = parseCsvRow(lines[i]);
+                            const rawName = cols[nameIdx] || '';
+                            if (!rawName) continue;
+
+                            // Parse rating: use "Rating" column first (only if > 0), fall back to "Unrated Mean"
+                            let elo = 0;
+                            if (ratingIdx >= 0) {
+                                const ratingVal = parseInt(cols[ratingIdx]) || 0;
+                                if (ratingVal > 0) elo = ratingVal;
+                            }
+                            if (elo === 0 && unratedMeanIdx >= 0) {
+                                const unratedVal = parseInt(cols[unratedMeanIdx]) || 0;
+                                if (unratedVal > 0) elo = unratedVal;
+                            }
+                            if (elo === 0 && eloIdx >= 0) {
+                                elo = parseInt(cols[eloIdx]) || 0;
+                            }
+
+                            // Parse Standard Deviation: use "Standard Deviation" first, fall back to "Unrated Standard Deviation"
+                            let stdDev = 0;
+                            if (stdDevIdx >= 0) {
+                                stdDev = parseInt(cols[stdDevIdx]) || 0;
+                            }
+                            if (stdDev === 0) {
+                                const unratedStdDevIdx = header.findIndex(h => h === 'unrated standard deviation' || h === 'unrated_std_deviation');
+                                if (unratedStdDevIdx >= 0) {
+                                    stdDev = parseInt(cols[unratedStdDevIdx]) || 0;
+                                }
+                            }
+
+                            // Parse name: TT Australia uses "Last, First" format, convert to "First Last"
+                            let displayName = rawName;
+                            if (rawName.includes(',')) {
+                                const commaIdx = rawName.indexOf(',');
+                                const lastName = rawName.substring(0, commaIdx).trim();
+                                const firstName = rawName.substring(commaIdx + 1).trim();
+                                displayName = firstName + ' ' + lastName;
+                            }
+
+                            const player = {
+                                name: displayName,
+                                elo: elo,
+                                stdDev: stdDev,
+                                division: divIdx >= 0 ? cols[divIdx] || '' : '',
+                                half: halfIdx >= 0 ? cols[halfIdx] || '' : '',
+                                wins: winsIdx >= 0 ? parseInt(cols[winsIdx]) || 0 : 0,
+                                losses: lossesIdx >= 0 ? parseInt(cols[lossesIdx]) || 0 : 0,
+                            };
+                            csvParsedPlayers.push(player);
+                        }
+
+                        if (csvParsedPlayers.length === 0) {
+                            if (statusNode) {
+                                statusNode.textContent = 'No valid player rows found in CSV.';
+                                statusNode.className = 'mt-2 text-sm text-red-600 block text-center';
+                                statusNode.classList.remove('hidden');
+                            }
+                            return;
+                        }
+
+                        // Show preview
+                        document.getElementById('csvFileSelected').classList.remove('hidden');
+                        document.getElementById('csvUploadArea').classList.add('hidden');
+                        document.getElementById('csvFileName').textContent = file.name;
+                        document.getElementById('csvPreviewSection').classList.remove('hidden');
+                        document.getElementById('csvPreviewCount').textContent = csvParsedPlayers.length;
+
+                        renderCsvPreview();
+
+                        if (statusNode) {
+                            statusNode.textContent = `Parsed ${csvParsedPlayers.length} players from CSV. Review and click Import.`;
+                            statusNode.className = 'mt-2 text-sm text-green-600 block text-center';
+                            statusNode.classList.remove('hidden');
+                        }
+                    } catch (err) {
+                        if (statusNode) {
+                            statusNode.textContent = `Error parsing CSV: ${err.message}`;
+                            statusNode.className = 'mt-2 text-sm text-red-600 block text-center';
+                            statusNode.classList.remove('hidden');
+                        }
+                    }
+                };
+                reader.readAsText(file);
+            }
+
+            function renderCsvPreview() {
+                const tbody = document.getElementById('csvPreviewBody');
+                if (!tbody) return;
+                tbody.innerHTML = csvParsedPlayers.map((player, idx) => `
+                    <tr class="${idx % 2 === 0 ? 'bg-white' : 'bg-slate-50'} hover:bg-indigo-50">
+                        <td class="p-2 text-slate-400">${idx + 1}</td>
+                        <td class="p-2 font-semibold text-slate-800">${escapeHtml(player.name)}</td>
+                        <td class="p-2 text-right font-mono">${player.elo}</td>
+                        <td class="p-2 text-right font-mono">${player.stdDev || '—'}</td>
+                        <td class="p-2">${escapeHtml(player.division || '—')}</td>
+                        <td class="p-2">${escapeHtml(player.half || '—')}</td>
+                        <td class="p-2 text-right">${player.wins}</td>
+                        <td class="p-2 text-right">${player.losses}</td>
+                    </tr>
+                `).join('');
+            }
+
+            function autoDetectCsvDivisions() {
+                // Sort ALL players by ELO descending
+                const sorted = [...csvParsedPlayers].sort((a, b) => b.elo - a.elo);
+                const total = sorted.length;
+
+                // Split into Monday (better players, top ~half) and Tuesday (worse players, bottom ~half)
+                // Monday gets the ceiling of half, Tuesday gets the floor
+                const mondayCount = Math.ceil(total / 2);
+                
+                sorted.forEach((player, idx) => {
+                    const isMonday = idx < mondayCount;
+                    player.half = isMonday ? 'Monday' : 'Tuesday';
+
+                    // Within each half group, determine rank
+                    const rankInGroup = isMonday ? idx + 1 : (idx - mondayCount + 1);
+
+                    // Assign division: top 4 = Div 1, next 3 = Div 2, rest = Div 3
+                    if (rankInGroup <= 4) {
+                        player.division = 'Division 1';
+                    } else if (rankInGroup <= 7) {
+                        player.division = 'Division 2';
+                    } else {
+                        player.division = 'Division 3';
+                    }
+                });
+
+                renderCsvPreview();
+
+                const statusNode = document.getElementById('csvImportStatus');
+                if (statusNode) {
+                    statusNode.textContent = 'Divisions & halves auto-detected: Monday (top players) vs Tuesday. Div 1/2/3 assigned per half based on ELO rank.';
+                    statusNode.className = 'mt-2 text-sm text-indigo-600 block text-center';
+                    statusNode.classList.remove('hidden');
+                }
+            }
+
+            async function submitCsvImport() {
+                const statusNode = document.getElementById('csvImportStatus');
+                if (!csvParsedPlayers.length) {
+                    if (statusNode) {
+                        statusNode.textContent = 'No players to import. Upload a CSV first.';
+                        statusNode.className = 'mt-2 text-sm text-red-600 block text-center';
+                        statusNode.classList.remove('hidden');
+                    }
+                    return;
+                }
+
+                if (statusNode) {
+                    statusNode.textContent = 'Importing players to database...';
+                    statusNode.className = 'mt-2 text-sm text-blue-600 block text-center';
+                    statusNode.classList.remove('hidden');
+                }
+
+                try {
+                    const { error } = await _supabase.rpc('bulk_upsert_player_rankings', {
+                        p_players: csvParsedPlayers
+                    });
+
+                    if (error) throw error;
+
+                    if (statusNode) {
+                        statusNode.textContent = `✓ Successfully imported ${csvParsedPlayers.length} players!`;
+                        statusNode.className = 'mt-2 text-sm text-green-600 block text-center';
+                    }
+
+                    // Reset after 2 seconds
+                    setTimeout(() => {
+                        csvParsedPlayers = [];
+                        document.getElementById('csvFileSelected').classList.add('hidden');
+                        document.getElementById('csvUploadArea').classList.remove('hidden');
+                        document.getElementById('csvPreviewSection').classList.add('hidden');
+                        document.getElementById('csvFileInput').value = '';
+                        if (statusNode) {
+                            statusNode.classList.add('hidden');
+                        }
+                    }, 2000);
+                } catch (error) {
+                    if (statusNode) {
+                        statusNode.textContent = `Import failed: ${error.message}`;
+                        statusNode.className = 'mt-2 text-sm text-red-600 block text-center';
+                    }
+                }
+            }
+
+            // ==============================================
+            // IMPROVED ELO EDITING - Add "Set ELO" capability
+            // ==============================================
+            function updateEloSummary() {
+                const summary = document.getElementById('eloPlayerSummary');
+                const eloInput = document.getElementById('eloAdjustmentValueInput');
+
+                if (!eloSelectedPlayer) {
+                    if (summary) summary.textContent = 'Select a player to view and adjust their ELO.';
+                    if (eloInput) eloInput.value = '';
+                    return;
+                }
+
+                if (summary) {
+                    summary.innerHTML = `
+                        <div class="space-y-3">
+                            <div>
+                                <p class="text-xs uppercase font-bold text-slate-500">Player</p>
+                                <p class="text-lg font-bold text-slate-900 mt-1">${escapeHtml(eloSelectedPlayer.name)}</p>
+                            </div>
+                            <div class="grid grid-cols-3 gap-2 text-sm">
+                                <div class="rounded-lg bg-white p-2 border border-blue-100">
+                                    <p class="text-xs font-bold text-blue-600">Current ELO</p>
+                                    <p class="font-bold text-slate-900">${eloSelectedPlayer.elo ?? 0}</p>
+                                </div>
+                                <div class="rounded-lg bg-green-50 p-2 border border-green-100">
+                                    <p class="text-xs font-bold text-green-600">Wins</p>
+                                    <p class="font-bold text-green-900">${eloSelectedPlayer.wins ?? 0}</p>
+                                </div>
+                                <div class="rounded-lg bg-red-50 p-2 border border-red-100">
+                                    <p class="text-xs font-bold text-red-600">Losses</p>
+                                    <p class="font-bold text-red-900">${eloSelectedPlayer.losses ?? 0}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                if (eloInput) eloInput.value = '';
+            }
+
+            async function submitEloAdjustment() {
+                const eloChangeInput = document.getElementById('eloAdjustmentValueInput');
+                const statusNode = document.getElementById('eloAdjustmentStatus');
+                const modeSelect = document.getElementById('eloModeSelect');
+
+                if (!eloSelectedPlayer) {
+                    if (statusNode) {
+                        statusNode.textContent = 'Please select a player first';
+                        statusNode.classList.remove('hidden');
+                    }
+                    return;
+                }
+
+                const eloChangeStr = (eloChangeInput?.value || '').trim();
+
+                if (!eloChangeStr) {
+                    if (statusNode) {
+                        statusNode.textContent = 'Please enter an ELO value';
+                        statusNode.classList.remove('hidden');
+                    }
+                    return;
+                }
+
+                const eloValue = parseInt(eloChangeStr, 10);
+                if (isNaN(eloValue)) {
+                    if (statusNode) {
+                        statusNode.textContent = 'ELO value must be a valid number';
+                        statusNode.classList.remove('hidden');
+                    }
+                    return;
+                }
+
+                const isSetMode = modeSelect && modeSelect.value === 'set';
+
+                try {
+                    if (statusNode) {
+                        statusNode.textContent = isSetMode ? 'Setting ELO...' : 'Adjusting ELO...';
+                        statusNode.classList.remove('hidden');
+                    }
+
+                    let error;
+                    if (isSetMode) {
+                        // Use set_player_elo RPC to set exact value
+                        const result = await _supabase.rpc('set_player_elo', {
+                            p_player_name: eloSelectedPlayer.name,
+                            p_new_elo: eloValue
+                        });
+                        error = result.error;
+                    } else {
+                        // Use existing adjust_player_elo RPC
+                        const result = await _supabase.rpc('adjust_player_elo', {
+                            p_player_name: eloSelectedPlayer.name,
+                            p_elo_change: eloValue
+                        });
+                        error = result.error;
+                    }
+
+                    if (error) throw error;
+
+                    if (statusNode) {
+                        if (isSetMode) {
+                            statusNode.textContent = `✓ ELO set to ${eloValue} for ${eloSelectedPlayer.name}`;
+                        } else {
+                            statusNode.textContent = `✓ ELO adjusted by ${eloValue > 0 ? '+' : ''}${eloValue} for ${eloSelectedPlayer.name}`;
+                        }
+                        statusNode.classList.remove('hidden');
+                    }
+
+                    setTimeout(() => {
+                        eloSelectedPlayer = null;
+                        eloChangeInput.value = '';
+                        statusNode.classList.add('hidden');
+                        loadEloPlayers();
+                    }, 1500);
+                } catch (error) {
+                    if (statusNode) {
+                        statusNode.textContent = `Error: ${error.message}`;
                         statusNode.classList.remove('hidden');
                     }
                 }

@@ -1,360 +1,9 @@
-create or replace function public.sync_player_divisions()
-returns void
-language plpgsql
-security definer
-set search_path = public
-as $$
-begin
-  if not exists (
-    select 1
-    from public.account a
-    where a.account_id = auth.uid()
-      and lower(a.role) = 'admin'
-  ) and not exists (
-    select 1
-    from auth.users u
-    where u.id = auth.uid()
-      and lower(u.email) in ('nbhsttclub@gmail.com', 'jonathanzhao111@gmail.com', 'damon.yuan@education.nsw.gov.au')
-  ) then
-    raise exception 'Not authorized to sync player divisions.';
-  end if;
-
-  with ranked_players as (
-    select
-      id,
-      row_number() over (
-        partition by case
-          when lower(coalesce(half, '')) like '%second%' then 'Second'
-          else 'First'
-        end
-        order by elo desc, lower(coalesce(name, '')) asc, id asc
-      ) as rank_position
-    from public.player_rankings
-  )
-  update public.player_rankings pr
-  set division = case
-    when ranked_players.rank_position <= 4 then 'Division 1'
-    when ranked_players.rank_position <= 7 then 'Division 2'
-    else 'Division 3'
-  end
-  from ranked_players
-  where pr.id = ranked_players.id
-    and pr.division is distinct from case
-      when ranked_players.rank_position <= 4 then 'Division 1'
-      when ranked_players.rank_position <= 7 then 'Division 2'
-      else 'Division 3'
-    end;
-end;
-$$;
--- Supabase migrations for TT-Club
--- Run these in Supabase SQL editor to create required tables and RLS policies.
-
-create or replace function public.normalize_key(input text)
-returns text
-language sql
-immutable
-as $$
-      select 1 from public.account a
-      where a.account_id = auth.uid()
-        and lower(a.role) = 'admin'
-    )
-    or auth.uid() in (
-      select id from auth.users
-      where lower(email) in ('nbhsttclub@gmail.com', 'jonathanzhao111@gmail.com', 'damon.yuan@education.nsw.gov.au')
-    )
-  );
-
-create policy "Admins can update any account"
-  on public.account
-  for update
-  to authenticated
-  using (
-    exists (
-      select 1 from public.account a
-      where a.account_id = auth.uid()
-        and lower(a.role) = 'admin'
-    )
-    or auth.uid() in (
-      select id from auth.users
-      where lower(email) in ('nbhsttclub@gmail.com', 'jonathanzhao111@gmail.com', 'damon.yuan@education.nsw.gov.au')
-    )
-  );
-
--- absence_reports
-create table if not exists public.absence_reports (
-  id uuid primary key default gen_random_uuid(),
-  account_id uuid references auth.users(id) on delete set null,
-  name text not null,
-  email text not null,
-  reason text not null,
-  status text not null default 'pending',
-  reviewed_by text,
-  reviewed_at timestamptz,
-  created_at timestamptz not null default now()
-);
-
-alter table public.absence_reports enable row level security;
-
-create policy "Anyone can insert absence reports"
-  on public.absence_reports
-  for insert
-  to anon, authenticated
-  with check (true);
-
-create policy "Authenticated users can read their own absence reports"
-  on public.absence_reports
-  for select
-  to authenticated
-  using (auth.uid() = account_id or account_id is null);
-
-create policy "Authenticated users can update their own absence reports"
-  on public.absence_reports
-  for update
-  to authenticated
-  using (auth.uid() = account_id);
-
-create policy "Authenticated users can read absence reports"
-  on public.absence_reports
-  for select
-  to authenticated
-  using (true);
-
-create policy "Authenticated users can update absence reports"
-  on public.absence_reports
-  for update
-  to authenticated
-  using (true);
-
-create policy "Authenticated users can delete absence reports"
-  on public.absence_reports
-  for delete
-  to authenticated
-  using (true);
-
--- account_requests (primary)
-create table if not exists public.account_requests (
-  id uuid primary key default gen_random_uuid(),
-  email text not null,
-  password text not null,
-  role text not null default 'standard',
-  status text not null default 'pending',
-  linked_account_id uuid references auth.users(id) on delete cascade,
-  reviewed_by text,
-  reviewed_at timestamptz,
-  created_at timestamptz not null default now()
-);
-
-alter table public.account_requests
-  add column if not exists password text;
-
-alter table public.account_requests enable row level security;
-
-create policy "Anyone can insert account requests"
-  on public.account_requests
-  for insert
-  to anon, authenticated
-  with check (true);
-
-create policy "Authenticated users can read account requests"
-  on public.account_requests
-  for select
-  to authenticated
-  using (true);
-
-create policy "Authenticated users can update account requests"
-  on public.account_requests
-  for update
-  to authenticated
-  using (true);
-
-create policy "Authenticated users can delete account requests"
-  on public.account_requests
-  for delete
-  to authenticated
-  using (true);
-
--- account_requests_v2 (fallback used by components.js)
-create table if not exists public.account_requests_v2 (
-  id uuid primary key default gen_random_uuid(),
-  email text not null,
-  password text not null,
-  role text not null default 'standard',
-  status text not null default 'pending',
-  linked_account_id uuid references auth.users(id) on delete cascade,
-  reviewed_by text,
-  reviewed_at timestamptz,
-  created_at timestamptz not null default now()
-);
-
-alter table public.account_requests_v2
-  add column if not exists password text;
-
-alter table public.account_requests_v2 enable row level security;
-
-create policy "Anyone can insert account_requests_v2"
-  on public.account_requests_v2
-  for insert
-  to anon, authenticated
-  with check (true);
-
-create policy "Authenticated users can read account_requests_v2"
-  on public.account_requests_v2
-  for select
-  to authenticated
-  using (true);
-
-create policy "Authenticated users can update account_requests_v2"
-  on public.account_requests_v2
-  for update
-  to authenticated
-  using (true);
-
-create policy "Authenticated users can delete account_requests_v2"
-  on public.account_requests_v2
-  for delete
-  to authenticated
-  using (true);
-
--- custom_rules (editable club rules shown on rules.html)
-create table if not exists public.custom_rules (
-  id bigint generated by default as identity primary key,
-  title text not null,
-  description text not null default '',
-  is_section boolean not null default false,
-  created_at timestamptz not null default now()
-);
-
-alter table public.custom_rules add column if not exists is_section boolean not null default false;
-alter table public.custom_rules add column if not exists created_at timestamptz not null default now();
-
-alter table public.custom_rules enable row level security;
-
-create policy "Anyone can read custom rules"
-  on public.custom_rules
-  for select
-  to anon, authenticated
-  using (true);
-
-create policy "Authenticated users can insert custom rules"
-  on public.custom_rules
-  for insert
-  to authenticated
-  with check (true);
-
-create policy "Authenticated users can update custom rules"
-  on public.custom_rules
-  for update
-  to authenticated
-  using (true);
-
-create policy "Authenticated users can delete custom rules"
-  on public.custom_rules
-  for delete
-  to authenticated
-  using (true);
-
--- player_rankings (Google Sheets leaderboard export)
-create table if not exists public.player_rankings (
-  id uuid primary key default gen_random_uuid(),
-  account_id uuid references auth.users(id) on delete set null,
-  name text not null unique,
-  elo integer not null default 0,
-  wins integer not null default 0,
-  losses integer not null default 0,
-  division text,
-  half text,
-  created_at timestamptz not null default now()
-);
-
-alter table public.player_rankings enable row level security;
-
-create policy "Anyone can read player rankings"
-  on public.player_rankings
-  for select
-  to anon, authenticated
-  using (true);
-
--- schedule_dates (Google Sheets session date export)
-create table if not exists public.schedule_dates (
-  id uuid primary key default gen_random_uuid(),
-  session_date date not null unique,
-  created_at timestamptz not null default now()
-);
-
-alter table public.schedule_dates enable row level security;
-
-create policy "Anyone can read schedule dates"
-  on public.schedule_dates
-  for select
-  to anon, authenticated
-  using (true);
-
--- season_records (Google Sheets season archive export)
-create table if not exists public.season_records (
-  id uuid primary key default gen_random_uuid(),
-  season_name text,
-  champion text,
-  peak_elo integer not null default 0,
-  total_matches integer not null default 0,
-  top_3_players text,
-  status text,
-  most_wins text,
-  biggest_upset text,
-  created_at timestamptz not null default now()
-);
-
-alter table public.season_records enable row level security;
-
-create policy "Anyone can read season records"
-  on public.season_records
-  for select
-  to anon, authenticated
-  using (true);
-
--- match_history (Google Sheets match archive export)
-create table if not exists public.match_history (
-  id uuid primary key default gen_random_uuid(),
-  player_1_account_id uuid references auth.users(id) on delete set null,
-  player_2_account_id uuid references auth.users(id) on delete set null,
-  winner_account_id uuid references auth.users(id) on delete set null,
-  player_1 text,
-  player_2 text,
-  winner text,
-  score text,
-  division text,
-  table_label text,
-  half text,
-  p1_elo_change integer not null default 0,
-  p2_elo_change integer not null default 0,
-  p1_new_elo integer not null default 0,
-  p2_new_elo integer not null default 0,
-  term_and_week text,
-  created_at timestamptz not null default now()
-);
-
-alter table public.match_history enable row level security;
-
-create policy "Anyone can read match history"
-  on public.match_history
-  for select
-  to anon, authenticated
-  using (true);
-
-create or replace function public.record_manual_match(
-  p_player_1_name text,
-  p_player_2_name text,
-  p_winner_name text,
-  p_score text,
-  p_division text default null,
-  p_half text default null,
-  p_term_and_week text default null,
-  p_player_1_account_id uuid default null,
-  p_player_2_account_id uuid default null,
-  p_winner_account_id uuid default null,
-  p_player_1_elo_change integer default 0,
-  p_player_2_elo_change integer default 0,
-  p_player_1_new_elo integer default 0,
-  p_player_2_new_elo integer default 0
+-- ================================================
+-- CSV BULK IMPORT PLAYER RANKINGS
+-- Security definer RPC for admin bulk import
+-- ================================================
+create or replace function public.bulk_upsert_player_rankings(
+  p_players jsonb
 )
 returns void
 language plpgsql
@@ -362,12 +11,16 @@ security definer
 set search_path = public
 as $$
 declare
-  player_1_is_winner boolean;
-  loser_name text;
+  v_player jsonb;
+  v_name text;
+  v_elo integer;
+  v_wins integer;
+  v_losses integer;
+  v_division text;
+  v_half text;
+  v_csv_names text[];
 begin
-  player_1_is_winner := normalize_key(p_player_1_name) = normalize_key(p_winner_name);
-  loser_name := case when player_1_is_winner then p_player_2_name else p_player_1_name end;
-
+  -- Authorization check
   if not exists (
     select 1
     from public.account a
@@ -379,254 +32,56 @@ begin
     where u.id = auth.uid()
       and lower(u.email) in ('nbhsttclub@gmail.com', 'jonathanzhao111@gmail.com', 'damon.yuan@education.nsw.gov.au')
   ) then
-    raise exception 'Not authorized to record match results.';
+    raise exception 'Not authorized to bulk import player rankings.';
   end if;
 
-  if normalize_key(p_player_1_name) = normalize_key(p_player_2_name) then
-    raise exception 'The two players must be different.';
-  end if;
+  -- Collect all names from the CSV
+  v_csv_names := array[]::text[];
+  for v_player in select * from jsonb_array_elements(p_players)
+  loop
+    v_name := trim(v_player->>'name');
+    if v_name is not null and v_name <> '' then
+      v_csv_names := array_append(v_csv_names, v_name);
+    end if;
+  end loop;
 
-  if not player_1_is_winner and normalize_key(p_player_2_name) <> normalize_key(p_winner_name) then
-    raise exception 'Winner must be one of the selected players.';
-  end if;
+  -- Delete any players NOT in the CSV (full replacement)
+  delete from public.player_rankings
+  where name <> ALL(v_csv_names);
 
-  insert into public.match_history (
-    player_1_account_id,
-    player_2_account_id,
-    winner_account_id,
-    player_1,
-    player_2,
-    winner,
-    score,
-    division,
-    half,
-    p1_elo_change,
-    p2_elo_change,
-    p1_new_elo,
-    p2_new_elo,
-    term_and_week
-  ) values (
-    p_player_1_account_id,
-    p_player_2_account_id,
-    p_winner_account_id,
-    p_player_1_name,
-    p_player_2_name,
-    p_winner_name,
-    p_score,
-    p_division,
-    p_half,
-    p_player_1_elo_change,
-    p_player_2_elo_change,
-    p_player_1_new_elo,
-    p_player_2_new_elo,
-    p_term_and_week
-  );
+  -- Upsert: insert or update the player ranking row
+  for v_player in select * from jsonb_array_elements(p_players)
+  loop
+    v_name := trim(v_player->>'name');
+    v_elo := coalesce((v_player->>'elo')::integer, 0);
+    v_wins := coalesce((v_player->>'wins')::integer, 0);
+    v_losses := coalesce((v_player->>'losses')::integer, 0);
+    v_division := nullif(trim(v_player->>'division'), '');
+    v_half := nullif(trim(v_player->>'half'), '');
 
-  update public.player_rankings
-  set
-    elo = case
-      when normalize_key(name) = normalize_key(p_player_1_name) then p_player_1_new_elo
-      when normalize_key(name) = normalize_key(p_player_2_name) then p_player_2_new_elo
-      else elo
-    end,
-    wins = wins + case when normalize_key(name) = normalize_key(p_winner_name) then 1 else 0 end,
-    losses = losses + case when normalize_key(name) = normalize_key(loser_name) then 1 else 0 end
-  where normalize_key(name) in (normalize_key(p_player_1_name), normalize_key(p_player_2_name));
+    if v_name is null or v_name = '' then
+      continue;
+    end if;
 
-  perform public.sync_player_divisions();
-
-  if p_player_1_account_id is not null then
-    update public.account
-    set
-      elo = p_player_1_new_elo,
-      wins = wins + case when player_1_is_winner then 1 else 0 end,
-      losses = losses + case when player_1_is_winner then 0 else 1 end
-    where account_id = p_player_1_account_id;
-  end if;
-
-  if p_player_2_account_id is not null then
-    update public.account
-    set
-      elo = p_player_2_new_elo,
-      wins = wins + case when player_1_is_winner then 0 else 1 end,
-      losses = losses + case when player_1_is_winner then 1 else 0 end
-    where account_id = p_player_2_account_id;
-  end if;
+    insert into public.player_rankings (name, elo, wins, losses, division, half)
+    values (v_name, v_elo, v_wins, v_losses, v_division, v_half)
+    on conflict (name) do update set
+      elo = excluded.elo,
+      wins = excluded.wins,
+      losses = excluded.losses,
+      division = case when excluded.division is not null then excluded.division else player_rankings.division end,
+      half = case when excluded.half is not null then excluded.half else player_rankings.half end;
+  end loop;
 end;
 $$;
 
-create or replace function public.delete_match(p_match_id uuid)
-returns void
-language plpgsql
-security definer
-set search_path = public
-as $$
-declare
-  v_match record;
-  v_player_1_old_elo integer;
-  v_player_2_old_elo integer;
-begin
-  if not exists (
-    select 1
-    from public.account a
-    where a.account_id = auth.uid()
-      and lower(a.role) = 'admin'
-  ) and not exists (
-    select 1
-    from auth.users u
-    where u.id = auth.uid()
-      and lower(u.email) in ('nbhsttclub@gmail.com', 'jonathanzhao111@gmail.com', 'damon.yuan@education.nsw.gov.au')
-  ) then
-    raise exception 'Not authorized to delete matches.';
-  end if;
-
-  select * into v_match from public.match_history where id = p_match_id;
-  if v_match is null then
-    raise exception 'Match not found.';
-  end if;
-
-  -- Reverse Elo changes by calculating what they were before
-  -- new_elo - change = old_elo
-  v_player_1_old_elo := v_match.p1_new_elo - v_match.p1_elo_change;
-  v_player_2_old_elo := v_match.p2_new_elo - v_match.p2_elo_change;
-
-  -- Update player_rankings to revert Elo and adjust win/loss counts
-  update public.player_rankings
-  set
-    elo = case
-      when normalize_key(name) = normalize_key(v_match.player_1) then v_player_1_old_elo
-      when normalize_key(name) = normalize_key(v_match.player_2) then v_player_2_old_elo
-      else elo
-    end,
-    wins = greatest(wins - case when normalize_key(name) = normalize_key(v_match.winner) then 1 else 0 end, 0),
-    losses = greatest(losses - case when normalize_key(name) <> normalize_key(v_match.winner) and (normalize_key(name) = normalize_key(v_match.player_1) or normalize_key(name) = normalize_key(v_match.player_2)) then 1 else 0 end, 0)
-  where normalize_key(name) in (normalize_key(v_match.player_1), normalize_key(v_match.player_2));
-
-  perform public.sync_player_divisions();
-
-  -- Update account table to revert Elo and adjust win/loss counts
-  if v_match.player_1_account_id is not null then
-    update public.account
-    set
-      elo = v_player_1_old_elo,
-      wins = greatest(wins - case when normalize_key(v_match.winner) = normalize_key(v_match.player_1) then 1 else 0 end, 0),
-      losses = greatest(losses - case when normalize_key(v_match.winner) <> normalize_key(v_match.player_1) then 1 else 0 end, 0)
-    where account_id = v_match.player_1_account_id;
-  elsif v_match.player_1 is not null then
-    update public.account
-    set
-      elo = v_player_1_old_elo,
-      wins = greatest(wins - case when normalize_key(v_match.winner) = normalize_key(v_match.player_1) then 1 else 0 end, 0),
-      losses = greatest(losses - case when normalize_key(v_match.winner) <> normalize_key(v_match.player_1) then 1 else 0 end, 0)
-    where normalize_key(coalesce(display_name, split_part(email, '@', 1))) = normalize_key(v_match.player_1);
-  end if;
-
-  if v_match.player_2_account_id is not null then
-    update public.account
-    set
-      elo = v_player_2_old_elo,
-      wins = greatest(wins - case when normalize_key(v_match.winner) = normalize_key(v_match.player_2) then 1 else 0 end, 0),
-      losses = greatest(losses - case when normalize_key(v_match.winner) <> normalize_key(v_match.player_2) then 1 else 0 end, 0)
-    where account_id = v_match.player_2_account_id;
-  elsif v_match.player_2 is not null then
-    update public.account
-    set
-      elo = v_player_2_old_elo,
-      wins = greatest(wins - case when normalize_key(v_match.winner) = normalize_key(v_match.player_2) then 1 else 0 end, 0),
-      losses = greatest(losses - case when normalize_key(v_match.winner) <> normalize_key(v_match.player_2) then 1 else 0 end, 0)
-    where normalize_key(coalesce(display_name, split_part(email, '@', 1))) = normalize_key(v_match.player_2);
-  end if;
-
-  -- Delete the match
-  delete from public.match_history where id = p_match_id;
-end;
-$$;
-
-create or replace function public.adjust_player_elo(p_player_name text, p_elo_change integer)
-returns void
-language plpgsql
-security definer
-set search_path = public
-as $$
-begin
-  if not exists (
-    select 1
-    from public.account a
-    where a.account_id = auth.uid()
-      and lower(a.role) = 'admin'
-  ) and not exists (
-    select 1
-    from auth.users u
-    where u.id = auth.uid()
-      and lower(u.email) in ('nbhsttclub@gmail.com', 'jonathanzhao111@gmail.com', 'damon.yuan@education.nsw.gov.au')
-  ) then
-    raise exception 'Not authorized to adjust player ELO.';
-  end if;
-
-  if p_player_name is null or trim(p_player_name) = '' then
-    raise exception 'Player name cannot be empty.';
-  end if;
-
-  update public.player_rankings
-  set elo = elo + p_elo_change
-  where normalize_key(name) = normalize_key(p_player_name);
-
-  perform public.sync_player_divisions();
-
-  update public.account
-  set elo = elo + p_elo_change
-  where normalize_key(display_name) = normalize_key(p_player_name) or (display_name is null and normalize_key((
-    select name from public.player_rankings where normalize_key(name) = normalize_key(p_player_name) limit 1
-  )) = normalize_key(p_player_name));
-end;
-$$;
-
-create or replace function public.update_player_wins_losses(p_player_name text, p_wins integer, p_losses integer)
-returns void
-language plpgsql
-security definer
-set search_path = public
-as $$
-begin
-  if not exists (
-    select 1
-    from public.account a
-    where a.account_id = auth.uid()
-      and lower(a.role) = 'admin'
-  ) and not exists (
-    select 1
-    from auth.users u
-    where u.id = auth.uid()
-      and lower(u.email) in ('nbhsttclub@gmail.com', 'jonathanzhao111@gmail.com', 'damon.yuan@education.nsw.gov.au')
-  ) then
-    raise exception 'Not authorized to update player wins/losses.';
-  end if;
-
-  if p_player_name is null or trim(p_player_name) = '' then
-    raise exception 'Player name cannot be empty.';
-  end if;
-
-  if p_wins < 0 or p_losses < 0 then
-    raise exception 'Wins and losses cannot be negative.';
-  end if;
-
-  update public.player_rankings
-  set wins = p_wins, losses = p_losses
-  where normalize_key(name) = normalize_key(p_player_name);
-
-  update public.account
-  set wins = p_wins, losses = p_losses
-  where normalize_key(display_name) = normalize_key(p_player_name) or (display_name is null and normalize_key((
-    select name from public.player_rankings where normalize_key(name) = normalize_key(p_player_name) limit 1
-  )) = normalize_key(p_player_name));
-end;
-$$;
-
--- Create account entry (bypasses RLS with SECURITY DEFINER)
-create or replace function public.create_account_entry(
-  p_account_id uuid,
-  p_email text,
-  p_role text default 'standard'
+-- ================================================
+-- SET PLAYER ELO DIRECTLY (not adjustment)
+-- RPC for setting a player's ELO to an exact value
+-- ================================================
+create or replace function public.set_player_elo(
+  p_player_name text,
+  p_new_elo integer
 )
 returns void
 language plpgsql
@@ -634,36 +89,32 @@ security definer
 set search_path = public
 as $$
 begin
-  insert into public.account (account_id, email, role)
-  values (p_account_id, p_email, p_role)
-  on conflict (account_id) do update
-  set email = excluded.email, role = excluded.role;
+  if not exists (
+    select 1
+    from public.account a
+    where a.account_id = auth.uid()
+      and lower(a.role) = 'admin'
+  ) and not exists (
+    select 1
+    from auth.users u
+    where u.id = auth.uid()
+      and lower(u.email) in ('nbhsttclub@gmail.com', 'jonathanzhao111@gmail.com', 'damon.yuan@education.nsw.gov.au')
+  ) then
+    raise exception 'Not authorized to set player ELO.';
+  end if;
+
+  if p_player_name is null or trim(p_player_name) = '' then
+    raise exception 'Player name cannot be empty.';
+  end if;
+
+  update public.player_rankings
+  set elo = p_new_elo
+  where normalize_key(name) = normalize_key(p_player_name);
+
+  update public.account
+  set elo = p_new_elo
+  where normalize_key(display_name) = normalize_key(p_player_name) or (display_name is null and normalize_key((
+    select name from public.player_rankings where normalize_key(name) = normalize_key(p_player_name) limit 1
+  )) = normalize_key(p_player_name));
 end;
 $$;
-
--- Update account request status (bypasses RLS with SECURITY DEFINER)
-create or replace function public.update_account_request_status(
-  p_request_id text,
-  p_status text,
-  p_linked_account_id uuid default null,
-  p_reviewed_by text default null,
-  p_role text default null
-)
-returns void
-language plpgsql
-security definer
-set search_path = public
-as $$
-begin
-  update public.account_requests
-  set
-    status = p_status,
-    linked_account_id = coalesce(p_linked_account_id, linked_account_id),
-    reviewed_by = coalesce(p_reviewed_by, reviewed_by),
-    role = coalesce(p_role, role),
-    reviewed_at = now()
-  where request_id = p_request_id;
-end;
-$$;
-
--- End of migrations
