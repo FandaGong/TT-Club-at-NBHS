@@ -13,28 +13,56 @@ window._adminEmails = (window._adminEmails || [
 
 const headerHTML = `
 <header class="bg-red-800 text-white fade-in relative z-50 border-b border-red-900/10">
-    <nav class="mx-auto flex max-w-7xl items-center justify-between gap-1.5 px-3 py-2.5 sm:px-6 lg:px-8">
-        <a href="index.html" class="site-brand-link inline-flex items-center gap-1.5 whitespace-nowrap text-sm font-semibold transition-all duration-200 hover:opacity-90 sm:text-base">
-            <img src="favicon.png" alt="NBHS TT" class="header-favicon h-5 w-5 shrink-0" />
-            <span class="leading-none relative after:absolute after:left-0 after:bottom-[-2px] after:h-[1px] after:w-full after:scale-x-0 after:origin-left after:bg-white after:transition-transform after:duration-200 hover:after:scale-x-100">NBHS TT Hub</span>
-        </a>
-        
-        <button id="rankingNavToggle" type="button" class="sm:hidden inline-flex h-10 w-10 items-center justify-center border border-red-600 bg-red-700 text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 transition-colors duration-200 overflow-hidden transform-gpu shrink-0">
-            <svg id="menu-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M4 6h16M4 12h16M4 18h16" /></svg>
-            <svg id="close-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M6 18L18 6M6 6l12 12" /></svg>
-        </button>
-
-        <div id="rankingNavLinks" class="hidden w-full flex-col gap-1 border-t border-red-700/50 mt-3 pt-3 sm:mt-0 sm:flex sm:w-auto sm:flex-row sm:items-center sm:justify-end sm:gap-0.5 sm:border-0 sm:pt-0 transition-all">
-            <a href="player-ranking.html" class="inline-flex items-center px-2.5 py-1.5 text-sm font-medium text-white/90 transition-colors hover:bg-white/10 sm:px-2.5"><svg xmlns="http://www.w3.org/2000/svg" class="mr-2 h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v18" /><path d="M17 3v18" /><path d="M7 7h10" /><path d="M7 11h10" /><path d="M7 15h10" /></svg>Rankings</a>
-            <a href="player-matchup-ladder.html" class="inline-flex items-center px-2.5 py-1.5 text-sm font-medium text-white/90 transition-colors hover:bg-white/10 sm:px-2.5"><svg xmlns="http://www.w3.org/2000/svg" class="mr-2 h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7V3m8 4V3M3 11h18M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>Matchups</a>
-            <a href="matches.html" class="inline-flex items-center px-2.5 py-1.5 text-sm font-medium text-white/90 transition-colors hover:bg-white/10 sm:px-2.5"><svg xmlns="http://www.w3.org/2000/svg" class="mr-2 h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h9" /><path d="M9 12h9" /><path d="M9 18h9" /><path d="M4 6h.01" /><path d="M4 12h.01" /><path d="M4 18h.01" /></svg>Matches</a>
-            <a href="club-analytics.html" class="inline-flex items-center px-2.5 py-1.5 text-sm font-medium text-white/90 transition-colors hover:bg-white/10 sm:px-2.5"><svg xmlns="http://www.w3.org/2000/svg" class="mr-2 h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18M8 7v10M12 11v6M16 5v12" /></svg>Analytics</a>
-            <a href="past-records.html" class="inline-flex items-center px-2.5 py-1.5 text-sm font-medium text-white/90 transition-colors hover:bg-white/10 sm:px-2.5"><svg xmlns="http://www.w3.org/2000/svg" class="mr-2 h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8" /><path d="M12 8v4" /><path d="M12 12l3 2" /></svg>Past Records</a>
-            <a href="absence-report.html" class="inline-flex items-center px-2.5 py-1.5 text-sm font-medium text-white/90 transition-colors hover:bg-white/10 sm:px-2.5"><svg xmlns="http://www.w3.org/2000/svg" class="mr-2 h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7h8M8 11h8M8 15h5" /><rect x="4" y="3" width="16" height="18" rx="2" ry="2" /></svg>Absence</a>
-            <a href="rules.html" class="inline-flex items-center px-2.5 py-1.5 text-sm font-medium text-white/90 transition-colors hover:bg-white/10 sm:px-2.5"><svg xmlns="http://www.w3.org/2000/svg" class="mr-2 h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>Rules</a>
+    <nav class="mx-auto flex max-w-7xl flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 px-3 py-2.5 sm:px-6 lg:px-8">
+        <!-- Top row: Logo and toggle button -->
+        <div class="flex items-center justify-between w-full sm:w-auto gap-1.5">
+            <a href="index.html" class="site-brand-link inline-flex items-center gap-1.5 whitespace-nowrap text-sm font-semibold transition-all duration-200 hover:opacity-90 sm:text-base">
+                <img src="favicon.png" alt="NBHS TT" class="header-favicon h-5 w-5 shrink-0" />
+                <span class="leading-none relative after:absolute after:left-0 after:bottom-[-2px] after:h-[1px] after:w-full after:scale-x-0 after:origin-left after:bg-white after:transition-transform after:duration-200 hover:after:scale-x-100">NBHS TT Hub</span>
+            </a>
             
-            <a id="navLoginLink" href="admin.html" class="inline-flex items-center px-2.5 py-1.5 text-sm font-medium text-white/90 transition-colors hover:bg-white/20 bg-white/10 overflow-hidden transform-gpu sm:px-2.5" style="backface-visibility: hidden; transform: translateZ(0);">
-                <svg xmlns="http://www.w3.org/2000/svg" class="mr-2 h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+            <button id="rankingNavToggle" type="button" class="sm:hidden inline-flex h-10 w-10 items-center justify-center border border-red-600 bg-red-700 text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 transition-colors duration-200 overflow-hidden transform-gpu shrink-0 ml-auto">
+                <svg id="menu-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M4 6h16M4 12h16M4 18h16" /></svg>
+                <svg id="close-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+        </div>
+
+        <!-- Menu items -->
+        <div id="rankingNavLinks" class="hidden w-full sm:flex sm:w-auto sm:flex-row sm:items-center sm:justify-end sm:gap-0.5 flex-col gap-0 transition-all">
+            <!-- Matches Dropdown -->
+            <div class="relative group w-full sm:w-auto">
+                <button class="inline-flex items-center justify-between w-full px-3 py-3 text-sm font-medium text-white/90 transition-colors hover:bg-white/10 sm:w-auto sm:px-2.5 sm:py-1.5 sm:justify-start">
+                    <span class="flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="mr-2 h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h9" /><path d="M9 12h9" /><path d="M9 18h9" /><path d="M4 6h.01" /><path d="M4 12h.01" /><path d="M4 18h.01" /></svg>Matches
+                    </span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 h-4 w-4 shrink-0 transition-transform group-hover:sm:rotate-180 sm:h-3 sm:w-3 sm:ml-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6" /></svg>
+                </button>
+                <div class="max-h-0 sm:max-h-none sm:absolute sm:left-0 sm:mt-0 w-full sm:w-48 bg-red-900 sm:shadow-lg opacity-0 sm:opacity-0 invisible sm:invisible sm:group-hover:opacity-100 sm:group-hover:visible transition-all duration-200 z-50 sm:top-full overflow-hidden sm:overflow-visible">
+                    <a href="player-ranking.html" class="block px-3 sm:px-4 py-3 sm:py-2 text-sm font-medium text-white/90 hover:bg-white/10 border-l-4 border-red-800 sm:border-l-0 pl-5 sm:pl-4"><svg xmlns="http://www.w3.org/2000/svg" class="inline mr-2 h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v18" /><path d="M17 3v18" /><path d="M7 7h10" /><path d="M7 11h10" /><path d="M7 15h10" /></svg>Rankings</a>
+                    <a href="player-matchup-ladder.html" class="block px-3 sm:px-4 py-3 sm:py-2 text-sm font-medium text-white/90 hover:bg-white/10 border-l-4 border-red-800 sm:border-l-0 pl-5 sm:pl-4"><svg xmlns="http://www.w3.org/2000/svg" class="inline mr-2 h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7V3m8 4V3M3 11h18M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>Matchups</a>
+                    <a href="matches.html" class="block px-3 sm:px-4 py-3 sm:py-2 text-sm font-medium text-white/90 hover:bg-white/10 border-l-4 border-red-800 sm:border-l-0 pl-5 sm:pl-4"><svg xmlns="http://www.w3.org/2000/svg" class="inline mr-2 h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v8m0 0l-3-3m3 3l3-3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>Match History</a>
+                </div>
+            </div>
+
+            <!-- Club Info Dropdown -->
+            <div class="relative group w-full sm:w-auto">
+                <button class="inline-flex items-center justify-between w-full px-3 py-3 text-sm font-medium text-white/90 transition-colors hover:bg-white/10 sm:w-auto sm:px-2.5 sm:py-1.5 sm:justify-start">
+                    <span class="flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="mr-2 h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 18 0A9 9 0 0 0 3 12z" /><path d="M12 6v6l4 2" /></svg>Club Info
+                    </span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 h-4 w-4 shrink-0 transition-transform group-hover:sm:rotate-180 sm:h-3 sm:w-3 sm:ml-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6" /></svg>
+                </button>
+                <div class="max-h-0 sm:max-h-none sm:absolute sm:left-0 sm:mt-0 w-full sm:w-48 bg-red-900 sm:shadow-lg opacity-0 sm:opacity-0 invisible sm:invisible sm:group-hover:opacity-100 sm:group-hover:visible transition-all duration-200 z-50 sm:top-full overflow-hidden sm:overflow-visible">
+                    <a href="club-analytics.html" class="block px-3 sm:px-4 py-3 sm:py-2 text-sm font-medium text-white/90 hover:bg-white/10 border-l-4 border-red-800 sm:border-l-0 pl-5 sm:pl-4"><svg xmlns="http://www.w3.org/2000/svg" class="inline mr-2 h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18M8 7v10M12 11v6M16 5v12" /></svg>Analytics</a>
+                    <a href="past-records.html" class="block px-3 sm:px-4 py-3 sm:py-2 text-sm font-medium text-white/90 hover:bg-white/10 border-l-4 border-red-800 sm:border-l-0 pl-5 sm:pl-4"><svg xmlns="http://www.w3.org/2000/svg" class="inline mr-2 h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8" /><path d="M12 8v4" /><path d="M12 12l3 2" /></svg>Past Records</a>
+                    <a href="rules.html" class="block px-3 sm:px-4 py-3 sm:py-2 text-sm font-medium text-white/90 hover:bg-white/10 border-l-4 border-red-800 sm:border-l-0 pl-5 sm:pl-4"><svg xmlns="http://www.w3.org/2000/svg" class="inline mr-2 h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>Rules</a>
+                </div>
+            </div>
+
+            <a href="absence-report.html" class="block w-full px-3 py-3 text-sm font-medium text-white/90 transition-colors hover:bg-white/10 sm:inline-flex sm:w-auto sm:px-2.5 sm:py-1.5"><svg xmlns="http://www.w3.org/2000/svg" class="inline mr-2 h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7h8M8 11h8M8 15h5" /><rect x="4" y="3" width="16" height="18" rx="2" ry="2" /></svg>Absence</a>
+            
+            <a id="navLoginLink" href="admin.html" class="block w-full sm:inline-flex sm:w-auto px-3 py-3 sm:px-2.5 sm:py-1.5 text-sm font-medium text-white/90 transition-colors hover:bg-white/20 bg-white/10 overflow-hidden transform-gpu" style="backface-visibility: hidden; transform: translateZ(0);">
+                <svg xmlns="http://www.w3.org/2000/svg" class="inline mr-2 h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
                 <span id="navLoginLinkText" style="opacity:0;">&nbsp;</span>
             </a>
         </div>
@@ -93,9 +121,54 @@ function initMenu() {
                 e.classList.add("hidden");
                 n.classList.remove("hidden");
                 o.classList.add("hidden");
+                // Close all dropdowns when menu closes
+                document.querySelectorAll('header .relative.group > div').forEach(d => {
+                    d.classList.remove('show');
+                });
             }
         });
     }
+
+    // Mobile dropdown menu support
+    const dropdownGroups = document.querySelectorAll('header .relative.group');
+    dropdownGroups.forEach((group) => {
+        const button = group.querySelector('button');
+        const dropdown = group.querySelector('div');
+        if (button && dropdown) {
+            button.addEventListener('click', (evt) => {
+                if (window.innerWidth < 640) { // sm breakpoint
+                    evt.preventDefault();
+                    evt.stopPropagation();
+                    const isVisible = dropdown.classList.contains('show');
+                    // Hide all other dropdowns
+                    document.querySelectorAll('header .relative.group > div').forEach(d => {
+                        d.classList.remove('show');
+                    });
+                    // Toggle this one
+                    if (!isVisible) {
+                        dropdown.classList.add('show');
+                    }
+                }
+            });
+
+            // Close dropdown when a link is clicked
+            const links = dropdown.querySelectorAll('a');
+            links.forEach(link => {
+                link.addEventListener('click', () => {
+                    dropdown.classList.remove('show');
+                });
+            });
+        }
+    });
+
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', (evt) => {
+        if (window.innerWidth < 640 && !evt.target.closest('header .relative.group')) {
+            document.querySelectorAll('header .relative.group > div').forEach(d => {
+                d.classList.remove('show');
+            });
+        }
+    });
 }
 
 document.addEventListener('DOMContentLoaded', async () => {

@@ -233,11 +233,11 @@
                         </div>
                         <div>
                             <h3 class="font-bold text-lg text-slate-800">Match Management</h3>
-                            <p class="text-slate-600 text-sm mt-1">View all matches, filter by term/week, and delete records.</p>
+                            <p class="text-slate-600 text-sm mt-1">View match history, filter by term/week, and delete records.</p>
                         </div>
                         <button id="openMatchManagementModalBtn" type="button"
                             class="admin-tool-link mt-auto text-sm cursor-pointer">Browse
-                            Matches &rarr;</button>
+                            History &rarr;</button>
                     </div>
                     <div
                         class="admin-tool-card bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-start gap-4">
@@ -354,7 +354,7 @@
 <div id="matchManagementModal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-slate-950/50 backdrop-blur-sm p-4">
     <div class="bg-white border border-slate-200 max-w-4xl w-full max-h-[90vh] flex flex-col overflow-hidden">
         <div class="bg-orange-600 text-white p-4 flex items-center justify-between shrink-0">
-            <h3 class="font-bold text-lg">Match Management</h3>
+            <h3 class="font-bold text-lg">Match History</h3>
             <button id="closeMatchManagementModalBtn" type="button" class="text-white hover:text-orange-200 text-2xl leading-none">&times;</button>
         </div>
         <div class="p-6 space-y-4 overflow-y-auto flex-grow">
@@ -362,11 +362,11 @@
                 <div>
                     <label class="block text-sm font-medium text-slate-700 mb-2">Filter by Term/Week</label>
                     <select id="matchTermWeekFilter" class="w-full p-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500">
-                        <option value="">All Matches</option>
+                        <option value="">All Match History</option>
                     </select>
                 </div>
                 <div class="flex items-end">
-                    <button id="loadAllMatchesBtn" type="button" class="w-full bg-orange-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-orange-700 transition-colors">Load Matches</button>
+                    <button id="loadAllMatchesBtn" type="button" class="w-full bg-orange-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-orange-700 transition-colors">Load History</button>
                 </div>
             </div>
             <div id="matchManagementList" class="space-y-2 max-h-96 overflow-y-auto"></div>
@@ -2330,7 +2330,7 @@
                 if (filterSelect && termWeeks.length > 0) {
                     filterSelect.innerHTML += termWeeks.map(tw => `<option value="${tw}">${tw}</option>`).join('');
                 }
-                if (statusNode) statusNode.textContent = 'Select filters above and click Load Matches';
+                if (statusNode) statusNode.textContent = 'Select filters above and click Load History';
             } catch (error) {
                 if (statusNode) statusNode.textContent = `Error loading filter options: ${error.message}`;
             }
