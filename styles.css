@@ -28,6 +28,18 @@
 
   --white: #ffffff;
   --body-bg: #faf7f5;
+  --surface-bg: #ffffff;
+  --surface-alt: #fef2f2;
+  --text-main: #1f2937;
+  --text-muted: #6b7280;
+  --text-heading: #111827;
+  --border-color: #e5e7eb;
+  --scale-factor: 1;
+  --contrast-adjust: 1;
+  --accent-color: #b91c1c;
+  --accent-bg: #fef2f2;
+  --accent-text: #991b1b;
+  --density-scale: 1;
 
   /* Radii — all zero for strict rectangular aesthetic */
   --radius-sm: 0px;
@@ -55,15 +67,19 @@
 /* ── Base ── */
 html {
   font-size: 16px;
+  /* Contrast filter lives on <html>, not <body>, so it doesn't turn
+     <body> into a containing block for position:fixed modals (which
+     would make popups scroll with the page). */
+  filter: contrast(var(--contrast-adjust));
 }
 
 body {
   margin: 0;
   width: 100%;
   font-family: var(--font-sans);
-  font-size: 1rem;
+  font-size: calc(1rem * var(--scale-factor));
   line-height: 1.5;
-  color: var(--gray-800);
+  color: var(--text-main);
   background:
     radial-gradient(circle at top, rgba(254, 242, 242, 0.7), rgba(250, 247, 245, 0) 24%),
     linear-gradient(180deg, #fbf9f7 0%, var(--body-bg) 100%);
@@ -71,6 +87,221 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Dark / high-contrast: flat background, no light-to-dark gradient */
+body[data-theme="dark"],
+body[data-theme="high-contrast"] {
+  background: var(--body-bg);
+}
+
+body[data-theme="dark"] {
+  --body-bg: #020617;
+  --surface-bg: #111827;
+  --surface-alt: #1f2937;
+  --text-main: #f8fafc;
+  --text-muted: #cbd5e1;
+  --text-heading: #ffffff;
+  --border-color: #334155;
+}
+
+body[data-theme="high-contrast"] {
+  --body-bg: #000000;
+  --surface-bg: #000000;
+  --surface-alt: #111111;
+  --text-main: #ffffff;
+  --text-muted: #fef3c7;
+  --text-heading: #ffffff;
+  --border-color: #ffffff;
+}
+
+body[data-theme="light"] {
+  --body-bg: #faf7f5;
+  --surface-bg: #ffffff;
+  --surface-alt: #fef2f2;
+  --text-main: #1f2937;
+  --text-muted: #6b7280;
+  --text-heading: #111827;
+  --border-color: #e5e7eb;
+}
+
+body[data-accent="blue"] {
+  --accent-color: #2563eb;
+  --accent-bg: #eff6ff;
+  --accent-text: #1d4ed8;
+}
+
+body[data-accent="emerald"] {
+  --accent-color: #047857;
+  --accent-bg: #ecfdf5;
+  --accent-text: #047857;
+}
+
+body[data-accent="amber"] {
+  --accent-color: #d97706;
+  --accent-bg: #fffbeb;
+  --accent-text: #b45309;
+}
+
+body[data-accent="red"] {
+  --accent-color: #b91c1c;
+  --accent-bg: #fef2f2;
+  --accent-text: #991b1b;
+}
+
+body[data-font="serif"] {
+  --font-sans: 'Plus Jakarta Sans', Georgia, serif;
+  --font-heading: 'Georgia', serif;
+}
+
+body[data-font="mono"] {
+  --font-sans: 'JetBrains Mono', monospace;
+  --font-heading: 'JetBrains Mono', monospace;
+}
+
+body[data-density="compact"] {
+  --density-scale: 0.9;
+}
+
+body[data-density="spacious"] {
+  --density-scale: 1.1;
+}
+
+body[data-reduced-motion="true"] * {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+body[data-theme="dark"] .bg-red-700,
+body[data-theme="dark"] .bg-red-800,
+body[data-theme="dark"] .bg-red-900,
+body[data-theme="dark"] .text-red-800,
+body[data-theme="dark"] .text-red-700,
+body[data-theme="dark"] .border-red-700,
+body[data-theme="dark"] .border-red-800,
+body[data-theme="dark"] .border-red-900,
+body[data-theme="dark"] .hover\:bg-white\/10:hover,
+body[data-accent="blue"] .bg-red-700,
+body[data-accent="blue"] .bg-red-800,
+body[data-accent="blue"] .bg-red-900,
+body[data-accent="blue"] .text-red-800,
+body[data-accent="blue"] .text-red-700,
+body[data-accent="blue"] .border-red-700,
+body[data-accent="blue"] .border-red-800,
+body[data-accent="blue"] .border-red-900,
+body[data-accent="emerald"] .bg-red-700,
+body[data-accent="emerald"] .bg-red-800,
+body[data-accent="emerald"] .bg-red-900,
+body[data-accent="emerald"] .text-red-800,
+body[data-accent="emerald"] .text-red-700,
+body[data-accent="emerald"] .border-red-700,
+body[data-accent="emerald"] .border-red-800,
+body[data-accent="emerald"] .border-red-900,
+body[data-accent="amber"] .bg-red-700,
+body[data-accent="amber"] .bg-red-800,
+body[data-accent="amber"] .bg-red-900,
+body[data-accent="amber"] .text-red-800,
+body[data-accent="amber"] .text-red-700,
+body[data-accent="amber"] .border-red-700,
+body[data-accent="amber"] .border-red-800,
+body[data-accent="amber"] .border-red-900 {
+  background-color: var(--accent-color) !important;
+  color: white !important;
+  border-color: var(--accent-color) !important;
+}
+
+body[data-accent="blue"] .text-red-800,
+body[data-accent="blue"] .text-red-700,
+body[data-accent="emerald"] .text-red-800,
+body[data-accent="emerald"] .text-red-700,
+body[data-accent="amber"] .text-red-800,
+body[data-accent="amber"] .text-red-700 {
+  color: var(--accent-text) !important;
+}
+
+body[data-theme="dark"] .panel-card,
+body[data-theme="dark"] .section-card,
+body[data-theme="dark"] .page-hero,
+body[data-theme="dark"] .home-panel,
+body[data-theme="dark"] .settings-card,
+body[data-theme="dark"] .settings-preview,
+body[data-theme="dark"] .form-shell,
+body[data-theme="dark"] .table-shell,
+body[data-theme="high-contrast"] .panel-card,
+body[data-theme="high-contrast"] .section-card,
+body[data-theme="high-contrast"] .page-hero,
+body[data-theme="high-contrast"] .home-panel,
+body[data-theme="high-contrast"] .settings-card,
+body[data-theme="high-contrast"] .settings-preview,
+body[data-theme="high-contrast"] .form-shell,
+body[data-theme="high-contrast"] .table-shell {
+  background-color: var(--surface-bg);
+  color: var(--text-main);
+  border-color: var(--border-color);
+  box-shadow: inset 0 0 0 1px var(--border-color);
+}
+
+.settings-card,
+.settings-preview {
+  background-color: var(--surface-bg);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+body[data-theme="dark"] .settings-preview,
+body[data-theme="high-contrast"] .settings-preview {
+  box-shadow: inset 0 0 0 1px var(--border-color);
+}
+
+.settings-preview {
+  background: linear-gradient(135deg, var(--surface-alt), var(--surface-bg));
+}
+
+.settings-label {
+  color: var(--text-main);
+}
+
+.settings-help {
+  color: var(--text-muted);
+}
+
+.settings-control {
+  border: 1px solid var(--border-color);
+  background-color: var(--surface-bg);
+  color: var(--text-main);
+}
+
+.settings-control:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px var(--accent-bg);
+}
+
+.preview-card {
+  background: linear-gradient(135deg, var(--accent-bg), var(--surface-bg));
+  border-color: var(--accent-color);
+}
+
+.preview-heading {
+  color: var(--accent-text);
+}
+
+.preview-button {
+  background-color: var(--accent-color);
+  color: white;
+}
+
+body[data-theme="high-contrast"] .settings-control,
+body[data-theme="high-contrast"] .settings-card,
+body[data-theme="high-contrast"] .settings-preview {
+  background-color: #000000;
+}
+
+body[data-theme="high-contrast"] input[type="range"] {
+  accent-color: #f59e0b;
 }
 
 * {
@@ -99,7 +330,13 @@ img {
   z-index: 1;
   width: 100%;
   box-sizing: border-box;
-  padding: 1rem clamp(0.75rem, 2vw, 1.25rem);
+  padding: calc(1rem * var(--density-scale)) clamp(0.75rem, 2vw, 1.25rem);
+}
+
+.page-hero,
+.settings-card,
+.settings-preview {
+  padding: calc(1.5rem * var(--density-scale));
 }
 
 main > section,
@@ -137,7 +374,7 @@ main > article + article {
 h1, h2, h3, .font-heading {
   font-family: var(--font-heading);
   font-weight: 700;
-  color: var(--gray-900);
+  color: var(--text-heading);
 }
 
 h1 { font-size: 2rem; letter-spacing: -0.02em; }
@@ -284,8 +521,8 @@ header nav {
 
 /* ── Page Hero ── */
 .page-hero {
-  background: var(--white);
-  border: 1px solid var(--gray-200);
+  background: var(--surface-bg);
+  border: 1px solid var(--border-color);
   border-radius: 0px;
   padding: clamp(1.75rem, 3vw, 2.5rem);
   text-align: center;
@@ -332,7 +569,7 @@ header nav {
   font-size: 2rem;
   font-weight: 800;
   line-height: 1.1;
-  color: var(--gray-900);
+  color: var(--text-heading);
   letter-spacing: -0.03em;
 }
 
@@ -341,7 +578,7 @@ header nav {
   max-width: 40rem;
   margin-left: auto;
   margin-right: auto;
-  color: var(--gray-600);
+  color: var(--text-muted);
   font-size: 1rem;
   line-height: 1.6;
   text-wrap: pretty;
@@ -1036,6 +1273,18 @@ select:focus {
   color: var(--gray-900);
 }
 
+/* Readable text-selection highlight in dark / high-contrast */
+body[data-theme="dark"] ::selection,
+body[data-theme="high-contrast"] ::selection {
+  background: var(--accent-color);
+  color: #ffffff;
+}
+body[data-theme="dark"] ::-moz-selection,
+body[data-theme="high-contrast"] ::-moz-selection {
+  background: var(--accent-color);
+  color: #ffffff;
+}
+
 /* ── Focus visible ── */
 :focus-visible {
   outline: 2px solid var(--red-800);
@@ -1180,7 +1429,7 @@ header .relative.group > div a svg {
 }
 
 /* Mobile dropdown menu display */
-@media (max-width: 640px) {
+@media (max-width: 767px) {
   header nav {
     flex-direction: column;
   }
@@ -1210,8 +1459,11 @@ header .relative.group > div a svg {
     transition: max-height 300ms ease-out;
   }
 
-  header .relative.group > div.show {
+  header .relative.group > div.show,
+  header .profile-dropdown-menu.show {
     max-height: 500px;
+    opacity: 1;
+    visibility: visible;
   }
 
   header .relative.group > div a {
@@ -1240,3 +1492,254 @@ header .relative.group > div a svg {
   }
 }
 .max-w-6xl { max-width: 72rem; }
+
+/* ──────────────────────────────────────────────────────────────
+   Theme overrides for Dark + High-contrast modes.
+   The pages (especially admin.html) are built with hardcoded
+   Tailwind utility classes that otherwise stay light in every
+   theme. These rules remap the LIGHT surfaces and DARK text to the
+   theme variables. Intentionally dark/colored surfaces (the red
+   navbar, gradient banners, bg-red-700/800/900, text-white,
+   bg-white/10, bg-white/20) are deliberately NOT remapped.
+   Scoped by body[data-theme=...] + !important to beat the Tailwind
+   CDN utilities and the light-mode override block above.
+   ────────────────────────────────────────────────────────────── */
+
+/* ---- Light surface backgrounds → theme surface ---- */
+body[data-theme="dark"] :is(
+  .bg-white, .bg-white\/85, .bg-white\/90,
+  .bg-slate-50, .bg-slate-100, .bg-slate-200, .bg-slate-300,
+  .bg-gray-50, .bg-gray-100, .bg-gray-200, .bg-gray-300),
+body[data-theme="high-contrast"] :is(
+  .bg-white, .bg-white\/85, .bg-white\/90,
+  .bg-slate-50, .bg-slate-100, .bg-slate-200, .bg-slate-300,
+  .bg-gray-50, .bg-gray-100, .bg-gray-200, .bg-gray-300) {
+  background-color: var(--surface-bg) !important;
+}
+
+/* Slightly recessed surfaces use the alt tone */
+body[data-theme="dark"] :is(.bg-slate-50, .bg-gray-50, .bg-slate-100, .bg-gray-100),
+body[data-theme="high-contrast"] :is(.bg-slate-50, .bg-gray-50, .bg-slate-100, .bg-gray-100) {
+  background-color: var(--surface-alt) !important;
+}
+
+/* ---- Pale colored badge / info-box backgrounds → dark tint ---- */
+body[data-theme="dark"] :is(
+  .bg-red-50, .bg-red-100, .bg-rose-50, .bg-rose-100,
+  .bg-green-50, .bg-green-100, .bg-emerald-50, .bg-emerald-100,
+  .bg-teal-50, .bg-teal-100, .bg-cyan-50, .bg-cyan-100,
+  .bg-sky-50, .bg-sky-100, .bg-blue-50, .bg-blue-100,
+  .bg-indigo-50, .bg-indigo-100, .bg-purple-50, .bg-purple-100,
+  .bg-violet-50, .bg-violet-100, .bg-pink-50, .bg-pink-100,
+  .bg-amber-50, .bg-amber-100, .bg-yellow-50, .bg-yellow-100,
+  .bg-orange-50, .bg-orange-100),
+body[data-theme="high-contrast"] :is(
+  .bg-red-50, .bg-red-100, .bg-rose-50, .bg-rose-100,
+  .bg-green-50, .bg-green-100, .bg-emerald-50, .bg-emerald-100,
+  .bg-teal-50, .bg-teal-100, .bg-cyan-50, .bg-cyan-100,
+  .bg-sky-50, .bg-sky-100, .bg-blue-50, .bg-blue-100,
+  .bg-indigo-50, .bg-indigo-100, .bg-purple-50, .bg-purple-100,
+  .bg-violet-50, .bg-violet-100, .bg-pink-50, .bg-pink-100,
+  .bg-amber-50, .bg-amber-100, .bg-yellow-50, .bg-yellow-100,
+  .bg-orange-50, .bg-orange-100) {
+  background-color: var(--surface-alt) !important;
+}
+
+/* ---- Dark text → main / muted theme text ---- */
+body[data-theme="dark"].text-slate-900,
+body[data-theme="high-contrast"].text-slate-900 {
+  color: var(--text-main) !important;
+}
+
+body[data-theme="dark"] :is(
+  .text-slate-950, .text-slate-900, .text-slate-800, .text-slate-700,
+  .text-gray-950, .text-gray-900, .text-gray-800, .text-gray-700,
+  .text-black),
+body[data-theme="high-contrast"] :is(
+  .text-slate-950, .text-slate-900, .text-slate-800, .text-slate-700,
+  .text-gray-950, .text-gray-900, .text-gray-800, .text-gray-700,
+  .text-black) {
+  color: var(--text-main) !important;
+}
+
+body[data-theme="dark"] :is(
+  .text-slate-600, .text-slate-500, .text-slate-400,
+  .text-gray-600, .text-gray-500, .text-gray-400),
+body[data-theme="high-contrast"] :is(
+  .text-slate-600, .text-slate-500, .text-slate-400,
+  .text-gray-600, .text-gray-500, .text-gray-400) {
+  color: var(--text-muted) !important;
+}
+
+/* Colored text on now-dark badges → lighten so it stays legible */
+body[data-theme="dark"] :is(
+  .text-red-700, .text-red-800, .text-red-900,
+  .text-green-700, .text-green-800, .text-green-900,
+  .text-emerald-700, .text-emerald-800, .text-emerald-900,
+  .text-cyan-700, .text-cyan-800, .text-cyan-900,
+  .text-sky-700, .text-sky-800, .text-sky-900,
+  .text-blue-700, .text-blue-800, .text-blue-900,
+  .text-indigo-600, .text-indigo-700, .text-indigo-800,
+  .text-purple-700, .text-purple-800,
+  .text-amber-800, .text-amber-900,
+  .text-orange-700, .text-orange-800) {
+  filter: brightness(1.55) saturate(1.1);
+}
+body[data-theme="high-contrast"] :is(
+  .text-red-700, .text-red-800, .text-red-900,
+  .text-green-700, .text-green-800, .text-green-900,
+  .text-emerald-700, .text-emerald-800, .text-emerald-900,
+  .text-cyan-700, .text-cyan-800, .text-cyan-900,
+  .text-sky-700, .text-sky-800, .text-sky-900,
+  .text-blue-700, .text-blue-800, .text-blue-900,
+  .text-indigo-600, .text-indigo-700, .text-indigo-800,
+  .text-purple-700, .text-purple-800,
+  .text-amber-800, .text-amber-900,
+  .text-orange-700, .text-orange-800) {
+  color: #ffffff !important;
+}
+
+/* ---- Borders + dividers ---- */
+body[data-theme="dark"] :is(
+  .border-slate-100, .border-slate-200, .border-slate-300,
+  .border-gray-100, .border-gray-200, .border-gray-300,
+  .border-red-100, .border-blue-100, .border-emerald-100,
+  .border-indigo-100, .border-cyan-100, .border-sky-100,
+  .border-green-100, .border-amber-200, .border-blue-200,
+  .border-emerald-200, .border-indigo-200, .border-red-200),
+body[data-theme="high-contrast"] :is(
+  .border-slate-100, .border-slate-200, .border-slate-300,
+  .border-gray-100, .border-gray-200, .border-gray-300,
+  .border-red-100, .border-blue-100, .border-emerald-100,
+  .border-indigo-100, .border-cyan-100, .border-sky-100,
+  .border-green-100, .border-amber-200, .border-blue-200,
+  .border-emerald-200, .border-indigo-200, .border-red-200) {
+  border-color: var(--border-color) !important;
+}
+
+body[data-theme="dark"] :is(.divide-slate-200, .divide-gray-200) > * + *,
+body[data-theme="high-contrast"] :is(.divide-slate-200, .divide-gray-200) > * + * {
+  border-color: var(--border-color) !important;
+}
+
+/* ---- Tables ---- */
+body[data-theme="dark"] .table-shell thead th,
+body[data-theme="high-contrast"] .table-shell thead th {
+  background: var(--surface-alt);
+  color: var(--text-muted);
+  border-bottom-color: var(--border-color);
+}
+body[data-theme="dark"] .table-shell tbody td,
+body[data-theme="high-contrast"] .table-shell tbody td {
+  color: var(--text-main);
+  border-bottom-color: var(--border-color);
+}
+body[data-theme="dark"] .table-shell tbody tr:hover,
+body[data-theme="high-contrast"] .table-shell tbody tr:hover {
+  background: var(--surface-alt);
+}
+
+/* ---- Inputs / selects / textareas ---- */
+body[data-theme="dark"] :is(input[type="text"], input[type="email"], input[type="password"], input[type="number"], input[type="date"], input[type="search"], textarea, select, .compact-input, .compact-select, .compact-textarea),
+body[data-theme="high-contrast"] :is(input[type="text"], input[type="email"], input[type="password"], input[type="number"], input[type="date"], input[type="search"], textarea, select, .compact-input, .compact-select, .compact-textarea) {
+  background: var(--surface-alt);
+  color: var(--text-main);
+  border-color: var(--border-color);
+}
+body[data-theme="dark"] ::placeholder,
+body[data-theme="high-contrast"] ::placeholder {
+  color: var(--text-muted);
+  opacity: 0.85;
+}
+
+/* ---- Secondary button (light by default) ---- */
+body[data-theme="dark"] .btn-secondary,
+body[data-theme="high-contrast"] .btn-secondary {
+  background: var(--surface-alt);
+  color: var(--text-main);
+  border-color: var(--border-color);
+}
+body[data-theme="dark"] .btn-secondary:hover,
+body[data-theme="high-contrast"] .btn-secondary:hover {
+  background: var(--surface-bg);
+  border-color: var(--accent-color);
+}
+
+/* ---- High-contrast: crisp 1px outline on remapped surfaces ---- */
+body[data-theme="high-contrast"] :is(.bg-white, .bg-white\/85, .bg-white\/90, .bg-slate-50, .bg-slate-100, .bg-slate-200, .bg-gray-50, .bg-gray-100) {
+  border: 1px solid var(--border-color);
+}
+
+/* ---- Admin component classes (hardcode --white / --gray-200) ---- */
+body[data-theme="dark"] :is(.admin-hero, .admin-login-shell, .admin-tool-card),
+body[data-theme="high-contrast"] :is(.admin-hero, .admin-login-shell, .admin-tool-card) {
+  background: var(--surface-bg);
+  border-color: var(--border-color);
+  color: var(--text-main);
+}
+body[data-theme="dark"] .admin-hero-lead,
+body[data-theme="high-contrast"] .admin-hero-lead {
+  color: var(--text-muted);
+}
+body[data-theme="dark"] .admin-tool-card:hover,
+body[data-theme="high-contrast"] .admin-tool-card:hover {
+  border-color: var(--accent-color);
+}
+
+/* ---- Content components that hardcode light gray/white in base rules ---- */
+body[data-theme="dark"] :is(.section-card, .panel-card, .metric-card, .table-shell, .form-shell, .archive-card, .match-card),
+body[data-theme="high-contrast"] :is(.section-card, .panel-card, .metric-card, .table-shell, .form-shell, .archive-card, .match-card) {
+  background: var(--surface-bg);
+  border-color: var(--border-color);
+  color: var(--text-main);
+}
+body[data-theme="dark"] :is(.section-card, .panel-card, .metric-card, .table-shell, .form-shell, .archive-card, .match-card):hover,
+body[data-theme="high-contrast"] :is(.section-card, .panel-card, .metric-card, .table-shell, .form-shell, .archive-card, .match-card):hover {
+  border-color: var(--accent-color);
+}
+
+body[data-theme="dark"] :is(.home-hero, .home-panel, .home-panel:not(a), .grid-card),
+body[data-theme="high-contrast"] :is(.home-hero, .home-panel, .home-panel:not(a), .grid-card) {
+  background-color: var(--surface-bg);
+  border-color: var(--border-color);
+  color: var(--text-main);
+}
+body[data-theme="dark"] :is(a.home-panel:hover, .card-hover:hover, .grid-card:hover),
+body[data-theme="high-contrast"] :is(a.home-panel:hover, .card-hover:hover, .grid-card:hover) {
+  background-color: var(--surface-alt);
+  border-color: var(--accent-color);
+}
+body[data-theme="dark"] :is(.section-heading, .grid-card h3),
+body[data-theme="high-contrast"] :is(.section-heading, .grid-card h3) {
+  color: var(--text-heading);
+}
+body[data-theme="dark"] :is(.section-subhead, .grid-card p),
+body[data-theme="high-contrast"] :is(.section-subhead, .grid-card p) {
+  color: var(--text-muted);
+}
+
+/* ---- Rules page (#custom-rules-container) ---- */
+body[data-theme="dark"] :is(#custom-rules-container, #custom-rules-container em),
+body[data-theme="high-contrast"] :is(#custom-rules-container, #custom-rules-container em) {
+  color: var(--text-muted);
+}
+body[data-theme="dark"] #custom-rules-container :is(h2, h3, strong),
+body[data-theme="high-contrast"] #custom-rules-container :is(h2, h3, strong) {
+  color: var(--text-heading);
+}
+body[data-theme="dark"] #custom-rules-container blockquote,
+body[data-theme="high-contrast"] #custom-rules-container blockquote {
+  background: var(--surface-alt);
+  color: var(--text-muted);
+}
+body[data-theme="dark"] #custom-rules-container :is(code, .important),
+body[data-theme="high-contrast"] #custom-rules-container :is(code, .important) {
+  background: var(--surface-alt);
+  color: var(--text-main);
+  border-color: var(--border-color);
+}
+body[data-theme="dark"] #custom-rules-container :is(.rule-section::after, .rule-children),
+body[data-theme="high-contrast"] #custom-rules-container :is(.rule-section::after, .rule-children) {
+  background: var(--border-color);
+  border-color: var(--border-color);
+}

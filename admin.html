@@ -1347,12 +1347,19 @@
                     document.getElementById('adminToolsContainer').classList.toggle('hidden', !isAdmin);
                     document.getElementById('pageTitle').textContent = isAdmin ? 'Admin Panel' : 'Profile';
 
-                    // Ensure header login link reflects current session state (Profile/Admin Portal)
+                    // Ensure header account controls reflect current session state
                     try {
-                        const navText = document.getElementById('navLoginLinkText');
-                        if (navText) {
-                            navText.textContent = isAdmin ? 'Admin Portal' : 'Profile';
-                            navText.style.opacity = '1';
+                        const adminLink = document.getElementById('navAdminLink');
+                        const adminText = document.getElementById('navAdminLinkText');
+                        const profileText = document.getElementById('navProfileLinkText');
+                        if (adminLink) adminLink.classList.toggle('hidden', !isAdmin);
+                        if (adminText) {
+                            adminText.textContent = 'Admin Portal';
+                            adminText.style.opacity = '1';
+                        }
+                        if (profileText) {
+                            profileText.textContent = 'Profile';
+                            profileText.style.opacity = '1';
                         }
                     } catch (e) { /* ignore if header not yet initialized */ }
 
@@ -1367,10 +1374,12 @@
                     dashboardContainer.classList.add('hidden');
                     document.getElementById('pageTitle').textContent = 'Login';
                     try {
-                        const navText = document.getElementById('navLoginLinkText');
-                        if (navText) {
-                            navText.textContent = 'Login';
-                            navText.style.opacity = '1';
+                        const adminLink = document.getElementById('navAdminLink');
+                        const profileText = document.getElementById('navProfileLinkText');
+                        if (adminLink) adminLink.classList.add('hidden');
+                        if (profileText) {
+                            profileText.textContent = 'Profile';
+                            profileText.style.opacity = '1';
                         }
                     } catch (e) { /* ignore if header not yet initialized */ }
                     document.getElementById('profileModal').classList.add('hidden');
@@ -3154,6 +3163,70 @@
                     }
                 }
             }
+    </script>
+    <script>
+    /* Lock background scroll while any modal is open, so the popup stays
+       centered/anchored and only its inner content scrolls. Modals are the
+       .fixed.inset-0 overlays; they're shown by removing the `hidden` class. */
+    (function () {
+        if (window.__nbhsModalScrollLock__) return;
+        window.__nbhsModalScrollLock__ = true;
+
+        const isOpen = (el) =>
+            el.classList.contains('fixed') &&
+            el.classList.contains('inset-0') &&
+            !el.classList.contains('hidden');
+
+        let savedScrollY = 0;
+        let locked = false;
+
+        function anyModalOpen() {
+            return Array.from(document.querySelectorAll('.fixed.inset-0')).some(isOpen);
+        }
+
+        function lock() {
+            if (locked) return;
+            locked = true;
+            savedScrollY = window.scrollY || window.pageYOffset || 0;
+            document.body.style.position = 'fixed';
+            document.body.style.top = `-${savedScrollY}px`;
+            document.body.style.left = '0';
+            document.body.style.right = '0';
+            document.body.style.width = '100%';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function unlock() {
+            if (!locked) return;
+            locked = false;
+            document.body.style.position = '';
+            document.body.style.top = '';
+            document.body.style.left = '';
+            document.body.style.right = '';
+            document.body.style.width = '';
+            document.body.style.overflow = '';
+            window.scrollTo(0, savedScrollY);
+        }
+
+        function sync() {
+            if (anyModalOpen()) lock();
+            else unlock();
+        }
+
+        const observer = new MutationObserver(sync);
+        function observeModals() {
+            document.querySelectorAll('.fixed.inset-0').forEach((el) => {
+                observer.observe(el, { attributes: true, attributeFilter: ['class'] });
+            });
+            sync();
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', observeModals);
+        } else {
+            observeModals();
+        }
+    })();
     </script>
 </body>
 </html>

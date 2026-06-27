@@ -156,7 +156,7 @@
                     let delay = 5; // Start staggering from d5
                     grid.innerHTML = seasons.map(rec => `
                         <div class="bg-white p-4 border border-slate-200 fade-up fade-up-d${delay++}">
-                            <div class="bg-red-50 border-b p-4 flex justify-between items-center">
+                            <div class="bg-red-50 border-b border-slate-200 p-4 flex justify-between items-center">
                                 <span class="font-bold text-red-900 italic uppercase">${rec.season_name}</span>
                                 <span class="bg-red-100 text-red-700 text-[10px] px-2 py-1 rounded font-black uppercase">${rec.status || ''}</span>
                             </div>
@@ -165,7 +165,7 @@
                                     <span class="text-sm font-semibold text-slate-500">Champion</span>
                                     <span class="text-lg font-bold text-red-800">${rec.champion || ''}</span>
                                 </div>
-                                <div class="grid grid-cols-2 gap-4 text-center border-t border-b py-4 mb-4">
+                                <div class="grid grid-cols-2 gap-4 text-center border-t border-b border-slate-200 py-4 mb-4">
                                     <div><p class="text-[10px] font-bold text-slate-400 uppercase">Most Wins</p><p class="text-[11px] font-bold text-slate-700">${rec.most_wins || ''}</p></div>
                                     <div><p class="text-[10px] font-bold text-slate-400 uppercase">Biggest Upset</p><p class="text-[11px] font-bold text-slate-700">${rec.biggest_upset || ''}</p></div>
                                 </div>
