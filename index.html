@@ -20,80 +20,112 @@
     <div id="header-placeholder"></div>
 
     <!-- 2. MAIN WITH ID AND OPACITY (Keeps content identical) -->
-    <main id="main-content" class="site-shell max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow w-full opacity-0 transition-opacity duration-500">
-        <section class="space-y-8">
-            <div class="home-hero page-hero text-center py-8 px-4 sm:px-8 fade-up">
-                <p class="page-hero-label">NBHS Table Tennis</p>
-                <h1 class="page-hero-title text-4xl font-extrabold mt-3">Welcome, Players</h1>
-                <p class="page-hero-copy mt-3">Access the official Normanhurst Boys Table Tennis ranking system.</p>
-            </div>
+    <main id="main-content" class="almanac flex-grow w-full opacity-0 transition-opacity duration-500">
+      <div class="alm-shell">
 
-            <div id="countdown-container" class="hidden p-5 text-white text-center mb-6 fade-up-d1 panel-card">
-                <h2 class="text-sm uppercase tracking-widest font-bold opacity-80 mb-2">Next Session In</h2>
-                <div class="flex justify-center gap-3 text-center">
-                    <div class="countdown-unit"><span id="days" class="text-4xl font-black block countdown-num">00</span><span class="text-[10px] uppercase opacity-70">Days</span></div>
-                    <span class="countdown-sep" aria-hidden="true">:</span>
-                    <div class="countdown-unit"><span id="hours" class="text-4xl font-black block countdown-num">00</span><span class="text-[10px] uppercase opacity-70">Hours</span></div>
-                    <span class="countdown-sep" aria-hidden="true">:</span>
-                    <div class="countdown-unit"><span id="minutes" class="text-4xl font-black block countdown-num">00</span><span class="text-[10px] uppercase opacity-70">Mins</span></div>
+        <!-- MASTHEAD: asymmetric 60/40, left-aligned, single focal point -->
+        <header class="alm-masthead alm-block">
+            <div>
+                <p class="alm-kicker">NBHS · TT CLub</p>
+                <h1 class="alm-display mt-4">NBHS<br>Table Tennis<br><span class="accent">Club</span></h1>
+                <p class="alm-lede mt-6">The official Elo ladder, weekly matchups and season archive for the NBHS Table Tennis Club.</p>
+                <div class="alm-masthead-meta">
+                    <div class="alm-stat"><span id="meta-players" class="alm-stat-num">—</span><span class="alm-stat-label">Ranked players</span></div>
+                    <div class="alm-stat"><span id="meta-top-elo" class="alm-stat-num">—</span><span class="alm-stat-label">Top Elo</span></div>
+                    <div class="alm-stat"><span id="meta-season" class="alm-stat-num">T2</span><span class="alm-stat-label">Current term</span></div>
                 </div>
-                <p id="next-date-label" class="mt-3 text-red-200 text-xs font-medium"></p>
             </div>
 
-            <div class="home-panel panel-card p-4 fade-up-d2 card-hover">
-                <h2 class="section-heading mb-3"><svg xmlns="http://www.w3.org/2000/svg" class="inline h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"/></svg>Quick Player Search</h2>
-                <form id="searchForm" class="flex flex-col sm:flex-row gap-2">
-                    <input type="text" id="searchInput" placeholder="Enter name (e.g. Fanda)..." class="compact-input flex-1 p-2 outline-none focus:ring-2 focus:ring-red-500 input-focus">
-                    <button type="submit" class="home-cta w-full sm:w-auto bg-red-700 text-white px-4 py-2 font-bold btn-hover">Search</button>
+            <aside class="alm-standings" aria-label="Top of the ladder">
+                <div class="alm-standings-head">
+                    <span class="t">Top of the Ladder</span>
+                    <a href="player-ranking.html" class="alm-standings-link">Full ↗</a>
+                </div>
+                <div id="standings-body">
+                    <div class="alm-standings-row"><span class="alm-rank">—</span><span class="nm">Loading standings…</span><span class="alm-elo"></span></div>
+                </div>
+            </aside>
+        </header>
+
+        <!-- SEARCH + COUNTDOWN: search is primary (left, wider); countdown
+             sits beside it and only renders when a session is scheduled. -->
+        <section class="alm-block alm-split" id="utility-row">
+            <div class="alm-panel">
+                <div class="alm-rule-head"><span class="alm-eyebrow">Find a player</span></div>
+                <form id="searchForm" class="alm-search">
+                    <input type="text" id="searchInput" placeholder="Search by name — e.g. Fanda">
+                    <button type="submit">Search</button>
                 </form>
-                <div id="searchResult" class="hidden mt-4 p-3 bg-red-50 border border-red-100"></div>
+                <div id="searchResult" class="hidden"></div>
             </div>
 
-            <div class="home-panel panel-card p-4 fade-up-d3 card-hover">
-                <h2 class="section-heading mb-2">Club Runners & Supervisors</h2>
-                <p class="section-subhead text-sm mb-3">Club runners and those who supervise sessions. Contact these people on teams if there is any issue.</p>
-                <div class="space-y-3">
-                    <div class="flex flex-wrap items-center gap-2"><span class="font-semibold text-slate-800">Mr Siu</span><span class="inline-flex items-center bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700 border border-blue-100">Teacher Supervisor</span></div>
-                    <div class="flex flex-wrap items-center gap-2"><span class="font-semibold text-slate-800">Fanda Gong</span><span class="inline-flex items-center bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700 border border-blue-100">Club Runner</span><span class="inline-flex items-center bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700 border border-blue-100">Founder</span></div>
-                    <div class="flex flex-wrap items-center gap-2"><span class="font-semibold text-slate-800">Jonathan Zhao</span><span class="inline-flex items-center bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700 border border-blue-100">Club Runner</span><span class="inline-flex items-center bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700 border border-blue-100">Website Feature Dev</span></div>
-                    <div class="flex flex-wrap items-center gap-2"><span class="font-semibold text-slate-800">Damon Yuan</span><span class="inline-flex items-center bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700 border border-blue-100">Club Runner</span></div>
-                    <div class="flex flex-wrap items-center gap-2"><span class="font-semibold text-slate-800">Oscar Pan</span><span class="inline-flex items-center bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700 border border-blue-100">Club Runner</span><span class="inline-flex items-center bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700 border border-blue-100">Coach</span></div>
+            <div id="countdown-container" class="alm-panel alm-panel--ink hidden">
+                <p class="alm-eyebrow">Next session</p>
+                <div class="alm-countdown mt-4">
+                    <div><span id="days" class="alm-count-num">00</span><div class="alm-count-unit">Days</div></div>
+                    <div><span id="hours" class="alm-count-num">00</span><div class="alm-count-unit">Hours</div></div>
+                    <div><span id="minutes" class="alm-count-num">00</span><div class="alm-count-unit">Mins</div></div>
                 </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <a href="player-ranking.html" class="home-panel panel-card p-5 text-center card-hover fade-up-d1 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-8 w-8 mb-2 text-red-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v18"/><path d="M17 3v18"/><path d="M7 7h10"/><path d="M7 11h10"/><path d="M7 15h10"/></svg>
-                    <h3 class="font-bold text-xl">View Ranking Ladder</h3>
-                    <p class="text-slate-500 text-sm">Check current Elo ratings and club standings.</p>
-                </a>
-                <a href="player-matchup-ladder.html" class="home-panel panel-card p-5 text-center card-hover fade-up-d2 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-8 w-8 mb-2 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3M3 11h18M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                    <h3 class="font-bold text-xl">Weekly Matchups</h3>
-                    <p class="text-slate-500 text-sm">See bracket placements for the next session.</p>
-                </a>
-                <a href="club-analytics.html" class="home-panel panel-card p-5 text-center card-hover fade-up-d3 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-8 w-8 mb-2 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3v18h18M8 7v10M12 11v6M16 5v12"/></svg>
-                    <h3 class="font-bold text-xl">Club Analytics</h3>
-                    <p class="text-slate-500 text-sm">View live club metrics like wins, upsets, and Elo highs.</p>
-                </a>
-                <a href="past-records.html" class="home-panel panel-card p-5 text-center card-hover fade-up-d4 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-8 w-8 mb-2 text-red-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4"/><path d="M12 12l3 2"/></svg>
-                    <h3 class="font-bold text-xl">Past Records</h3>
-                    <p class="text-slate-500 text-sm">Archive completed season records for easy comparison.</p>
-                </a>
-                <a href="absence-report.html" class="home-panel panel-card p-5 text-center card-hover fade-up-d5 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-8 w-8 mb-2 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h8M8 11h8M8 15h5"/><rect x="4" y="3" width="16" height="18" rx="2" ry="2"/></svg>
-                    <h3 class="font-bold text-xl">Absence Report</h3>
-                    <p class="text-slate-500 text-sm">Submit a missed-session note and let admins review it.</p>
-                </a>
-                <a href="rules.html" class="home-panel panel-card p-5 text-center card-hover fade-up-d6 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-8 w-8 mb-2 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
-                    <h3 class="font-bold text-xl">Club Rules</h3>
-                    <p class="text-slate-500 text-sm">Review club guidelines, policies, and match rules.</p>
-                </a>
+                <p id="next-date-label" class="alm-count-unit" style="margin-top:1rem;letter-spacing:0.08em;text-align:center;"></p>
             </div>
         </section>
+
+        <!-- THE INDEX: almanac table-of-contents (replaces the card grid) -->
+        <section class="alm-block">
+            <div class="alm-rule-head"><h2 class="alm-section-title">Navigation</h2></div>
+            <nav class="alm-index">
+                <a href="player-ranking.html" class="alm-index-row">
+                    <span class="alm-index-num">01</span>
+                    <span><span class="alm-index-title">Ranking Ladder</span><span class="alm-index-desc">Current Elo ratings and full club standings.</span></span>
+                    <span class="alm-index-arrow">→</span>
+                </a>
+                <a href="player-matchup-ladder.html" class="alm-index-row">
+                    <span class="alm-index-num">02</span>
+                    <span><span class="alm-index-title">Weekly Matchups</span><span class="alm-index-desc">Bracket placements and table assignments for the next session.</span></span>
+                    <span class="alm-index-arrow">→</span>
+                </a>
+                <a href="club-analytics.html" class="alm-index-row">
+                    <span class="alm-index-num">03</span>
+                    <span><span class="alm-index-title">Club Analytics</span><span class="alm-index-desc">Live metrics — wins, biggest upsets and Elo highs.</span></span>
+                    <span class="alm-index-arrow">→</span>
+                </a>
+                <a href="past-records.html" class="alm-index-row">
+                    <span class="alm-index-num">04</span>
+                    <span><span class="alm-index-title">Past Records</span><span class="alm-index-desc">The season archive and hall of fame.</span></span>
+                    <span class="alm-index-arrow">→</span>
+                </a>
+                <a href="absence-report.html" class="alm-index-row">
+                    <span class="alm-index-num">05</span>
+                    <span><span class="alm-index-title">Absence Report</span><span class="alm-index-desc">Submit a missed-session note for admin review.</span></span>
+                    <span class="alm-index-arrow">→</span>
+                </a>
+                <a href="rules.html" class="alm-index-row">
+                    <span class="alm-index-num">06</span>
+                    <span><span class="alm-index-title">Club Rules</span><span class="alm-index-desc">Guidelines, policies and match rules.</span></span>
+                    <span class="alm-index-arrow">→</span>
+                </a>
+            </nav>
+        </section>
+
+        <!-- ROSTER: ruled roster, typographic role tags (no pill-on-card) -->
+        <section class="alm-block alm-split">
+            <div class="alm-panel">
+                <div class="alm-rule-head"><h2 class="alm-section-title">Club Runners</h2></div>
+                <div class="alm-roster">
+                    <div class="alm-roster-row"><span class="alm-roster-name">Mr Siu</span><span class="alm-roles"><span class="alm-role">Teacher Supervisor</span></span></div>
+                    <div class="alm-roster-row"><span class="alm-roster-name">Fanda Gong</span><span class="alm-roles"><span class="alm-role">Club Runner</span><span class="alm-role">Founder</span></span></div>
+                    <div class="alm-roster-row"><span class="alm-roster-name">Jonathan Zhao</span><span class="alm-roles"><span class="alm-role">Club Runner</span><span class="alm-role">Feature Dev</span></span></div>
+                    <div class="alm-roster-row"><span class="alm-roster-name">Damon Yuan</span><span class="alm-roles"><span class="alm-role">Club Runner</span></span></div>
+                    <div class="alm-roster-row"><span class="alm-roster-name">Oscar Pan</span><span class="alm-roles"><span class="alm-role">Club Runner</span><span class="alm-role">Coach</span></span></div>
+                </div>
+            </div>
+            <div class="alm-panel alm-panel--ink" style="display:flex;flex-direction:column;justify-content:center;">
+                <p class="alm-eyebrow">A note</p>
+                <p class="alm-lede mt-3" style="color:#e9e3d6;max-width:none;">Linked to the wrong name, or spotted an error in the ladder? Message a club runner on Teams, or email <a href="mailto:nbhsttclub@gmail.com" class="alm-note-link">nbhsttclub@gmail.com</a> for general inquiries and we'll sort it.</p>
+            </div>
+        </section>
+
+      </div>
     </main>
 
     <!-- 3. FOOTER PLACEHOLDER -->
@@ -158,6 +190,32 @@
                     if (aOscar !== bOscar) return aOscar ? -1 : 1;
                     return (a.name || '').localeCompare(b.name || '');
                 });
+
+            renderStandings();
+            renderMasthead();
+        }
+
+        function renderMasthead() {
+            const playersEl = document.getElementById('meta-players');
+            const topEloEl = document.getElementById('meta-top-elo');
+            if (playersEl) playersEl.textContent = players.length || '—';
+            if (topEloEl) topEloEl.textContent = players.length ? players[0].elo : '—';
+        }
+
+        function renderStandings() {
+            const body = document.getElementById('standings-body');
+            if (!body) return;
+            if (!players.length) {
+                body.innerHTML = '<div class="alm-standings-row"><span class="alm-rank">—</span><span class="nm">No standings yet</span><span class="alm-elo"></span></div>';
+                return;
+            }
+            body.innerHTML = players.slice(0, 5).map((p, i) => `
+                <a href="player-analysis.html?name=${encodeURIComponent(p.name)}" class="alm-standings-row">
+                    <span class="alm-rank">${String(i + 1).padStart(2, '0')}</span>
+                    <span class="nm">${p.name}</span>
+                    <span class="alm-elo">${p.elo}</span>
+                </a>
+            `).join('');
         }
 
         function searchPlayer(event) {
@@ -168,18 +226,18 @@
             const matches = players.filter(p => p.name.toLowerCase().includes(input));
             if (matches.length) {
                 resultDiv.innerHTML = matches.map(player => `
-                    <div class="mb-6">
-                        <h3 class="text-xl font-bold text-red-800"><a href="player-analysis.html?name=${encodeURIComponent(player.name)}" class="hover:underline hover:text-red-600">${player.name} →</a></h3>
-                        <div class="mt-4 grid grid-cols-3 gap-4 text-center">
-                            <div class="bg-white p-2 border border-red-100"><p class="text-slate-500 uppercase text-[10px] font-bold tracking-widest">Elo</p><p class="text-lg font-mono font-bold text-red-600">${player.elo}</p></div>
-                            <div class="bg-white p-2 border border-green-100"><p class="text-slate-500 uppercase text-[10px] font-bold tracking-widest">Wins</p><p class="text-lg font-bold text-green-600">${player.wins}</p></div>
-                            <div class="bg-white p-2 border border-gray-100"><p class="text-slate-500 uppercase text-[10px] font-bold tracking-widest">Losses</p><p class="text-lg font-bold text-slate-500">${player.losses}</p></div>
+                    <div class="alm-result">
+                        <a href="player-analysis.html?name=${encodeURIComponent(player.name)}" class="alm-section-title" style="display:inline-block;text-decoration:none;">${player.name} →</a>
+                        <div class="alm-result-grid mt-3">
+                            <div class="alm-result-cell"><p class="l">Elo</p><p class="v">${player.elo}</p></div>
+                            <div class="alm-result-cell"><p class="l">Wins</p><p class="v">${player.wins}</p></div>
+                            <div class="alm-result-cell"><p class="l">Losses</p><p class="v">${player.losses}</p></div>
                         </div>
                     </div>
                 `).join('');
                 resultDiv.classList.remove('hidden');
             } else {
-                resultDiv.innerHTML = `<p class="text-slate-600 p-2">Player "${input}" not found.</p>`;
+                resultDiv.innerHTML = `<div class="alm-result"><p style="color:var(--ink-soft);">No player found for "${input}".</p></div>`;
                 resultDiv.classList.remove('hidden');
             }
         }
@@ -194,6 +252,7 @@
             if (upcomingDates.length > 0) {
                 const target = upcomingDates[0];
                 document.getElementById('countdown-container').classList.remove('hidden');
+                document.getElementById('utility-row')?.classList.remove('utility-row--solo');
                 document.getElementById('next-date-label').innerText = "Scheduled for: " + target.toDateString();
                 setInterval(() => {
                     const diff = target - new Date();
@@ -201,6 +260,8 @@
                     document.getElementById('hours').innerText = Math.floor((diff % 864e5) / 36e5).toString().padStart(2, '0');
                     document.getElementById('minutes').innerText = Math.floor((diff % 36e5) / 6e4).toString().padStart(2, '0');
                 }, 1000);
+            } else {
+                document.getElementById('utility-row')?.classList.add('utility-row--solo');
             }
         }
 

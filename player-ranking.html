@@ -18,30 +18,39 @@
 
     <div id="header-placeholder"></div>
 
-    <main id="main-content" class="site-shell max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow w-full transition-opacity duration-300">
-        <div class="page-hero text-center py-8 px-4 sm:px-8 mb-6 fade-up">
-            <h1 class="page-hero-title text-4xl font-bold mt-3">Player Rankings</h1>
-            <p class="page-hero-copy mt-3">Live Elo leaderboard.</p>
-        </div>
+    <main id="main-content" class="almanac flex-grow w-full transition-opacity duration-300">
+      <div class="alm-shell">
+        <header class="alm-masthead--compact alm-block" style="border-bottom:2px solid var(--ink);padding-bottom:1.25rem;">
+            <div>
+                <p class="alm-kicker">Season standings</p>
+                <h1 class="alm-display alm-display--md mt-3">Ranking<br>Ladder</h1>
+            </div>
+            <div class="alm-masthead-meta" style="margin-top:0;border-top:none;padding-top:0;">
+                <div class="alm-stat"><span id="meta-players" class="alm-stat-num">—</span><span class="alm-stat-label">Players</span></div>
+                <div class="alm-stat"><span id="meta-top" class="alm-stat-num">—</span><span class="alm-stat-label">Top Elo</span></div>
+                <div class="alm-stat"><span id="meta-avg" class="alm-stat-num">—</span><span class="alm-stat-label">Median Elo</span></div>
+            </div>
+        </header>
 
-        <div class="table-shell overflow-x-auto rounded-3xl fade-up">
-            <table class="min-w-full text-left">
-                <thead class="text-slate-600 uppercase text-xs tracking-[0.16em]">
-                    <tr>
-                        <th class="px-4 py-4">Rank</th>
-                        <th class="px-4 py-4">Player</th>
-                        <th class="px-4 py-4 text-center">Wins</th>
-                        <th class="px-4 py-4 text-center">Losses</th>
-                        <th class="px-4 py-4 text-right">Elo</th>
-                    </tr>
-                </thead>
-                <tbody id="ladder-table">
-                    <tr>
-                        <td colspan="5" class="p-10 text-center text-slate-500">Loading rankings…</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+        <section class="alm-block">
+            <div class="alm-ldr-record">
+                <table class="alm-ladder">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Player</th>
+                            <th class="ctr">W</th>
+                            <th class="ctr">L</th>
+                            <th class="num">Elo</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ladder-table">
+                        <tr><td colspan="5" style="padding:2.5rem;text-align:center;color:var(--ink-faint);">Loading rankings…</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+      </div>
     </main>
 
     <div id="footer-placeholder"></div>
@@ -65,11 +74,9 @@
     }
 
     function renderPlayerTags(name) {
-        return getPlayerTags(name).map(tag => `
-            <span class="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-blue-700">
-                ${tag}
-            </span>
-        `).join('');
+        const tags = getPlayerTags(name);
+        if (!tags.length) return '';
+        return `<span class="alm-ldr-tags">${tags.map(t => `<span>${t}</span>`).join('')}</span>`;
     }
 
         async function getSupabaseClient() {
@@ -107,7 +114,7 @@
             const ladderTable = document.getElementById('ladder-table');
 
             if (ladderTable) {
-                ladderTable.innerHTML = `<tr><td colspan="5" class="p-10 text-center text-slate-500">Loading rankings...</td></tr>`;
+                ladderTable.innerHTML = `<tr><td colspan="5" style="padding:2.5rem;text-align:center;color:var(--ink-faint);">Loading rankings…</td></tr>`;
             }
 
             try {
@@ -123,26 +130,39 @@
                     losses: r.losses || 0
                 })));
 
+                // Masthead meta
+                const playersEl = document.getElementById('meta-players');
+                const topEl = document.getElementById('meta-top');
+                const avgEl = document.getElementById('meta-avg');
+                if (playersEl) playersEl.textContent = players.length || '—';
+                if (topEl) topEl.textContent = players.length ? players[0].elo : '—';
+                if (avgEl && players.length) {
+                    const elos = players.map(p => p.elo).sort((a, b) => a - b);
+                    const mid = Math.floor(elos.length / 2);
+                    const median = elos.length % 2 ? elos[mid] : Math.round((elos[mid - 1] + elos[mid]) / 2);
+                    avgEl.textContent = median;
+                }
+
+                if (!players.length) {
+                    ladderTable.innerHTML = `<tr><td colspan="5" style="padding:2.5rem;text-align:center;color:var(--ink-faint);">No players ranked yet.</td></tr>`;
+                    return;
+                }
+
                 ladderTable.innerHTML = players.map((p, i) => `
-                <tr class="border-b hover:bg-slate-50 transition-colors">
-                    <td class="p-4 text-slate-400 font-bold">#${i + 1}</td>
-                    <td class="p-4 font-semibold text-slate-800">
-                        <div class="flex flex-wrap items-center gap-2">
-                            <a href="player-analysis.html?name=${encodeURIComponent(p.name)}" class="text-red-600 hover:underline">
-                                ${p.name}
-                            </a>
-                            ${renderPlayerTags(p.name)}
-                        </div>
+                <tr>
+                    <td class="alm-ldr-rank">${String(i + 1).padStart(2, '0')}</td>
+                    <td>
+                        <a href="player-analysis.html?name=${encodeURIComponent(p.name)}" class="alm-ldr-name">${p.name}</a>${renderPlayerTags(p.name)}
                     </td>
-                    <td class="p-4 text-center text-green-600 font-bold">${p.wins}</td>
-                    <td class="p-4 text-center text-red-500 font-bold">${p.losses}</td>
-                    <td class="p-4 text-right font-mono font-bold text-red-600">${p.elo}</td>
+                    <td class="ctr"><span class="alm-ldr-num alm-ldr-w">${p.wins}</span></td>
+                    <td class="ctr"><span class="alm-ldr-num alm-ldr-l">${p.losses}</span></td>
+                    <td class="alm-ldr-elo">${p.elo}</td>
                 </tr>
             `).join('');
             } catch (err) {
                 console.error("Data error:", err);
                 if (ladderTable) {
-                    ladderTable.innerHTML = `<tr><td colspan="5" class="p-10 text-center text-red-500">Error loading data. Check your internet or Supabase configuration.</td></tr>`;
+                    ladderTable.innerHTML = `<tr><td colspan="5" style="padding:2.5rem;text-align:center;color:var(--oxblood);">Error loading data. Check your internet or Supabase configuration.</td></tr>`;
                 }
             } finally {
                 if (mainContent) mainContent.classList.remove('opacity-0');

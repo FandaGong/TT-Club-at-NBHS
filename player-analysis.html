@@ -143,6 +143,15 @@
                     const losses = found.losses || 0;
                     const division = found.division || 'N/A';
                     const half = found.half || 'N/A';
+                    const dayLabel = (() => {
+                        const k = (found.half || '').toString().trim().toLowerCase();
+                        if (!k) return 'N/A';
+                        if (k.includes('mon')) return 'Monday';
+                        if (k.includes('tue')) return 'Tuesday';
+                        if (k.includes('second') || k === '2' || k.includes('2nd')) return 'Monday';
+                        if (k.includes('first') || k === '1' || k.includes('1st')) return 'Tuesday';
+                        return found.half;
+                    })();
                     document.getElementById('quick-stats').innerHTML = `
                         <div class="mt-4 flex flex-wrap gap-6 font-black uppercase italic tracking-tighter text-sm sm:text-base">
                             <span class="text-red-700">ELO: ${elo}</span>
@@ -150,7 +159,7 @@
                             <span class="text-red-500">LOSSES: ${losses}</span>
                             <div class="border-l border-slate-300 pl-6 flex gap-4 text-slate-400">
                                 <span>${division}</span>
-                                <span>${half} HALF</span>
+                                <span>${dayLabel}</span>
                             </div>
                         </div>`;
                 }

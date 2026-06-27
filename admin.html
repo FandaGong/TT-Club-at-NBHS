@@ -284,7 +284,7 @@
                         </div>
                         <div>
                             <h3 class="font-bold text-lg text-slate-800">CSV Import</h3>
-                            <p class="text-slate-600 text-sm mt-1">Upload a CSV of players with ELO, division, and half. Auto-detects division from ELO.</p>
+                            <p class="text-slate-600 text-sm mt-1">Upload a CSV of players with ELO, division, and day. Auto-detects division from ELO.</p>
                         </div>
                         <button id="openCsvImportModalBtn" type="button"
                             class="admin-tool-link mt-auto text-sm cursor-pointer">Import
@@ -627,7 +627,7 @@
                 <div>
                     <p class="text-xs uppercase tracking-[0.24em] text-white/80">Admin Tool</p>
                     <h3 class="font-extrabold text-2xl mt-1 text-white">CSV Import</h3>
-                    <p class="text-white/90 text-sm mt-1">Upload a CSV of players with ELO, division, and half. Auto-detects division from ELO.</p>
+                    <p class="text-white/90 text-sm mt-1">Upload a CSV of players with ELO, division, and day. Auto-detects division from ELO.</p>
                 </div>
                 <button id="closeCsvImportModalBtn" type="button"
                     class="shrink-0 rounded-full bg-white/10 hover:bg-white/20 text-white text-2xl leading-none h-11 w-11 inline-flex items-center justify-center">&times;</button>
@@ -673,7 +673,7 @@
                                     <th class="text-right p-2 font-bold text-slate-600">ELO</th>
                                     <th class="text-right p-2 font-bold text-slate-600">Std Dev</th>
                                     <th class="text-left p-2 font-bold text-slate-600">Division</th>
-                                    <th class="text-left p-2 font-bold text-slate-600">Half</th>
+                                    <th class="text-left p-2 font-bold text-slate-600">Day</th>
                                     <th class="text-right p-2 font-bold text-slate-600">Wins</th>
                                     <th class="text-right p-2 font-bold text-slate-600">Losses</th>
                                 </tr>
@@ -682,7 +682,7 @@
                         </table>
                     </div>
                     <div class="p-3 bg-amber-50 border border-amber-200 text-xs text-amber-900 leading-relaxed">
-                        <strong>⚠ Auto-Detect:</strong> Automatically assigns divisions based on ELO ranking within each half.
+                        <strong>⚠ Auto-Detect:</strong> Automatically assigns divisions based on ELO ranking within each day.
                         Players with the top ELOs get higher divisions. This uses the same logic as the season reset.
                         If division is missing from the CSV, it will be auto-detected on import.
                     </div>
@@ -715,7 +715,7 @@
                                 <select id="manualMatchDivisionSelect" class="w-full p-2 border outline-none focus:ring-2 focus:ring-cyan-500 bg-white"></select>
                             </div>
                             <div>
-                                <label class="block text-sm font-semibold text-slate-700 mb-2">Half</label>
+                                <label class="block text-sm font-semibold text-slate-700 mb-2">Day</label>
                                 <select id="manualMatchHalfSelect" class="w-full p-2 border outline-none focus:ring-2 focus:ring-cyan-500 bg-white"></select>
                             </div>
                         </div>
@@ -833,6 +833,17 @@
             return (value || '').toLowerCase().replace(/[^a-z0-9]+/g, '');
         }
 
+        // Display the "half" field as a weekday: 2nd half = Monday, 1st half = Tuesday.
+        function halfToDay(half) {
+            const k = (half || '').toString().trim().toLowerCase();
+            if (!k) return '';
+            if (k.includes('mon')) return 'Monday';
+            if (k.includes('tue')) return 'Tuesday';
+            if (k.includes('second') || k === '2' || k.includes('2nd')) return 'Monday';
+            if (k.includes('first') || k === '1' || k.includes('1st')) return 'Tuesday';
+            return half;
+        }
+
         function getAccountLabel(account) {
             return account?.display_name || account?.email || 'Account';
         }
@@ -847,7 +858,7 @@
 
         function getManualMatchPlayerLabel(player) {
             const division = player?.division ? ` · ${player.division}` : '';
-            const half = player?.half ? ` · ${player.half}` : '';
+            const half = player?.half ? ` · ${halfToDay(player.half)}` : '';
             return `${player?.name || 'Player'} · ${player?.elo ?? 0} Elo · W${player?.wins ?? 0}/L${player?.losses ?? 0}${division}${half}`;
         }
 
@@ -875,8 +886,8 @@
                 manualMatchDivisions.map(division => `<option value="${escapeHtml(division)}" ${normalizeKey(division) === normalizeKey(selectedDivision) ? 'selected' : ''}>${escapeHtml(division)}</option>`)
             ).join('');
 
-            halfSelect.innerHTML = [`<option value="">Choose a half</option>`].concat(
-                manualMatchHalves.map(half => `<option value="${escapeHtml(half)}" ${normalizeKey(half) === normalizeKey(selectedHalf) ? 'selected' : ''}>${escapeHtml(half)}</option>`)
+            halfSelect.innerHTML = [`<option value="">Choose a day</option>`].concat(
+                manualMatchHalves.map(half => `<option value="${escapeHtml(half)}" ${normalizeKey(half) === normalizeKey(selectedHalf) ? 'selected' : ''}>${escapeHtml(halfToDay(half))}</option>`)
             ).join('');
 
             divisionSelect.value = selectedDivision || '';
@@ -912,7 +923,7 @@
 
             if (!manualMatchPlayers.length) {
                 divisionSelect.innerHTML = '<option value="">No divisions found</option>';
-                halfSelect.innerHTML = '<option value="">No halves found</option>';
+                halfSelect.innerHTML = '<option value="">No days found</option>';
                 player1Select.innerHTML = '<option value="">No players found</option>';
                 player2Select.innerHTML = '<option value="">No players found</option>';
                 winnerSelect.innerHTML = '<option value="">No players found</option>';
@@ -921,18 +932,18 @@
             }
 
             if (!manualMatchSelectedDivision || !manualMatchSelectedHalf) {
-                player1Select.innerHTML = '<option value="">Choose division and half first</option>';
-                player2Select.innerHTML = '<option value="">Choose division and half first</option>';
-                winnerSelect.innerHTML = '<option value="">Choose division and half first</option>';
-                preview.innerHTML = '<p class="text-slate-500">Choose a division and half to load eligible players.</p>';
+                player1Select.innerHTML = '<option value="">Choose division and day first</option>';
+                player2Select.innerHTML = '<option value="">Choose division and day first</option>';
+                winnerSelect.innerHTML = '<option value="">Choose division and day first</option>';
+                preview.innerHTML = '<p class="text-slate-500">Choose a division and day to load eligible players.</p>';
                 return;
             }
 
             if (!filteredPlayers.length) {
-                player1Select.innerHTML = '<option value="">No players in this division/half</option>';
-                player2Select.innerHTML = '<option value="">No players in this division/half</option>';
-                winnerSelect.innerHTML = '<option value="">No players in this division/half</option>';
-                preview.innerHTML = '<p class="text-slate-500">No players were found for that division and half.</p>';
+                player1Select.innerHTML = '<option value="">No players in this division/day</option>';
+                player2Select.innerHTML = '<option value="">No players in this division/day</option>';
+                winnerSelect.innerHTML = '<option value="">No players in this division/day</option>';
+                preview.innerHTML = '<p class="text-slate-500">No players were found for that division and day.</p>';
                 return;
             }
 
@@ -1028,7 +1039,7 @@
                 renderManualMatchForm();
 
                 if (statusNode) {
-                    statusNode.textContent = manualMatchPlayers.length ? 'Pick a division and half to load the eligible players.' : 'No ranking players found.';
+                    statusNode.textContent = manualMatchPlayers.length ? 'Pick a division and day to load the eligible players.' : 'No ranking players found.';
                     statusNode.className = manualMatchPlayers.length ? 'mt-2 text-sm text-slate-500 block text-center' : 'mt-2 text-sm text-red-600 block text-center';
                 }
             } catch (error) {
@@ -1055,7 +1066,7 @@
 
             if (!division || !half) {
                 if (statusNode) {
-                    statusNode.textContent = 'Choose a division and half first.';
+                    statusNode.textContent = 'Choose a division and day first.';
                     statusNode.className = 'mt-2 text-sm text-red-600 block text-center';
                     statusNode.classList.remove('hidden');
                 }
@@ -2065,7 +2076,7 @@
         document.getElementById('accountRequestForm').addEventListener('submit', handleAccountRequest);
         document.getElementById('openAccountRequestsModalBtn')?.addEventListener('click', () => { document.getElementById('accountRequestsModal').classList.remove('hidden'); loadAccountRequests(); });
         document.getElementById('openAbsenceReportsModalBtn')?.addEventListener('click', () => { document.getElementById('absenceReportsModal').classList.remove('hidden'); loadAbsenceReports(); });
-        document.getElementById('openProfileModalBtn')?.addEventListener('click', () => { document.getElementById('profileModal').classList.remove('hidden'); loadProfileSummary(); });
+        document.getElementById('openProfileModalBtn')?.addEventListener('click', () => { window.location.href = 'profile.html'; });
         document.getElementById('openMatchManagementModalBtn')?.addEventListener('click', () => { document.getElementById('matchManagementModal').classList.remove('hidden'); loadMatchManagementModal(); });
         document.getElementById('closeMatchManagementModalBtn')?.addEventListener('click', () => { document.getElementById('matchManagementModal').classList.add('hidden'); });
         document.getElementById('loadAllMatchesBtn')?.addEventListener('click', loadAllMatches);
@@ -2372,7 +2383,7 @@
                         <div class="rounded-lg border border-slate-200 bg-slate-50 p-3 flex items-start justify-between gap-3">
                             <div class="min-w-0 flex-grow">
                                 <p class="text-sm font-semibold text-slate-800">${m.winner} beat ${m.player_1 === m.winner ? m.player_2 : m.player_1}</p>
-                                <p class="text-xs text-slate-500 mt-1">Score: ${m.score || 'N/A'} | ${m.division || 'N/A'} ${m.half || ''} | ${m.term_and_week || 'N/A'}</p>
+                                <p class="text-xs text-slate-500 mt-1">Score: ${m.score || 'N/A'} | ${m.division || 'N/A'} ${halfToDay(m.half) || ''} | ${m.term_and_week || 'N/A'}</p>
                                 <p class="text-[10px] text-slate-400 mt-1">${new Date(m.created_at).toLocaleString()}</p>
                             </div>
                             <button class="match-delete-btn flex-shrink-0 text-[10px] font-bold uppercase px-2 py-1 rounded bg-red-100 text-red-700 hover:bg-red-200 transition-colors whitespace-nowrap" data-id="${m.id}">Delete</button>
@@ -2418,7 +2429,7 @@
                     const isSelected = eloSelectedPlayer && normalizeKey(eloSelectedPlayer.name) === normalizeKey(player.name);
                     const initials = (player.name?.slice(0, 2) || 'P').toUpperCase();
                     const division = player.division ? ` · ${player.division}` : '';
-                    const half = player.half ? ` · ${player.half}` : '';
+                    const half = player.half ? ` · ${halfToDay(player.half)}` : '';
                     return `
                         <button type="button" data-player-name="${escapeHtml(player.name)}"
                             class="text-left rounded-2xl border p-4 transition-all shadow-sm hover:shadow-md min-w-0 ${isSelected ? 'border-blue-400 bg-blue-50 ring-2 ring-blue-200' : 'border-slate-200 bg-white hover:border-blue-200'}">
@@ -2606,7 +2617,7 @@
                     const isSelected = winLossSelectedPlayer && normalizeKey(winLossSelectedPlayer.name) === normalizeKey(player.name);
                     const initials = (player.name?.slice(0, 2) || 'P').toUpperCase();
                     const division = player.division ? ` · ${player.division}` : '';
-                    const half = player.half ? ` · ${player.half}` : '';
+                    const half = player.half ? ` · ${halfToDay(player.half)}` : '';
                     return `
                         <button type="button" data-player-name="${escapeHtml(player.name)}"
                             class="text-left rounded-2xl border p-4 transition-all shadow-sm hover:shadow-md ${isSelected ? 'border-red-400 bg-red-50 ring-2 ring-red-200' : 'border-slate-200 bg-white hover:border-red-200'}">
@@ -2873,7 +2884,7 @@
                         <td class="p-2 text-right font-mono">${player.elo}</td>
                         <td class="p-2 text-right font-mono">${player.stdDev || '—'}</td>
                         <td class="p-2">${escapeHtml(player.division || '—')}</td>
-                        <td class="p-2">${escapeHtml(player.half || '—')}</td>
+                        <td class="p-2">${escapeHtml(halfToDay(player.half) || '—')}</td>
                         <td class="p-2 text-right">${player.wins}</td>
                         <td class="p-2 text-right">${player.losses}</td>
                     </tr>
@@ -2910,7 +2921,7 @@
 
                 const statusNode = document.getElementById('csvImportStatus');
                 if (statusNode) {
-                    statusNode.textContent = 'Divisions & halves auto-detected: Monday (top players) vs Tuesday. Div 1/2/3 assigned per half based on ELO rank.';
+                    statusNode.textContent = 'Divisions & days auto-detected: Monday (top players) vs Tuesday. Div 1/2/3 assigned per day based on ELO rank.';
                     statusNode.className = 'mt-2 text-sm text-indigo-600 block text-center';
                     statusNode.classList.remove('hidden');
                 }

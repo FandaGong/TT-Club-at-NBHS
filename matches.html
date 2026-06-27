@@ -88,6 +88,17 @@
         let _userRole = 'standard';
         let _pendingDeleteId = null;
 
+        // Display the "half" field as a weekday: 2nd half = Monday, 1st half = Tuesday.
+        function halfToDay(half) {
+            const k = (half || '').toString().trim().toLowerCase();
+            if (!k) return '';
+            if (k.includes('mon')) return 'Monday';
+            if (k.includes('tue')) return 'Tuesday';
+            if (k.includes('second') || k === '2' || k.includes('2nd')) return 'Monday';
+            if (k.includes('first') || k === '1' || k.includes('1st')) return 'Tuesday';
+            return half;
+        }
+
         // --- Toast-like confirmation ---
         function showToast(message, type) {
             const existing = document.getElementById('toastMsg');
@@ -210,7 +221,7 @@
                                     <p class="text-sm font-bold text-slate-900">${m.winner} <span class="font-normal text-slate-500">beat</span> ${loser}</p>
                                     <div class="flex flex-wrap gap-x-3 gap-y-0.5 mt-1.5 text-xs text-slate-500">
                                         <span>Score: ${m.score || '—'}</span>
-                                        <span>${m.division || '—'}${m.half ? ' ' + m.half : ''}</span>
+                                        <span>${m.division || '—'}${m.half ? ' ' + halfToDay(m.half) : ''}</span>
                                         <span class="font-medium text-slate-600">${m.term_and_week || '—'}</span>
                                     </div>
                                     <p class="text-[11px] text-slate-400 mt-1.5">${new Date(m.created_at).toLocaleString()}</p>

@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Profile - NBHS Table Tennis</title>
+    <script src="tailwind-theme.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="animations.css">
+    <link rel="icon" type="image/png" href="favicon.png">
+</head>
+
+<body class="site-surface text-slate-900 font-sans min-h-screen flex flex-col">
+    <div id="header-placeholder"></div>
+
+    <main id="main-content" class="site-shell max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow w-full">
+        <div class="page-hero text-center py-8 px-4 sm:px-8 mb-8">
+            <p class="page-hero-label">Your Profile</p>
+            <h1 id="profileName" class="page-hero-title text-4xl font-extrabold mt-3">Loading…</h1>
+            <p id="profileEmail" class="page-hero-copy mt-3">—</p>
+        </div>
+
+        <!-- Signed-out state -->
+        <div id="signedOutState" class="hidden section-card p-8 text-center">
+            <h2 class="section-heading mb-2">You're not signed in</h2>
+            <p class="text-sm text-slate-500 mb-4">Sign in from the admin portal to view your profile.</p>
+            <a href="admin.html" class="btn-primary inline-flex px-5 py-2">Go to Login</a>
+        </div>
+
+        <div id="profileContent" class="hidden space-y-8">
+            <!-- Rank + key numbers -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div class="metric-card p-5">
+                    <p class="text-xs font-bold uppercase tracking-widest text-slate-400">Current Rank</p>
+                    <p id="statRank" class="text-2xl font-black text-red-900 mt-1">—</p>
+                </div>
+                <div class="metric-card p-5">
+                    <p class="text-xs font-bold uppercase tracking-widest text-slate-400">Current ELO</p>
+                    <p id="statElo" class="text-2xl font-black text-slate-900 mt-1">—</p>
+                </div>
+                <div class="metric-card p-5">
+                    <p class="text-xs font-bold uppercase tracking-widest text-slate-400">Highest ELO</p>
+                    <p id="statHighElo" class="text-2xl font-black text-green-700 mt-1">—</p>
+                </div>
+                <div class="metric-card p-5">
+                    <p class="text-xs font-bold uppercase tracking-widest text-slate-400">Lowest ELO</p>
+                    <p id="statLowElo" class="text-2xl font-black text-orange-600 mt-1">—</p>
+                </div>
+            </div>
+
+            <!-- Secondary stats -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div class="section-card p-4"><p class="text-xs uppercase font-bold text-slate-400">Wins</p><p id="statWins" class="font-black text-lg text-slate-900 mt-1">—</p></div>
+                <div class="section-card p-4"><p class="text-xs uppercase font-bold text-slate-400">Losses</p><p id="statLosses" class="font-black text-lg text-slate-900 mt-1">—</p></div>
+                <div class="section-card p-4"><p class="text-xs uppercase font-bold text-slate-400">Division</p><p id="statDivision" class="font-black text-lg text-slate-900 mt-1">—</p></div>
+                <div class="section-card p-4"><p class="text-xs uppercase font-bold text-slate-400">Day</p><p id="statHalf" class="font-black text-lg text-slate-900 mt-1">—</p></div>
+            </div>
+
+            <!-- ELO over time -->
+            <div class="section-card p-6">
+                <h2 class="section-heading mb-4">ELO Change Over Time</h2>
+                <div class="relative h-[300px] w-full">
+                    <canvas id="eloChart"></canvas>
+                </div>
+                <p id="chartEmpty" class="hidden text-sm text-slate-500 text-center mt-4">Not enough match data to plot a chart yet.</p>
+            </div>
+
+            <!-- Recent matches -->
+            <div class="section-card p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="section-heading">3 Most Recent Matches</h2>
+                    <a id="viewAllLink" href="#" class="text-sm font-semibold text-red-800 hover:underline">View full history →</a>
+                </div>
+                <div id="recentMatches" class="space-y-3">
+                    <p class="text-sm text-slate-500">Loading recent matches…</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="profileError" class="hidden section-card p-6 text-center">
+            <p class="text-red-600 text-sm" id="profileErrorMsg">Something went wrong loading your profile.</p>
+        </div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="components.js"></script>
+    <script>
+        const SUPABASE_URL = 'https://ngnkbfazhdedaqvxcphw.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbmtiZmF6aGRlZGFxdnhjcGh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTE5NDksImV4cCI6MjA5MzI4Nzk0OX0.F_S6ORkFe-SuJPybs7FEFH94E6U2hZ5ern4vrg4kMOk';
+
+        let _supabase = null;
+        function getClient() {
+            if (_supabase) return _supabase;
+            if (window.supabase) _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            return _supabase;
+        }
+
+        const normalizeKey = (v) => (v || '').toString().trim().toLowerCase();
+
+        // Display the "half" field as a weekday: 2nd half = Monday, 1st half = Tuesday.
+        function halfToDay(half) {
+            const k = normalizeKey(half);
+            if (!k) return '—';
+            if (k.includes('mon')) return 'Monday';
+            if (k.includes('tue')) return 'Tuesday';
+            if (k.includes('second') || k === '2' || k.includes('2nd')) return 'Monday';
+            if (k.includes('first') || k === '1' || k.includes('1st')) return 'Tuesday';
+            return half;
+        }
+
+        function show(id) { document.getElementById(id)?.classList.remove('hidden'); }
+        function hide(id) { document.getElementById(id)?.classList.add('hidden'); }
+        function setText(id, val) { const el = document.getElementById(id); if (el) el.textContent = val; }
+
+        async function init() {
+            const supabase = getClient();
+            if (!supabase) {
+                hide('profileContent');
+                show('signedOutState');
+                setText('profileName', 'Your Profile');
+                setText('profileEmail', '');
+                return;
+            }
+
+            const { data: sessionData } = await supabase.auth.getSession();
+            const session = sessionData?.session;
+            if (!session?.user) {
+                hide('profileContent');
+                show('signedOutState');
+                setText('profileName', 'Your Profile');
+                setText('profileEmail', 'Not signed in');
+                return;
+            }
+
+            const email = session.user.email || '';
+            const accountId = session.user.id;
+            setText('profileEmail', email);
+
+            try {
+                const [{ data: accountData }, { data: rankingData }, { data: matchData }] = await Promise.all([
+                    supabase.from('account').select('display_name, email').eq('account_id', accountId).maybeSingle(),
+                    supabase.from('player_rankings').select('elo,wins,losses,division,half,name,account_id').order('elo', { ascending: false }).limit(500),
+                    supabase.from('match_history').select('id,created_at,player_1,player_2,winner,score,p1_elo_change,p2_elo_change,p1_new_elo,p2_new_elo,player_1_account_id,player_2_account_id,winner_account_id').order('created_at', { ascending: true }).limit(1000)
+                ]);
+
+                const displayName = accountData?.display_name || email.split('@')[0];
+                const nameCandidates = [displayName, accountData?.display_name, email, email.split('@')[0]]
+                    .filter(Boolean).map(normalizeKey);
+
+                const rankings = rankingData || [];
+                const myIndex = rankings.findIndex(row =>
+                    row.account_id === accountId || nameCandidates.includes(normalizeKey(row.name))
+                );
+                const ranking = myIndex >= 0 ? rankings[myIndex] : null;
+                const resolvedName = ranking?.name || displayName;
+
+                setText('profileName', resolvedName);
+                show('profileContent');
+
+                // Rank (1-based position in elo-sorted list)
+                setText('statRank', ranking ? `#${myIndex + 1}` : 'Unranked');
+                setText('statElo', ranking?.elo ?? '—');
+                setText('statWins', ranking?.wins ?? 0);
+                setText('statLosses', ranking?.losses ?? 0);
+                setText('statDivision', ranking?.division || '—');
+                setText('statHalf', halfToDay(ranking?.half));
+
+                // My matches in chronological order
+                const myKey = normalizeKey(resolvedName);
+                const myMatches = (matchData || []).filter(m =>
+                    m.player_1_account_id === accountId ||
+                    m.player_2_account_id === accountId ||
+                    nameCandidates.includes(normalizeKey(m.player_1)) ||
+                    nameCandidates.includes(normalizeKey(m.player_2)) ||
+                    normalizeKey(m.player_1) === myKey ||
+                    normalizeKey(m.player_2) === myKey
+                );
+
+                // ELO progression (highest / lowest / chart)
+                const eloSeries = [];
+                myMatches.forEach(m => {
+                    const isP1 = m.player_1_account_id === accountId ||
+                        nameCandidates.includes(normalizeKey(m.player_1)) ||
+                        normalizeKey(m.player_1) === myKey;
+                    const newElo = isP1 ? m.p1_new_elo : m.p2_new_elo;
+                    if (newElo !== null && newElo !== undefined && newElo !== '') {
+                        eloSeries.push(parseInt(newElo, 10));
+                    }
+                });
+
+                if (eloSeries.length) {
+                    setText('statHighElo', Math.max(...eloSeries));
+                    setText('statLowElo', Math.min(...eloSeries));
+                } else if (ranking) {
+                    setText('statHighElo', ranking.elo ?? '—');
+                    setText('statLowElo', ranking.elo ?? '—');
+                }
+
+                renderChart(eloSeries);
+                renderRecentMatches(myMatches, accountId, nameCandidates, myKey, resolvedName);
+
+                const viewAll = document.getElementById('viewAllLink');
+                if (viewAll && resolvedName) viewAll.href = `player-analysis.html?name=${encodeURIComponent(resolvedName)}`;
+
+            } catch (error) {
+                hide('profileContent');
+                show('profileError');
+                setText('profileErrorMsg', `Could not load your profile: ${error.message}`);
+            }
+        }
+
+        function renderChart(eloSeries) {
+            const canvas = document.getElementById('eloChart');
+            const emptyMsg = document.getElementById('chartEmpty');
+            if (eloSeries.length < 2) {
+                canvas.style.display = 'none';
+                emptyMsg?.classList.remove('hidden');
+                return;
+            }
+            canvas.style.display = '';
+            emptyMsg?.classList.add('hidden');
+
+            const labels = eloSeries.map((_, i) => `Match ${i + 1}`);
+            const ctx = canvas.getContext('2d');
+            if (window._eloChart) window._eloChart.destroy();
+            const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim() || '#991b1b';
+            window._eloChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: 'ELO',
+                        data: eloSeries,
+                        borderColor: accent,
+                        borderWidth: 3,
+                        pointBackgroundColor: accent,
+                        tension: 0.3,
+                        fill: true,
+                        backgroundColor: 'rgba(153, 27, 27, 0.1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { y: { beginAtZero: false, ticks: { font: { weight: 'bold' } } } },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+
+        function renderRecentMatches(myMatches, accountId, nameCandidates, myKey, myName) {
+            const container = document.getElementById('recentMatches');
+            // Most recent first, take 3
+            const recent = myMatches.slice().reverse().slice(0, 3);
+
+            if (!recent.length) {
+                container.innerHTML = '<p class="text-sm text-slate-500">No matches found for your account yet.</p>';
+                return;
+            }
+
+            container.innerHTML = recent.map((m, idx) => {
+                const isP1 = m.player_1_account_id === accountId ||
+                    nameCandidates.includes(normalizeKey(m.player_1)) ||
+                    normalizeKey(m.player_1) === myKey;
+                const opponent = (isP1 ? m.player_2 : m.player_1) || 'Unknown opponent';
+                const isWinner = m.winner_account_id === accountId ||
+                    nameCandidates.includes(normalizeKey(m.winner)) ||
+                    normalizeKey(m.winner) === myKey;
+                const score = m.score || 'No score recorded';
+                const when = m.created_at ? new Date(m.created_at).toLocaleString() : 'Unknown date';
+
+                let delta = isP1 ? m.p1_elo_change : m.p2_elo_change;
+                delta = (delta === null || delta === undefined || delta === '') ? null : parseInt(delta, 10);
+                const deltaStr = delta === null ? '—' : (delta > 0 ? `+${delta}` : `${delta}`);
+                const deltaColor = delta === null ? 'text-slate-500' : (delta >= 0 ? 'text-green-600' : 'text-red-600');
+                const newElo = isP1 ? m.p1_new_elo : m.p2_new_elo;
+                const newEloStr = (newElo === null || newElo === undefined || newElo === '') ? '—' : newElo;
+
+                return `
+                    <div class="match-card border border-slate-200 bg-white overflow-hidden">
+                        <button type="button" class="match-toggle w-full text-left p-4 flex items-center justify-between gap-3 hover:bg-slate-50 transition-colors" data-idx="${idx}" aria-expanded="false">
+                            <span class="flex items-center gap-3">
+                                <span class="text-[10px] font-bold uppercase px-2 py-1 rounded ${isWinner ? 'bg-green-100 text-green-800' : 'bg-slate-100 text-slate-700'}">${isWinner ? 'Win' : 'Loss'}</span>
+                                <span class="font-semibold text-slate-800">vs ${opponent}</span>
+                            </span>
+                            <span class="flex items-center gap-3">
+                                <span class="font-bold ${deltaColor}">${deltaStr}</span>
+                                <svg class="match-chevron h-4 w-4 text-slate-400 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+                            </span>
+                        </button>
+                        <div class="match-detail hidden border-t border-slate-200 p-4 bg-slate-50 text-sm space-y-2">
+                            <div class="flex justify-between"><span class="text-slate-500">Result</span><span class="font-semibold text-slate-800">${isWinner ? 'Win' : 'Loss'} vs ${opponent}</span></div>
+                            <div class="flex justify-between"><span class="text-slate-500">Score</span><span class="font-semibold text-slate-800">${score}</span></div>
+                            <div class="flex justify-between"><span class="text-slate-500">ELO change</span><span class="font-semibold ${deltaColor}">${deltaStr}</span></div>
+                            <div class="flex justify-between"><span class="text-slate-500">ELO after match</span><span class="font-semibold text-slate-800">${newEloStr}</span></div>
+                            <div class="flex justify-between"><span class="text-slate-500">Date</span><span class="font-semibold text-slate-800">${when}</span></div>
+                            <div class="pt-2">
+                                <a href="player-analysis.html?name=${encodeURIComponent(opponent)}" class="text-sm font-semibold text-red-800 hover:underline">View ${opponent}'s profile →</a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            container.querySelectorAll('.match-toggle').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const card = btn.closest('.match-card');
+                    const detail = card.querySelector('.match-detail');
+                    const chevron = btn.querySelector('.match-chevron');
+                    const isOpen = !detail.classList.contains('hidden');
+                    detail.classList.toggle('hidden', isOpen);
+                    btn.setAttribute('aria-expanded', String(!isOpen));
+                    if (chevron) chevron.style.transform = isOpen ? '' : 'rotate(180deg)';
+                });
+            });
+        }
+
+        if (window.supabase) {
+            init();
+        } else {
+            const s = document.createElement('script');
+            s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+            s.onload = init;
+            document.head.appendChild(s);
+        }
+    </script>
+</body>
+
+</html>

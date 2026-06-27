@@ -19,32 +19,39 @@
     <div id="header-placeholder"></div>
 
     <!-- CHANGE 2: Added id, flex-grow, and opacity-0 -->
-    <main id="main-content" class="site-shell max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow w-full transition-opacity duration-300">
-        <div class="page-hero flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6 fade-up p-6 sm:p-8">
-            <div class="text-left">
-                <h1 class="page-hero-title text-3xl font-bold mt-3">Weekly Matchups</h1>
+    <main id="main-content" class="almanac flex-grow w-full transition-opacity duration-300">
+      <div class="alm-shell">
+        <header class="alm-masthead--compact alm-block" style="border-bottom:2px solid var(--ink);padding-bottom:1.25rem;">
+            <div>
+                <p class="alm-kicker">This week's draw</p>
+                <h1 class="alm-display alm-display--md mt-3">Weekly<br>Matchups</h1>
             </div>
-            <span class="stat-chip self-start sm:self-center text-xs font-bold px-3 py-1 uppercase">Term 2 - Week 4</span>
-        </div>
+            <div class="alm-masthead-meta" style="margin-top:0;border-top:none;padding-top:0;">
+                <div class="alm-stat"><span class="alm-stat-num">T2</span><span class="alm-stat-label">Term</span></div>
+                <div class="alm-stat"><span class="alm-stat-num">W4</span><span class="alm-stat-label">Week</span></div>
+            </div>
+        </header>
 
-        <div class="flex flex-col gap-4 mb-6">
-            <div class="flex flex-col gap-3 md:flex-row md:items-end md:justify-between fade-up">
-                <div class="text-left">
-                    <p class="text-sm uppercase tracking-[0.18em] text-slate-500 font-bold">View half</p>
-                    <div class="inline-flex bg-white border border-slate-200 p-1 mt-2" role="group">
-                        <button id="half2Btn" type="button" class="px-4 py-2 text-sm font-semibold transition-colors">Half 2</button>
-                        <button id="half1Btn" type="button" class="px-4 py-2 text-sm font-semibold transition-colors">Half 1</button>
+        <section class="alm-block">
+            <div class="alm-split" style="align-items:start;">
+                <div>
+                    <p class="alm-eyebrow" style="margin-bottom:0.6rem;">View day</p>
+                    <div class="alm-toggle" role="group">
+                        <button id="half2Btn" type="button">Monday</button>
+                        <button id="half1Btn" type="button">Tuesday</button>
                     </div>
                 </div>
-                <div class="section-card p-4 text-sm text-slate-600 w-full md:max-w-2xl">
-                    <p class="font-semibold text-slate-800">Table assignments</p>
-                    <p class="mt-1">Div 1 → Table 1 · Div 2 → Tables 2 &amp; 3 · Div 3 → Table 4</p>
+                <div class="alm-panel">
+                    <p class="alm-eyebrow" style="margin-bottom:0.5rem;">Table assignments</p>
+                    <p class="alm-assign">Div 1 → <b>Table 1</b> · Div 2 → <b>Tables 2 &amp; 3</b> · Div 3 → <b>Table 4</b></p>
                 </div>
             </div>
-            <div id="matchup-summary" class="section-card p-4 text-slate-700 fade-up"></div>
-        </div>
 
-        <div id="matchup-container" class="grid gap-4 md:grid-cols-2"></div>
+            <div id="matchup-summary" class="alm-panel alm-panel--ink" style="margin-top:1.25rem;"></div>
+
+            <div id="matchup-container" class="grid gap-4 md:grid-cols-2" style="margin-top:1.25rem;"></div>
+        </section>
+      </div>
     </main>
 
     <!-- CHANGE 3: Added id, mt-auto, and opacity-0 -->
@@ -76,8 +83,8 @@
 
         function buildHalfData(players, isUpperHalf) {
             return {
-                title: isUpperHalf ? 'Half 2 — Better Half' : 'Half 1 — Lower Half',
-                subtitle: isUpperHalf ? 'Top 16 players in descending Elo order.' : 'Next 16 players in descending Elo order.',
+                title: isUpperHalf ? 'Monday — Top 16' : 'Tuesday — Next 16',
+                subtitle: isUpperHalf ? 'Top 16 players in descending Elo order.' : 'Players 17–32 in descending Elo order.',
                 divisions: [
                     { name: 'Division 1', tableLabel: 'Table 1', description: '4 players', players: players.slice(0, 4) },
                     { name: 'Division 2', tableLabel: 'Tables 2 & 3', description: '8 players', players: players.slice(4, 12) },
@@ -87,50 +94,43 @@
         }
 
         function buildPlayerList(players) {
-            return players.map(player => `<li class="py-1 text-sm text-slate-700"><span class="font-semibold">${player.name}</span> <span class="text-slate-400">(${player.elo})</span></li>`).join('');
+            return players.map((player, i) => `
+                <li>
+                    <span class="alm-division-seed">${String(i + 1).padStart(2, '0')}</span>
+                    <span class="alm-division-player">${player.name}</span>
+                    <span class="alm-division-elo">${player.elo}</span>
+                </li>`).join('');
+        }
+
+        function divisionCard(name, tableLabel, count, players) {
+            return `
+                <div class="alm-division">
+                    <div class="alm-division-head">
+                        <span class="alm-division-name">${name}</span>
+                        <span class="alm-division-table">${tableLabel} · ${count}</span>
+                    </div>
+                    <ul class="alm-division-list">${buildPlayerList(players)}</ul>
+                </div>`;
         }
 
         function renderHalfData(halfKey, half) {
             const container = document.getElementById('matchup-container');
             const summary = document.getElementById('matchup-summary');
-            let delay = 1;
 
             container.innerHTML = half.divisions.map(division => {
                 if (division.name === 'Division 2') {
                     const groups = [division.players.slice(0, 4), division.players.slice(4)];
-                    return groups.map((group, idx) => `
-                        <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm fade-up fade-up-d${delay++}">
-                            <div class="flex items-start justify-between gap-4 mb-4">
-                                <div class="min-w-0">
-                                    <p class="text-xs uppercase tracking-[0.2em] text-slate-500 font-semibold">${division.name}</p>
-                                    <h2 class="text-xl font-bold text-slate-900 mt-2">Table ${idx + 2}</h2>
-                                </div>
-                                <span class="inline-flex items-center rounded-full bg-red-50 px-3 py-1 text-xs font-semibold text-red-700">4 players</span>
-                            </div>
-                            <ul class="space-y-2">${buildPlayerList(group)}</ul>
-                        </div>
-                    `).join('');
+                    return groups.map((group, idx) =>
+                        divisionCard(division.name, `Table ${idx + 2}`, '4 players', group)
+                    ).join('');
                 }
-                return `
-                    <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm fade-up fade-up-d${delay++}">
-                        <div class="flex items-start justify-between gap-4 mb-4">
-                            <div class="min-w-0">
-                                <p class="text-xs uppercase tracking-[0.2em] text-slate-500 font-semibold">${division.name}</p>
-                                <h2 class="text-xl font-bold text-slate-900 mt-2">${division.tableLabel}</h2>
-                            </div>
-                            <span class="inline-flex items-center rounded-full bg-red-50 px-3 py-1 text-xs font-semibold text-red-700">${division.description}</span>
-                        </div>
-                        <ul class="space-y-2">${buildPlayerList(division.players)}</ul>
-                    </div>
-                `;
+                return divisionCard(division.name, division.tableLabel, division.description, division.players);
             }).join('');
 
-            summary.innerHTML = `<h2 class="text-lg font-bold text-slate-900">${half.title}</h2><p class="mt-2 text-slate-600">${half.subtitle} Each division plays a round-robin.</p>`;
+            summary.innerHTML = `<p class="alm-eyebrow">${half.title}</p><p class="alm-lede mt-2" style="color:#e9e3d6;max-width:none;">${half.subtitle} Each division plays a round-robin.</p>`;
 
             document.querySelectorAll('[data-half-button]').forEach(btn => {
-                const active = btn.dataset.halfButton === halfKey;
-                btn.classList.toggle('bg-red-800', active); btn.classList.toggle('text-white', active);
-                btn.classList.toggle('text-slate-600', !active); btn.classList.toggle('bg-transparent', !active);
+                btn.classList.toggle('is-active', btn.dataset.halfButton === halfKey);
             });
         }
 

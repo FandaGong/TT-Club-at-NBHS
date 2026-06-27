@@ -52,16 +52,36 @@
   --font-heading: 'Exo 2', Georgia, serif;
   --font-mono: 'JetBrains Mono', monospace;
 
-  /* Spacing (8px grid) */
-  --space-1: 0.25rem;  /*  4px */
-  --space-2: 0.5rem;   /*  8px */
-  --space-3: 0.75rem;  /* 12px */
-  --space-4: 1rem;     /* 16px */
-  --space-5: 1.25rem;  /* 20px */
-  --space-6: 1.5rem;   /* 24px */
-  --space-8: 2rem;     /* 32px */
-  --space-10: 2.5rem;  /* 40px */
-  --space-12: 3rem;    /* 48px */
+  /* Spacing (8px grid) — multiplied by --density-scale so the
+     Layout density setting (compact / comfortable / spacious)
+     adjusts padding, margins, and gaps across the whole site. */
+  --space-1: calc(0.25rem * var(--density-scale));  /*  4px */
+  --space-2: calc(0.5rem * var(--density-scale));   /*  8px */
+  --space-3: calc(0.75rem * var(--density-scale));  /* 12px */
+  --space-4: calc(1rem * var(--density-scale));     /* 16px */
+  --space-5: calc(1.25rem * var(--density-scale));  /* 20px */
+  --space-6: calc(1.5rem * var(--density-scale));   /* 24px */
+  --space-8: calc(2rem * var(--density-scale));     /* 32px */
+  --space-10: calc(2.5rem * var(--density-scale));  /* 40px */
+  --space-12: calc(3rem * var(--density-scale));    /* 48px */
+
+  /* Density-scaled Tailwind spacing steps (drive the utility layer
+     below so p-*, m-*, gap-*, space-* all respond to density). */
+  --d-0: 0px;
+  --d-0p5: calc(0.125rem * var(--density-scale));  /*  2px */
+  --d-1: calc(0.25rem * var(--density-scale));      /*  4px */
+  --d-1p5: calc(0.375rem * var(--density-scale));  /*  6px */
+  --d-2: calc(0.5rem * var(--density-scale));       /*  8px */
+  --d-2p5: calc(0.625rem * var(--density-scale));  /* 10px */
+  --d-3: calc(0.75rem * var(--density-scale));      /* 12px */
+  --d-3p5: calc(0.875rem * var(--density-scale));  /* 14px */
+  --d-4: calc(1rem * var(--density-scale));         /* 16px */
+  --d-5: calc(1.25rem * var(--density-scale));      /* 20px */
+  --d-6: calc(1.5rem * var(--density-scale));       /* 24px */
+  --d-7: calc(1.75rem * var(--density-scale));      /* 28px */
+  --d-8: calc(2rem * var(--density-scale));         /* 32px */
+  --d-10: calc(2.5rem * var(--density-scale));      /* 40px */
+  --d-12: calc(3rem * var(--density-scale));        /* 48px */
 }
 
 /* ── Base ── */
@@ -131,16 +151,16 @@ body[data-accent="blue"] {
   --accent-text: #1d4ed8;
 }
 
-body[data-accent="emerald"] {
-  --accent-color: #047857;
-  --accent-bg: #ecfdf5;
-  --accent-text: #047857;
+body[data-accent="green"] {
+  --accent-color: #16a34a;
+  --accent-bg: #f0fdf4;
+  --accent-text: #15803d;
 }
 
-body[data-accent="amber"] {
-  --accent-color: #d97706;
-  --accent-bg: #fffbeb;
-  --accent-text: #b45309;
+body[data-accent="orange"] {
+  --accent-color: #ea580c;
+  --accent-bg: #fff7ed;
+  --accent-text: #c2410c;
 }
 
 body[data-accent="red"] {
@@ -160,11 +180,11 @@ body[data-font="mono"] {
 }
 
 body[data-density="compact"] {
-  --density-scale: 0.9;
+  --density-scale: 0.75;
 }
 
 body[data-density="spacious"] {
-  --density-scale: 1.1;
+  --density-scale: 1.35;
 }
 
 body[data-reduced-motion="true"] * {
@@ -191,22 +211,22 @@ body[data-accent="blue"] .text-red-700,
 body[data-accent="blue"] .border-red-700,
 body[data-accent="blue"] .border-red-800,
 body[data-accent="blue"] .border-red-900,
-body[data-accent="emerald"] .bg-red-700,
-body[data-accent="emerald"] .bg-red-800,
-body[data-accent="emerald"] .bg-red-900,
-body[data-accent="emerald"] .text-red-800,
-body[data-accent="emerald"] .text-red-700,
-body[data-accent="emerald"] .border-red-700,
-body[data-accent="emerald"] .border-red-800,
-body[data-accent="emerald"] .border-red-900,
-body[data-accent="amber"] .bg-red-700,
-body[data-accent="amber"] .bg-red-800,
-body[data-accent="amber"] .bg-red-900,
-body[data-accent="amber"] .text-red-800,
-body[data-accent="amber"] .text-red-700,
-body[data-accent="amber"] .border-red-700,
-body[data-accent="amber"] .border-red-800,
-body[data-accent="amber"] .border-red-900 {
+body[data-accent="green"] .bg-red-700,
+body[data-accent="green"] .bg-red-800,
+body[data-accent="green"] .bg-red-900,
+body[data-accent="green"] .text-red-800,
+body[data-accent="green"] .text-red-700,
+body[data-accent="green"] .border-red-700,
+body[data-accent="green"] .border-red-800,
+body[data-accent="green"] .border-red-900,
+body[data-accent="orange"] .bg-red-700,
+body[data-accent="orange"] .bg-red-800,
+body[data-accent="orange"] .bg-red-900,
+body[data-accent="orange"] .text-red-800,
+body[data-accent="orange"] .text-red-700,
+body[data-accent="orange"] .border-red-700,
+body[data-accent="orange"] .border-red-800,
+body[data-accent="orange"] .border-red-900 {
   background-color: var(--accent-color) !important;
   color: white !important;
   border-color: var(--accent-color) !important;
@@ -214,10 +234,10 @@ body[data-accent="amber"] .border-red-900 {
 
 body[data-accent="blue"] .text-red-800,
 body[data-accent="blue"] .text-red-700,
-body[data-accent="emerald"] .text-red-800,
-body[data-accent="emerald"] .text-red-700,
-body[data-accent="amber"] .text-red-800,
-body[data-accent="amber"] .text-red-700 {
+body[data-accent="green"] .text-red-800,
+body[data-accent="green"] .text-red-700,
+body[data-accent="orange"] .text-red-800,
+body[data-accent="orange"] .text-red-700 {
   color: var(--accent-text) !important;
 }
 
@@ -1343,6 +1363,91 @@ body[data-theme="high-contrast"] ::-moz-selection {
 .gap-6 { gap: var(--space-6); }
 .mb-8 { margin-bottom: var(--space-8); }
 
+/* ── Density-aware spacing layer ──────────────────────────────────
+   Remaps the Tailwind padding/margin/gap/space utilities used across
+   the site to density-scaled values so the Layout density setting
+   affects spacing on every element, not just the page shell.
+   ──────────────────────────────────────────────────────────────── */
+.p-0 { padding: var(--d-0) !important; }
+.p-1 { padding: var(--d-1) !important; }
+.p-1\.5 { padding: var(--d-1p5) !important; }
+.p-2 { padding: var(--d-2) !important; }
+.p-3 { padding: var(--d-3) !important; }
+.p-4 { padding: var(--d-4) !important; }
+.p-5 { padding: var(--d-5) !important; }
+.p-6 { padding: var(--d-6) !important; }
+.p-8 { padding: var(--d-8) !important; }
+.p-10 { padding: var(--d-10) !important; }
+
+.px-1 { padding-left: var(--d-1) !important; padding-right: var(--d-1) !important; }
+.px-2 { padding-left: var(--d-2) !important; padding-right: var(--d-2) !important; }
+.px-2\.5 { padding-left: var(--d-2p5) !important; padding-right: var(--d-2p5) !important; }
+.px-3 { padding-left: var(--d-3) !important; padding-right: var(--d-3) !important; }
+.px-4 { padding-left: var(--d-4) !important; padding-right: var(--d-4) !important; }
+.px-5 { padding-left: var(--d-5) !important; padding-right: var(--d-5) !important; }
+.px-6 { padding-left: var(--d-6) !important; padding-right: var(--d-6) !important; }
+.px-8 { padding-left: var(--d-8) !important; padding-right: var(--d-8) !important; }
+.px-10 { padding-left: var(--d-10) !important; padding-right: var(--d-10) !important; }
+
+.py-0\.5 { padding-top: var(--d-0p5) !important; padding-bottom: var(--d-0p5) !important; }
+.py-1 { padding-top: var(--d-1) !important; padding-bottom: var(--d-1) !important; }
+.py-1\.5 { padding-top: var(--d-1p5) !important; padding-bottom: var(--d-1p5) !important; }
+.py-2 { padding-top: var(--d-2) !important; padding-bottom: var(--d-2) !important; }
+.py-2\.5 { padding-top: var(--d-2p5) !important; padding-bottom: var(--d-2p5) !important; }
+.py-3 { padding-top: var(--d-3) !important; padding-bottom: var(--d-3) !important; }
+.py-4 { padding-top: var(--d-4) !important; padding-bottom: var(--d-4) !important; }
+.py-6 { padding-top: var(--d-6) !important; padding-bottom: var(--d-6) !important; }
+.py-8 { padding-top: var(--d-8) !important; padding-bottom: var(--d-8) !important; }
+.py-10 { padding-top: var(--d-10) !important; padding-bottom: var(--d-10) !important; }
+
+.pt-2 { padding-top: var(--d-2) !important; }
+.pt-5 { padding-top: var(--d-5) !important; }
+.pb-2 { padding-bottom: var(--d-2) !important; }
+.pl-5 { padding-left: var(--d-5) !important; }
+.pl-6 { padding-left: var(--d-6) !important; }
+.pr-1 { padding-right: var(--d-1) !important; }
+.pr-3 { padding-right: var(--d-3) !important; }
+
+.m-2 { margin: var(--d-2) !important; }
+.mx-4 { margin-left: var(--d-4) !important; margin-right: var(--d-4) !important; }
+.mr-2 { margin-right: var(--d-2) !important; }
+.mt-0\.5 { margin-top: var(--d-0p5) !important; }
+.mt-1 { margin-top: var(--d-1) !important; }
+.mt-1\.5 { margin-top: var(--d-1p5) !important; }
+.mt-2 { margin-top: var(--d-2) !important; }
+.mt-3 { margin-top: var(--d-3) !important; }
+.mt-4 { margin-top: var(--d-4) !important; }
+.mt-6 { margin-top: var(--d-6) !important; }
+.mt-8 { margin-top: var(--d-8) !important; }
+.mb-1 { margin-bottom: var(--d-1) !important; }
+.mb-2 { margin-bottom: var(--d-2) !important; }
+.mb-3 { margin-bottom: var(--d-3) !important; }
+.mb-4 { margin-bottom: var(--d-4) !important; }
+.mb-6 { margin-bottom: var(--d-6) !important; }
+.mb-8 { margin-bottom: var(--d-8) !important; }
+.mb-10 { margin-bottom: var(--d-10) !important; }
+
+.gap-0 { gap: var(--d-0) !important; }
+.gap-1 { gap: var(--d-1) !important; }
+.gap-1\.5 { gap: var(--d-1p5) !important; }
+.gap-2 { gap: var(--d-2) !important; }
+.gap-3 { gap: var(--d-3) !important; }
+.gap-4 { gap: var(--d-4) !important; }
+.gap-5 { gap: var(--d-5) !important; }
+.gap-6 { gap: var(--d-6) !important; }
+.gap-x-3 { column-gap: var(--d-3) !important; }
+.gap-y-0\.5 { row-gap: var(--d-0p5) !important; }
+
+.space-y-1 > * + * { margin-top: var(--d-1) !important; }
+.space-y-2 > * + * { margin-top: var(--d-2) !important; }
+.space-y-3 > * + * { margin-top: var(--d-3) !important; }
+.space-y-4 > * + * { margin-top: var(--d-4) !important; }
+.space-y-5 > * + * { margin-top: var(--d-5) !important; }
+.space-y-6 > * + * { margin-top: var(--d-6) !important; }
+.space-y-8 > * + * { margin-top: var(--d-8) !important; }
+.space-x-2 > * + * { margin-left: var(--d-2) !important; }
+.space-x-3 > * + * { margin-left: var(--d-3) !important; }
+
 .bg-white { background-color: var(--white); }
 .bg-red-50 { background-color: var(--red-50); }
 .bg-red-700 { background-color: var(--red-700); }
@@ -1742,4 +1847,573 @@ body[data-theme="dark"] #custom-rules-container :is(.rule-section::after, .rule-
 body[data-theme="high-contrast"] #custom-rules-container :is(.rule-section::after, .rule-children) {
   background: var(--border-color);
   border-color: var(--border-color);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ALMANAC — editorial redesign system (scoped to .almanac)
+   Sport-almanac / print direction: warm paper, ink charcoal,
+   oxblood accent, ruled lines, numbered standings. Scoped so it
+   only affects pages that opt in via class="almanac" on <main>.
+   ═══════════════════════════════════════════════════════════════ */
+.almanac {
+  --paper: #f4f1ea;          /* warm off-white */
+  --paper-2: #efeae0;        /* slightly deeper panel */
+  --ink: #1c1a17;            /* near-black warm ink */
+  --ink-soft: #514c44;       /* warm gray body */
+  --ink-faint: #8a8377;      /* captions / meta */
+  --rule: #d8d2c6;           /* hairline rules */
+  --rule-strong: #b9b2a3;
+  --oxblood: #7c1d1d;        /* emphasis accent */
+  --oxblood-deep: #5e1414;
+
+  background: var(--paper);
+  color: var(--ink);
+  font-feature-settings: "ss01", "kern", "liga";
+}
+
+/* Container: asymmetric, not dead-centered max-width */
+.almanac .alm-shell {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: clamp(1.5rem, 4vw, 3rem) clamp(1rem, 4vw, 2.5rem);
+}
+
+/* ── Display type: push contrast hard ── */
+.almanac .alm-kicker {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--oxblood);
+  font-weight: 700;
+}
+.almanac .alm-display {
+  font-family: 'Exo 2', Georgia, serif;
+  font-weight: 800;
+  line-height: 0.9;
+  letter-spacing: -0.035em;
+  color: var(--ink);
+  font-size: clamp(2.5rem, 7vw, 5rem);
+  text-transform: uppercase;
+}
+.almanac .alm-display .accent { color: var(--oxblood); }
+.almanac .alm-lede {
+  font-size: clamp(1rem, 1.4vw, 1.15rem);
+  line-height: 1.6;
+  color: var(--ink-soft);
+  max-width: 46ch;
+}
+.almanac .alm-section-title {
+  font-family: 'Exo 2', Georgia, serif;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  font-size: clamp(1.4rem, 2.4vw, 2rem);
+  color: var(--ink);
+}
+.almanac .alm-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  font-weight: 700;
+}
+
+/* ── Masthead: 60/40 asymmetric split ── */
+.almanac .alm-masthead {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(1.5rem, 4vw, 3rem);
+  padding-bottom: clamp(1.5rem, 4vw, 2.5rem);
+  border-bottom: 2px solid var(--ink);
+}
+@media (min-width: 900px) {
+  .almanac .alm-masthead {
+    grid-template-columns: 1.5fr 1fr;
+    align-items: stretch;
+  }
+  /* Title column splits so meta pins to the bottom, aligning with the
+     base of the standings card for a balanced editorial baseline. */
+  .almanac .alm-masthead > div:first-child {
+    display: flex;
+    flex-direction: column;
+  }
+  .almanac .alm-masthead-meta { margin-top: auto; }
+}
+.almanac .alm-masthead-meta {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--rule);
+}
+.almanac .alm-stat {
+  display: flex;
+  flex-direction: column;
+}
+.almanac .alm-stat-num {
+  font-family: 'Exo 2', Georgia, serif;
+  font-weight: 800;
+  font-size: 1.6rem;
+  line-height: 1;
+  color: var(--ink);
+}
+.almanac .alm-stat-label {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-top: 0.35rem;
+}
+
+/* ── Standings table (replaces hero icon block) ── */
+.almanac .alm-standings {
+  border: 1px solid var(--ink);
+  background: var(--paper);
+  display: flex;
+  flex-direction: column;
+}
+.almanac #standings-body { display: flex; flex-direction: column; flex: 1; }
+.almanac .alm-standings-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 0.6rem 0.9rem;
+  background: var(--ink);
+  color: var(--paper);
+}
+.almanac .alm-standings-head .t {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+.almanac .alm-standings-link {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--paper);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(244,241,234,0.4);
+  transition: border-color 0.18s ease;
+}
+.almanac .alm-standings-link:hover { border-color: var(--paper); }
+.almanac .alm-standings-row {
+  display: grid;
+  grid-template-columns: 2rem 1fr auto;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.7rem 0.9rem;
+  border-top: 1px solid var(--rule);
+  text-decoration: none;
+  color: var(--ink);
+  flex: 1;
+  transition: background-color 0.18s ease, padding-left 0.18s ease;
+}
+.almanac .alm-standings-row:first-of-type { border-top: none; }
+.almanac .alm-standings-row:hover {
+  background: var(--paper-2);
+  padding-left: 1.2rem;
+}
+.almanac .alm-rank {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--oxblood);
+}
+.almanac .alm-standings-row .nm {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.almanac .alm-elo {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-soft);
+}
+
+/* ── Generic almanac panel: ruled, flat, sharp ── */
+.almanac .alm-panel {
+  background: var(--paper);
+  border: 1px solid var(--rule-strong);
+  padding: clamp(1.1rem, 2.5vw, 1.6rem);
+}
+.almanac .alm-panel--ink {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+.almanac .alm-panel--ink .alm-section-title,
+.almanac .alm-panel--ink .alm-eyebrow { color: var(--paper); }
+.almanac .alm-note-link {
+  color: #fff;
+  font-weight: 600;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(244,241,234,0.45);
+  transition: border-color 0.18s ease;
+  white-space: nowrap;
+}
+.almanac .alm-note-link:hover { border-color: #fff; }
+
+/* ── Asymmetric content row: 60/40 ── */
+.almanac .alm-split {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+@media (min-width: 860px) {
+  .almanac .alm-split { grid-template-columns: 1.4fr 1fr; }
+  .almanac .alm-split--offset { grid-template-columns: 1fr 1.4fr; }
+}
+/* Utility row collapses to a single column when no session is scheduled */
+.almanac .utility-row--solo { grid-template-columns: 1fr !important; }
+
+/* ── Index list: almanac table-of-contents (replaces card grid) ── */
+.almanac .alm-index { border-top: 2px solid var(--ink); }
+.almanac .alm-index-row {
+  display: grid;
+  grid-template-columns: 3.5rem 1fr auto;
+  align-items: baseline;
+  gap: 1rem;
+  padding: 1.1rem 0.5rem;
+  border-bottom: 1px solid var(--rule);
+  text-decoration: none;
+  color: var(--ink);
+  position: relative;
+  transition: padding-left 0.2s ease, color 0.2s ease;
+}
+.almanac .alm-index-row::after {
+  content: "";
+  position: absolute;
+  left: 0.5rem; bottom: 0.6rem;
+  width: 0; height: 2px;
+  background: var(--oxblood);
+  transition: width 0.25s ease;
+}
+.almanac .alm-index-row:hover { padding-left: 1.1rem; color: var(--oxblood-deep); }
+.almanac .alm-index-row:hover::after { width: 2.5rem; }
+.almanac .alm-index-num {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--ink-faint);
+  letter-spacing: 0.05em;
+}
+.almanac .alm-index-row:hover .alm-index-num { color: var(--oxblood); }
+.almanac .alm-index-title {
+  font-family: 'Exo 2', Georgia, serif;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  font-size: clamp(1.15rem, 2vw, 1.55rem);
+  line-height: 1.05;
+}
+.almanac .alm-index-desc {
+  display: block;
+  font-family: var(--font-sans);
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+  margin-top: 0.3rem;
+  max-width: 52ch;
+}
+.almanac .alm-index-arrow {
+  font-family: var(--font-mono);
+  color: var(--ink-faint);
+  align-self: center;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+.almanac .alm-index-row:hover .alm-index-arrow { transform: translateX(4px); color: var(--oxblood); }
+
+/* ── Roster (runners) — ruled rows, typographic tags ── */
+.almanac .alm-roster-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.7rem 0;
+  border-bottom: 1px solid var(--rule);
+  flex-wrap: wrap;
+}
+.almanac .alm-roster-row:last-child { border-bottom: none; }
+.almanac .alm-roster-name { font-weight: 700; letter-spacing: -0.01em; }
+.almanac .alm-roles {
+  display: flex; gap: 0.4rem 0.9rem; flex-wrap: wrap;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.almanac .alm-role { white-space: nowrap; }
+.almanac .alm-role + .alm-role { position: relative; padding-left: 0.9rem; }
+.almanac .alm-role + .alm-role::before {
+  content: "/"; position: absolute; left: 0; color: var(--rule-strong);
+}
+
+/* ── Search field: editorial underline input ── */
+.almanac .alm-search {
+  display: flex; align-items: stretch; gap: 0;
+  border: 1px solid var(--ink);
+  background: var(--paper);
+}
+.almanac .alm-search input {
+  flex: 1; border: none; background: transparent;
+  padding: 0.85rem 1rem;
+  font-size: 1rem; color: var(--ink);
+  font-family: var(--font-sans);
+}
+.almanac .alm-search input:focus { outline: none; }
+.almanac .alm-search button {
+  border: none; border-radius: 0;
+  background: var(--oxblood); color: #fff;
+  font-family: var(--font-mono);
+  letter-spacing: 0.16em; text-transform: uppercase;
+  font-size: 0.72rem; font-weight: 700;
+  padding: 0 1.4rem; cursor: pointer;
+  transition: background-color 0.18s ease;
+}
+.almanac .alm-search button:hover { background: var(--oxblood-deep); transform: none; filter: none; }
+
+/* Section label with rule line that extends across */
+.almanac .alm-rule-head {
+  display: flex; align-items: baseline; gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+.almanac .alm-rule-head::after {
+  content: ""; flex: 1; height: 1px; background: var(--rule-strong);
+}
+
+/* Search result cells */
+.almanac .alm-result {
+  border: 1px solid var(--rule-strong);
+  background: var(--paper-2);
+  padding: 1rem;
+  margin-top: 1rem;
+}
+.almanac .alm-result-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  border: 1px solid var(--rule);
+}
+.almanac .alm-result-cell {
+  padding: 0.6rem; text-align: center;
+  border-right: 1px solid var(--rule);
+}
+.almanac .alm-result-cell:last-child { border-right: none; }
+.almanac .alm-result-cell .l {
+  font-family: var(--font-mono); font-size: 0.6rem;
+  letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-faint);
+}
+.almanac .alm-result-cell .v {
+  font-family: var(--font-mono); font-weight: 700; font-size: 1.15rem;
+  color: var(--ink); font-variant-numeric: tabular-nums;
+}
+
+/* Countdown re-skin inside almanac */
+/* The countdown panel sits beside the search panel; when search results
+   expand the row taller, center the countdown content vertically so it
+   stays anchored in the middle of the box. */
+.almanac #countdown-container:not(.hidden) {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+.almanac .alm-countdown {
+  display: flex; align-items: flex-end; justify-content: center; gap: 1.75rem; flex-wrap: wrap;
+  text-align: center;
+}
+.almanac .alm-countdown > div { display: flex; flex-direction: column; align-items: center; }
+.almanac .alm-count-num {
+  font-family: 'Exo 2', Georgia, serif; font-weight: 800;
+  font-size: 2.4rem; line-height: 1; color: var(--paper);
+  font-variant-numeric: tabular-nums;
+}
+.almanac .alm-count-unit {
+  font-family: var(--font-mono); font-size: 0.58rem;
+  letter-spacing: 0.18em; text-transform: uppercase; color: rgba(244,241,234,0.6);
+}
+
+/* Vertical rhythm: deliberate, not uniform */
+.almanac .alm-block + .alm-block { margin-top: clamp(2.5rem, 6vw, 4.5rem); }
+/* A section right after a compact masthead is its own content — tighten it */
+.almanac .alm-masthead--compact + .alm-block { margin-top: clamp(1.25rem, 3vw, 2rem); }
+
+/* ── Compact masthead variant (interior pages) ── */
+.almanac .alm-masthead--compact {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+.almanac .alm-display--md { font-size: clamp(2.25rem, 5.5vw, 3.75rem); }
+.almanac .alm-masthead--compact .alm-stat-num { font-size: 2rem; }
+
+/* ── Leaderboard / ladder record ── */
+.almanac .alm-ladder {
+  width: 100%;
+  border-collapse: collapse;
+  border-top: 2px solid var(--ink);
+}
+.almanac .alm-ladder thead th {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  font-weight: 700;
+  text-align: left;
+  padding: 0.7rem 0.9rem;
+  border-bottom: 1px solid var(--rule-strong);
+  background: transparent;
+}
+.almanac .alm-ladder thead th.num { text-align: right; }
+.almanac .alm-ladder thead th.ctr { text-align: center; }
+.almanac .alm-ladder td.ctr { text-align: center; }
+.almanac .alm-ladder td.num { text-align: right; }
+.almanac .alm-ladder tbody td {
+  padding: 0.85rem 0.9rem;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: middle;
+  font-size: 0.95rem;
+}
+.almanac .alm-ladder tbody tr {
+  transition: background-color 0.15s ease;
+}
+.almanac .alm-ladder tbody tr:hover { background: var(--paper-2); }
+
+.almanac .alm-ldr-rank {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-faint);
+  font-size: 1rem;
+  width: 3.5rem;
+}
+/* Podium emphasis: top 3 ranks in oxblood, larger */
+.almanac .alm-ladder tbody tr:nth-child(1) .alm-ldr-rank,
+.almanac .alm-ladder tbody tr:nth-child(2) .alm-ldr-rank,
+.almanac .alm-ladder tbody tr:nth-child(3) .alm-ldr-rank {
+  color: var(--oxblood);
+  font-size: 1.3rem;
+}
+.almanac .alm-ladder tbody tr:nth-child(1) td { border-bottom-color: var(--rule-strong); }
+
+.almanac .alm-ldr-name {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+.almanac .alm-ldr-name:hover { color: var(--oxblood-deep); border-bottom-color: var(--oxblood); }
+.almanac .alm-ldr-tags {
+  display: inline-flex; gap: 0.4rem 0.8rem; flex-wrap: wrap;
+  font-family: var(--font-mono);
+  font-size: 0.58rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-left: 0.6rem;
+}
+.almanac .alm-ldr-num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+.almanac .alm-ldr-w { color: #2f6b3a; }
+.almanac .alm-ldr-l { color: var(--oxblood); }
+.almanac .alm-ldr-elo {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--ink);
+  text-align: right;
+}
+.almanac .alm-ldr-record {
+  border: 1px solid var(--rule-strong);
+  background: var(--paper);
+  overflow-x: auto;
+}
+
+/* ── Matchups: segmented toggle + division cards ── */
+.almanac .alm-toggle {
+  display: inline-flex;
+  border: 1px solid var(--ink);
+  background: var(--paper);
+}
+.almanac .alm-toggle button {
+  border: none; border-radius: 0;
+  background: transparent;
+  font-family: var(--font-mono);
+  font-size: 0.72rem; font-weight: 700;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--ink-soft);
+  padding: 0.6rem 1.3rem;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+.almanac .alm-toggle button + button { border-left: 1px solid var(--ink); }
+.almanac .alm-toggle button:hover { background: var(--paper-2); transform: none; filter: none; }
+.almanac .alm-toggle button.is-active { background: var(--ink); color: var(--paper); }
+.almanac .alm-toggle button.is-active:hover { background: var(--ink); }
+
+.almanac .alm-assign {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  line-height: 1.7;
+}
+.almanac .alm-assign b { color: var(--ink); font-weight: 700; }
+
+.almanac .alm-division {
+  border: 1px solid var(--rule-strong);
+  background: var(--paper);
+}
+.almanac .alm-division-head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 2px solid var(--ink);
+}
+.almanac .alm-division-name {
+  font-family: 'Exo 2', Georgia, serif;
+  font-weight: 800; text-transform: uppercase;
+  letter-spacing: -0.01em;
+  font-size: 1.15rem; color: var(--ink);
+}
+.almanac .alm-division-table {
+  font-family: var(--font-mono);
+  font-size: 0.62rem; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--oxblood); font-weight: 700;
+  white-space: nowrap;
+}
+.almanac .alm-division-list { list-style: none; margin: 0; padding: 0; }
+.almanac .alm-division-list li {
+  display: grid;
+  grid-template-columns: 2rem 1fr auto;
+  align-items: baseline;
+  gap: 0.75rem;
+  padding: 0.6rem 1rem;
+  border-bottom: 1px solid var(--rule);
+}
+.almanac .alm-division-list li:last-child { border-bottom: none; }
+.almanac .alm-division-seed {
+  font-family: var(--font-mono); font-weight: 700;
+  font-size: 0.8rem; color: var(--ink-faint);
+}
+.almanac .alm-division-player { font-weight: 700; letter-spacing: -0.01em; color: var(--ink); }
+.almanac .alm-division-elo {
+  font-family: var(--font-mono); font-variant-numeric: tabular-nums;
+  font-weight: 700; color: var(--ink-soft); font-size: 0.85rem;
 }

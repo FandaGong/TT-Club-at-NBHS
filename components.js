@@ -15,8 +15,8 @@ window._adminEmails = (window._adminEmails || [
     const accentMap = {
         red: { color: '#b91c1c', bg: '#fef2f2', text: '#991b1b' },
         blue: { color: '#2563eb', bg: '#eff6ff', text: '#1d4ed8' },
-        emerald: { color: '#047857', bg: '#ecfdf5', text: '#047857' },
-        amber: { color: '#d97706', bg: '#fffbeb', text: '#b45309' }
+        green: { color: '#16a34a', bg: '#f0fdf4', text: '#15803d' },
+        orange: { color: '#ea580c', bg: '#fff7ed', text: '#c2410c' }
     };
 
     function readSetting(key, fallback) {
@@ -35,7 +35,7 @@ window._adminEmails = (window._adminEmails || [
         const font = readSetting('nbhs-font', 'sans');
         const density = readSetting('nbhs-density', 'comfortable');
         const reducedMotion = readSetting('nbhs-reduced-motion', 'false') === 'true';
-        const densityScale = density === 'compact' ? 0.9 : density === 'spacious' ? 1.1 : 1;
+        const densityScale = density === 'compact' ? 0.75 : density === 'spacious' ? 1.35 : 1;
         const accentValues = accentMap[accent] || accentMap.red;
 
         document.body.dataset.theme = theme;
@@ -122,6 +122,7 @@ const headerHTML = `
                     <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 h-4 w-4 shrink-0 transition-transform group-hover:md:rotate-180 md:h-3 md:w-3 md:ml-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6" /></svg>
                 </button>
                 <div class="profile-dropdown-menu max-h-0 md:max-h-none md:absolute md:left-0 md:mt-0 w-full md:w-56 bg-red-950 md:shadow-lg opacity-0 md:opacity-0 invisible md:invisible transition-all duration-200 z-50 md:top-full overflow-hidden md:overflow-visible rounded-none border border-white/10">
+                    <a href="profile.html" class="block px-3 md:px-4 py-3 md:py-2 text-sm font-medium text-white/90 hover:bg-white/10 border-l-4 border-red-700 md:border-l-0 pl-5 md:pl-4"><svg xmlns="http://www.w3.org/2000/svg" class="inline mr-2 h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm-7 8a7 7 0 0 1 14 0" /></svg>Your Profile</a>
                     <a href="absence-report.html" class="block px-3 md:px-4 py-3 md:py-2 text-sm font-medium text-white/90 hover:bg-white/10 border-l-4 border-red-700 md:border-l-0 pl-5 md:pl-4"><svg xmlns="http://www.w3.org/2000/svg" class="inline mr-2 h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7h8M8 11h8M8 15h5" /><rect x="4" y="3" width="16" height="18" rx="2" ry="2" /></svg>Absence</a>
                     <a href="settings.html" class="block px-3 md:px-4 py-3 md:py-2 text-sm font-medium text-white/90 hover:bg-white/10 border-l-4 border-red-700 md:border-l-0 pl-5 md:pl-4"><svg xmlns="http://www.w3.org/2000/svg" class="inline mr-2 h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v2" /><path d="M12 19v2" /><path d="M4.93 4.93l1.41 1.41" /><path d="M17.66 17.66l1.41 1.41" /><path d="M3 12h2" /><path d="M19 12h2" /><path d="M4.93 19.07l1.41-1.41" /><path d="M17.66 6.34l1.41-1.41" /><circle cx="12" cy="12" r="3.5" /></svg>Settings</a>
                 </div>
