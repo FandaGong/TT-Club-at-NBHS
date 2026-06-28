@@ -17,73 +17,67 @@
 <body class="site-surface text-slate-900 font-sans min-h-screen flex flex-col">
     <div id="header-placeholder"></div>
 
-    <main id="main-content" class="site-shell max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow w-full">
-        <div class="page-hero text-center py-8 px-4 sm:px-8 mb-8">
-            <p class="page-hero-label">Your Profile</p>
-            <h1 id="profileName" class="page-hero-title text-4xl font-extrabold mt-3">Loading…</h1>
-            <p id="profileEmail" class="page-hero-copy mt-3">—</p>
-        </div>
+    <main id="main-content" class="almanac flex-grow w-full">
+      <div class="alm-shell">
+        <header class="alm-masthead--compact alm-block" style="border-bottom:2px solid var(--ink);padding-bottom:1.25rem;">
+            <div>
+                <p class="alm-kicker">Your Profile</p>
+                <h1 id="profileName" class="alm-display alm-display--md mt-3">Loading…</h1>
+                <p id="profileEmail" class="alm-lede mt-3" style="font-family:var(--font-mono);font-size:0.8rem;">—</p>
+            </div>
+        </header>
 
         <!-- Signed-out state -->
-        <div id="signedOutState" class="hidden section-card p-8 text-center">
-            <h2 class="section-heading mb-2">You're not signed in</h2>
-            <p class="text-sm text-slate-500 mb-4">Sign in from the admin portal to view your profile.</p>
-            <a href="admin.html" class="btn-primary inline-flex px-5 py-2">Go to Login</a>
+        <div id="signedOutState" class="hidden alm-panel alm-block" style="text-align:center;padding:2.5rem;">
+            <h2 class="alm-section-title mb-2">You're not signed in</h2>
+            <p class="alm-lede" style="margin:0 auto 1.25rem;">Sign in from the admin portal to view your profile.</p>
+            <a href="admin.html" class="alm-search" style="display:inline-flex;text-decoration:none;"><span style="padding:0.7rem 1.4rem;background:var(--oxblood);color:#fff;font-family:var(--font-mono);letter-spacing:0.16em;text-transform:uppercase;font-size:0.72rem;font-weight:700;">Go to Login</span></a>
         </div>
 
-        <div id="profileContent" class="hidden space-y-8">
+        <div id="profileContent" class="hidden">
             <!-- Rank + key numbers -->
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                <div class="metric-card p-5">
-                    <p class="text-xs font-bold uppercase tracking-widest text-slate-400">Current Rank</p>
-                    <p id="statRank" class="text-2xl font-black text-red-900 mt-1">—</p>
+            <section class="alm-block">
+                <div class="alm-statgrid">
+                    <div class="alm-statcell"><p class="l">Current Rank</p><p id="statRank" class="v accent">—</p></div>
+                    <div class="alm-statcell"><p class="l">Current Elo</p><p id="statElo" class="v">—</p></div>
+                    <div class="alm-statcell"><p class="l">Highest Elo</p><p id="statHighElo" class="v pos">—</p></div>
+                    <div class="alm-statcell"><p class="l">Lowest Elo</p><p id="statLowElo" class="v">—</p></div>
                 </div>
-                <div class="metric-card p-5">
-                    <p class="text-xs font-bold uppercase tracking-widest text-slate-400">Current ELO</p>
-                    <p id="statElo" class="text-2xl font-black text-slate-900 mt-1">—</p>
+                <div class="alm-statgrid alm-statgrid--sm" style="border-top:none;">
+                    <div class="alm-statcell"><p class="l">Wins</p><p id="statWins" class="v">—</p></div>
+                    <div class="alm-statcell"><p class="l">Losses</p><p id="statLosses" class="v">—</p></div>
+                    <div class="alm-statcell"><p class="l">Division</p><p id="statDivision" class="v">—</p></div>
+                    <div class="alm-statcell"><p class="l">Day</p><p id="statHalf" class="v">—</p></div>
                 </div>
-                <div class="metric-card p-5">
-                    <p class="text-xs font-bold uppercase tracking-widest text-slate-400">Highest ELO</p>
-                    <p id="statHighElo" class="text-2xl font-black text-green-700 mt-1">—</p>
-                </div>
-                <div class="metric-card p-5">
-                    <p class="text-xs font-bold uppercase tracking-widest text-slate-400">Lowest ELO</p>
-                    <p id="statLowElo" class="text-2xl font-black text-orange-600 mt-1">—</p>
-                </div>
-            </div>
-
-            <!-- Secondary stats -->
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                <div class="section-card p-4"><p class="text-xs uppercase font-bold text-slate-400">Wins</p><p id="statWins" class="font-black text-lg text-slate-900 mt-1">—</p></div>
-                <div class="section-card p-4"><p class="text-xs uppercase font-bold text-slate-400">Losses</p><p id="statLosses" class="font-black text-lg text-slate-900 mt-1">—</p></div>
-                <div class="section-card p-4"><p class="text-xs uppercase font-bold text-slate-400">Division</p><p id="statDivision" class="font-black text-lg text-slate-900 mt-1">—</p></div>
-                <div class="section-card p-4"><p class="text-xs uppercase font-bold text-slate-400">Day</p><p id="statHalf" class="font-black text-lg text-slate-900 mt-1">—</p></div>
-            </div>
+            </section>
 
             <!-- ELO over time -->
-            <div class="section-card p-6">
-                <h2 class="section-heading mb-4">ELO Change Over Time</h2>
-                <div class="relative h-[300px] w-full">
-                    <canvas id="eloChart"></canvas>
+            <section class="alm-block">
+                <div class="alm-rule-head"><h2 class="alm-section-title">Elo Over Time</h2></div>
+                <div class="alm-panel">
+                    <div class="relative h-[300px] w-full">
+                        <canvas id="eloChart"></canvas>
+                    </div>
+                    <p id="chartEmpty" class="hidden alm-eyebrow" style="text-align:center;margin-top:1rem;">Not enough match data to plot a chart yet.</p>
                 </div>
-                <p id="chartEmpty" class="hidden text-sm text-slate-500 text-center mt-4">Not enough match data to plot a chart yet.</p>
-            </div>
+            </section>
 
             <!-- Recent matches -->
-            <div class="section-card p-6">
-                <div class="flex items-center justify-between mb-4">
-                    <h2 class="section-heading">3 Most Recent Matches</h2>
-                    <a id="viewAllLink" href="#" class="text-sm font-semibold text-red-800 hover:underline">View full history →</a>
+            <section class="alm-block">
+                <div class="alm-rule-head" style="justify-content:space-between;">
+                    <h2 class="alm-section-title">Recent Matches</h2>
+                    <a id="viewAllLink" href="#" class="alm-link" style="white-space:nowrap;">Full history →</a>
                 </div>
-                <div id="recentMatches" class="space-y-3">
-                    <p class="text-sm text-slate-500">Loading recent matches…</p>
+                <div id="recentMatches">
+                    <p class="alm-eyebrow">Loading recent matches…</p>
                 </div>
-            </div>
+            </section>
         </div>
 
-        <div id="profileError" class="hidden section-card p-6 text-center">
-            <p class="text-red-600 text-sm" id="profileErrorMsg">Something went wrong loading your profile.</p>
+        <div id="profileError" class="hidden alm-panel alm-block" style="text-align:center;">
+            <p id="profileErrorMsg" style="color:var(--oxblood);">Something went wrong loading your profile.</p>
         </div>
+      </div>
     </main>
 
     <div id="footer-placeholder"></div>
@@ -228,7 +222,7 @@
             const labels = eloSeries.map((_, i) => `Match ${i + 1}`);
             const ctx = canvas.getContext('2d');
             if (window._eloChart) window._eloChart.destroy();
-            const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim() || '#991b1b';
+            const accent = '#7c1d1d';
             window._eloChart = new Chart(ctx, {
                 type: 'line',
                 data: {
@@ -259,7 +253,7 @@
             const recent = myMatches.slice().reverse().slice(0, 3);
 
             if (!recent.length) {
-                container.innerHTML = '<p class="text-sm text-slate-500">No matches found for your account yet.</p>';
+                container.innerHTML = '<p class="alm-eyebrow">No matches found for your account yet.</p>';
                 return;
             }
 
@@ -277,41 +271,37 @@
                 let delta = isP1 ? m.p1_elo_change : m.p2_elo_change;
                 delta = (delta === null || delta === undefined || delta === '') ? null : parseInt(delta, 10);
                 const deltaStr = delta === null ? '—' : (delta > 0 ? `+${delta}` : `${delta}`);
-                const deltaColor = delta === null ? 'text-slate-500' : (delta >= 0 ? 'text-green-600' : 'text-red-600');
+                const deltaCls = delta === null ? '' : (delta >= 0 ? 'up' : 'down');
                 const newElo = isP1 ? m.p1_new_elo : m.p2_new_elo;
                 const newEloStr = (newElo === null || newElo === undefined || newElo === '') ? '—' : newElo;
 
                 return `
-                    <div class="match-card border border-slate-200 bg-white overflow-hidden">
-                        <button type="button" class="match-toggle w-full text-left p-4 flex items-center justify-between gap-3 hover:bg-slate-50 transition-colors" data-idx="${idx}" aria-expanded="false">
-                            <span class="flex items-center gap-3">
-                                <span class="text-[10px] font-bold uppercase px-2 py-1 rounded ${isWinner ? 'bg-green-100 text-green-800' : 'bg-slate-100 text-slate-700'}">${isWinner ? 'Win' : 'Loss'}</span>
-                                <span class="font-semibold text-slate-800">vs ${opponent}</span>
-                            </span>
-                            <span class="flex items-center gap-3">
-                                <span class="font-bold ${deltaColor}">${deltaStr}</span>
-                                <svg class="match-chevron h-4 w-4 text-slate-400 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
-                            </span>
+                    <div class="alm-match">
+                        <button type="button" class="alm-match-toggle" data-idx="${idx}" aria-expanded="false">
+                            <span class="alm-match-tag ${isWinner ? 'win' : 'loss'}">${isWinner ? 'Win' : 'Loss'}</span>
+                            <span class="alm-match-vs">vs ${opponent}</span>
+                            <span class="alm-match-delta ${deltaCls}">${deltaStr}</span>
+                            <svg class="alm-match-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
                         </button>
-                        <div class="match-detail hidden border-t border-slate-200 p-4 bg-slate-50 text-sm space-y-2">
-                            <div class="flex justify-between"><span class="text-slate-500">Result</span><span class="font-semibold text-slate-800">${isWinner ? 'Win' : 'Loss'} vs ${opponent}</span></div>
-                            <div class="flex justify-between"><span class="text-slate-500">Score</span><span class="font-semibold text-slate-800">${score}</span></div>
-                            <div class="flex justify-between"><span class="text-slate-500">ELO change</span><span class="font-semibold ${deltaColor}">${deltaStr}</span></div>
-                            <div class="flex justify-between"><span class="text-slate-500">ELO after match</span><span class="font-semibold text-slate-800">${newEloStr}</span></div>
-                            <div class="flex justify-between"><span class="text-slate-500">Date</span><span class="font-semibold text-slate-800">${when}</span></div>
-                            <div class="pt-2">
-                                <a href="player-analysis.html?name=${encodeURIComponent(opponent)}" class="text-sm font-semibold text-red-800 hover:underline">View ${opponent}'s profile →</a>
+                        <div class="alm-match-detail hidden">
+                            <div class="row"><span class="k">Result</span><span class="val">${isWinner ? 'Win' : 'Loss'} vs ${opponent}</span></div>
+                            <div class="row"><span class="k">Score</span><span class="val">${score}</span></div>
+                            <div class="row"><span class="k">Elo change</span><span class="val ${deltaCls === 'up' ? '' : ''}" style="color:${delta === null ? 'inherit' : (delta >= 0 ? '#2f6b3a' : 'var(--oxblood)')};">${deltaStr}</span></div>
+                            <div class="row"><span class="k">Elo after match</span><span class="val">${newEloStr}</span></div>
+                            <div class="row"><span class="k">Date</span><span class="val">${when}</span></div>
+                            <div style="padding-top:0.6rem;">
+                                <a href="player-analysis.html?name=${encodeURIComponent(opponent)}" class="alm-link">View ${opponent}'s profile →</a>
                             </div>
                         </div>
                     </div>
                 `;
             }).join('');
 
-            container.querySelectorAll('.match-toggle').forEach(btn => {
+            container.querySelectorAll('.alm-match-toggle').forEach(btn => {
                 btn.addEventListener('click', () => {
-                    const card = btn.closest('.match-card');
-                    const detail = card.querySelector('.match-detail');
-                    const chevron = btn.querySelector('.match-chevron');
+                    const card = btn.closest('.alm-match');
+                    const detail = card.querySelector('.alm-match-detail');
+                    const chevron = btn.querySelector('.alm-match-chev');
                     const isOpen = !detail.classList.contains('hidden');
                     detail.classList.toggle('hidden', isOpen);
                     btn.setAttribute('aria-expanded', String(!isOpen));

@@ -49,7 +49,7 @@
 
   /* Fonts */
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-heading: 'Exo 2', Georgia, serif;
+  --font-heading: var(--font-heading);
   --font-mono: 'JetBrains Mono', monospace;
 
   /* Spacing (8px grid) — multiplied by --density-scale so the
@@ -1888,7 +1888,7 @@ body[data-theme="high-contrast"] #custom-rules-container :is(.rule-section::afte
   font-weight: 700;
 }
 .almanac .alm-display {
-  font-family: 'Exo 2', Georgia, serif;
+  font-family: var(--font-heading);
   font-weight: 800;
   line-height: 0.9;
   letter-spacing: -0.035em;
@@ -1904,7 +1904,7 @@ body[data-theme="high-contrast"] #custom-rules-container :is(.rule-section::afte
   max-width: 46ch;
 }
 .almanac .alm-section-title {
-  font-family: 'Exo 2', Georgia, serif;
+  font-family: var(--font-heading);
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: -0.01em;
@@ -1954,7 +1954,7 @@ body[data-theme="high-contrast"] #custom-rules-container :is(.rule-section::afte
   flex-direction: column;
 }
 .almanac .alm-stat-num {
-  font-family: 'Exo 2', Georgia, serif;
+  font-family: var(--font-heading);
   font-weight: 800;
   font-size: 1.6rem;
   line-height: 1;
@@ -2108,7 +2108,7 @@ body[data-theme="high-contrast"] #custom-rules-container :is(.rule-section::afte
 }
 .almanac .alm-index-row:hover .alm-index-num { color: var(--oxblood); }
 .almanac .alm-index-title {
-  font-family: 'Exo 2', Georgia, serif;
+  font-family: var(--font-heading);
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: -0.01em;
@@ -2234,7 +2234,7 @@ body[data-theme="high-contrast"] #custom-rules-container :is(.rule-section::afte
 }
 .almanac .alm-countdown > div { display: flex; flex-direction: column; align-items: center; }
 .almanac .alm-count-num {
-  font-family: 'Exo 2', Georgia, serif; font-weight: 800;
+  font-family: var(--font-heading); font-weight: 800;
   font-size: 2.4rem; line-height: 1; color: var(--paper);
   font-variant-numeric: tabular-nums;
 }
@@ -2387,7 +2387,7 @@ body[data-theme="high-contrast"] #custom-rules-container :is(.rule-section::afte
   border-bottom: 2px solid var(--ink);
 }
 .almanac .alm-division-name {
-  font-family: 'Exo 2', Georgia, serif;
+  font-family: var(--font-heading);
   font-weight: 800; text-transform: uppercase;
   letter-spacing: -0.01em;
   font-size: 1.15rem; color: var(--ink);
@@ -2416,4 +2416,246 @@ body[data-theme="high-contrast"] #custom-rules-container :is(.rule-section::afte
 .almanac .alm-division-elo {
   font-family: var(--font-mono); font-variant-numeric: tabular-nums;
   font-weight: 700; color: var(--ink-soft); font-size: 0.85rem;
+}
+
+/* ── Profile: stat grid + match rows ── */
+.almanac .alm-statgrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  border: 1px solid var(--rule-strong);
+}
+@media (min-width: 720px) {
+  .almanac .alm-statgrid { grid-template-columns: repeat(4, 1fr); }
+}
+.almanac .alm-statcell {
+  padding: 1rem 1.1rem;
+  border-right: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+}
+.almanac .alm-statcell .l {
+  font-family: var(--font-mono);
+  font-size: 0.6rem; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.almanac .alm-statcell .v {
+  font-family: var(--font-heading);
+  font-weight: 800; font-size: 1.7rem; line-height: 1;
+  color: var(--ink); margin-top: 0.4rem;
+  font-variant-numeric: tabular-nums;
+}
+.almanac .alm-statcell .v.accent { color: var(--oxblood); }
+.almanac .alm-statcell .v.pos { color: #2f6b3a; }
+
+/* Secondary (smaller) stat row */
+.almanac .alm-statgrid--sm .v { font-size: 1.15rem; font-family: var(--font-mono); }
+
+/* Expandable match rows */
+.almanac .alm-match { border-bottom: 1px solid var(--rule); }
+.almanac .alm-match:first-child { border-top: 2px solid var(--ink); }
+.almanac .alm-match-toggle {
+  width: 100%; background: transparent; border: none; border-radius: 0;
+  display: grid; grid-template-columns: auto 1fr auto auto;
+  align-items: center; gap: 0.9rem;
+  padding: 0.9rem 0.5rem; cursor: pointer; text-align: left;
+  transition: background-color 0.15s ease, padding-left 0.15s ease;
+}
+.almanac .alm-match-toggle:hover { background: var(--paper-2); padding-left: 1rem; transform: none; filter: none; }
+.almanac .alm-match-tag {
+  font-family: var(--font-mono); font-size: 0.58rem; font-weight: 700;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  padding: 0.2rem 0.5rem; border: 1px solid currentColor;
+}
+.almanac .alm-match-tag.win { color: #2f6b3a; }
+.almanac .alm-match-tag.loss { color: var(--oxblood); }
+.almanac .alm-match-vs { font-weight: 700; letter-spacing: -0.01em; color: var(--ink); }
+.almanac .alm-match-delta { font-family: var(--font-mono); font-weight: 700; font-variant-numeric: tabular-nums; }
+.almanac .alm-match-delta.up { color: #2f6b3a; }
+.almanac .alm-match-delta.down { color: var(--oxblood); }
+.almanac .alm-match-chev { color: var(--ink-faint); transition: transform 0.2s ease; }
+.almanac .alm-match-detail {
+  padding: 0 0.5rem 1rem;
+  font-size: 0.85rem;
+}
+.almanac .alm-match-detail .row {
+  display: flex; justify-content: space-between;
+  padding: 0.4rem 0; border-bottom: 1px solid var(--rule);
+}
+.almanac .alm-match-detail .row:last-of-type { border-bottom: none; }
+.almanac .alm-match-detail .row .k { color: var(--ink-faint); }
+.almanac .alm-match-detail .row .val { font-weight: 700; color: var(--ink); }
+
+.almanac .alm-link {
+  color: var(--oxblood-deep); font-weight: 600; text-decoration: none;
+  border-bottom: 1px solid transparent; transition: border-color 0.15s ease;
+}
+.almanac .alm-link:hover { border-bottom-color: var(--oxblood); }
+
+/* ── Almanac form fields ── */
+.almanac .alm-field-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.62rem; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--ink-faint); font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+.almanac .alm-input,
+.almanac .alm-select {
+  width: 100%;
+  border: 1px solid var(--ink);
+  border-radius: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  padding: 0.7rem 0.85rem;
+}
+.almanac .alm-input:focus,
+.almanac .alm-select:focus {
+  outline: none;
+  box-shadow: inset 0 -2px 0 var(--oxblood);
+}
+.almanac .alm-input::placeholder { color: var(--ink-faint); }
+.almanac .alm-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  border: none; border-radius: 0; cursor: pointer;
+  background: var(--oxblood); color: #fff;
+  font-family: var(--font-mono);
+  letter-spacing: 0.16em; text-transform: uppercase;
+  font-size: 0.72rem; font-weight: 700;
+  padding: 0.75rem 1.4rem;
+  transition: background-color 0.15s ease;
+}
+.almanac .alm-btn:hover { background: var(--oxblood-deep); transform: none; filter: none; }
+.almanac .alm-btn--ghost {
+  background: transparent; color: var(--ink-soft);
+  border: 1px solid var(--rule-strong);
+}
+.almanac .alm-btn--ghost:hover { background: var(--paper-2); border-color: var(--ink); }
+
+/* ── Match-history list rows ── */
+.almanac .alm-mh-row {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem;
+  padding: 0.95rem 0.5rem;
+  border-bottom: 1px solid var(--rule);
+}
+.almanac .alm-mh-list { border-top: 2px solid var(--ink); }
+.almanac .alm-mh-result {
+  font-weight: 700; letter-spacing: -0.01em; color: var(--ink);
+}
+.almanac .alm-mh-result .beat { color: var(--ink-faint); font-weight: 400; font-style: italic; }
+.almanac .alm-mh-result a { color: var(--ink); text-decoration: none; border-bottom: 1px solid transparent; transition: border-color 0.15s ease; }
+.almanac .alm-mh-result a:hover { border-bottom-color: var(--oxblood); color: var(--oxblood-deep); }
+.almanac .alm-mh-meta {
+  display: flex; flex-wrap: wrap; gap: 0.3rem 1rem;
+  margin-top: 0.45rem;
+  font-family: var(--font-mono);
+  font-size: 0.66rem; letter-spacing: 0.06em;
+  color: var(--ink-faint); text-transform: uppercase;
+}
+.almanac .alm-mh-meta .score { color: var(--ink-soft); }
+.almanac .alm-mh-date {
+  font-family: var(--font-mono); font-size: 0.62rem; color: var(--ink-faint);
+  margin-top: 0.35rem;
+}
+
+/* ── Analytics: data callout cards + ranked list ── */
+.almanac .alm-datacard {
+  border: 1px solid var(--rule-strong);
+  background: var(--paper);
+  padding: 1.4rem 1.5rem;
+  height: 100%;
+}
+.almanac .alm-datacard .t {
+  font-family: var(--font-mono);
+  font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--ink-faint); font-weight: 700;
+}
+.almanac .alm-datacard .v {
+  font-family: var(--font-heading);
+  font-weight: 800; line-height: 1;
+  font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+  color: var(--ink); margin-top: 0.9rem;
+  letter-spacing: -0.02em;
+}
+.almanac .alm-datacard .d {
+  font-size: 0.85rem; color: var(--ink-soft);
+  margin-top: 0.8rem; line-height: 1.5;
+}
+.almanac .alm-datacard--feature {
+  background: var(--ink); border-color: var(--ink);
+}
+.almanac .alm-datacard--feature .t { color: rgba(244,241,234,0.6); }
+.almanac .alm-datacard--feature .v { color: var(--paper); }
+.almanac .alm-datacard--feature .v .accent { color: #e9a23b; }
+.almanac .alm-datacard--feature .d { color: rgba(244,241,234,0.8); }
+
+/* Ranked active-players list */
+.almanac .alm-ranklist { border-top: 2px solid var(--ink); list-style: none; margin: 0; padding: 0; }
+.almanac .alm-ranklist li {
+  display: grid; grid-template-columns: 2.5rem 1fr auto;
+  align-items: baseline; gap: 0.9rem;
+  padding: 0.8rem 0.5rem;
+  border-bottom: 1px solid var(--rule);
+}
+.almanac .alm-ranklist .seed {
+  font-family: var(--font-mono); font-weight: 700; color: var(--oxblood); font-size: 0.95rem;
+}
+.almanac .alm-ranklist .nm { font-weight: 700; color: var(--ink); letter-spacing: -0.01em; }
+.almanac .alm-ranklist .ct {
+  font-family: var(--font-mono); font-variant-numeric: tabular-nums;
+  font-weight: 700; color: var(--ink-soft); font-size: 0.85rem;
+}
+
+/* ── Season archive card ── */
+.almanac .alm-season { border: 1px solid var(--rule-strong); background: var(--paper); }
+.almanac .alm-season-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  padding: 0.7rem 1rem;
+  background: var(--ink); color: var(--paper);
+}
+.almanac .alm-season-name {
+  font-family: var(--font-heading); font-weight: 800;
+  text-transform: uppercase; letter-spacing: -0.01em; font-size: 1.05rem;
+}
+.almanac .alm-season-status {
+  font-family: var(--font-mono); font-size: 0.56rem; font-weight: 700;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  border: 1px solid rgba(244,241,234,0.4); padding: 0.15rem 0.5rem;
+}
+.almanac .alm-season-body { padding: 1.1rem 1rem; }
+.almanac .alm-season-champ {
+  display: flex; align-items: baseline; justify-content: space-between;
+  padding-bottom: 0.9rem; border-bottom: 1px solid var(--rule);
+}
+.almanac .alm-season-champ .k { font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-faint); }
+.almanac .alm-season-champ .v { font-family: var(--font-heading); font-weight: 800; font-size: 1.2rem; color: var(--oxblood); }
+.almanac .alm-season-stats {
+  display: grid; grid-template-columns: 1fr 1fr;
+  border-bottom: 1px solid var(--rule);
+}
+.almanac .alm-season-stats > div { padding: 0.8rem 0; }
+.almanac .alm-season-stats > div + div { border-left: 1px solid var(--rule); padding-left: 0.9rem; }
+.almanac .alm-season-stats .k { font-family: var(--font-mono); font-size: 0.56rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); }
+.almanac .alm-season-stats .v { font-weight: 700; color: var(--ink); font-size: 0.85rem; margin-top: 0.3rem; }
+.almanac .alm-season-top { padding-top: 0.9rem; }
+.almanac .alm-season-top .k { font-family: var(--font-mono); font-size: 0.56rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 0.5rem; }
+.almanac .alm-season-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.almanac .alm-season-chip {
+  font-family: var(--font-mono); font-size: 0.62rem; font-weight: 700;
+  background: var(--paper-2); border: 1px solid var(--rule);
+  padding: 0.2rem 0.55rem; color: var(--ink);
+}
+
+/* Rules container inside almanac: use site fonts + ink palette */
+.almanac #custom-rules-container,
+.almanac #custom-rules-container h2,
+.almanac #custom-rules-container h3 {
+  font-family: var(--font-sans);
+  color: var(--ink);
+}
+.almanac #custom-rules-container .rule-children {
+  border-left: 1px solid var(--rule-strong);
+}
+.almanac #custom-rules-container .rule-child::before {
+  background: var(--rule-strong);
 }

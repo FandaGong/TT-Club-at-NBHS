@@ -26,10 +26,6 @@
                 <p class="alm-kicker">This week's draw</p>
                 <h1 class="alm-display alm-display--md mt-3">Weekly<br>Matchups</h1>
             </div>
-            <div class="alm-masthead-meta" style="margin-top:0;border-top:none;padding-top:0;">
-                <div class="alm-stat"><span class="alm-stat-num">T2</span><span class="alm-stat-label">Term</span></div>
-                <div class="alm-stat"><span class="alm-stat-num">W4</span><span class="alm-stat-label">Week</span></div>
-            </div>
         </header>
 
         <section class="alm-block">
@@ -97,7 +93,7 @@
             return players.map((player, i) => `
                 <li>
                     <span class="alm-division-seed">${String(i + 1).padStart(2, '0')}</span>
-                    <span class="alm-division-player">${player.name}</span>
+                    <a href="player-analysis.html?name=${encodeURIComponent(player.name)}" class="alm-division-player alm-ldr-name">${player.name}</a>
                     <span class="alm-division-elo">${player.elo}</span>
                 </li>`).join('');
         }

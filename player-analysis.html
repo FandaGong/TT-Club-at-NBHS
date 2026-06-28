@@ -19,44 +19,48 @@
     </style>
 </head>
 
-<body class="site-surface text-slate-900 min-h-screen">
+<body class="site-surface text-slate-900 min-h-screen flex flex-col">
     <div id="header-placeholder"></div>
 
-    <main class="site-shell max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div id="player-header" class="page-hero text-center p-6 sm:p-8 mb-8">
-            <div class="flex flex-col items-center justify-center gap-3">
-                <p class="page-hero-label">Player Profile</p>
-                <h1 id="player-name" class="page-hero-title text-4xl font-black uppercase italic">Loading...</h1>
-                <div id="player-tags" class="flex flex-wrap justify-center gap-2"></div>
+    <main class="almanac flex-grow w-full">
+      <div class="alm-shell">
+        <header id="player-header" class="alm-masthead--compact alm-block" style="border-bottom:2px solid var(--ink);padding-bottom:1.25rem;align-items:flex-start;">
+            <div>
+                <p class="alm-kicker">Player Profile</p>
+                <h1 id="player-name" class="alm-display alm-display--md mt-3">Loading…</h1>
+                <div id="player-tags" class="alm-ldr-tags" style="margin-left:0;margin-top:0.6rem;"></div>
             </div>
-            <div id="quick-stats" class="flex gap-6 mt-4 font-bold justify-center flex-wrap"></div>
-        </div>
+            <div id="quick-stats" class="alm-masthead-meta" style="margin-top:0;border-top:none;padding-top:0;"></div>
+        </header>
 
-        <div class="section-card p-6 rounded-2xl mb-8">
-            <h2 class="section-heading mb-4 uppercase italic text-slate-500">Elo Progress</h2>
-            <div class="relative h-[300px] w-full">
-                <canvas id="eloChart"></canvas>
+        <section class="alm-block">
+            <div class="alm-rule-head"><h2 class="alm-section-title">Elo Progress</h2></div>
+            <div class="alm-panel">
+                <div class="relative h-[300px] w-full">
+                    <canvas id="eloChart"></canvas>
+                </div>
             </div>
-        </div>
+        </section>
 
-        <div class="table-shell p-4 overflow-x-auto">
-            <h2 class="p-4 bg-slate-50 border-b font-bold uppercase text-slate-500">Match History</h2>
-            <table class="w-full min-w-max text-left">
-                <thead class="bg-slate-50 text-xs uppercase font-bold text-slate-400">
-                    <tr>
-                        <th class="p-4">Opponent</th>
-                        <th class="p-4">Result</th>
-                        <th class="p-4 text-center">Score</th>
-                        <th class="p-4 text-right">Δ Elo</th>
-                    </tr>
-                </thead>
-                <tbody id="history-table">
-                    <tr>
-                        <td colspan="4" class="p-10 text-center italic text-slate-400">Loading matches...</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+        <section class="alm-block">
+            <div class="alm-rule-head"><h2 class="alm-section-title">Match History</h2></div>
+            <div class="alm-ldr-record">
+                <table class="alm-ladder">
+                    <thead>
+                        <tr>
+                            <th>Opponent</th>
+                            <th class="ctr">Result</th>
+                            <th class="ctr">Score</th>
+                            <th class="num">Δ Elo</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history-table">
+                        <tr><td colspan="4" style="padding:2.5rem;text-align:center;color:var(--ink-faint);">Loading matches…</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+      </div>
     </main>
     <div id="footer-placeholder"></div>
 
@@ -109,19 +113,15 @@
         }
 
         function renderPlayerTags(name) {
-            return getPlayerTags(name).map(tag => `
-                <span class="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-blue-700">
-                    ${tag}
-                </span>
-            `).join('');
+            return getPlayerTags(name).map(tag => `<span>${tag}</span>`).join('');
         }
 
         async function init() {
             if (!playerName) {
                 document.getElementById('player-name').innerText = 'Select a Player';
                 document.getElementById('player-tags').innerHTML = '';
-                document.getElementById('quick-stats').innerHTML = '<span class="text-slate-500 text-sm font-bold uppercase italic">Open Rankings and choose a player to view their stats.</span>';
-                document.getElementById('history-table').innerHTML = `<tr><td colspan="4" class="p-10 text-center italic text-slate-400">No player selected. Open this page from the Rankings list.</td></tr>`;
+                document.getElementById('quick-stats').innerHTML = '<span class="alm-eyebrow">Open Rankings and choose a player to view their stats.</span>';
+                document.getElementById('history-table').innerHTML = `<tr><td colspan="4" style="padding:2.5rem;text-align:center;color:var(--ink-faint);">No player selected. Open this page from the Rankings list.</td></tr>`;
                 return;
             }
             document.getElementById('player-name').innerText = playerName;
@@ -153,15 +153,12 @@
                         return found.half;
                     })();
                     document.getElementById('quick-stats').innerHTML = `
-                        <div class="mt-4 flex flex-wrap gap-6 font-black uppercase italic tracking-tighter text-sm sm:text-base">
-                            <span class="text-red-700">ELO: ${elo}</span>
-                            <span class="text-green-600">WINS: ${wins}</span>
-                            <span class="text-red-500">LOSSES: ${losses}</span>
-                            <div class="border-l border-slate-300 pl-6 flex gap-4 text-slate-400">
-                                <span>${division}</span>
-                                <span>${dayLabel}</span>
-                            </div>
-                        </div>`;
+                        <div class="alm-stat"><span class="alm-stat-num" style="color:var(--oxblood);">${elo}</span><span class="alm-stat-label">Elo</span></div>
+                        <div class="alm-stat"><span class="alm-stat-num" style="color:#2f6b3a;">${wins}</span><span class="alm-stat-label">Wins</span></div>
+                        <div class="alm-stat"><span class="alm-stat-num">${losses}</span><span class="alm-stat-label">Losses</span></div>
+                        <div class="alm-stat"><span class="alm-stat-num" style="font-size:1.1rem;">${division}</span><span class="alm-stat-label">Division</span></div>
+                        <div class="alm-stat"><span class="alm-stat-num" style="font-size:1.1rem;">${dayLabel}</span><span class="alm-stat-label">Day</span></div>
+                    `;
                 }
             } catch (err) { console.error("Stats load error:", err); }
         }
@@ -185,7 +182,7 @@
                 const labels = ['Start'];
 
                 if (playerMatches.length === 0) {
-                    table.innerHTML = `<tr><td colspan="4" class="p-10 text-center text-slate-400 font-bold">No matches found in history.</td></tr>`;
+                    table.innerHTML = `<tr><td colspan="4" style="padding:2.5rem;text-align:center;color:var(--ink-faint);">No matches found in history.</td></tr>`;
                     renderChart(eloProgress, labels);
                     return;
                 }
@@ -203,18 +200,14 @@
                     }
 
                     const hasWon = (winner || '').toLowerCase() === playerName.toLowerCase();
-                    const deltaColor = (delta || '').includes('+') ? 'text-green-600' : 'text-red-600';
+                    const deltaColor = (delta || '').includes('+') ? '#2f6b3a' : 'var(--oxblood)';
 
                     return `
-                <tr class="border-b hover:bg-slate-50 transition-colors">
-                    <td class="p-4 font-bold text-slate-800">${opponent}</td>
-                    <td class="p-4">
-                        <span class="px-2 py-1 rounded text-[10px] font-black ${hasWon ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">
-                            ${hasWon ? 'WIN' : 'LOSS'}
-                        </span>
-                    </td>
-                    <td class="p-4 text-center font-mono font-bold text-slate-600">${score}</td>
-                    <td class="p-4 text-right font-bold ${deltaColor}">${delta}</td>
+                <tr>
+                    <td><a href="player-analysis.html?name=${encodeURIComponent(opponent)}" class="alm-ldr-name">${opponent}</a></td>
+                    <td class="ctr"><span class="alm-match-tag ${hasWon ? 'win' : 'loss'}">${hasWon ? 'Win' : 'Loss'}</span></td>
+                    <td class="ctr"><span class="alm-ldr-num">${score}</span></td>
+                    <td class="num"><span class="alm-ldr-num" style="color:${deltaColor};">${delta}</span></td>
                 </tr>`;
                 }).join('');
 
@@ -245,12 +238,12 @@
                     datasets: [{
                         label: 'Elo Rating',
                         data: historyData,
-                        borderColor: '#991b1b',
+                        borderColor: '#7c1d1d',
                         borderWidth: 3,
-                        pointBackgroundColor: '#991b1b',
+                        pointBackgroundColor: '#7c1d1d',
                         tension: 0.3,
                         fill: true,
-                        backgroundColor: 'rgba(153, 27, 27, 0.1)'
+                        backgroundColor: 'rgba(124, 29, 29, 0.1)'
                     }]
                 },
                 options: {

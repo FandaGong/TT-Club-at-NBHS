@@ -18,43 +18,47 @@
     <div id="header-placeholder"></div>
 
     <!-- CHANGE 2: Added id, flex-grow, and opacity-0 -->
-    <main id="main-content" class="site-shell max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow w-full transition-opacity duration-300">
-        <div class="page-hero text-center py-8 px-4 sm:px-8 mb-8 fade-up">
-            <h1 class="page-hero-title text-3xl font-bold mt-3">Hall of Fame</h1>
-            <p class="page-hero-copy mt-3">Historic season winners and club milestones.</p>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
-            <div class="metric-card p-6 rounded-2xl fade-up fade-up-d1">
-                <div class="mb-4 inline-flex h-2 w-14 rounded-full bg-red-800"></div>
-                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Highest Ever Elo</p>
-                <p id="top-elo-val" class="text-2xl font-black text-red-900 mt-1">N/A</p>
-                <p id="top-elo-player" class="text-[10px] text-slate-500 font-bold uppercase mt-1">N/A</p>
+    <main id="main-content" class="almanac flex-grow w-full transition-opacity duration-300">
+      <div class="alm-shell">
+        <header class="alm-masthead--compact alm-block" style="border-bottom:2px solid var(--ink);padding-bottom:1.25rem;">
+            <div>
+                <p class="alm-kicker">Club milestones</p>
+                <h1 class="alm-display alm-display--md mt-3">Hall of<br>Fame</h1>
             </div>
-            <div class="metric-card p-6 rounded-2xl fade-up fade-up-d2">
-                <div class="mb-4 inline-flex h-2 w-14 rounded-full bg-green-600"></div>
-                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Most Match Wins</p>
-                <p id="top-wins-val" class="text-2xl font-black text-green-700 mt-1">N/A</p>
-                <p id="top-wins-player" class="text-[10px] text-slate-500 font-bold uppercase mt-1">N/A</p>
+        </header>
+
+        <section class="alm-block">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="alm-datacard">
+                    <p class="t">Highest Ever Elo</p>
+                    <p id="top-elo-val" class="v" style="color:var(--oxblood);">N/A</p>
+                    <p id="top-elo-player" class="d" style="font-family:var(--font-mono);text-transform:uppercase;font-size:0.7rem;letter-spacing:0.1em;">N/A</p>
+                </div>
+                <div class="alm-datacard">
+                    <p class="t">Most Match Wins</p>
+                    <p id="top-wins-val" class="v" style="color:#2f6b3a;">N/A</p>
+                    <p id="top-wins-player" class="d" style="font-family:var(--font-mono);text-transform:uppercase;font-size:0.7rem;letter-spacing:0.1em;">N/A</p>
+                </div>
+                <div class="alm-datacard">
+                    <p class="t">Biggest Upset</p>
+                    <p id="top-upset-val" class="v" style="color:#c2410c;">N/A</p>
+                    <p id="top-upset-desc" class="d" style="font-family:var(--font-mono);text-transform:uppercase;font-size:0.7rem;letter-spacing:0.1em;">N/A</p>
+                </div>
             </div>
-            <div class="metric-card p-6 rounded-2xl fade-up fade-up-d3">
-                <div class="mb-4 inline-flex h-2 w-14 rounded-full bg-orange-500"></div>
-                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Biggest Upset</p>
-                <p id="top-upset-val" class="text-2xl font-black text-orange-600 mt-1">N/A</p>
-                <p id="top-upset-desc" class="text-[10px] text-slate-500 font-bold uppercase mt-1">N/A</p>
+        </section>
+
+        <section class="alm-block">
+            <div class="alm-rule-head"><h2 class="alm-section-title">Season Archives</h2></div>
+            <div id="season-grid" class="grid gap-4 md:grid-cols-2">
+                <div style="grid-column:1/-1;padding:2.5rem;text-align:center;" class="alm-eyebrow">Fetching archive records…</div>
             </div>
-        </div>
 
-        <h2 class="section-heading mb-4 fade-up fade-up-d4">Season Archives</h2>
-
-        <div id="season-grid" class="grid gap-6 md:grid-cols-2">
-            <div class="col-span-full p-10 text-center text-slate-400 italic">Fetching archive records...</div>
-        </div>
-
-        <div class="archive-card mt-6 p-6 border border-dashed border-slate-300 flex flex-col items-center justify-center text-center fade-up">
-            <p class="text-sm font-bold text-slate-400 uppercase tracking-widest">Term 2 2026</p>
-            <p class="text-[10px] text-slate-400 mt-1 italic">Season is currently live. Records will be finalized at the end of the term.</p>
-        </div>
+            <div class="alm-panel" style="margin-top:1rem;border-style:dashed;text-align:center;">
+                <p class="alm-eyebrow">Term 2 2026</p>
+                <p class="alm-mh-date" style="margin-top:0.4rem;">Season is currently live. Records will be finalized at the end of the term.</p>
+            </div>
+        </section>
+      </div>
     </main>
 
     <!-- CHANGE 3: Added id, mt-auto, and opacity-0 -->
@@ -104,7 +108,7 @@
                 if (topUpsetVal) topUpsetVal.innerText = 'N/A';
                 if (topUpsetDesc) topUpsetDesc.innerText = 'No data available';
                 if (grid) {
-                    grid.innerHTML = `<div class="col-span-full border border-dashed border-slate-300 bg-white p-6 text-center text-slate-500 text-sm">${message}</div>`;
+                    grid.innerHTML = `<div style="grid-column:1/-1;border:1px dashed var(--rule-strong);background:var(--paper);padding:2rem;text-align:center;" class="alm-eyebrow">${message}</div>`;
                 }
             };
 
@@ -153,25 +157,26 @@
                     if (topUpsetVal) topUpsetVal.innerText = Number.isFinite(maxUpsetVal) && maxUpsetVal > 0 ? `${maxUpsetVal} pts` : 'N/A';
                     if (topUpsetDesc) topUpsetDesc.innerText = maxUpsetDesc || 'No data available';
 
-                    let delay = 5; // Start staggering from d5
                     grid.innerHTML = seasons.map(rec => `
-                        <div class="bg-white p-4 border border-slate-200 fade-up fade-up-d${delay++}">
-                            <div class="bg-red-50 border-b border-slate-200 p-4 flex justify-between items-center">
-                                <span class="font-bold text-red-900 italic uppercase">${rec.season_name}</span>
-                                <span class="bg-red-100 text-red-700 text-[10px] px-2 py-1 rounded font-black uppercase">${rec.status || ''}</span>
+                        <div class="alm-season">
+                            <div class="alm-season-head">
+                                <span class="alm-season-name">${rec.season_name}</span>
+                                <span class="alm-season-status">${rec.status || ''}</span>
                             </div>
-                            <div class="p-6">
-                                <div class="flex justify-between items-center mb-4">
-                                    <span class="text-sm font-semibold text-slate-500">Champion</span>
-                                    <span class="text-lg font-bold text-red-800">${rec.champion || ''}</span>
+                            <div class="alm-season-body">
+                                <div class="alm-season-champ">
+                                    <span class="k">Champion</span>
+                                    <span class="v">${rec.champion || '—'}</span>
                                 </div>
-                                <div class="grid grid-cols-2 gap-4 text-center border-t border-b border-slate-200 py-4 mb-4">
-                                    <div><p class="text-[10px] font-bold text-slate-400 uppercase">Most Wins</p><p class="text-[11px] font-bold text-slate-700">${rec.most_wins || ''}</p></div>
-                                    <div><p class="text-[10px] font-bold text-slate-400 uppercase">Biggest Upset</p><p class="text-[11px] font-bold text-slate-700">${rec.biggest_upset || ''}</p></div>
+                                <div class="alm-season-stats">
+                                    <div><p class="k">Most Wins</p><p class="v">${rec.most_wins || '—'}</p></div>
+                                    <div><p class="k">Biggest Upset</p><p class="v">${rec.biggest_upset || '—'}</p></div>
                                 </div>
-                                <p class="text-[10px] font-bold text-slate-400 uppercase mb-2 text-center">Top 3 Players</p>
-                                <div class="flex flex-wrap justify-center gap-1">
-                                    ${((rec.top_3_players || '')).split(',').map(n => `<span class="bg-slate-100 px-2 py-0.5 rounded text-[10px] font-bold">${n.trim()}</span>`).join('')}
+                                <div class="alm-season-top">
+                                    <p class="k">Top 3 Players</p>
+                                    <div class="alm-season-chips">
+                                        ${((rec.top_3_players || '')).split(',').filter(n => n.trim()).map(n => `<span class="alm-season-chip">${n.trim()}</span>`).join('') || '<span class="alm-season-chip">—</span>'}
+                                    </div>
                                 </div>
                             </div>
                         </div>

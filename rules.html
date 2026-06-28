@@ -14,60 +14,64 @@
 <body class="site-surface text-slate-900 font-sans min-h-screen flex flex-col">
         <div id="header-placeholder"></div>
 
-    <main id="main-content" class="site-shell max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 opacity-0 transition-opacity duration-300">
-        <section class="space-y-8">
-            <div class="page-hero text-center py-10 px-4 sm:px-8 fade-up">
-                <h1 class="page-hero-title text-4xl font-extrabold uppercase italic tracking-tight mt-3">Rules & Regulations</h1>
-                <p class="page-hero-copy mt-2 font-medium">Official club guidelines for tournament play and casual spars.</p>
+    <main id="main-content" class="almanac flex-grow w-full opacity-0 transition-opacity duration-300">
+      <div class="alm-shell">
+        <header class="alm-masthead--compact alm-block" style="border-bottom:2px solid var(--ink);padding-bottom:1.25rem;">
+            <div>
+                <p class="alm-kicker">Official guidelines</p>
+                <h1 class="alm-display alm-display--md mt-3">Rules &amp;<br>Regulations</h1>
             </div>
+        </header>
 
+        <section class="alm-block">
             <!-- All Rules Loaded from Database -->
-            <div id="custom-rules-container" class="space-y-6"></div>
+            <div id="custom-rules-container" class="space-y-4"></div>
 
-            <!-- Admin Editor (Red Themed) -->
-            <div id="admin-form-container" class="hidden form-shell p-8 mt-8 fade-up">
-                <div class="flex items-center gap-3 mb-6">
-                    <button type="button" id="mode-form-btn" onclick="switchMode('form')" class="px-4 py-2 text-sm font-bold bg-red-800 text-white transition shadow-sm btn-hover">Form Mode</button>
-                    <button type="button" id="mode-text-btn" onclick="switchMode('text')" class="px-4 py-2 text-sm font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">Text Editor</button>
+            <!-- Admin Editor -->
+            <div id="admin-form-container" class="hidden alm-panel" style="margin-top:2rem;">
+                <div class="alm-toggle mb-6">
+                    <button type="button" id="mode-form-btn" onclick="switchMode('form')" class="is-active">Form Mode</button>
+                    <button type="button" id="mode-text-btn" onclick="switchMode('text')">Text Editor</button>
                 </div>
 
                 <div id="form-mode">
-                    <h3 id="form-container-title" class="section-heading mb-2">Add a Club Rule</h3>
-                    <p id="form-container-subtitle" class="section-subhead text-sm mb-6">Changes made here sync instantly to the club database.</p>
+                    <div class="alm-rule-head"><h3 id="form-container-title" class="alm-section-title" style="font-size:1.2rem;">Add a Club Rule</h3></div>
+                    <p id="form-container-subtitle" class="alm-mh-date" style="margin-bottom:1.25rem;">Changes made here sync instantly to the club database.</p>
                     <form id="add-rule-form" class="space-y-4">
                         <div>
-                            <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1">Rule Title</label>
-                            <input type="text" id="rule-title" placeholder="e.g., Conduct" required class="w-full border-slate-200 focus:border-red-500 focus:ring-red-500 p-3 border outline-none transition-all">
+                            <label class="alm-field-label">Rule Title</label>
+                            <input type="text" id="rule-title" placeholder="e.g., Conduct" required class="alm-input">
                         </div>
                         <div>
-                            <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1">Outline Level</label>
-                            <select id="rule-level" class="w-full border-slate-200 focus:border-red-500 focus:ring-red-500 p-3 border bg-white outline-none transition-all">
+                            <label class="alm-field-label">Outline Level</label>
+                            <select id="rule-level" class="alm-select">
                                 <option value="1">Section (Header)</option>
                                 <option value="2">Sub-rule (1.1)</option>
                                 <option value="3">Detail (1.1.1)</option>
                             </select>
                         </div>
                         <div id="desc-container">
-                            <label class="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1">Description</label>
-                            <textarea id="rule-desc" rows="3" required class="w-full border-slate-200 focus:border-red-500 focus:ring-red-500 p-3 border outline-none transition-all"></textarea>
+                            <label class="alm-field-label">Description</label>
+                            <textarea id="rule-desc" rows="3" required class="alm-input"></textarea>
                         </div>
-                        <div class="flex gap-4 pt-2">
-                            <button type="submit" id="submit-btn" class="bg-red-800 text-white px-6 py-3 hover:bg-red-900 transition font-bold">Add Rule</button>
-                            <button type="button" id="cancel-edit-btn" class="hidden bg-slate-100 text-slate-600 px-6 py-3 hover:bg-slate-200 transition font-bold" onclick="cancelEdit()">Cancel</button>
+                        <div class="flex gap-3 pt-2">
+                            <button type="submit" id="submit-btn" class="alm-btn">Add Rule</button>
+                            <button type="button" id="cancel-edit-btn" class="hidden alm-btn alm-btn--ghost" onclick="cancelEdit()">Cancel</button>
                         </div>
                     </form>
                 </div>
 
                 <div id="text-mode" class="hidden">
-                    <h3 class="text-xl font-bold text-slate-800 mb-4">Bulk Text Editor</h3>
-                    <textarea id="text-editor" rows="15" class="w-full border-slate-200 focus:border-red-500 focus:ring-red-500 p-4 border font-mono text-sm leading-relaxed bg-slate-50 outline-none" spellcheck="false"></textarea>
+                    <div class="alm-rule-head"><h3 class="alm-section-title" style="font-size:1.2rem;">Bulk Text Editor</h3></div>
+                    <textarea id="text-editor" rows="15" class="alm-input" style="font-family:var(--font-mono);font-size:0.82rem;line-height:1.6;" spellcheck="false"></textarea>
                     <div class="flex items-center gap-4 mt-6">
-                        <button type="button" id="save-text-btn" onclick="saveTextRules()" class="bg-red-800 text-white px-6 py-3 hover:bg-red-900 transition font-bold">Save All Changes</button>
-                        <span id="text-save-status" class="text-sm font-medium"></span>
+                        <button type="button" id="save-text-btn" onclick="saveTextRules()" class="alm-btn">Save All Changes</button>
+                        <span id="text-save-status" class="alm-eyebrow"></span>
                     </div>
                 </div>
             </div>
         </section>
+      </div>
     </main>
 
     <div id="footer-placeholder"></div>
@@ -157,19 +161,17 @@
             document.getElementById('page-footer').classList.remove('opacity-0');
         }
 
-        // Mode Switching (Updated to Red Theme)
+        // Mode Switching
         window.switchMode = function (mode) {
             const formMode = document.getElementById('form-mode'), textMode = document.getElementById('text-mode');
             const formBtn = document.getElementById('mode-form-btn'), textBtn = document.getElementById('mode-text-btn');
             if (mode === 'text') {
                 formMode.classList.add('hidden'); textMode.classList.remove('hidden');
-                formBtn.className = 'px-4 py-2 rounded-xl text-sm font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition';
-                textBtn.className = 'px-4 py-2 rounded-xl text-sm font-bold bg-red-800 text-white transition shadow-sm';
+                formBtn.classList.remove('is-active'); textBtn.classList.add('is-active');
                 document.getElementById('text-editor').value = rulesToText(customRules);
             } else {
                 textMode.classList.add('hidden'); formMode.classList.remove('hidden');
-                textBtn.className = 'px-4 py-2 rounded-xl text-sm font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition';
-                formBtn.className = 'px-4 py-2 rounded-xl text-sm font-bold bg-red-800 text-white transition shadow-sm';
+                textBtn.classList.remove('is-active'); formBtn.classList.add('is-active');
                 cancelEdit();
             }
         };
@@ -182,9 +184,9 @@
 
             if (message) {
                 container.innerHTML = `
-                    <div class="bg-white border border-red-100 shadow-sm p-6 md:p-8 fade-up">
-                        <h2 class="text-xl font-black text-red-900 uppercase italic">Rules unavailable</h2>
-                        <p class="mt-2 text-sm text-slate-600">${escapeHtml(message)}</p>
+                    <div class="alm-panel fade-up">
+                        <h2 class="alm-section-title" style="font-size:1.2rem;">Rules unavailable</h2>
+                        <p class="mt-2 text-sm" style="color:var(--ink-soft);">${escapeHtml(message)}</p>
                     </div>
                 `;
                 return;
@@ -192,9 +194,9 @@
 
             if (!customRules.length) {
                 container.innerHTML = `
-                    <div class="bg-white border border-slate-200 shadow-sm p-6 md:p-8 fade-up">
-                        <h2 class="text-xl font-black text-red-900 uppercase italic">No rules published yet</h2>
-                        <p class="mt-2 text-sm text-slate-600">${isAdmin ? 'Use the editor below to add the first club rule.' : 'Ask a club admin to publish the current club rules.'}</p>
+                    <div class="alm-panel fade-up">
+                        <h2 class="alm-section-title" style="font-size:1.2rem;">No rules published yet</h2>
+                        <p class="mt-2 text-sm" style="color:var(--ink-soft);">${isAdmin ? 'Use the editor below to add the first club rule.' : 'Ask a club admin to publish the current club rules.'}</p>
                     </div>
                 `;
                 return;
@@ -224,35 +226,34 @@
             let delay = 1;
             sections.forEach((section) => {
                 const sectionDiv = document.createElement('div');
-                sectionDiv.className = `bg-white border border-slate-200 shadow-sm p-6 md:p-8 fade-up fade-up-d${Math.min(delay++, 9)}`;
-                
-                let adminHtml = isAdmin ? `<div class="flex gap-2"><button onclick="editRule(${section.rule.id})" class="text-slate-400 hover:text-red-800">Edit</button><button onclick="deleteRule(${section.rule.id})" class="text-slate-400 hover:text-red-600">Delete</button></div>` : '';
-                
-                let html = `<div class="flex justify-between items-start mb-4"><h2 class="text-2xl text-red-900 uppercase italic"><span class="font-normal">${section.number}.</span> <span class="font-black">${section.rule.title}</span></h2>${adminHtml}</div>`;
-                
+                sectionDiv.className = `alm-panel fade-up fade-up-d${Math.min(delay++, 9)}`;
+
+                let adminHtml = isAdmin ? `<div class="flex gap-3" style="font-family:var(--font-mono);font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;"><button onclick="editRule(${section.rule.id})" class="alm-link">Edit</button><button onclick="deleteRule(${section.rule.id})" class="alm-link" style="color:var(--oxblood);">Delete</button></div>` : '';
+
+                let html = `<div class="flex justify-between items-start mb-3 gap-3"><h2 class="alm-section-title" style="font-size:1.4rem;"><span style="color:var(--oxblood);font-family:var(--font-mono);font-weight:700;">${section.number}.</span> ${section.rule.title}</h2>${adminHtml}</div>`;
+
                 if (section.rule.description) {
-                    html += `<p class="text-slate-600 leading-relaxed mb-4">${section.rule.description}</p>`;
+                    html += `<p style="color:var(--ink-soft);line-height:1.6;margin-bottom:1rem;">${section.rule.description}</p>`;
                 }
-                
+
                 // Add nested rules with indentation
                 if (section.children.length > 0) {
                     html += '<div class="rule-children space-y-4 mt-4">';
                     section.children.forEach((child) => {
                         const childLevel = child.rule.level;
                         const levelClass = childLevel === 2 ? 'level-2' : 'level-3';
-                        const childAdminHtml = isAdmin ? `<div class="flex gap-2"><button onclick="editRule(${child.rule.id})" class="text-slate-400 hover:text-red-800">Edit</button><button onclick="deleteRule(${child.rule.id})" class="text-slate-400 hover:text-red-600">Delete</button></div>` : '';
-                        const headingClass = childLevel === 2 ? 'font-normal text-slate-800' : 'font-normal text-slate-700';
-                        
+                        const childAdminHtml = isAdmin ? `<div class="flex gap-3" style="font-family:var(--font-mono);font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;"><button onclick="editRule(${child.rule.id})" class="alm-link">Edit</button><button onclick="deleteRule(${child.rule.id})" class="alm-link" style="color:var(--oxblood);">Delete</button></div>` : '';
+
                         html += `<div class="rule-child ${levelClass}">`;
-                        html += `<div class="flex justify-between items-start mb-2"><h3 class="${headingClass}">${child.number} ${child.rule.title}</h3>${childAdminHtml}</div>`;
+                        html += `<div class="flex justify-between items-start mb-1 gap-3"><h3 style="font-weight:700;color:var(--ink);"><span style="font-family:var(--font-mono);color:var(--ink-faint);font-weight:700;margin-right:0.4rem;">${child.number}</span>${child.rule.title}</h3>${childAdminHtml}</div>`;
                         if (child.rule.description) {
-                            html += `<p class="text-sm text-slate-600 leading-relaxed">${child.rule.description}</p>`;
+                            html += `<p style="font-size:0.9rem;color:var(--ink-soft);line-height:1.6;">${child.rule.description}</p>`;
                         }
                         html += '</div>';
                     });
                     html += '</div>';
                 }
-                
+
                 sectionDiv.innerHTML = html;
                 container.appendChild(sectionDiv);
             });
