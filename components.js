@@ -156,28 +156,30 @@ async function updateAuthUI(session) {
         profileText.style.opacity = '1';
     }
 
-    if (adminText) {
-        adminText.textContent = 'Admin Portal';
-        adminText.style.opacity = '1';
-    }
-
     if (adminLink) {
-        let shouldShowAdminLink = false;
+        let role = 'guest';
         if (session && session.user && session.user.email) {
             const email = (session.user.email || '').toLowerCase();
             try {
                 if (window._resolveAccountRole) {
-                    const role = await window._resolveAccountRole(email);
-                    shouldShowAdminLink = role === 'admin';
+                    role = await window._resolveAccountRole(email);
                 } else {
                     const adminEmails = (window._adminEmails || []).slice();
-                    shouldShowAdminLink = adminEmails.includes(email);
+                    role = adminEmails.includes(email) ? 'admin' : 'standard';
                 }
             } catch (err) {
-                shouldShowAdminLink = false;
+                role = 'standard';
             }
         }
-        adminLink.classList.toggle('hidden', !shouldShowAdminLink);
+        // Signed-out: hide the account link entirely.
+        // Admin: "Admin Portal". Standard user: "Standard User".
+        // Both roles link to admin.html, which shows role-appropriate tools.
+        const signedIn = role === 'admin' || role === 'standard';
+        adminLink.classList.toggle('hidden', !signedIn);
+        if (adminText && signedIn) {
+            adminText.textContent = role === 'admin' ? 'Admin Portal' : 'Standard User';
+            adminText.style.opacity = '1';
+        }
     }
 }
 

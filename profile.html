@@ -11,6 +11,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="animations.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="icon" type="image/png" href="favicon.png">
 </head>
 
@@ -222,7 +223,7 @@
             const labels = eloSeries.map((_, i) => `Match ${i + 1}`);
             const ctx = canvas.getContext('2d');
             if (window._eloChart) window._eloChart.destroy();
-            const accent = '#7c1d1d';
+            const accent = (getComputedStyle(document.documentElement).getPropertyValue('--accent-color') || '').trim() || '#7c1d1d';
             window._eloChart = new Chart(ctx, {
                 type: 'line',
                 data: {
@@ -235,7 +236,7 @@
                         pointBackgroundColor: accent,
                         tension: 0.3,
                         fill: true,
-                        backgroundColor: 'rgba(153, 27, 27, 0.1)'
+                        backgroundColor: 'color-mix(in srgb, ' + accent + ' 12%, transparent)'
                     }]
                 },
                 options: {

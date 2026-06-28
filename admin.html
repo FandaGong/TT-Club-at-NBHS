@@ -8,6 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="animations.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="icon" type="image/png" href="favicon.png">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -18,289 +19,155 @@
     <div id="header-placeholder"></div>
 
     <!-- 2. MAIN CONTENT -->
-    <main id="main-content" class="admin-main max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow w-full opacity-0 transition-opacity duration-500">
-        <section class="space-y-8">
-            <div class="admin-hero text-center py-10 px-6 sm:px-10 fade-up">
-                <div class="mx-auto max-w-3xl">
-                    <h1 id="pageTitle" class="text-4xl font-extrabold text-slate-950 mt-2">Login</h1>
-                    <p id="pageSubtitle" class="admin-hero-lead mt-3">Log in to as an admin to manage club stats and data or log in as a standard user to view personal stats and profile.</p>
-                </div>
+    <main id="main-content" class="almanac admin-surface flex-grow w-full opacity-0 transition-opacity duration-500">
+      <div class="alm-shell">
+        <header class="alm-masthead--compact alm-block" style="border-bottom:2px solid var(--ink);padding-bottom:1.25rem;">
+            <div>
+                <p id="pageKicker" class="alm-kicker">Club administration</p>
+                <h1 id="pageTitle" class="alm-display alm-display--md mt-3">Login</h1>
+                <p id="pageSubtitle" class="alm-lede mt-4">Log in as an admin to manage club stats and data, or as a standard user to view your profile.</p>
+            </div>
+        </header>
+
+        <!-- Login Container -->
+        <div id="loginContainer" class="alm-block alm-panel" style="max-width:42rem;margin-left:auto;margin-right:auto;">
+            <div class="alm-rule-head" style="flex-direction:column;align-items:flex-start;gap:0.3rem;">
+                <h2 id="authPanelTitle" class="alm-section-title" style="font-size:1.3rem;">Account Access</h2>
+                <p id="authPanelSubtitle" class="alm-mh-date">Admin access is login-only. Standard user login and account creation are available here.</p>
             </div>
 
-            <!-- Login Container -->
-            <div id="loginContainer" class="admin-login-shell bg-white/90 p-4 sm:p-6 border border-slate-200 max-w-3xl mx-auto fade-up-d1 backdrop-blur-sm">
-                <div class="text-center mb-6">
-                    <h2 id="authPanelTitle" class="text-xl font-bold text-slate-800">Account Access</h2>
-                    <p id="authPanelSubtitle" class="mt-2 text-sm text-slate-500">Admin access is login-only. Standard
-                        user login and account creation are available here.</p>
-                </div>
-
-                <div class="mb-3 grid grid-cols-1 sm:grid-cols-3 gap-1 bg-slate-100 p-1">
-                    <button id="dialogTabAdminLogin" type="button" data-tab="admin-login"
-                        class="bg-white px-4 py-3 text-sm font-semibold text-red-800 border border-slate-200 transition-colors">Admin
-                        Login</button>
-                    <button id="dialogTabStandardLogin" type="button" data-tab="standard-login"
-                        class="px-4 py-3 text-sm font-semibold text-slate-600 transition-colors hover:text-slate-900 border border-transparent">Standard
-                        User</button>
-                    <button id="dialogTabCreateAccount" type="button" data-tab="create-account"
-                        class="px-4 py-3 text-sm font-semibold text-slate-600 transition-colors hover:text-slate-900 border border-transparent">Create
-                        Account</button>
-                </div>
-
-                <!-- Admin Form -->
-                <div id="dialogPanelAdminLogin" class="space-y-4">
-                    <form id="adminLoginForm" class="space-y-4" action="javascript:void(0);"
-                        onsubmit="handleDialogLogin(event, 'admin')">
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Admin Email</label>
-                             <input id="adminEmail" type="email" placeholder="admin@nbhs.com"
-                                class="w-full p-3 border outline-none focus:ring-2 focus:ring-red-500 text-sm">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Password</label>
-                             <input id="adminPassword" type="password" placeholder="••••••••"
-                                class="w-full p-3 border outline-none focus:ring-2 focus:ring-red-500 text-sm">
-                        </div>
-                            <button type="submit"
-                                class="w-full bg-red-800 text-white px-4 py-3 font-bold hover:bg-red-900 transition-colors border border-red-900">Admin
-                                Login</button>
-                        <p id="adminLoginStatus" class="hidden text-sm font-medium text-center"></p>
-                    </form>
-                </div>
-
-                <!-- Standard Form -->
-                <div id="dialogPanelStandardLogin" class="hidden space-y-4">
-                    <form id="standardLoginForm" class="space-y-4" action="javascript:void(0);"
-                        onsubmit="handleDialogLogin(event, 'standard')">
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1"> Email</label>
-                             <input id="standardEmail" type="email" placeholder="you@example.com"
-                                class="w-full p-3 border outline-none focus:ring-2 focus:ring-red-500 text-sm">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Password</label>
-                             <input id="standardPassword" type="password" placeholder="••••••••"
-                                class="w-full p-3 border outline-none focus:ring-2 focus:ring-red-500 text-sm">
-                        </div>
-                            <button type="submit"
-                                class="w-full bg-slate-900 text-white px-4 py-3 font-bold hover:bg-slate-800 transition-colors border border-slate-800">Standard
-                                User Login</button>
-                        <p id="standardLoginStatus" class="hidden text-sm font-medium text-center"></p>
-                    </form>
-                </div>
-
-                <!-- Account Request Form -->
-                <div id="dialogPanelCreateAccount" class="hidden space-y-4">
-                    <p class="text-sm text-slate-600 mb-2">Account creation must be independently verified by an admin
-                        user before it will be approved.</p>
-                    <form id="accountRequestForm" class="grid grid-cols-1 gap-3">
-                         <input id="requestEmail" type="email" placeholder="Email to approve" required
-                             class="p-3 border outline-none focus:ring-2 focus:ring-red-500">
-                         <input id="requestPassword" type="password" placeholder="Create a password" required
-                             class="p-3 border outline-none focus:ring-2 focus:ring-red-500">
-                         <input id="requestConfirmPassword" type="password" placeholder="Confirm password" required
-                             class="p-3 border outline-none focus:ring-2 focus:ring-red-500">
-                            <button type="submit"
-                                class="bg-red-600 text-white px-5 py-3 font-bold hover:bg-red-700 transition-colors border border-red-700">Submit
-                                Request</button>
-                        <p id="accountRequestStatus" class="hidden text-sm font-medium"></p>
-                    </form>
-                </div>
+            <div class="alm-tabstrip mt-4">
+                <button id="dialogTabAdminLogin" type="button" data-tab="admin-login" class="is-active">Admin Login</button>
+                <button id="dialogTabStandardLogin" type="button" data-tab="standard-login">Standard User</button>
+                <button id="dialogTabCreateAccount" type="button" data-tab="create-account">Create Account</button>
             </div>
+
+            <!-- Admin Form -->
+            <div id="dialogPanelAdminLogin" class="space-y-4 mt-5">
+                <form id="adminLoginForm" class="space-y-4" action="javascript:void(0);" onsubmit="handleDialogLogin(event, 'admin')">
+                    <div>
+                        <label class="alm-field-label">Admin Email</label>
+                        <input id="adminEmail" type="email" placeholder="admin@nbhs.com" class="alm-input">
+                    </div>
+                    <div>
+                        <label class="alm-field-label">Password</label>
+                        <input id="adminPassword" type="password" placeholder="••••••••" class="alm-input">
+                    </div>
+                    <button type="submit" class="alm-btn w-full">Admin Login</button>
+                    <p id="adminLoginStatus" class="hidden text-sm font-medium text-center"></p>
+                </form>
+            </div>
+
+            <!-- Standard Form -->
+            <div id="dialogPanelStandardLogin" class="hidden space-y-4 mt-5">
+                <form id="standardLoginForm" class="space-y-4" action="javascript:void(0);" onsubmit="handleDialogLogin(event, 'standard')">
+                    <div>
+                        <label class="alm-field-label">Email</label>
+                        <input id="standardEmail" type="email" placeholder="you@example.com" class="alm-input">
+                    </div>
+                    <div>
+                        <label class="alm-field-label">Password</label>
+                        <input id="standardPassword" type="password" placeholder="••••••••" class="alm-input">
+                    </div>
+                    <button type="submit" class="alm-btn w-full" style="background:var(--ink);">Standard User Login</button>
+                    <p id="standardLoginStatus" class="hidden text-sm font-medium text-center"></p>
+                </form>
+            </div>
+
+            <!-- Account Request Form -->
+            <div id="dialogPanelCreateAccount" class="hidden space-y-4 mt-5">
+                <p class="alm-mh-date" style="margin-bottom:0.5rem;">Account creation must be independently verified by an admin before it is approved.</p>
+                <form id="accountRequestForm" class="grid grid-cols-1 gap-3">
+                    <input id="requestEmail" type="email" placeholder="Email to approve" required class="alm-input">
+                    <input id="requestPassword" type="password" placeholder="Create a password" required class="alm-input">
+                    <input id="requestConfirmPassword" type="password" placeholder="Confirm password" required class="alm-input">
+                    <button type="submit" class="alm-btn">Submit Request</button>
+                    <p id="accountRequestStatus" class="hidden text-sm font-medium"></p>
+                </form>
+            </div>
+        </div>
 
             <!-- Dashboard Container -->
-            <div id="dashboardContainer" class="hidden space-y-6 fade-up-d1">
-                <div
-                    class="admin-dashboard-banner flex flex-col sm:flex-row sm:justify-between gap-3 bg-white/90 p-4 sm:p-5 border border-slate-200 backdrop-blur-sm">
-                    <div class="space-y-1">
-                        <span class="text-slate-700 font-semibold" id="adminUserEmail">Logged in as: ...</span>
-                        <p id="dashboardAccessNote" class="text-sm text-slate-500">Loading account type...</p>
+            <div id="dashboardContainer" class="hidden alm-block">
+                <div class="alm-banner">
+                    <div>
+                        <span class="alm-banner-email" id="adminUserEmail">Logged in as: ...</span>
+                        <p id="dashboardAccessNote" class="alm-banner-note">Loading account type...</p>
                     </div>
                     <div class="flex flex-wrap gap-2">
-                        <button id="openProfileModalBtn" type="button"
-                            class="text-sm font-bold text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 px-4 py-2 transition-colors border border-slate-200">My
-                            Profile</button>
-                        <button id="adminLogoutBtn" type="button"
-                            class="text-sm font-bold text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 px-4 py-2 transition-colors border border-red-100">Log
-                            Out</button>
+                        <button id="openProfileModalBtn" type="button" class="alm-btn alm-btn--ghost">My Profile</button>
+                        <button id="adminLogoutBtn" type="button" class="alm-btn" style="background:var(--oxblood);">Log Out</button>
                     </div>
                 </div>
 
                 <!-- Standard User Dashboard View -->
-                <div id="standardUserNotice" class="hidden bg-white/90 p-6 border border-slate-100 backdrop-blur-sm">
-                    <h3 class="font-bold text-lg text-slate-800">Standard User Dashboard</h3>
-                    <p class="text-slate-600 text-sm mt-1">You are signed in. You can now submit Absence Reports without
-                        filling in your email.</p>
-                    <a href="absence-report.html"
-                        class="inline-block mt-4 text-red-600 font-semibold hover:underline text-sm">Go to Absence
-                        Reports &rarr;</a>
+                <div id="standardUserNotice" class="hidden alm-panel" style="margin-top:1.25rem;">
+                    <h3 class="alm-section-title" style="font-size:1.2rem;">Standard User Dashboard</h3>
+                    <p class="alm-mh-date" style="margin-top:0.5rem;">You are signed in. You can now submit Absence Reports without filling in your email.</p>
+                    <a href="absence-report.html" class="alm-link" style="display:inline-block;margin-top:1rem;">Go to Absence Reports →</a>
                 </div>
 
                 <!-- Admin Dashboard View -->
-                <div id="adminToolsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <div
-                        class="admin-tool-card bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-start gap-4">
-                        <div class="admin-tool-icon bg-purple-100 text-purple-700 p-3 rounded-xl">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
-                            </svg>
+                <div id="adminToolsContainer" class="hidden" style="margin-top:1.5rem;">
+                    <div class="alm-rule-head"><h2 class="alm-section-title">Admin Tools</h2></div>
+                    <nav class="alm-tools">
+                        <button id="openAccountRequestsModalBtn" type="button" class="alm-tool">
+                            <span class="alm-tool-num">01</span>
+                            <span><span class="alm-tool-title">Account Requests</span><span class="alm-tool-desc">Review pending account approvals.</span></span>
+                            <span class="alm-tool-arrow">→</span>
+                        </button>
+                        <button id="openAbsenceReportsModalBtn" type="button" class="alm-tool">
+                            <span class="alm-tool-num">02</span>
+                            <span><span class="alm-tool-title">Absence Reports</span><span class="alm-tool-desc">Manage student absence submissions.</span></span>
+                            <span class="alm-tool-arrow">→</span>
+                        </button>
+                        <a href="rules.html" class="alm-tool">
+                            <span class="alm-tool-num">03</span>
+                            <span><span class="alm-tool-title">Club Rules</span><span class="alm-tool-desc">Edit and review club rules and guidelines.</span></span>
+                            <span class="alm-tool-arrow">→</span>
+                        </a>
+                        <button id="openNameLinkModalBtn" type="button" class="alm-tool">
+                            <span class="alm-tool-num">04</span>
+                            <span><span class="alm-tool-title">Name Linking</span><span class="alm-tool-desc">Assign a display name to any account and link existing rows by that name.</span></span>
+                            <span class="alm-tool-arrow">→</span>
+                        </button>
+                        <button id="openManualMatchModalBtn" type="button" class="alm-tool">
+                            <span class="alm-tool-num">05</span>
+                            <span><span class="alm-tool-title">Manual Match Entry</span><span class="alm-tool-desc">Record a finished match and sync rankings, stats, and analytics together.</span></span>
+                            <span class="alm-tool-arrow">→</span>
+                        </button>
+                        <button id="openMatchManagementModalBtn" type="button" class="alm-tool">
+                            <span class="alm-tool-num">06</span>
+                            <span><span class="alm-tool-title">Match Management</span><span class="alm-tool-desc">View match history, filter by term/week, and delete records.</span></span>
+                            <span class="alm-tool-arrow">→</span>
+                        </button>
+                        <button id="openEloAdjustmentModalBtn" type="button" class="alm-tool">
+                            <span class="alm-tool-num">07</span>
+                            <span><span class="alm-tool-title">Elo Adjustment</span><span class="alm-tool-desc">Manually adjust a player's ELO rating.</span></span>
+                            <span class="alm-tool-arrow">→</span>
+                        </button>
+                        <button id="openWinLossEditorModalBtn" type="button" class="alm-tool">
+                            <span class="alm-tool-num">08</span>
+                            <span><span class="alm-tool-title">Win / Loss Editor</span><span class="alm-tool-desc">Manually edit a player's wins and losses record.</span></span>
+                            <span class="alm-tool-arrow">→</span>
+                        </button>
+                        <button id="openCsvImportModalBtn" type="button" class="alm-tool">
+                            <span class="alm-tool-num">09</span>
+                            <span><span class="alm-tool-title">CSV Import</span><span class="alm-tool-desc">Upload a CSV of players with ELO, division, and day. Auto-detects division from ELO.</span></span>
+                            <span class="alm-tool-arrow">→</span>
+                        </button>
+                    </nav>
+
+                    <div class="alm-danger">
+                        <h3>Season Management</h3>
+                        <div class="row">
+                            <button onclick="finalizeSeason()" class="alm-btn" style="background:var(--oxblood);">Finalize Season</button>
+                            <button onclick="resetSeason()" class="alm-btn" style="background:var(--ink);">Reset ELOs (New Term)</button>
                         </div>
-                        <div>
-                            <h3 class="font-bold text-lg text-slate-800">Account Requests</h3>
-                            <p class="text-slate-600 text-sm mt-1">Review pending account approvals.</p>
-                        </div>
-                        <button id="openAccountRequestsModalBtn" type="button"
-                            class="admin-tool-link mt-auto text-sm cursor-pointer">Review
-                            Requests &rarr;</button>
-                    </div>
-                    <div
-                        class="admin-tool-card bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-start gap-4">
-                        <div class="admin-tool-icon bg-red-100 text-red-700 p-3 rounded-xl">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                            </svg>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-lg text-slate-800">Absence Reports</h3>
-                            <p class="text-slate-600 text-sm mt-1">Manage student absence submissions.</p>
-                        </div>
-                        <button id="openAbsenceReportsModalBtn" type="button"
-                            class="admin-tool-link mt-auto text-sm cursor-pointer">View
-                            Reports &rarr;</button>
-                    </div>
-                    <div
-                        class="admin-tool-card bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-start gap-4">
-                        <div class="admin-tool-icon bg-slate-100 text-slate-700 p-3 rounded-xl">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                            </svg>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-lg text-slate-800">Club Rules</h3>
-                            <p class="text-slate-600 text-sm mt-1">Edit and review club rules and guidelines.</p>
-                        </div>
-                        <a href="rules.html" class="admin-tool-link mt-auto text-sm">Edit
-                            Rules &rarr;</a>
-                    </div>
-                    <div
-                        class="admin-tool-card bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-start gap-4">
-                        <div class="admin-tool-icon bg-emerald-100 text-emerald-700 p-3 rounded-xl">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M17 20h5v-2a4 4 0 00-5-4m-4 6H2v-2a4 4 0 014-4h8m-4-4a4 4 0 100-8 4 4 0 000 8zm6 4a4 4 0 100-8 4 4 0 000 8z" />
-                            </svg>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-lg text-slate-800">Name Linking</h3>
-                            <p class="text-slate-600 text-sm mt-1">Assign a display name to any account and link existing rows by that name.</p>
-                        </div>
-                        <button id="openNameLinkModalBtn" type="button"
-                            class="admin-tool-link mt-auto text-sm cursor-pointer">Link
-                            Names &rarr;</button>
-                    </div>
-                    <div
-                        class="admin-tool-card bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-start gap-4">
-                        <div class="admin-tool-icon bg-cyan-100 text-cyan-700 p-3 rounded-xl">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M4 6h16M4 10h16M4 14h10M4 18h6" />
-                            </svg>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-lg text-slate-800">Manual Match Entry</h3>
-                            <p class="text-slate-600 text-sm mt-1">Record a finished match and sync rankings, stats, and analytics together.</p>
-                        </div>
-                        <button id="openManualMatchModalBtn" type="button"
-                            class="admin-tool-link mt-auto text-sm cursor-pointer">Add
-                            Match Result &rarr;</button>
-                    </div>
-                    <div
-                        class="admin-tool-card bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-start gap-4">
-                        <div class="admin-tool-icon bg-orange-100 text-orange-700 p-3 rounded-xl">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 12l2 2 4-4M7 20H5a2 2 0 01-2-2V5a2 2 0 012-2h6.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2h-3m0-6l2 2 4-4" />
-                            </svg>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-lg text-slate-800">Match Management</h3>
-                            <p class="text-slate-600 text-sm mt-1">View match history, filter by term/week, and delete records.</p>
-                        </div>
-                        <button id="openMatchManagementModalBtn" type="button"
-                            class="admin-tool-link mt-auto text-sm cursor-pointer">Browse
-                            History &rarr;</button>
-                    </div>
-                    <div
-                        class="admin-tool-card bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-start gap-4">
-                        <div class="admin-tool-icon bg-blue-100 text-blue-700 p-3 rounded-xl">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M13 10V3L4 14h7v7l9-11h-7z" />
-                            </svg>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-lg text-slate-800">Elo Adjustment</h3>
-                            <p class="text-slate-600 text-sm mt-1">Manually adjust a player's ELO rating.</p>
-                        </div>
-                        <button id="openEloAdjustmentModalBtn" type="button"
-                            class="admin-tool-link mt-auto text-sm cursor-pointer">Adjust
-                            ELO &rarr;</button>
-                    </div>
-                    <div
-                        class="admin-tool-card bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-start gap-4">
-                        <div class="admin-tool-icon bg-red-100 text-red-700 p-3 rounded-xl">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-lg text-slate-800">Win/Loss Editor</h3>
-                            <p class="text-slate-600 text-sm mt-1">Manually edit a player's wins and losses record.</p>
-                        </div>
-                        <button id="openWinLossEditorModalBtn" type="button"
-                            class="admin-tool-link mt-auto text-sm cursor-pointer">Edit
-                            Wins/Losses &rarr;</button>
-                    </div>
-                    <div
-                        class="admin-tool-card bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-start gap-4">
-                        <div class="admin-tool-icon bg-indigo-100 text-indigo-700 p-3 rounded-xl">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                            </svg>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-lg text-slate-800">CSV Import</h3>
-                            <p class="text-slate-600 text-sm mt-1">Upload a CSV of players with ELO, division, and day. Auto-detects division from ELO.</p>
-                        </div>
-                        <button id="openCsvImportModalBtn" type="button"
-                            class="admin-tool-link mt-auto text-sm cursor-pointer">Import
-                            CSV &rarr;</button>
-                    </div>
-                    <div class="admin-tool-card bg-red-50 p-6 rounded-2xl shadow-sm border border-red-200 flex flex-col gap-4">
-                        <h3 class="font-bold text-lg text-red-900">Season Management</h3>
-                        <button onclick="finalizeSeason()"
-                            class="w-full bg-red-800 text-white px-4 py-2 rounded-lg font-bold btn-hover">Finalize Season</button>
-                        <button onclick="resetSeason()"
-                            class="w-full bg-slate-800 text-white px-4 py-2 rounded-lg font-bold btn-hover">Reset ELOs (New
-                            Term)</button>
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
     </main>
 
     <!-- 3. FOOTER PLACEHOLDER -->
@@ -1356,16 +1223,21 @@
                     document.getElementById('dashboardAccessNote').textContent = isAdmin ? 'Admin access granted.' : 'Standard user access granted.';
                     document.getElementById('standardUserNotice').classList.toggle('hidden', isAdmin);
                     document.getElementById('adminToolsContainer').classList.toggle('hidden', !isAdmin);
-                    document.getElementById('pageTitle').textContent = isAdmin ? 'Admin Panel' : 'Profile';
+                    document.getElementById('pageTitle').textContent = isAdmin ? 'Admin Panel' : 'Standard User Tools';
+                    const kicker = document.getElementById('pageKicker');
+                    if (kicker) kicker.textContent = isAdmin ? 'Club administration' : 'Standard User Tools';
 
                     // Ensure header account controls reflect current session state
                     try {
                         const adminLink = document.getElementById('navAdminLink');
                         const adminText = document.getElementById('navAdminLinkText');
                         const profileText = document.getElementById('navProfileLinkText');
-                        if (adminLink) adminLink.classList.toggle('hidden', !isAdmin);
+                        // The navbar "Admin Portal" link doubles as the account-area link:
+                        // admins see "Admin Portal", standard users see "Standard User".
+                        // Both point to admin.html and stay visible while signed in.
+                        if (adminLink) adminLink.classList.remove('hidden');
                         if (adminText) {
-                            adminText.textContent = 'Admin Portal';
+                            adminText.textContent = isAdmin ? 'Admin Portal' : 'Standard User';
                             adminText.style.opacity = '1';
                         }
                         if (profileText) {
@@ -1384,6 +1256,8 @@
                     loginContainer.classList.remove('hidden');
                     dashboardContainer.classList.add('hidden');
                     document.getElementById('pageTitle').textContent = 'Login';
+                    const kickerOut = document.getElementById('pageKicker');
+                    if (kickerOut) kickerOut.textContent = 'Club administration';
                     try {
                         const adminLink = document.getElementById('navAdminLink');
                         const profileText = document.getElementById('navProfileLinkText');
@@ -1419,7 +1293,7 @@
                 const panel = document.getElementById('dialogPanel' + t.split('-').map(s => s[0].toUpperCase() + s.slice(1)).join(''));
                 const isActive = t === tabName;
                 if (panel) panel.classList.toggle('hidden', !isActive);
-                if (btn) btn.className = isActive ? "rounded-xl bg-white px-4 py-3 text-sm font-semibold text-red-800 shadow-sm transition-colors" : "rounded-xl px-4 py-3 text-sm font-semibold text-slate-600 transition-colors hover:text-slate-900";
+                if (btn) btn.classList.toggle('is-active', isActive);
             });
         }
 
