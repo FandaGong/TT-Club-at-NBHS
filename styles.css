@@ -2726,7 +2726,7 @@ body:not([data-theme]) .almanac {
    theme/accent system. Works on every page.
    ═══════════════════════════════════════════════════════════════ */
 .site-nav {
-  --nav-bg: #7a1a1a;                 /* deep oxblood brand bar */
+  --nav-bg: #991b1b;                 /* original club red (red-800) */
   --nav-fg: #f7f2ec;
   --nav-fg-dim: rgba(247,242,236,0.72);
   --nav-hover: rgba(255,255,255,0.10);
@@ -2737,7 +2737,7 @@ body:not([data-theme]) .almanac {
   box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset;
 }
 /* Tie the bar to the chosen accent (deepened for legibility) */
-body[data-accent="red"] .site-nav { --nav-bg: #7a1a1a; }
+body[data-accent="red"] .site-nav { --nav-bg: #991b1b; }
 body[data-accent="blue"] .site-nav { --nav-bg: #15347a; }
 body[data-accent="green"] .site-nav { --nav-bg: #14532d; }
 body[data-accent="orange"] .site-nav { --nav-bg: #7c2d12; }

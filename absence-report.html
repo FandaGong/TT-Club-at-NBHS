@@ -10,6 +10,7 @@
     <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="animations.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="icon" type="image/png" href="favicon.png">
 </head>
 
@@ -17,33 +18,46 @@
 
     <div id="header-placeholder"></div>
 
-    <main id="main-content" class="site-shell max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow w-full opacity-0 transition-opacity duration-500">
-        <section class="form-shell bg-white/85 p-6 sm:p-8 site-radius-lg shadow-[0_18px_55px_rgba(127,29,29,0.08)] border border-red-100 backdrop-blur-sm fade-up-d1 card-hover">
-            <h1 class="page-hero-title text-3xl font-bold mt-3 mb-2">Club Absence Report</h1>
-            <p class="section-subhead text-sm mb-6">If you did not show up to club, submit your details so the team can
-                review your note. Note: you must be logged in to submit.</p>
+    <main id="main-content" class="almanac flex-grow w-full opacity-0 transition-opacity duration-500">
+      <div class="alm-shell" style="max-width:46rem;">
+        <header class="alm-masthead--compact alm-block" style="border-bottom:2px solid var(--ink);padding-bottom:1.25rem;">
+            <div>
+                <p class="alm-kicker">Missed a session?</p>
+                <h1 class="alm-display alm-display--md mt-3">Absence<br>Report</h1>
+                <p class="alm-lede mt-3">If you didn't show up to club, submit your details so the team can review your note. You must be logged in to submit.</p>
+            </div>
+        </header>
 
-            <div id="loginRequiredNotice" class="text-center py-8">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-slate-300 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-                <p class="text-slate-500 font-medium">You must be logged in to submit an absence report.</p>
-                <a href="admin.html" class="action-link inline-block mt-3 text-sm">Go to Login &rarr;</a>
+        <section class="alm-block alm-panel">
+            <div id="loginRequiredNotice" class="text-center" style="padding:2rem 1rem;">
+                <p class="alm-section-title" style="font-size:1.1rem;">Login required</p>
+                <p class="alm-mh-date" style="margin-top:0.5rem;">You must be logged in to submit an absence report.</p>
+                <a href="admin.html" class="alm-link" style="display:inline-block;margin-top:1rem;">Go to Login →</a>
             </div>
 
             <form id="absenceForm" class="hidden grid grid-cols-1 gap-3">
-                <input id="absenceName" type="text" placeholder="Submit your name" required class="compact-input p-3 rounded-xl outline-none focus:ring-2 focus:ring-red-500">
-                <input id="absenceEmail" type="email" placeholder="Your email" readonly class="compact-input p-3 rounded-xl bg-slate-50 text-slate-700 outline-none">
-                <textarea id="absenceReason" rows="5" placeholder="Reason for absence" required class="compact-textarea p-3 rounded-xl outline-none focus:ring-2 focus:ring-red-500"></textarea>
-                <button type="submit" class="bg-red-700 text-white px-5 py-3 rounded-xl font-bold btn-hover">Submit Absence</button>
+                <div>
+                    <label class="alm-field-label" for="absenceName">Your name</label>
+                    <input id="absenceName" type="text" placeholder="Submit your name" required class="alm-input">
+                </div>
+                <div>
+                    <label class="alm-field-label" for="absenceEmail">Email</label>
+                    <input id="absenceEmail" type="email" placeholder="Your email" readonly class="alm-input" style="background:var(--paper-2);">
+                </div>
+                <div>
+                    <label class="alm-field-label" for="absenceReason">Reason for absence</label>
+                    <textarea id="absenceReason" rows="5" placeholder="Reason for absence" required class="alm-input"></textarea>
+                </div>
+                <button type="submit" class="alm-btn">Submit Absence</button>
                 <p id="absenceSubmitStatus" class="hidden text-sm font-medium"></p>
             </form>
 
-            <div class="mt-8 border-t border-slate-200 pt-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <p class="text-sm font-medium text-slate-500">Only club admins can view submitted reports.</p>
-                <div class="flex items-center gap-2">
-                    <button id="adminShowReportsBtn" type="button" class="hidden text-sm font-bold bg-red-700 text-white px-4 py-2 rounded-xl btn-hover" onclick="openAdminReports()">View Reports</button>
-                </div>
+            <div class="mt-8 pt-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4" style="border-top:1px solid var(--rule);">
+                <p class="alm-mh-date">Only club admins can view submitted reports.</p>
+                <button id="adminShowReportsBtn" type="button" class="hidden alm-btn" onclick="openAdminReports()">View Reports</button>
             </div>
         </section>
+      </div>
     </main>
 
     <div id="footer-placeholder"></div>
