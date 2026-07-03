@@ -35,6 +35,8 @@ window._adminEmails = (window._adminEmails || [
         const font = readSetting('nbhs-font', 'sans');
         const density = readSetting('nbhs-density', 'comfortable');
         const reducedMotion = readSetting('nbhs-reduced-motion', 'false') === 'true';
+        const navLayout = readSetting('nbhs-nav-layout', 'top');
+        const sidebarCollapsed = readSetting('nbhs-sidebar-collapsed', 'false') === 'true';
         const densityScale = density === 'compact' ? 0.75 : density === 'spacious' ? 1.35 : 1;
         const accentValues = accentMap[accent] || accentMap.red;
 
@@ -43,6 +45,8 @@ window._adminEmails = (window._adminEmails || [
         document.body.dataset.font = font;
         document.body.dataset.density = density;
         document.body.dataset.reducedMotion = reducedMotion ? 'true' : 'false';
+        document.body.dataset.navLayout = navLayout;
+        document.body.dataset.sidebarCollapsed = sidebarCollapsed ? 'true' : 'false';
 
         document.documentElement.style.setProperty('--contrast-adjust', contrast.toFixed(2));
         document.documentElement.style.setProperty('--scale-factor', scale.toFixed(2));
@@ -71,7 +75,7 @@ const headerHTML = `
         <!-- Top row: Brand + toggle -->
         <div class="flex items-center justify-between w-full md:w-auto gap-2">
             <a href="index.html" class="site-brand inline-flex items-center gap-2.5 whitespace-nowrap">
-                <img src="favicon.png" alt="NBHS TT" class="site-brand-mark h-7 w-7 shrink-0" />
+                <img src="favicon.svg" alt="NBHS TT" class="site-brand-mark h-7 w-7 shrink-0" />
                 <span class="site-brand-text">
                     <span class="site-brand-name">NBHS Table Tennis</span>
                     <span class="site-brand-sub">Club Hub</span>
@@ -82,6 +86,11 @@ const headerHTML = `
                 <i id="menu-icon" data-lucide="menu" class="h-6 w-6"></i>
                 <i id="close-icon" data-lucide="x" class="h-6 w-6 hidden"></i>
             </button>
+
+            <button id="sidebarCollapseToggle" type="button" class="site-sidebar-toggle hidden shrink-0 items-center justify-center h-9 w-9" aria-label="Collapse sidebar" title="Collapse sidebar">
+                <i data-lucide="panel-left-close" class="site-sidebar-toggle-open h-5 w-5"></i>
+                <i data-lucide="panel-left-open" class="site-sidebar-toggle-closed h-5 w-5 hidden"></i>
+            </button>
         </div>
 
         <!-- Menu items -->
@@ -89,7 +98,7 @@ const headerHTML = `
             <!-- Matches Dropdown -->
             <div class="relative group w-full md:w-auto">
                 <button class="site-nav-item inline-flex items-center justify-between w-full px-3 py-3 md:w-auto md:px-3 md:py-2 md:justify-start">
-                    <span class="flex items-center gap-2"><i data-lucide="table-2" class="h-4 w-4 shrink-0"></i>Matches</span>
+                    <span class="flex items-center gap-2"><i data-lucide="table-2" class="h-4 w-4 shrink-0"></i><span class="site-nav-label">Matches</span></span>
                     <i data-lucide="chevron-down" class="site-nav-caret ml-2 h-4 w-4 shrink-0 md:h-3.5 md:w-3.5 md:ml-1"></i>
                 </button>
                 <div class="site-nav-menu max-h-0 md:max-h-none md:absolute md:left-0 md:mt-0 w-full md:w-52 opacity-0 md:opacity-0 invisible md:invisible md:group-hover:opacity-100 md:group-hover:visible transition-all duration-200 z-50 md:top-full overflow-hidden md:overflow-visible">
@@ -102,7 +111,7 @@ const headerHTML = `
             <!-- Club Info Dropdown -->
             <div class="relative group w-full md:w-auto">
                 <button class="site-nav-item inline-flex items-center justify-between w-full px-3 py-3 md:w-auto md:px-3 md:py-2 md:justify-start">
-                    <span class="flex items-center gap-2"><i data-lucide="info" class="h-4 w-4 shrink-0"></i>Club Info</span>
+                    <span class="flex items-center gap-2"><i data-lucide="info" class="h-4 w-4 shrink-0"></i><span class="site-nav-label">Club Info</span></span>
                     <i data-lucide="chevron-down" class="site-nav-caret ml-2 h-4 w-4 shrink-0 md:h-3.5 md:w-3.5 md:ml-1"></i>
                 </button>
                 <div class="site-nav-menu max-h-0 md:max-h-none md:absolute md:left-0 md:mt-0 w-full md:w-52 opacity-0 md:opacity-0 invisible md:invisible md:group-hover:opacity-100 md:group-hover:visible transition-all duration-200 z-50 md:top-full overflow-hidden md:overflow-visible">
@@ -212,6 +221,8 @@ function initMenu() {
     const profileDropdown = document.querySelector('header .profile-dropdown-menu');
     if (profileButton && profileDropdown) {
         profileButton.addEventListener('click', (evt) => {
+            // In desktop sidebar mode the section-heading handler below manages this.
+            if (window.innerWidth >= 768 && document.body.dataset.navLayout === 'sidebar') return;
             evt.preventDefault();
             evt.stopPropagation();
             const isVisible = profileDropdown.classList.contains('show');
@@ -274,6 +285,56 @@ function initMenu() {
                 d.classList.remove('show');
             });
         }
+    });
+
+    // Sidebar collapse toggle (desktop, sidebar layout only)
+    const collapseToggle = document.getElementById('sidebarCollapseToggle');
+    if (collapseToggle) {
+        const syncCollapseToggle = () => {
+            const collapsed = document.body.dataset.sidebarCollapsed === 'true';
+            const openIcon = collapseToggle.querySelector('.site-sidebar-toggle-open');
+            const closedIcon = collapseToggle.querySelector('.site-sidebar-toggle-closed');
+            if (openIcon) openIcon.classList.toggle('hidden', collapsed);
+            if (closedIcon) closedIcon.classList.toggle('hidden', !collapsed);
+            collapseToggle.setAttribute('aria-label', collapsed ? 'Expand sidebar' : 'Collapse sidebar');
+            collapseToggle.setAttribute('title', collapsed ? 'Expand sidebar' : 'Collapse sidebar');
+        };
+        collapseToggle.addEventListener('click', () => {
+            const collapsed = document.body.dataset.sidebarCollapsed === 'true';
+            const next = collapsed ? 'false' : 'true';
+            document.body.dataset.sidebarCollapsed = next;
+            try { localStorage.setItem('nbhs-sidebar-collapsed', next); } catch (err) {}
+            syncCollapseToggle();
+        });
+        syncCollapseToggle();
+    }
+
+    // Collapsible section headings in sidebar mode.
+    // In sidebar layout each nav group toggles its own submenu open/closed
+    // and remembers the state; expanding the collapsed rail auto-closes them.
+    document.querySelectorAll('header .relative.group').forEach((group) => {
+        const button = group.querySelector('button');
+        if (!button) return;
+        button.addEventListener('click', (evt) => {
+            if (window.innerWidth < 768) return; // handled by mobile logic above
+            if (document.body.dataset.navLayout !== 'sidebar') return; // top-bar uses hover
+            evt.preventDefault();
+            evt.stopPropagation();
+            if (document.body.dataset.sidebarCollapsed === 'true') {
+                // Expand the rail first so the opened section is visible
+                document.body.dataset.sidebarCollapsed = 'false';
+                try { localStorage.setItem('nbhs-sidebar-collapsed', 'false'); } catch (err) {}
+                const ct = document.getElementById('sidebarCollapseToggle');
+                if (ct) {
+                    const oi = ct.querySelector('.site-sidebar-toggle-open');
+                    const ci = ct.querySelector('.site-sidebar-toggle-closed');
+                    if (oi) oi.classList.remove('hidden');
+                    if (ci) ci.classList.add('hidden');
+                }
+            }
+            group.classList.toggle('section-open');
+            button.setAttribute('aria-expanded', String(group.classList.contains('section-open')));
+        });
     });
 }
 

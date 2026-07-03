@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="NBHS Table Tennis">
+  <!-- Background tile: club red, sharp corners to match the editorial system -->
+  <rect width="64" height="64" fill="#991b1b"/>
+  <!-- Thin inner keyline -->
+  <rect x="3" y="3" width="58" height="58" fill="none" stroke="#ffffff" stroke-opacity="0.18" stroke-width="1.5"/>
+
+  <!-- Paddle: blade + handle, angled like a real bat -->
+  <g transform="rotate(-32 32 34)">
+    <!-- blade -->
+    <ellipse cx="32" cy="26" rx="15" ry="17" fill="#f4f1ea"/>
+    <ellipse cx="32" cy="26" rx="15" ry="17" fill="none" stroke="#1c1a17" stroke-width="2"/>
+    <!-- rubber inner -->
+    <ellipse cx="32" cy="26" rx="10.5" ry="12.5" fill="#7f1d1d"/>
+    <!-- handle -->
+    <rect x="28.5" y="41" width="7" height="17" rx="3" fill="#1c1a17"/>
+    <rect x="28.5" y="41" width="7" height="6" fill="#3a2b20"/>
+  </g>
+
+  <!-- Ball -->
+  <circle cx="46" cy="17" r="6" fill="#f4f1ea"/>
+  <circle cx="46" cy="17" r="6" fill="none" stroke="#1c1a17" stroke-width="1.5"/>
+</svg>

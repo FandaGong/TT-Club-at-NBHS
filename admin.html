@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="animations.css">
     <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="icon" type="image/png" href="favicon.png">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -380,7 +381,7 @@
                         <div id="winLossPlayerSummary" class="border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600">
                             Select a player to view their current stats.
                         </div>
-                        <div id="winLossPlayerList" class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[50vh] overflow-y-auto pr-1"></div>
+                        <div id="winLossPlayerList" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
                         <p id="winLossPlayerEmpty" class="hidden border border-dashed border-slate-300 bg-slate-50 p-3 text-xs text-slate-500 text-center">No players match that search.</p>
                     </div>
                     <div class="lg:col-span-2 space-y-4">
@@ -441,7 +442,7 @@
                         <div id="nameLinkAccountSummary" class="border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600">
                             Select an account to preview who will be linked.
                         </div>
-                        <div id="nameLinkAccountList" class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[50vh] overflow-y-auto pr-1"></div>
+                        <div id="nameLinkAccountList" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
                         <p id="nameLinkAccountEmpty" class="hidden border border-dashed border-slate-300 bg-slate-50 p-3 text-xs text-slate-500 text-center">No accounts match that search.</p>
                     </div>
                     <div class="lg:col-span-2 space-y-4">
@@ -713,6 +714,19 @@
 
         function getAccountLabel(account) {
             return account?.display_name || account?.email || 'Account';
+        }
+
+        // Compact, always-fitting initials: first letter of first + last word.
+        // "Jonathan Zhao" -> "JZ", "Fanda" -> "F", "a@b.com" -> "A".
+        function getInitials(value) {
+            const raw = (value || '').toString().trim();
+            if (!raw) return '?';
+            const base = raw.includes('@') ? raw.split('@')[0] : raw;
+            const words = base.replace(/[._-]+/g, ' ').split(/\s+/).filter(Boolean);
+            if (!words.length) return '?';
+            const first = words[0][0] || '';
+            const last = words.length > 1 ? words[words.length - 1][0] || '' : '';
+            return (first + last).toUpperCase();
         }
 
         function getAccountRequestKey(request) {
@@ -1054,12 +1068,12 @@
                 const email = account.email || 'No email';
                 const displayName = account.display_name || 'No display name yet';
                 const isLinked = Boolean(account.display_name) && nameLinkRankingNames.some(name => normalizeKey(name) === normalizeKey(account.display_name));
-                const initials = (getAccountLabel(account).slice(0, 2) || 'A').toUpperCase();
+                const initials = getInitials(getAccountLabel(account));
                 return `
                     <button type="button" data-account-id="${escapeHtml(account.account_id)}"
-                        class="text-left rounded-2xl border p-4 transition-all shadow-sm hover:shadow-md ${isSelected ? 'border-emerald-400 bg-emerald-50 ring-2 ring-emerald-200' : 'border-slate-200 bg-white hover:border-emerald-200'}">
-                        <div class="flex items-start gap-3">
-                            <div class="h-12 w-12 rounded-2xl ${isSelected ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-600'} flex items-center justify-center font-extrabold text-sm shrink-0">${escapeHtml(initials)}</div>
+                        class="text-left rounded-xl border p-3 transition-all shadow-sm hover:shadow-md min-w-0 ${isSelected ? 'border-emerald-400 bg-emerald-50 ring-2 ring-emerald-200' : 'border-slate-200 bg-white hover:border-emerald-200'}">
+                        <div class="flex items-start gap-2.5">
+                            <div class="h-10 w-10 rounded-xl ${isSelected ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-600'} flex items-center justify-center font-extrabold text-xs shrink-0">${escapeHtml(initials)}</div>
                             <div class="min-w-0 flex-1">
                                 <div class="flex items-start justify-between gap-2">
                                     <div class="min-w-0">
@@ -2301,14 +2315,14 @@
 
                 list.innerHTML = filteredPlayers.map(player => {
                     const isSelected = eloSelectedPlayer && normalizeKey(eloSelectedPlayer.name) === normalizeKey(player.name);
-                    const initials = (player.name?.slice(0, 2) || 'P').toUpperCase();
+                    const initials = getInitials(player.name);
                     const division = player.division ? ` · ${player.division}` : '';
                     const half = player.half ? ` · ${halfToDay(player.half)}` : '';
                     return `
                         <button type="button" data-player-name="${escapeHtml(player.name)}"
-                            class="text-left rounded-2xl border p-4 transition-all shadow-sm hover:shadow-md min-w-0 ${isSelected ? 'border-blue-400 bg-blue-50 ring-2 ring-blue-200' : 'border-slate-200 bg-white hover:border-blue-200'}">
-                            <div class="flex items-start gap-3">
-                                <div class="h-12 w-12 rounded-2xl ${isSelected ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-600'} flex items-center justify-center font-extrabold text-sm shrink-0">${escapeHtml(initials)}</div>
+                            class="text-left rounded-xl border p-3 transition-all shadow-sm hover:shadow-md min-w-0 ${isSelected ? 'border-blue-400 bg-blue-50 ring-2 ring-blue-200' : 'border-slate-200 bg-white hover:border-blue-200'}">
+                            <div class="flex items-center gap-2.5">
+                                <div class="h-10 w-10 rounded-xl ${isSelected ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-600'} flex items-center justify-center font-extrabold text-xs shrink-0">${escapeHtml(initials)}</div>
                                 <div class="min-w-0 flex-1">
                                     <p class="font-bold text-slate-800 truncate">${escapeHtml(player.name)}</p>
                                     <p class="text-xs text-slate-500 truncate mt-0.5">${player.elo ?? 0} Elo · W${player.wins ?? 0}/L${player.losses ?? 0}${division}${half}</p>
@@ -2489,14 +2503,14 @@
 
                 list.innerHTML = filteredPlayers.map(player => {
                     const isSelected = winLossSelectedPlayer && normalizeKey(winLossSelectedPlayer.name) === normalizeKey(player.name);
-                    const initials = (player.name?.slice(0, 2) || 'P').toUpperCase();
+                    const initials = getInitials(player.name);
                     const division = player.division ? ` · ${player.division}` : '';
                     const half = player.half ? ` · ${halfToDay(player.half)}` : '';
                     return `
                         <button type="button" data-player-name="${escapeHtml(player.name)}"
-                            class="text-left rounded-2xl border p-4 transition-all shadow-sm hover:shadow-md ${isSelected ? 'border-red-400 bg-red-50 ring-2 ring-red-200' : 'border-slate-200 bg-white hover:border-red-200'}">
-                            <div class="flex items-start gap-3">
-                                <div class="h-12 w-12 rounded-2xl ${isSelected ? 'bg-red-800 text-white' : 'bg-slate-100 text-slate-600'} flex items-center justify-center font-extrabold text-sm shrink-0">${escapeHtml(initials)}</div>
+                            class="text-left rounded-xl border p-3 transition-all shadow-sm hover:shadow-md min-w-0 ${isSelected ? 'border-red-400 bg-red-50 ring-2 ring-red-200' : 'border-slate-200 bg-white hover:border-red-200'}">
+                            <div class="flex items-center gap-2.5">
+                                <div class="h-10 w-10 rounded-xl ${isSelected ? 'bg-red-800 text-white' : 'bg-slate-100 text-slate-600'} flex items-center justify-center font-extrabold text-xs shrink-0">${escapeHtml(initials)}</div>
                                 <div class="min-w-0 flex-1">
                                     <p class="font-bold text-slate-800 truncate">${escapeHtml(player.name)}</p>
                                     <p class="text-xs text-slate-500 truncate mt-0.5">W${player.wins ?? 0} / L${player.losses ?? 0} · ${player.elo ?? 0} Elo${division}${half}</p>

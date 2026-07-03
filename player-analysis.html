@@ -9,6 +9,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="animations.css">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="icon" type="image/png" href="favicon.png">
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -33,6 +35,13 @@
             </div>
             <div id="quick-stats" class="alm-masthead-meta" style="margin-top:0;border-top:none;padding-top:0;"></div>
         </header>
+
+        <section id="bio-section" class="alm-block hidden">
+            <div class="alm-rule-head"><h2 class="alm-section-title">Biography</h2></div>
+            <div class="alm-panel">
+                <p id="bio-text" class="alm-lede" style="margin:0;white-space:pre-wrap;">—</p>
+            </div>
+        </section>
 
         <section class="alm-block">
             <div class="alm-rule-head"><h2 class="alm-section-title">Elo Progress</h2></div>
@@ -128,7 +137,24 @@
             document.getElementById('player-name').innerText = playerName;
             document.getElementById('player-tags').innerHTML = renderPlayerTags(playerName);
             await loadPlayerStats();
+            await loadBio();
             await loadCombinedHistory();
+        }
+
+        async function loadBio() {
+            try {
+                const supabase = await getSupabaseClient();
+                if (!supabase) return;
+                // Match the viewed player's account by display name (case-insensitive).
+                const { data, error } = await supabase.from('account').select('display_name, bio').ilike('display_name', playerName);
+                if (error) return; // column/table may not exist yet — fail quietly
+                const row = (data || [])[0];
+                const bio = (row?.bio || '').toString().trim();
+                if (bio) {
+                    document.getElementById('bio-text').textContent = bio;
+                    document.getElementById('bio-section').classList.remove('hidden');
+                }
+            } catch (err) { /* fail quietly */ }
         }
 
         async function loadPlayerStats() {

@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="animations.css">
     <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="icon" type="image/png" href="favicon.png">
 </head>
 <body class="site-surface text-slate-900 font-sans min-h-screen flex flex-col">
@@ -35,6 +36,14 @@
                             <option value="light">Light mode</option>
                             <option value="dark">Dark mode</option>
                             <option value="high-contrast">High contrast</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="alm-field-label" for="navLayoutSelect">Navigation layout</label>
+                        <select id="navLayoutSelect" class="alm-select">
+                            <option value="top">Top bar</option>
+                            <option value="sidebar">Sidebar</option>
                         </select>
                     </div>
 
@@ -113,11 +122,13 @@
             const font = localStorage.getItem('nbhs-font') || 'sans';
             const density = localStorage.getItem('nbhs-density') || 'comfortable';
             const reducedMotion = localStorage.getItem('nbhs-reduced-motion') === 'true';
+            const navLayout = localStorage.getItem('nbhs-nav-layout') || 'top';
 
             const themeSelect = document.getElementById('themeSelect');
             const accentSelect = document.getElementById('accentSelect');
             const fontSelect = document.getElementById('fontSelect');
             const densitySelect = document.getElementById('densitySelect');
+            const navLayoutSelect = document.getElementById('navLayoutSelect');
             const reducedMotionToggle = document.getElementById('reducedMotionToggle');
             const contrastRange = document.getElementById('contrastRange');
             const scaleRange = document.getElementById('scaleRange');
@@ -128,6 +139,7 @@
             if (accentSelect) accentSelect.value = accent;
             if (fontSelect) fontSelect.value = font;
             if (densitySelect) densitySelect.value = density;
+            if (navLayoutSelect) navLayoutSelect.value = navLayout;
             if (reducedMotionToggle) reducedMotionToggle.checked = reducedMotion;
             if (contrastRange) contrastRange.value = contrast.toFixed(2);
             if (scaleRange) scaleRange.value = scale.toFixed(2);
@@ -147,11 +159,13 @@
             const accentSelect = document.getElementById('accentSelect');
             const fontSelect = document.getElementById('fontSelect');
             const densitySelect = document.getElementById('densitySelect');
+            const navLayoutSelect = document.getElementById('navLayoutSelect');
             const reducedMotionToggle = document.getElementById('reducedMotionToggle');
             const contrastRange = document.getElementById('contrastRange');
             const scaleRange = document.getElementById('scaleRange');
 
             themeSelect?.addEventListener('change', (event) => saveSetting('nbhs-theme', event.target.value));
+            navLayoutSelect?.addEventListener('change', (event) => saveSetting('nbhs-nav-layout', event.target.value));
             accentSelect?.addEventListener('change', (event) => saveSetting('nbhs-accent', event.target.value));
             fontSelect?.addEventListener('change', (event) => saveSetting('nbhs-font', event.target.value));
             densitySelect?.addEventListener('change', (event) => saveSetting('nbhs-density', event.target.value));

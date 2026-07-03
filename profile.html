@@ -12,7 +12,20 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="animations.css">
     <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="icon" type="image/png" href="favicon.png">
+    <style>
+        /* Page-scoped: tighten the profile so it reads more compact */
+        .almanac .alm-block + .alm-block { margin-top: clamp(1.5rem, 3vw, 2.25rem); }
+        .almanac .alm-masthead--compact + .alm-block { margin-top: clamp(1rem, 2vw, 1.5rem); }
+        /* Slightly less space below the heading, a touch more air by the rule line */
+        .almanac .alm-rule-head { margin-bottom: 0.85rem; gap: 1.4rem; }
+        .almanac .alm-panel { padding: 1.1rem 1.2rem; }
+        /* Compress the stat cells */
+        .almanac .alm-statcell { padding: 0.7rem 0.9rem; }
+        .almanac .alm-statcell .v { font-size: 1.45rem; margin-top: 0.3rem; }
+        .almanac .alm-statgrid--sm .v { font-size: 1.05rem; }
+    </style>
 </head>
 
 <body class="site-surface text-slate-900 font-sans min-h-screen flex flex-col">
@@ -36,6 +49,32 @@
         </div>
 
         <div id="profileContent" class="hidden">
+            <!-- Biography -->
+            <section class="alm-block">
+                <div class="alm-rule-head" style="justify-content:space-between;">
+                    <h2 class="alm-section-title">Biography</h2>
+                    <button id="bioEditBtn" type="button" class="alm-link" style="white-space:nowrap;background:none;border:none;cursor:pointer;font:inherit;">Edit →</button>
+                </div>
+                <div class="alm-panel">
+                    <!-- Display state -->
+                    <div id="bioDisplay">
+                        <p id="bioText" class="alm-lede" style="margin:0;white-space:pre-wrap;">—</p>
+                    </div>
+                    <!-- Edit state -->
+                    <div id="bioEditor" class="hidden">
+                        <textarea id="bioTextarea" class="alm-select" rows="5" maxlength="600" placeholder="Tell the club a bit about yourself — playing style, favourite shot, goals…" style="width:100%;resize:vertical;line-height:1.5;"></textarea>
+                        <div style="display:flex;align-items:center;justify-content:space-between;gap:0.75rem;margin-top:0.6rem;flex-wrap:wrap;">
+                            <span id="bioCount" class="alm-mh-date">0 / 600</span>
+                            <div style="display:flex;gap:0.5rem;">
+                                <button id="bioCancelBtn" type="button" class="alm-select" style="cursor:pointer;padding:0.5rem 1rem;">Cancel</button>
+                                <button id="bioSaveBtn" type="button" style="cursor:pointer;padding:0.5rem 1.2rem;background:var(--oxblood);color:#fff;border:none;font-family:var(--font-mono);letter-spacing:0.12em;text-transform:uppercase;font-size:0.72rem;font-weight:700;">Save</button>
+                            </div>
+                        </div>
+                        <p id="bioStatus" class="alm-mh-date hidden" style="margin-top:0.5rem;"></p>
+                    </div>
+                </div>
+            </section>
+
             <!-- Rank + key numbers -->
             <section class="alm-block">
                 <div class="alm-statgrid">
@@ -112,6 +151,9 @@
         function hide(id) { document.getElementById(id)?.classList.add('hidden'); }
         function setText(id, val) { const el = document.getElementById(id); if (el) el.textContent = val; }
 
+        // Holds the signed-in user's account id so the bio editor can save.
+        let _myAccountId = null;
+
         async function init() {
             const supabase = getClient();
             if (!supabase) {
@@ -134,11 +176,12 @@
 
             const email = session.user.email || '';
             const accountId = session.user.id;
+            _myAccountId = accountId;
             setText('profileEmail', email);
 
             try {
                 const [{ data: accountData }, { data: rankingData }, { data: matchData }] = await Promise.all([
-                    supabase.from('account').select('display_name, email').eq('account_id', accountId).maybeSingle(),
+                    supabase.from('account').select('display_name, email, bio').eq('account_id', accountId).maybeSingle(),
                     supabase.from('player_rankings').select('elo,wins,losses,division,half,name,account_id').order('elo', { ascending: false }).limit(500),
                     supabase.from('match_history').select('id,created_at,player_1,player_2,winner,score,p1_elo_change,p2_elo_change,p1_new_elo,p2_new_elo,player_1_account_id,player_2_account_id,winner_account_id').order('created_at', { ascending: true }).limit(1000)
                 ]);
@@ -156,6 +199,8 @@
 
                 setText('profileName', resolvedName);
                 show('profileContent');
+
+                renderBio(accountData?.bio);
 
                 // Rank (1-based position in elo-sorted list)
                 setText('statRank', ranking ? `#${myIndex + 1}` : 'Unranked');
@@ -207,6 +252,75 @@
                 show('profileError');
                 setText('profileErrorMsg', `Could not load your profile: ${error.message}`);
             }
+        }
+
+        function renderBio(bio) {
+            const text = (bio || '').toString().trim();
+            const el = document.getElementById('bioText');
+            if (el) {
+                el.textContent = text || 'No biography yet. Click Edit to add one.';
+                el.style.opacity = text ? '1' : '0.6';
+                el.dataset.hasBio = text ? 'true' : 'false';
+            }
+            const ta = document.getElementById('bioTextarea');
+            if (ta) { ta.value = text; updateBioCount(); }
+        }
+
+        function updateBioCount() {
+            const ta = document.getElementById('bioTextarea');
+            const counter = document.getElementById('bioCount');
+            if (ta && counter) counter.textContent = `${ta.value.length} / 600`;
+        }
+
+        function openBioEditor() {
+            hide('bioDisplay');
+            show('bioEditor');
+            document.getElementById('bioEditBtn')?.classList.add('hidden');
+            document.getElementById('bioTextarea')?.focus();
+            document.getElementById('bioStatus')?.classList.add('hidden');
+        }
+
+        function closeBioEditor() {
+            show('bioDisplay');
+            hide('bioEditor');
+            document.getElementById('bioEditBtn')?.classList.remove('hidden');
+        }
+
+        async function saveBio() {
+            const supabase = getClient();
+            const ta = document.getElementById('bioTextarea');
+            const status = document.getElementById('bioStatus');
+            const saveBtn = document.getElementById('bioSaveBtn');
+            if (!supabase || !ta || !_myAccountId) return;
+
+            const value = ta.value.trim();
+            if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = 'Saving…'; }
+            if (status) { status.classList.remove('hidden'); status.style.color = 'var(--ink-faint)'; status.textContent = 'Saving…'; }
+
+            const { error } = await supabase.from('account').update({ bio: value }).eq('account_id', _myAccountId);
+
+            if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'Save'; }
+            if (error) {
+                if (status) { status.classList.remove('hidden'); status.style.color = 'var(--oxblood)'; status.textContent = `Could not save: ${error.message}`; }
+                return;
+            }
+            renderBio(value);
+            closeBioEditor();
+        }
+
+        function wireBioEditor() {
+            document.getElementById('bioEditBtn')?.addEventListener('click', openBioEditor);
+            document.getElementById('bioCancelBtn')?.addEventListener('click', () => {
+                const el = document.getElementById('bioText');
+                const ta = document.getElementById('bioTextarea');
+                if (ta && el) {
+                    ta.value = el.dataset.hasBio === 'true' ? el.textContent : '';
+                    updateBioCount();
+                }
+                closeBioEditor();
+            });
+            document.getElementById('bioSaveBtn')?.addEventListener('click', saveBio);
+            document.getElementById('bioTextarea')?.addEventListener('input', updateBioCount);
         }
 
         function renderChart(eloSeries) {
@@ -312,11 +426,12 @@
         }
 
         if (window.supabase) {
+            wireBioEditor();
             init();
         } else {
             const s = document.createElement('script');
             s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
-            s.onload = init;
+            s.onload = () => { wireBioEditor(); init(); };
             document.head.appendChild(s);
         }
     </script>
