@@ -1,0 +1,4 @@
+Player 1,Player 2,Division,Day,Term/Week,Played,S1P1,S1P2,S2P1,S2P2,S3P1,S3P2,Winner
+Jonathan Zhao,Damon Yuan,Division 1,Monday,Term 3 Week 1,Y,11,7,9,11,11,8,"=IF(AND(G2="""",I2="""",K2=""""),"""",IF((IF(G2>H2,1,0)+IF(I2>J2,1,0)+IF(K2>L2,1,0))>(IF(G2<H2,1,0)+IF(I2<J2,1,0)+IF(K2<L2,1,0)),A2,B2))"
+Fanda Gong,Oscar Pan,Division 1,Monday,Term 3 Week 1,Y,11,5,11,6,,,"=IF(AND(G3="""",I3="""",K3=""""),"""",IF((IF(G3>H3,1,0)+IF(I3>J3,1,0)+IF(K3>L3,1,0))>(IF(G3<H3,1,0)+IF(I3<J3,1,0)+IF(K3<L3,1,0)),A3,B3))"
+Alex Chen,Sam Lee,Division 2,Tuesday,Term 3 Week 1,N,,,,,,,"=IF(AND(G4="""",I4="""",K4=""""),"""",IF((IF(G4>H4,1,0)+IF(I4>J4,1,0)+IF(K4>L4,1,0))>(IF(G4<H4,1,0)+IF(I4<J4,1,0)+IF(K4<L4,1,0)),A4,B4))"

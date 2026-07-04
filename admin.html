@@ -303,15 +303,15 @@
                 <button id="closeEloAdjustmentModalBtn" type="button"
                     class="text-white hover:text-blue-100 text-2xl leading-none shrink-0">&times;</button>
             </div>
-            <div class="grid grid-cols-5 gap-0 overflow-hidden max-h-[calc(90vh-120px)] min-h-0">
+            <div class="grid grid-cols-5 gap-0 overflow-hidden h-[calc(90vh-120px)] max-h-[calc(90vh-120px)] min-h-0">
                 <!-- Left Panel: Player Search & Cards -->
-                <div class="col-span-3 border-r border-slate-100 flex flex-col min-h-0">
+                <div class="col-span-3 border-r border-slate-100 flex flex-col min-h-0 overflow-hidden">
                     <div class="border-b border-slate-100 p-4 shrink-0">
                         <input id="eloSearchInput" type="text" placeholder="Search players..."
                             class="w-full px-4 py-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-400 transition-all">
                         <p id="eloPlayerCount" class="text-xs text-slate-500 mt-2 font-semibold">0 players</p>
                     </div>
-                    <div id="eloPlayerList" class="grid grid-cols-1 md:grid-cols-2 gap-2 overflow-y-auto flex-1 min-h-0 p-4 pr-3 content-start">
+                    <div id="eloPlayerList" class="grid grid-cols-1 md:grid-cols-2 gap-2.5 overflow-y-auto flex-1 min-h-0 p-4 pr-3 content-start">
                     </div>
                     <p id="eloPlayerEmpty" class="hidden text-center text-slate-500 p-4 text-sm shrink-0">No players match that search.</p>
                 </div>
@@ -381,7 +381,7 @@
                         <div id="winLossPlayerSummary" class="border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600">
                             Select a player to view their current stats.
                         </div>
-                        <div id="winLossPlayerList" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
+                        <div id="winLossPlayerList" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-80 overflow-y-auto pr-1 content-start"></div>
                         <p id="winLossPlayerEmpty" class="hidden border border-dashed border-slate-300 bg-slate-50 p-3 text-xs text-slate-500 text-center">No players match that search.</p>
                     </div>
                     <div class="lg:col-span-2 space-y-4">
@@ -442,7 +442,7 @@
                         <div id="nameLinkAccountSummary" class="border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600">
                             Select an account to preview who will be linked.
                         </div>
-                        <div id="nameLinkAccountList" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
+                        <div id="nameLinkAccountList" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-80 overflow-y-auto pr-1 content-start"></div>
                         <p id="nameLinkAccountEmpty" class="hidden border border-dashed border-slate-300 bg-slate-50 p-3 text-xs text-slate-500 text-center">No accounts match that search.</p>
                     </div>
                     <div class="lg:col-span-2 space-y-4">
@@ -575,6 +575,55 @@
                     class="shrink-0 rounded-full bg-white/10 hover:bg-white/20 text-white text-2xl leading-none h-11 w-11 inline-flex items-center justify-center">&times;</button>
             </div>
             <div class="p-6 max-h-[calc(92vh-92px)] overflow-y-auto">
+                <!-- BULK CSV IMPORT -->
+                <div class="mb-6 rounded-2xl border border-cyan-200 bg-cyan-50/60 p-5">
+                    <div class="flex items-start justify-between gap-3 flex-wrap">
+                        <div>
+                            <h4 class="font-extrabold text-slate-900 text-lg">Bulk import from spreadsheet</h4>
+                            <p class="text-sm text-slate-600 mt-1">Upload a CSV of matches. Elo is applied in order and stacked on top of current ratings.</p>
+                        </div>
+                        <a href="match-import-template.csv" download class="shrink-0 inline-flex items-center gap-2 rounded-lg bg-white border border-cyan-300 text-cyan-800 px-3 py-2 text-sm font-semibold hover:bg-cyan-100 transition-colors">
+                            Download template
+                        </a>
+                        <button id="downloadFixturesBtn" type="button" class="shrink-0 inline-flex items-center gap-2 rounded-lg bg-cyan-600 text-white px-3 py-2 text-sm font-semibold hover:bg-cyan-700 transition-colors">
+                            Download fixtures (all pairings)
+                        </button>
+                    </div>
+                    <div class="mt-3 flex items-center justify-between gap-3 flex-wrap rounded-lg bg-white/70 border border-slate-200 p-3">
+                        <p class="text-sm text-slate-600">Back up the current standings (Elo, wins, losses) before importing, so you can revert if something goes wrong.</p>
+                        <button id="exportPlayerDataBtn" type="button" class="shrink-0 inline-flex items-center gap-2 rounded-lg bg-slate-800 text-white px-3 py-2 text-sm font-semibold hover:bg-slate-900 transition-colors">
+                            Export current data (backup)
+                        </button>
+                    </div>
+                    <div class="mt-4 flex flex-col sm:flex-row sm:items-center gap-3">
+                        <input id="bulkMatchFileInput" type="file" accept=".csv,text/csv"
+                            class="block w-full text-sm text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-cyan-600 file:text-white file:px-4 file:py-2 file:font-semibold file:cursor-pointer hover:file:bg-cyan-700">
+                    </div>
+                    <p id="bulkMatchStatus" class="hidden mt-3 text-sm font-medium"></p>
+                    <div id="bulkMatchPreviewWrap" class="hidden mt-4">
+                        <div class="max-h-72 overflow-auto rounded-lg border border-slate-200 bg-white">
+                            <table class="w-full text-xs">
+                                <thead class="bg-slate-100 text-slate-600 sticky top-0">
+                                    <tr>
+                                        <th class="text-left p-2 font-bold">#</th>
+                                        <th class="text-left p-2 font-bold">Match</th>
+                                        <th class="text-left p-2 font-bold">Sets</th>
+                                        <th class="text-left p-2 font-bold">Winner</th>
+                                        <th class="text-right p-2 font-bold">Elo Δ</th>
+                                        <th class="text-left p-2 font-bold">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="bulkMatchPreviewBody"></tbody>
+                            </table>
+                        </div>
+                        <div class="mt-3 flex items-center justify-between gap-3 flex-wrap">
+                            <p id="bulkMatchSummary" class="text-sm text-slate-600"></p>
+                            <button id="bulkMatchImportBtn" type="button" disabled
+                                class="rounded-lg bg-emerald-600 text-white px-5 py-2.5 text-sm font-bold hover:bg-emerald-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Import all valid matches</button>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
                     <div class="lg:col-span-3 space-y-4">
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -775,16 +824,60 @@
             halfSelect.value = selectedHalf || '';
         }
 
-        function calculateManualMatchElo(player1Elo, player2Elo, player1Won) {
-            const kFactor = 32;
-            const expectedPlayer1 = 1 / (1 + Math.pow(10, (player2Elo - player1Elo) / 400));
-            const player1Change = Math.round(kFactor * ((player1Won ? 1 : 0) - expectedPlayer1));
+        // Parse a games score like "3-1" (or points like "11-7") into the
+        // winner's and loser's tallies. Returns null if it can't be read.
+        function parseMatchScore(rawScore, player1Won) {
+            const text = (rawScore || '').toString().trim();
+            const match = text.match(/(\d+)\s*[-–:to]+\s*(\d+)/i);
+            if (!match) return null;
+            const a = parseInt(match[1], 10);
+            const b = parseInt(match[2], 10);
+            if (isNaN(a) || isNaN(b)) return null;
+            // Assume the score is written winner-first (e.g. "3-1"). Map to each player.
+            const winScore = Math.max(a, b);
+            const loseScore = Math.min(a, b);
+            return { winScore, loseScore };
+        }
+
+        // Accurate Elo update.
+        // - Uses the logistic expectation so the ratings gap already governs how
+        //   much a result moves each player (favourite gains little for an
+        //   expected win, a lot for an upset — and vice versa).
+        // - Adds a margin-of-victory multiplier from the score so a 3-0 shifts
+        //   more than a 3-2, with a dampener that prevents lopsided favourites
+        //   from over-inflating on blowouts (the FiveThirtyEight MOV trick).
+        function calculateManualMatchElo(player1Elo, player2Elo, player1Won, rawScore) {
+            const baseK = 32;
+            const p1 = Number(player1Elo) || 0;
+            const p2 = Number(player2Elo) || 0;
+
+            const expectedPlayer1 = 1 / (1 + Math.pow(10, (p2 - p1) / 400));
+            const s1 = player1Won ? 1 : 0;
+
+            // Margin-of-victory multiplier (>= 1). Falls back to 1 when the score
+            // can't be parsed, which makes this reduce to standard Elo.
+            const winnerElo = player1Won ? p1 : p2;
+            const loserElo = player1Won ? p2 : p1;
+            const eloDiff = winnerElo - loserElo; // + when the favourite won
+            let movMultiplier = 1;
+            const parsed = parseMatchScore(rawScore, player1Won);
+            if (parsed) {
+                const margin = Math.max(1, parsed.winScore - parsed.loseScore);
+                // log-scaled margin so 3-0 > 3-1 > 3-2 with diminishing returns,
+                // divided by a term that grows with the winner's rating edge to
+                // dampen expected blowouts (and amplify upset blowouts).
+                movMultiplier = Math.log(margin + 1) * (2.2 / ((eloDiff * 0.001) + 2.2));
+                if (!isFinite(movMultiplier) || movMultiplier <= 0) movMultiplier = 1;
+            }
+
+            const effectiveK = baseK * movMultiplier;
+            const player1Change = Math.round(effectiveK * (s1 - expectedPlayer1));
             const player2Change = -player1Change;
             return {
                 player1Change,
                 player2Change,
-                player1New: player1Elo + player1Change,
-                player2New: player2Elo + player2Change,
+                player1New: p1 + player1Change,
+                player2New: p2 + player2Change,
             };
         }
 
@@ -865,8 +958,8 @@
             winnerSelect.value = manualMatchSelectedWinner || player1?.name || '';
 
             const player1Won = normalizeKey(winnerSelect.value) === normalizeKey(player1?.name);
-            const outcome = calculateManualMatchElo(player1?.elo || 0, player2?.elo || 0, player1Won);
             const scoreValue = (document.getElementById('manualMatchScoreInput')?.value || '').trim();
+            const outcome = calculateManualMatchElo(player1?.elo || 0, player2?.elo || 0, player1Won, scoreValue);
 
             preview.innerHTML = `
                 <div class="space-y-4">
@@ -990,7 +1083,7 @@
                 return;
             }
 
-            const outcome = calculateManualMatchElo(player1.elo || 0, player2.elo || 0, normalizeKey(winner.name) === normalizeKey(player1.name));
+            const outcome = calculateManualMatchElo(player1.elo || 0, player2.elo || 0, normalizeKey(winner.name) === normalizeKey(player1.name), score);
 
             if (statusNode) {
                 statusNode.textContent = 'Saving match result...';
@@ -1033,6 +1126,374 @@
             }
         }
 
+        // ============================================================
+        // BULK CSV MATCH IMPORT
+        // Parses a CSV, validates each row against loaded players,
+        // chains Elo chronologically, previews, then saves in order.
+        // ============================================================
+        let bulkParsedRows = [];
+
+        function parseCsvText(text) {
+            const rows = [];
+            let row = [], field = '', inQuotes = false;
+            const s = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+            for (let i = 0; i < s.length; i++) {
+                const c = s[i];
+                if (c === '"') {
+                    if (inQuotes && s[i + 1] === '"') { field += '"'; i++; }
+                    else inQuotes = !inQuotes;
+                } else if (c === ',' && !inQuotes) { row.push(field); field = ''; }
+                else if (c === '\n' && !inQuotes) { row.push(field); rows.push(row); row = []; field = ''; }
+                else field += c;
+            }
+            if (field.length || row.length) { row.push(field); rows.push(row); }
+            return rows.filter(r => r.some(cell => (cell || '').trim() !== ''));
+        }
+
+        function findHeaderIndex(headers, candidates) {
+            const norm = headers.map(h => normalizeKey(h).replace(/[^a-z0-9]/g, ''));
+            for (const cand of candidates) {
+                const target = cand.replace(/[^a-z0-9]/g, '');
+                const idx = norm.indexOf(target);
+                if (idx !== -1) return idx;
+            }
+            return -1;
+        }
+
+        function buildBulkColumnMap(headers) {
+            return {
+                p1: findHeaderIndex(headers, ['player1', 'player 1', 'p1', 'homeplayer']),
+                p2: findHeaderIndex(headers, ['player2', 'player 2', 'p2', 'awayplayer']),
+                division: findHeaderIndex(headers, ['division', 'grade', 'div']),
+                day: findHeaderIndex(headers, ['day', 'half']),
+                term: findHeaderIndex(headers, ['termweek', 'term/week', 'term', 'week', 'termandweek']),
+                played: findHeaderIndex(headers, ['played', 'playedyn', 'didplay']),
+                s1p1: findHeaderIndex(headers, ['s1p1', 'set1p1', 'set1player1']),
+                s1p2: findHeaderIndex(headers, ['s1p2', 'set1p2', 'set1player2']),
+                s2p1: findHeaderIndex(headers, ['s2p1', 'set2p1', 'set2player1']),
+                s2p2: findHeaderIndex(headers, ['s2p2', 'set2p2', 'set2player2']),
+                s3p1: findHeaderIndex(headers, ['s3p1', 'set3p1', 'set3player1']),
+                s3p2: findHeaderIndex(headers, ['s3p2', 'set3p2', 'set3player2']),
+            };
+        }
+
+        function intOrNull(v) {
+            const t = (v || '').toString().trim();
+            if (t === '') return null;
+            const n = parseInt(t, 10);
+            return isNaN(n) ? null : n;
+        }
+
+        // Analyse one CSV row into a validated match (or an error).
+        // runningElo maps normalizeKey(name) -> current running Elo so repeated
+        // players carry forward their updated rating within the batch.
+        function analyseBulkRow(cells, map, runningElo) {
+            const get = (idx) => idx >= 0 ? (cells[idx] || '').trim() : '';
+            const p1Name = get(map.p1);
+            const p2Name = get(map.p2);
+            if (!p1Name || !p2Name) return { error: 'Missing player name' };
+
+            // "Played" gate: N / No / 0 / false means they never played — skip quietly.
+            const playedRaw = normalizeKey(get(map.played));
+            const hasAnySetScore = [map.s1p1, map.s1p2, map.s2p1, map.s2p2, map.s3p1, map.s3p2]
+                .some(idx => intOrNull(get(idx)) !== null);
+            if (['n', 'no', '0', 'false'].includes(playedRaw)) return { skip: true, p1Name, p2Name };
+            // If no Played column but the row has no scores at all, treat as "not played".
+            if (map.played === -1 && !hasAnySetScore) return { skip: true, p1Name, p2Name };
+
+            const p1 = getManualMatchPlayer(p1Name);
+            const p2 = getManualMatchPlayer(p2Name);
+            if (!p1) return { error: `Unknown player: ${p1Name}` };
+            if (!p2) return { error: `Unknown player: ${p2Name}` };
+            if (normalizeKey(p1.name) === normalizeKey(p2.name)) return { error: 'Players are the same' };
+
+            const sets = [
+                [intOrNull(get(map.s1p1)), intOrNull(get(map.s1p2))],
+                [intOrNull(get(map.s2p1)), intOrNull(get(map.s2p2))],
+                [intOrNull(get(map.s3p1)), intOrNull(get(map.s3p2))],
+            ];
+            let p1Sets = 0, p2Sets = 0;
+            const playedSets = [];
+            for (const [a, b] of sets) {
+                if (a === null && b === null) continue; // set not played
+                if (a === null || b === null) return { error: 'Incomplete set score' };
+                if (a === b) return { error: 'A set cannot be a tie' };
+                if (a > b) p1Sets++; else p2Sets++;
+                playedSets.push(`${a}-${b}`);
+            }
+            if (p1Sets === 0 && p2Sets === 0) return { error: 'No set scores' };
+
+            const p1Won = p1Sets > p2Sets;
+            const winner = p1Won ? p1 : p2;
+            const setsScore = `${p1Sets}-${p2Sets}`;
+            const fullScore = playedSets.length ? `${setsScore} (${playedSets.join(', ')})` : setsScore;
+
+            // Use running Elo if this player already appeared earlier in the batch.
+            const k1 = normalizeKey(p1.name), k2 = normalizeKey(p2.name);
+            const p1Elo = runningElo[k1] ?? (p1.elo || 0);
+            const p2Elo = runningElo[k2] ?? (p2.elo || 0);
+            const outcome = calculateManualMatchElo(p1Elo, p2Elo, p1Won, setsScore);
+
+            // advance the running ratings
+            runningElo[k1] = outcome.player1New;
+            runningElo[k2] = outcome.player2New;
+
+            return {
+                p1, p2, winner, p1Won,
+                division: get(map.division) || p1.division || '',
+                day: get(map.day) || p1.half || '',
+                term: get(map.term) || '',
+                setsScore, fullScore, outcome,
+            };
+        }
+
+        function setBulkStatus(msg, kind) {
+            const el = document.getElementById('bulkMatchStatus');
+            if (!el) return;
+            el.textContent = msg;
+            el.classList.remove('hidden');
+            el.className = `mt-3 text-sm font-medium ${kind === 'error' ? 'text-red-600' : kind === 'ok' ? 'text-green-600' : 'text-slate-600'}`;
+        }
+
+        function handleBulkFile(file) {
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = () => {
+                try {
+                    processBulkCsv(String(reader.result || ''));
+                } catch (err) {
+                    setBulkStatus(`Could not read file: ${err.message}`, 'error');
+                }
+            };
+            reader.onerror = () => setBulkStatus('Failed to read the file.', 'error');
+            reader.readAsText(file);
+        }
+
+        function processBulkCsv(text) {
+            const rows = parseCsvText(text);
+            if (rows.length < 2) { setBulkStatus('The file has no data rows.', 'error'); return; }
+
+            const headers = rows[0].map(h => (h || '').trim());
+            const map = buildBulkColumnMap(headers);
+            if (map.p1 === -1 || map.p2 === -1) {
+                setBulkStatus('Could not find "Player 1" and "Player 2" columns. Use the template headers.', 'error');
+                return;
+            }
+            if (map.s1p1 === -1 || map.s1p2 === -1) {
+                setBulkStatus('Could not find set-score columns (S1P1, S1P2, …). Use the template headers.', 'error');
+                return;
+            }
+
+            const runningElo = {};
+            bulkParsedRows = rows.slice(1).map(cells => analyseBulkRow(cells, map, runningElo));
+
+            const body = document.getElementById('bulkMatchPreviewBody');
+            body.innerHTML = bulkParsedRows.map((r, i) => {
+                if (r.skip) {
+                    const label = (r.p1Name && r.p2Name) ? `${escapeHtml(r.p1Name)} vs ${escapeHtml(r.p2Name)}` : 'Row skipped';
+                    return `<tr class="border-t border-slate-100 bg-slate-50/70 text-slate-400">
+                        <td class="p-2">${i + 1}</td>
+                        <td class="p-2">${label}</td>
+                        <td class="p-2">—</td>
+                        <td class="p-2">—</td>
+                        <td class="p-2 text-right">—</td>
+                        <td class="p-2"><span class="text-[10px] font-bold uppercase text-slate-400">Not played</span></td>
+                    </tr>`;
+                }
+                if (r.error) {
+                    return `<tr class="border-t border-slate-100 bg-red-50">
+                        <td class="p-2 text-slate-400">${i + 1}</td>
+                        <td class="p-2 text-slate-500" colspan="4">${escapeHtml(r.error)}</td>
+                        <td class="p-2"><span class="text-[10px] font-bold uppercase text-red-700">Skip</span></td>
+                    </tr>`;
+                }
+                const d1 = r.outcome.player1Change, d2 = r.outcome.player2Change;
+                return `<tr class="border-t border-slate-100">
+                    <td class="p-2 text-slate-400">${i + 1}</td>
+                    <td class="p-2 text-slate-800">${escapeHtml(r.p1.name)} vs ${escapeHtml(r.p2.name)}</td>
+                    <td class="p-2 text-slate-600">${escapeHtml(r.fullScore)}</td>
+                    <td class="p-2 font-semibold text-slate-800">${escapeHtml(r.winner.name)}</td>
+                    <td class="p-2 text-right whitespace-nowrap"><span class="${d1 >= 0 ? 'text-green-600' : 'text-red-500'}">${d1 >= 0 ? '+' : ''}${d1}</span> / <span class="${d2 >= 0 ? 'text-green-600' : 'text-red-500'}">${d2 >= 0 ? '+' : ''}${d2}</span></td>
+                    <td class="p-2"><span class="text-[10px] font-bold uppercase text-green-700">Ready</span></td>
+                </tr>`;
+            }).join('');
+
+            const valid = bulkParsedRows.filter(r => !r.error && !r.skip).length;
+            const skipped = bulkParsedRows.filter(r => r.skip).length;
+            const invalid = bulkParsedRows.filter(r => r.error).length;
+            document.getElementById('bulkMatchPreviewWrap').classList.remove('hidden');
+            document.getElementById('bulkMatchSummary').textContent =
+                `${valid} match${valid !== 1 ? 'es' : ''} ready` +
+                (skipped ? `, ${skipped} not played` : '') +
+                (invalid ? `, ${invalid} with errors` : '') + '.';
+            const importBtn = document.getElementById('bulkMatchImportBtn');
+            importBtn.disabled = valid === 0;
+            setBulkStatus(valid ? 'Review the preview, then import.' : 'No valid matches to import.', valid ? 'info' : 'error');
+        }
+
+        async function runBulkImport() {
+            const valid = bulkParsedRows.filter(r => !r.error && !r.skip);
+            if (!valid.length) return;
+            const importBtn = document.getElementById('bulkMatchImportBtn');
+            importBtn.disabled = true;
+            let saved = 0, failed = 0;
+
+            for (let i = 0; i < valid.length; i++) {
+                const r = valid[i];
+                setBulkStatus(`Importing ${i + 1} of ${valid.length}…`, 'info');
+                try {
+                    const { error } = await _supabase.rpc('record_manual_match', {
+                        p_player_1_name: r.p1.name,
+                        p_player_2_name: r.p2.name,
+                        p_winner_name: r.winner.name,
+                        p_score: r.fullScore,
+                        p_division: r.division || null,
+                        p_half: r.day || null,
+                        p_term_and_week: r.term || null,
+                        p_player_1_account_id: r.p1.account_id || null,
+                        p_player_2_account_id: r.p2.account_id || null,
+                        p_winner_account_id: r.winner.account_id || null,
+                        p_player_1_elo_change: r.outcome.player1Change,
+                        p_player_2_elo_change: r.outcome.player2Change,
+                        p_player_1_new_elo: r.outcome.player1New,
+                        p_player_2_new_elo: r.outcome.player2New,
+                    });
+                    if (error) throw error;
+                    saved++;
+                } catch (err) {
+                    failed++;
+                }
+            }
+
+            setBulkStatus(`Imported ${saved} match${saved !== 1 ? 'es' : ''}${failed ? `, ${failed} failed` : ''}.`, failed ? 'error' : 'ok');
+            document.getElementById('bulkMatchPreviewWrap').classList.add('hidden');
+            document.getElementById('bulkMatchFileInput').value = '';
+            bulkParsedRows = [];
+            await loadManualMatchPlayers();
+            await loadProfileSummary();
+        }
+
+        // Generate a fixtures CSV: every unique pairing within each
+        // division + day, pre-filled, with Played defaulting to N and
+        // set-score columns left blank for the admin to fill in.
+        function csvCell(v) {
+            const s = (v ?? '').toString();
+            return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+        }
+
+        function triggerCsvDownload(text, filename) {
+            const blob = new Blob([text], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Export current standings as a CSV backup. Columns match the bulk
+        // player-ranking importer so this file can be re-imported to revert.
+        async function exportPlayerData() {
+            setBulkStatus('Preparing backup…', 'info');
+            try {
+                const { data, error } = await _supabase
+                    .from('player_rankings')
+                    .select('name,elo,wins,losses,division,half')
+                    .order('elo', { ascending: false });
+                if (error) throw error;
+                const rows = data || [];
+                if (!rows.length) { setBulkStatus('No player data to export.', 'error'); return; }
+
+                const headers = ['name', 'elo', 'wins', 'losses', 'division', 'half'];
+                const lines = [headers.join(',')];
+                rows.forEach(r => {
+                    lines.push([
+                        r.name, r.elo ?? 0, r.wins ?? 0, r.losses ?? 0, r.division ?? '', r.half ?? ''
+                    ].map(csvCell).join(','));
+                });
+
+                const stamp = new Date().toISOString().slice(0, 16).replace(/[:T]/g, '-');
+                triggerCsvDownload(lines.join('\n'), `player-standings-backup-${stamp}.csv`);
+                setBulkStatus(`Backed up ${rows.length} players. Keep this file to revert if needed.`, 'ok');
+            } catch (err) {
+                setBulkStatus(`Backup failed: ${err.message}`, 'error');
+            }
+        }
+
+        function downloadFixtures() {
+            if (!manualMatchPlayers.length) {
+                setBulkStatus('Players are still loading — try again in a moment.', 'error');
+                return;
+            }
+
+            const headers = ['Player 1','Player 2','Division','Day','Term/Week','Played','S1P1','S1P2','S2P1','S2P2','S3P1','S3P2','Winner'];
+
+            // Match the Matchup Ladder exactly: rank everyone by Elo, then
+            // Monday = top 16, Tuesday = ranks 17–32. Within each day:
+            // Division 1 = ranks 1–4, Division 2 = ranks 5–12, Division 3 = 13–16.
+            const ranked = manualMatchPlayers.slice()
+                .filter(p => p.name)
+                .sort((a, b) => {
+                    const d = (b.elo || 0) - (a.elo || 0);
+                    if (d !== 0) return d;
+                    return (a.name || '').localeCompare(b.name || '');
+                });
+
+            const dayGroups = [
+                { day: 'Monday',  players: ranked.slice(0, 16) },
+                { day: 'Tuesday', players: ranked.slice(16, 32) },
+            ];
+            const divisionOf = (idxWithinDay) =>
+                idxWithinDay < 4 ? 'Division 1' : idxWithinDay < 12 ? 'Division 2' : 'Division 3';
+
+            const lines = [headers.map(csvCell).join(',')];
+            let pairCount = 0;
+            let rowNum = 1; // header is row 1; data starts at row 2
+            const winnerFormula = (r) =>
+                `=IF(AND(G${r}="",I${r}="",K${r}=""),"",` +
+                `IF((IF(G${r}>H${r},1,0)+IF(I${r}>J${r},1,0)+IF(K${r}>L${r},1,0))>` +
+                `(IF(G${r}<H${r},1,0)+IF(I${r}<J${r},1,0)+IF(K${r}<L${r},1,0)),A${r},B${r}))`;
+
+            dayGroups.forEach(({ day, players }) => {
+                // Split this day's 16 into divisions by rank position.
+                const divs = { 'Division 1': [], 'Division 2': [], 'Division 3': [] };
+                players.forEach((p, idx) => divs[divisionOf(idx)].push(p));
+                ['Division 1', 'Division 2', 'Division 3'].forEach(divName => {
+                    const group = divs[divName];
+                    for (let i = 0; i < group.length; i++) {
+                        for (let j = i + 1; j < group.length; j++) {
+                            rowNum++;
+                            lines.push([
+                                group[i].name, group[j].name,
+                                divName, day, '', 'N',
+                                '', '', '', '', '', '',
+                                winnerFormula(rowNum)
+                            ].map(csvCell).join(','));
+                            pairCount++;
+                        }
+                    }
+                });
+            });
+
+            if (!pairCount) {
+                setBulkStatus('No pairings could be generated (need at least two players in a division/day).', 'error');
+                return;
+            }
+
+            const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'match-fixtures.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            setBulkStatus(`Generated ${pairCount} pairings. Fill in scores, set Played to Y for matches that happened, then re-upload.`, 'ok');
+        }
+
         function renderNameLinkAccounts() {
             const list = document.getElementById('nameLinkAccountList');
             const emptyState = document.getElementById('nameLinkAccountEmpty');
@@ -1071,9 +1532,9 @@
                 const initials = getInitials(getAccountLabel(account));
                 return `
                     <button type="button" data-account-id="${escapeHtml(account.account_id)}"
-                        class="text-left rounded-xl border p-3 transition-all shadow-sm hover:shadow-md min-w-0 ${isSelected ? 'border-emerald-400 bg-emerald-50 ring-2 ring-emerald-200' : 'border-slate-200 bg-white hover:border-emerald-200'}">
-                        <div class="flex items-start gap-2.5">
-                            <div class="h-10 w-10 rounded-xl ${isSelected ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-600'} flex items-center justify-center font-extrabold text-xs shrink-0">${escapeHtml(initials)}</div>
+                        class="text-left rounded-xl border p-3 transition-all shadow-sm hover:shadow-md min-w-0 w-full ${isSelected ? 'border-emerald-400 bg-emerald-50 ring-2 ring-emerald-200' : 'border-slate-200 bg-white hover:border-emerald-200'}">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div class="h-10 w-10 rounded-xl ${isSelected ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-600'} flex items-center justify-center font-extrabold text-sm leading-none tracking-tight shrink-0">${escapeHtml(initials)}</div>
                             <div class="min-w-0 flex-1">
                                 <div class="flex items-start justify-between gap-2">
                                     <div class="min-w-0">
@@ -2062,6 +2523,10 @@
         ['manualMatchScoreInput', 'manualMatchTermInput']
             .forEach(id => document.getElementById(id)?.addEventListener('input', renderManualMatchForm));
         document.getElementById('saveManualMatchBtn')?.addEventListener('click', saveManualMatch);
+        document.getElementById('bulkMatchFileInput')?.addEventListener('change', (e) => handleBulkFile(e.target.files?.[0]));
+        document.getElementById('bulkMatchImportBtn')?.addEventListener('click', runBulkImport);
+        document.getElementById('downloadFixturesBtn')?.addEventListener('click', downloadFixtures);
+        document.getElementById('exportPlayerDataBtn')?.addEventListener('click', exportPlayerData);
 
         // Profile Listeners
         document.getElementById('closeProfileModalBtn').addEventListener('click', () => document.getElementById('profileModal').classList.add('hidden'));
@@ -2320,12 +2785,12 @@
                     const half = player.half ? ` · ${halfToDay(player.half)}` : '';
                     return `
                         <button type="button" data-player-name="${escapeHtml(player.name)}"
-                            class="text-left rounded-xl border p-3 transition-all shadow-sm hover:shadow-md min-w-0 ${isSelected ? 'border-blue-400 bg-blue-50 ring-2 ring-blue-200' : 'border-slate-200 bg-white hover:border-blue-200'}">
-                            <div class="flex items-center gap-2.5">
-                                <div class="h-10 w-10 rounded-xl ${isSelected ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-600'} flex items-center justify-center font-extrabold text-xs shrink-0">${escapeHtml(initials)}</div>
-                                <div class="min-w-0 flex-1">
+                            class="text-left rounded-xl border p-3 transition-all shadow-sm hover:shadow-md min-w-0 w-full ${isSelected ? 'border-blue-400 bg-blue-50 ring-2 ring-blue-200' : 'border-slate-200 bg-white hover:border-blue-200'}">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <div class="h-10 w-10 rounded-xl ${isSelected ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-600'} flex items-center justify-center font-extrabold text-sm leading-none tracking-tight shrink-0">${escapeHtml(initials)}</div>
+                                <div class="min-w-0 flex-1 leading-tight">
                                     <p class="font-bold text-slate-800 truncate">${escapeHtml(player.name)}</p>
-                                    <p class="text-xs text-slate-500 truncate mt-0.5">${player.elo ?? 0} Elo · W${player.wins ?? 0}/L${player.losses ?? 0}${division}${half}</p>
+                                    <p class="text-xs text-slate-500 truncate mt-1">${player.elo ?? 0} Elo · W${player.wins ?? 0}/L${player.losses ?? 0}${division}${half}</p>
                                 </div>
                             </div>
                         </button>
@@ -2508,12 +2973,12 @@
                     const half = player.half ? ` · ${halfToDay(player.half)}` : '';
                     return `
                         <button type="button" data-player-name="${escapeHtml(player.name)}"
-                            class="text-left rounded-xl border p-3 transition-all shadow-sm hover:shadow-md min-w-0 ${isSelected ? 'border-red-400 bg-red-50 ring-2 ring-red-200' : 'border-slate-200 bg-white hover:border-red-200'}">
-                            <div class="flex items-center gap-2.5">
-                                <div class="h-10 w-10 rounded-xl ${isSelected ? 'bg-red-800 text-white' : 'bg-slate-100 text-slate-600'} flex items-center justify-center font-extrabold text-xs shrink-0">${escapeHtml(initials)}</div>
-                                <div class="min-w-0 flex-1">
+                            class="text-left rounded-xl border p-3 transition-all shadow-sm hover:shadow-md min-w-0 w-full ${isSelected ? 'border-red-400 bg-red-50 ring-2 ring-red-200' : 'border-slate-200 bg-white hover:border-red-200'}">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <div class="h-10 w-10 rounded-xl ${isSelected ? 'bg-red-800 text-white' : 'bg-slate-100 text-slate-600'} flex items-center justify-center font-extrabold text-sm leading-none tracking-tight shrink-0">${escapeHtml(initials)}</div>
+                                <div class="min-w-0 flex-1 leading-tight">
                                     <p class="font-bold text-slate-800 truncate">${escapeHtml(player.name)}</p>
-                                    <p class="text-xs text-slate-500 truncate mt-0.5">W${player.wins ?? 0} / L${player.losses ?? 0} · ${player.elo ?? 0} Elo${division}${half}</p>
+                                    <p class="text-xs text-slate-500 truncate mt-1">W${player.wins ?? 0} / L${player.losses ?? 0} · ${player.elo ?? 0} Elo${division}${half}</p>
                                 </div>
                             </div>
                         </button>
