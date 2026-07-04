@@ -595,6 +595,17 @@
                             Export current data (backup)
                         </button>
                     </div>
+                    <div class="mt-3 rounded-lg bg-amber-50 border border-amber-200 p-3">
+                        <p class="text-sm text-amber-900 font-semibold">Revert to a backup</p>
+                        <p class="text-xs text-amber-800 mt-1">Upload a backup file. This deletes every match added after that backup and restores Elo, wins/losses, and divisions to that moment. This cannot be undone.</p>
+                        <div class="mt-3 flex flex-col sm:flex-row sm:items-center gap-3">
+                            <input id="revertBackupFileInput" type="file" accept=".csv,text/csv"
+                                class="block w-full text-sm text-slate-700 file:mr-3 file:rounded-lg file:border-0 file:bg-amber-600 file:text-white file:px-4 file:py-2 file:font-semibold file:cursor-pointer hover:file:bg-amber-700">
+                            <button id="revertBackupBtn" type="button" disabled
+                                class="shrink-0 rounded-lg bg-red-600 text-white px-4 py-2 text-sm font-bold hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Revert now</button>
+                        </div>
+                        <p id="revertStatus" class="hidden mt-2 text-sm font-medium"></p>
+                    </div>
                     <div class="mt-4 flex flex-col sm:flex-row sm:items-center gap-3">
                         <input id="bulkMatchFileInput" type="file" accept=".csv,text/csv"
                             class="block w-full text-sm text-slate-600 file:mr-3 file:rounded-lg file:border-0 file:bg-cyan-600 file:text-white file:px-4 file:py-2 file:font-semibold file:cursor-pointer hover:file:bg-cyan-700">
@@ -1393,32 +1404,143 @@
             URL.revokeObjectURL(url);
         }
 
-        // Export current standings as a CSV backup. Columns match the bulk
-        // player-ranking importer so this file can be re-imported to revert.
+        // Export a full snapshot backup: current standings AND the list of
+        // match IDs that exist right now. The match-ID list lets a later
+        // "Revert to backup" delete exactly the matches added afterwards.
         async function exportPlayerData() {
             setBulkStatus('Preparing backup…', 'info');
             try {
-                const { data, error } = await _supabase
-                    .from('player_rankings')
-                    .select('name,elo,wins,losses,division,half')
-                    .order('elo', { ascending: false });
-                if (error) throw error;
-                const rows = data || [];
+                const [{ data: players, error: pErr }, { data: matches, error: mErr }] = await Promise.all([
+                    _supabase.from('player_rankings').select('name,elo,wins,losses,division,half').order('elo', { ascending: false }),
+                    _supabase.from('match_history').select('id').order('created_at', { ascending: true }),
+                ]);
+                if (pErr) throw pErr;
+                if (mErr) throw mErr;
+                const rows = players || [];
                 if (!rows.length) { setBulkStatus('No player data to export.', 'error'); return; }
 
-                const headers = ['name', 'elo', 'wins', 'losses', 'division', 'half'];
-                const lines = [headers.join(',')];
+                const lines = [];
+                lines.push('[STANDINGS]');
+                lines.push(['name', 'elo', 'wins', 'losses', 'division', 'half'].join(','));
                 rows.forEach(r => {
                     lines.push([
                         r.name, r.elo ?? 0, r.wins ?? 0, r.losses ?? 0, r.division ?? '', r.half ?? ''
                     ].map(csvCell).join(','));
                 });
+                lines.push('');
+                lines.push('[MATCH_IDS]');
+                lines.push('id');
+                (matches || []).forEach(m => lines.push(csvCell(m.id)));
 
                 const stamp = new Date().toISOString().slice(0, 16).replace(/[:T]/g, '-');
-                triggerCsvDownload(lines.join('\n'), `player-standings-backup-${stamp}.csv`);
-                setBulkStatus(`Backed up ${rows.length} players. Keep this file to revert if needed.`, 'ok');
+                triggerCsvDownload(lines.join('\n'), `nbhs-backup-${stamp}.csv`);
+                setBulkStatus(`Backed up ${rows.length} players and ${(matches || []).length} matches. Keep this file to revert.`, 'ok');
             } catch (err) {
                 setBulkStatus(`Backup failed: ${err.message}`, 'error');
+            }
+        }
+
+        // Parse a backup file into { standings: [...], matchIds: Set }.
+        let revertBackup = null;
+
+        function parseBackupFile(text) {
+            const rows = parseCsvText(text);
+            const standings = [];
+            const matchIds = new Set();
+            let section = '';
+            let headerSeen = false;
+            for (const cells of rows) {
+                const first = (cells[0] || '').trim();
+                if (first === '[STANDINGS]') { section = 'standings'; headerSeen = false; continue; }
+                if (first === '[MATCH_IDS]') { section = 'matchids'; headerSeen = false; continue; }
+                if (!section) continue;
+                if (!headerSeen) { headerSeen = true; continue; } // skip the column header line
+                if (section === 'standings') {
+                    if (!first) continue;
+                    standings.push({
+                        name: first,
+                        elo: parseInt(cells[1], 10) || 0,
+                        wins: parseInt(cells[2], 10) || 0,
+                        losses: parseInt(cells[3], 10) || 0,
+                        division: (cells[4] || '').trim() || null,
+                        half: (cells[5] || '').trim() || null,
+                    });
+                } else if (section === 'matchids') {
+                    if (first) matchIds.add(first);
+                }
+            }
+            return { standings, matchIds };
+        }
+
+        function setRevertStatus(msg, kind) {
+            const el = document.getElementById('revertStatus');
+            if (!el) return;
+            el.textContent = msg;
+            el.classList.remove('hidden');
+            el.className = `mt-2 text-sm font-medium ${kind === 'error' ? 'text-red-600' : kind === 'ok' ? 'text-green-600' : 'text-slate-600'}`;
+        }
+
+        function handleRevertFile(file) {
+            const btn = document.getElementById('revertBackupBtn');
+            if (!file) { revertBackup = null; if (btn) btn.disabled = true; return; }
+            const reader = new FileReader();
+            reader.onload = () => {
+                try {
+                    const parsed = parseBackupFile(String(reader.result || ''));
+                    if (!parsed.standings.length) {
+                        setRevertStatus('This file has no standings section. Use a file made by "Export current data".', 'error');
+                        revertBackup = null; if (btn) btn.disabled = true; return;
+                    }
+                    revertBackup = parsed;
+                    if (btn) btn.disabled = false;
+                    setRevertStatus(`Loaded backup: ${parsed.standings.length} players, ${parsed.matchIds.size} matches. Click "Revert now" to restore.`, 'info');
+                } catch (err) {
+                    revertBackup = null; if (btn) btn.disabled = true;
+                    setRevertStatus(`Could not read backup: ${err.message}`, 'error');
+                }
+            };
+            reader.onerror = () => setRevertStatus('Failed to read the file.', 'error');
+            reader.readAsText(file);
+        }
+
+        async function runRevert() {
+            if (!revertBackup) return;
+            const btn = document.getElementById('revertBackupBtn');
+            const confirmMsg = 'Revert to this backup?\n\nThis will DELETE every match added after the backup and reset all Elo, wins/losses, and divisions to that moment. This cannot be undone.';
+            if (!confirm(confirmMsg)) return;
+            btn.disabled = true;
+
+            try {
+                // 1. Find matches added after the snapshot (present now, absent in backup).
+                setRevertStatus('Checking for matches to remove…', 'info');
+                const { data: current, error: cErr } = await _supabase
+                    .from('match_history').select('id').order('created_at', { ascending: false });
+                if (cErr) throw cErr;
+                const toDelete = (current || []).map(m => m.id).filter(id => !revertBackup.matchIds.has(id));
+
+                // 2. Delete each newer match (this also unwinds its Elo & W/L).
+                let deleted = 0, delFailed = 0;
+                for (let i = 0; i < toDelete.length; i++) {
+                    setRevertStatus(`Removing added matches (${i + 1} of ${toDelete.length})…`, 'info');
+                    const { error } = await _supabase.rpc('delete_match', { p_match_id: toDelete[i] });
+                    if (error) delFailed++; else deleted++;
+                }
+
+                // 3. Overwrite standings from the snapshot as the final source of truth.
+                setRevertStatus('Restoring standings…', 'info');
+                const { error: upErr } = await _supabase.rpc('bulk_upsert_player_rankings', {
+                    p_players: revertBackup.standings,
+                });
+                if (upErr) throw upErr;
+
+                setRevertStatus(`Revert complete. Removed ${deleted} match${deleted !== 1 ? 'es' : ''}${delFailed ? ` (${delFailed} failed)` : ''} and restored ${revertBackup.standings.length} players.`, delFailed ? 'error' : 'ok');
+                document.getElementById('revertBackupFileInput').value = '';
+                revertBackup = null;
+                await loadManualMatchPlayers();
+                await loadProfileSummary();
+            } catch (err) {
+                setRevertStatus(`Revert failed: ${err.message}`, 'error');
+                btn.disabled = false;
             }
         }
 
@@ -2527,6 +2649,8 @@
         document.getElementById('bulkMatchImportBtn')?.addEventListener('click', runBulkImport);
         document.getElementById('downloadFixturesBtn')?.addEventListener('click', downloadFixtures);
         document.getElementById('exportPlayerDataBtn')?.addEventListener('click', exportPlayerData);
+        document.getElementById('revertBackupFileInput')?.addEventListener('change', (e) => handleRevertFile(e.target.files?.[0]));
+        document.getElementById('revertBackupBtn')?.addEventListener('click', runRevert);
 
         // Profile Listeners
         document.getElementById('closeProfileModalBtn').addEventListener('click', () => document.getElementById('profileModal').classList.add('hidden'));

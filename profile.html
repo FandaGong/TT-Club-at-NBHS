@@ -34,10 +34,22 @@
     <main id="main-content" class="almanac flex-grow w-full">
       <div class="alm-shell">
         <header class="alm-masthead--compact alm-block" style="border-bottom:2px solid var(--ink);padding-bottom:1.25rem;">
-            <div>
-                <p class="alm-kicker">Your Profile</p>
-                <h1 id="profileName" class="alm-display alm-display--md mt-3">Loading…</h1>
-                <p id="profileEmail" class="alm-lede mt-3" style="font-family:var(--font-mono);font-size:0.8rem;">—</p>
+            <div style="display:flex;align-items:center;gap:1.25rem;flex-wrap:wrap;">
+                <div id="avatarWrap" class="hidden" style="position:relative;flex-shrink:0;">
+                    <div id="avatarCircle" style="height:84px;width:84px;border-radius:9999px;overflow:hidden;border:2px solid var(--ink);background:var(--paper-2);display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-weight:800;font-size:1.8rem;color:var(--ink);">
+                        <img id="avatarImg" alt="Profile picture" style="height:100%;width:100%;object-fit:cover;display:none;">
+                        <span id="avatarInitials">?</span>
+                    </div>
+                    <button id="avatarUploadBtn" type="button" title="Change profile picture"
+                        style="position:absolute;bottom:-4px;right:-4px;height:30px;width:30px;border-radius:9999px;background:var(--oxblood);color:#fff;border:2px solid var(--paper);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:0.9rem;line-height:1;">✎</button>
+                    <input id="avatarFileInput" type="file" accept="image/png,image/jpeg,image/webp" style="display:none;">
+                </div>
+                <div style="min-width:0;">
+                    <p class="alm-kicker">Your Profile</p>
+                    <h1 id="profileName" class="alm-display alm-display--md mt-3">Loading…</h1>
+                    <p id="profileEmail" class="alm-lede mt-3" style="font-family:var(--font-mono);font-size:0.8rem;">—</p>
+                    <p id="avatarStatus" class="hidden alm-mh-date" style="margin-top:0.4rem;"></p>
+                </div>
             </div>
         </header>
 
@@ -181,7 +193,7 @@
 
             try {
                 const [{ data: accountData }, { data: rankingData }, { data: matchData }] = await Promise.all([
-                    supabase.from('account').select('display_name, email, bio').eq('account_id', accountId).maybeSingle(),
+                    supabase.from('account').select('display_name, email, bio, avatar_url').eq('account_id', accountId).maybeSingle(),
                     supabase.from('player_rankings').select('elo,wins,losses,division,half,name,account_id').order('elo', { ascending: false }).limit(500),
                     supabase.from('match_history').select('id,created_at,player_1,player_2,winner,score,p1_elo_change,p2_elo_change,p1_new_elo,p2_new_elo,player_1_account_id,player_2_account_id,winner_account_id').order('created_at', { ascending: true }).limit(1000)
                 ]);
@@ -201,6 +213,7 @@
                 show('profileContent');
 
                 renderBio(accountData?.bio);
+                renderAvatar(accountData?.avatar_url, resolvedName);
 
                 // Rank (1-based position in elo-sorted list)
                 setText('statRank', ranking ? `#${myIndex + 1}` : 'Unranked');
@@ -252,6 +265,80 @@
                 show('profileError');
                 setText('profileErrorMsg', `Could not load your profile: ${error.message}`);
             }
+        }
+
+        function avatarInitials(name) {
+            const raw = (name || '').toString().trim();
+            if (!raw) return '?';
+            const words = raw.replace(/[._-]+/g, ' ').split(/\s+/).filter(Boolean);
+            const first = words[0]?.[0] || '';
+            const last = words.length > 1 ? words[words.length - 1][0] : '';
+            return (first + last).toUpperCase() || '?';
+        }
+
+        function renderAvatar(url, name) {
+            const wrap = document.getElementById('avatarWrap');
+            const img = document.getElementById('avatarImg');
+            const initials = document.getElementById('avatarInitials');
+            if (wrap) wrap.classList.remove('hidden');
+            if (initials) initials.textContent = avatarInitials(name);
+            const clean = (url || '').toString().trim();
+            if (img) {
+                if (clean) {
+                    img.src = clean;
+                    img.style.display = 'block';
+                    if (initials) initials.style.display = 'none';
+                } else {
+                    img.removeAttribute('src');
+                    img.style.display = 'none';
+                    if (initials) initials.style.display = '';
+                }
+            }
+        }
+
+        function setAvatarStatus(msg, kind) {
+            const el = document.getElementById('avatarStatus');
+            if (!el) return;
+            el.textContent = msg;
+            el.classList.remove('hidden');
+            el.style.color = kind === 'error' ? 'var(--oxblood)' : kind === 'ok' ? '#2f6b3a' : 'var(--ink-faint)';
+        }
+
+        async function uploadAvatar(file) {
+            const supabase = getClient();
+            if (!supabase || !_myAccountId || !file) return;
+            if (!/^image\/(png|jpe?g|webp)$/.test(file.type)) {
+                setAvatarStatus('Please choose a PNG, JPG, or WebP image.', 'error');
+                return;
+            }
+            if (file.size > 3 * 1024 * 1024) {
+                setAvatarStatus('Image must be under 3 MB.', 'error');
+                return;
+            }
+            setAvatarStatus('Uploading…', 'info');
+
+            const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+            const path = `${_myAccountId}/avatar-${Date.now()}.${ext}`;
+            const { error: upErr } = await supabase.storage.from('avatars').upload(path, file, {
+                cacheControl: '3600', upsert: true, contentType: file.type,
+            });
+            if (upErr) { setAvatarStatus(`Upload failed: ${upErr.message}`, 'error'); return; }
+
+            const { data: pub } = supabase.storage.from('avatars').getPublicUrl(path);
+            const publicUrl = pub?.publicUrl || '';
+
+            const { error: saveErr } = await supabase.from('account').update({ avatar_url: publicUrl }).eq('account_id', _myAccountId);
+            if (saveErr) { setAvatarStatus(`Could not save: ${saveErr.message}`, 'error'); return; }
+
+            renderAvatar(publicUrl, document.getElementById('profileName')?.textContent || '');
+            setAvatarStatus('Profile picture updated. It is publicly visible.', 'ok');
+        }
+
+        function wireAvatarUploader() {
+            const btn = document.getElementById('avatarUploadBtn');
+            const input = document.getElementById('avatarFileInput');
+            btn?.addEventListener('click', () => input?.click());
+            input?.addEventListener('change', (e) => uploadAvatar(e.target.files?.[0]));
         }
 
         function renderBio(bio) {
@@ -427,11 +514,12 @@
 
         if (window.supabase) {
             wireBioEditor();
+            wireAvatarUploader();
             init();
         } else {
             const s = document.createElement('script');
             s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
-            s.onload = () => { wireBioEditor(); init(); };
+            s.onload = () => { wireBioEditor(); wireAvatarUploader(); init(); };
             document.head.appendChild(s);
         }
     </script>
