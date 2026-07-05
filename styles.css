@@ -2800,6 +2800,12 @@ body[data-theme="high-contrast"] .site-nav {
 }
 .site-nav .site-nav-item:hover,
 .site-nav .group:hover .site-nav-item { color: var(--nav-fg); background: var(--nav-hover); transform: none; filter: none; }
+/* Standalone link items (e.g. Settings) match the dimmed nav-item colour */
+.site-nav a.site-nav-item { color: var(--nav-fg-dim) !important; text-decoration: none; }
+.site-nav a.site-nav-item .site-nav-label { color: var(--nav-fg-dim); }
+.site-nav a.site-nav-item:hover,
+.site-nav a.site-nav-item:hover .site-nav-label { color: var(--nav-fg) !important; }
+.site-nav a.site-nav-item i, .site-nav a.site-nav-item svg { color: inherit; stroke: currentColor; }
 .site-nav .group:hover .site-nav-item::after { transform: scaleX(1); opacity: 0.9; }
 .site-nav .site-nav-caret { transition: transform 0.2s ease; opacity: 0.7; }
 .site-nav .group:hover .site-nav-caret { transform: rotate(180deg); }
@@ -2859,10 +2865,10 @@ body[data-theme="high-contrast"] .site-nav {
   border: 1px solid rgba(255,255,255,0.30);
   border-radius: 0;
   box-shadow: 0 2px 10px -6px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04) inset;
-  transition: transform 0.14s ease, box-shadow 0.14s ease, background-color 0.14s ease;
+  transition: box-shadow 0.14s ease, background-color 0.14s ease;
 }
-.site-nav .site-nav-cta:hover { transform: translateY(-1px); background: rgba(255,255,255,0.24); box-shadow: 0 8px 18px -8px rgba(0,0,0,0.55); }
-.site-nav .site-nav-cta:active { transform: translateY(0); }
+.site-nav .site-nav-cta:hover { background: rgba(255,255,255,0.24); box-shadow: 0 8px 18px -8px rgba(0,0,0,0.55); }
+.site-nav .site-nav-cta:active { transform: none; }
 /* Account button: one universal circle holding either a photo or initials */
 .site-nav .site-nav-badge {
   display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;

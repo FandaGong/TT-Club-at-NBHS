@@ -121,22 +121,24 @@ const headerHTML = `
                 </div>
             </div>
 
-            <div class="relative group w-full md:w-auto">
-                <button id="navProfileLink" type="button" class="site-nav-item inline-flex items-center justify-between w-full md:inline-flex md:w-auto px-3 py-3 md:px-3 md:py-2" aria-expanded="false" aria-haspopup="menu">
-                    <span class="flex items-center gap-2"><span id="navProfileLinkText">Profile</span></span>
-                    <i data-lucide="chevron-down" class="site-nav-caret ml-2 h-4 w-4 shrink-0 md:h-3.5 md:w-3.5 md:ml-1"></i>
-                </button>
-                <div class="profile-dropdown-menu site-nav-menu max-h-0 md:max-h-none md:absolute md:left-0 md:mt-0 w-full md:w-56 opacity-0 md:opacity-0 invisible md:invisible transition-all duration-200 z-50 md:top-full overflow-hidden md:overflow-visible">
+            <!-- Settings (standalone top-level item) -->
+            <a href="settings.html" class="site-nav-item inline-flex items-center gap-2 w-full px-3 py-3 md:w-auto md:px-3 md:py-2" style="text-decoration:none;">
+                <i data-lucide="settings" class="h-4 w-4 shrink-0"></i><span class="site-nav-label">Settings</span>
+            </a>
+
+            <!-- Account: link when signed out, dropdown (Your Profile / Absence) when signed in -->
+            <div id="navAccountGroup" class="relative group w-full md:w-auto md:ml-3">
+                <a id="navAdminLink" href="admin.html" class="site-nav-cta w-full px-3 py-3 md:inline-flex md:w-auto md:px-3 md:py-2 items-center gap-2">
+                    <span id="navAdminLinkBadge" class="site-nav-badge hidden"><img id="navAdminLinkBadgeImg" alt="" /><span id="navAdminLinkBadgeText"></span></span>
+                    <span id="navAdminLinkText">Login</span>
+                    <i id="navAccountCaret" data-lucide="chevron-down" class="site-nav-caret hidden ml-1 h-4 w-4 shrink-0 md:h-3.5 md:w-3.5"></i>
+                </a>
+                <div id="navAccountMenu" class="account-dropdown-menu site-nav-menu hidden max-h-0 md:max-h-none md:absolute md:right-0 md:mt-0 w-full md:w-56 opacity-0 md:opacity-0 invisible md:invisible transition-all duration-200 z-50 md:top-full overflow-hidden md:overflow-visible">
                     <a href="profile.html" class="site-nav-subitem"><i data-lucide="user-round" class="h-4 w-4 shrink-0"></i>Your Profile</a>
                     <a href="absence-report.html" class="site-nav-subitem"><i data-lucide="calendar-x" class="h-4 w-4 shrink-0"></i>Absence</a>
-                    <a href="settings.html" class="site-nav-subitem"><i data-lucide="settings" class="h-4 w-4 shrink-0"></i>Settings</a>
+                    <a id="navAdminPanelItem" href="admin.html" class="site-nav-subitem hidden"><i data-lucide="layout-dashboard" class="h-4 w-4 shrink-0"></i><span class="panel-item-label">Standard User Panel</span></a>
                 </div>
             </div>
-
-            <a id="navAdminLink" href="admin.html" class="site-nav-cta w-full px-3 py-3 md:inline-flex md:w-auto md:px-3 md:py-2 items-center gap-2">
-                <span id="navAdminLinkBadge" class="site-nav-badge hidden"><img id="navAdminLinkBadgeImg" alt="" /><span id="navAdminLinkBadgeText"></span></span>
-                <span id="navAdminLinkText">Login</span>
-            </a>
         </div>
     </nav>
 </header>
@@ -158,6 +160,9 @@ async function updateAuthUI(session) {
     const badge = document.getElementById('navAdminLinkBadge');
     const badgeImg = document.getElementById('navAdminLinkBadgeImg');
     const badgeText = document.getElementById('navAdminLinkBadgeText');
+    const accountCaret = document.getElementById('navAccountCaret');
+    const accountMenu = document.getElementById('navAccountMenu');
+    const adminPanelItem = document.getElementById('navAdminPanelItem');
 
     const navInitials = (name) => {
         const raw = (name || '').toString().trim();
@@ -192,14 +197,29 @@ async function updateAuthUI(session) {
 
     const signedIn = !!(session && session.user && session.user.email);
 
-    // Signed out: a plain "Login" button (sign-up lives inside that page).
+    // Signed out: a plain "Login" button, no badge, no dropdown.
     if (!signedIn) {
+        adminLink.setAttribute('href', 'admin.html');
         if (badge) badge.classList.add('hidden');
+        if (accountCaret) accountCaret.classList.add('hidden');
+        if (accountMenu) accountMenu.classList.add('hidden');
+        if (adminPanelItem) adminPanelItem.classList.add('hidden');
         if (adminText) { adminText.textContent = 'Login'; adminText.style.opacity = '1'; }
         return;
     }
 
-    // Signed in (standard OR admin): show the name + badge immediately, then enrich.
+    // Signed in: the name is a dropdown toggle only — never a link to the panel.
+    adminLink.removeAttribute('href');
+    adminLink.style.cursor = 'pointer';
+    if (accountCaret) accountCaret.classList.remove('hidden');
+    if (accountMenu) accountMenu.classList.remove('hidden');
+    // Panel item shows for everyone signed in; label depends on role.
+    if (adminPanelItem) {
+        adminPanelItem.classList.remove('hidden');
+        const lbl = adminPanelItem.querySelector('.panel-item-label');
+        if (lbl) lbl.textContent = 'Standard User Panel';
+    }
+
     const email = (session.user.email || '').toLowerCase();
     let displayName = session.user.user_metadata?.full_name
         || session.user.user_metadata?.name
@@ -207,6 +227,15 @@ async function updateAuthUI(session) {
 
     if (adminText) { adminText.textContent = displayName; adminText.style.opacity = '1'; }
     showBadge(displayName, '');
+
+    // Upgrade the panel label to "Admin Panel" for admins. Allowlist is
+    // available synchronously; also confirm via the async resolver below.
+    const setPanelLabel = (text) => {
+        const lbl = adminPanelItem && adminPanelItem.querySelector('.panel-item-label');
+        if (lbl) lbl.textContent = text;
+    };
+    const adminEmails = (window._adminEmails || []);
+    if (adminEmails.includes(email)) setPanelLabel('Admin Panel');
 
     // Enrich with the stored display name / avatar (non-blocking; never call getSession here).
     try {
@@ -221,6 +250,15 @@ async function updateAuthUI(session) {
                 if (adminText) adminText.textContent = displayName;
             }
             showBadge(displayName, data?.avatar_url);
+        }
+        // Role check via resolver (with a timeout so it can never hang the UI).
+        if (window._resolveAccountRole) {
+            const role = await Promise.race([
+                window._resolveAccountRole(email),
+                new Promise(resolve => setTimeout(() => resolve(null), 2500))
+            ]);
+            if (role === 'admin') setPanelLabel('Admin Panel');
+            else if (role === 'standard') setPanelLabel('Standard User Panel');
         }
     } catch (err) { /* keep the initials + email-prefix fallback */ }
 }
@@ -253,31 +291,31 @@ function initMenu() {
         });
     }
 
-    // Profile dropdown support on mobile and desktop
-    const profileButton = document.getElementById('navProfileLink');
-    const profileDropdown = document.querySelector('header .profile-dropdown-menu');
-    if (profileButton && profileDropdown) {
-        profileButton.addEventListener('click', (evt) => {
-            // In desktop sidebar mode the section-heading handler below manages this.
-            if (window.innerWidth >= 768 && document.body.dataset.navLayout === 'sidebar') return;
+    // Account dropdown: when signed in, clicking the account button toggles the
+    // menu (Your Profile / Absence) instead of navigating. When signed out the
+    // menu is hidden and the button navigates to the login page normally.
+    const accountButton = document.getElementById('navAdminLink');
+    const accountMenu = document.getElementById('navAccountMenu');
+    if (accountButton && accountMenu) {
+        accountButton.addEventListener('click', (evt) => {
+            // If the menu is hidden (signed out), let the link navigate.
+            if (accountMenu.classList.contains('hidden')) return;
             evt.preventDefault();
             evt.stopPropagation();
-            const isVisible = profileDropdown.classList.contains('show');
-            document.querySelectorAll('header .relative.group > div').forEach(d => {
-                d.classList.remove('show');
-            });
+            const isVisible = accountMenu.classList.contains('show');
+            document.querySelectorAll('header .relative.group > div').forEach(d => d.classList.remove('show'));
             if (!isVisible) {
-                profileDropdown.classList.add('show');
-                profileButton.setAttribute('aria-expanded', 'true');
+                accountMenu.classList.add('show');
+                accountButton.setAttribute('aria-expanded', 'true');
             } else {
-                profileButton.setAttribute('aria-expanded', 'false');
+                accountButton.setAttribute('aria-expanded', 'false');
             }
         });
 
-        profileDropdown.querySelectorAll('a').forEach(link => {
+        accountMenu.querySelectorAll('a').forEach(link => {
             link.addEventListener('click', () => {
-                profileDropdown.classList.remove('show');
-                profileButton.setAttribute('aria-expanded', 'false');
+                accountMenu.classList.remove('show');
+                accountButton.setAttribute('aria-expanded', 'false');
             });
         });
     }

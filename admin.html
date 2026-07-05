@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NBHS TT Hub - Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="styles.css?v=20260705b">
+    <link rel="stylesheet" href="styles.css?v=20260705i">
     <link rel="stylesheet" href="animations.css">
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
@@ -104,8 +104,39 @@
                 <!-- Standard User Dashboard View -->
                 <div id="standardUserNotice" class="hidden alm-panel" style="margin-top:1.25rem;">
                     <h3 class="alm-section-title" style="font-size:1.2rem;">Standard User Dashboard</h3>
-                    <p class="alm-mh-date" style="margin-top:0.5rem;">You are signed in. You can now submit Absence Reports without filling in your email.</p>
-                    <a href="absence-report.html" class="alm-link" style="display:inline-block;margin-top:1rem;">Go to Absence Reports →</a>
+                    <p class="alm-mh-date" style="margin-top:0.5rem;">You're signed in. Use the tools below — your submissions are linked to your account automatically.</p>
+                    <nav class="alm-tools" style="margin-top:1.25rem;">
+                        <a href="absence-report.html" class="alm-tool">
+                            <span class="alm-tool-num">01</span>
+                            <span><span class="alm-tool-title">Submit an Absence</span><span class="alm-tool-desc">Report a missed session — no need to type your email.</span></span>
+                            <span class="alm-tool-arrow">→</span>
+                        </a>
+                        <a href="profile.html" class="alm-tool">
+                            <span class="alm-tool-num">02</span>
+                            <span><span class="alm-tool-title">Your Profile</span><span class="alm-tool-desc">Rank, Elo history, bio and profile picture.</span></span>
+                            <span class="alm-tool-arrow">→</span>
+                        </a>
+                        <a href="player-ranking.html" class="alm-tool">
+                            <span class="alm-tool-num">03</span>
+                            <span><span class="alm-tool-title">Ranking Ladder</span><span class="alm-tool-desc">Current Elo ratings and full club standings.</span></span>
+                            <span class="alm-tool-arrow">→</span>
+                        </a>
+                        <a href="player-matchup-ladder.html" class="alm-tool">
+                            <span class="alm-tool-num">04</span>
+                            <span><span class="alm-tool-title">Weekly Matchups</span><span class="alm-tool-desc">Bracket placements and table assignments.</span></span>
+                            <span class="alm-tool-arrow">→</span>
+                        </a>
+                        <a href="matches.html" class="alm-tool">
+                            <span class="alm-tool-num">05</span>
+                            <span><span class="alm-tool-title">Match History</span><span class="alm-tool-desc">Browse and search every recorded club match.</span></span>
+                            <span class="alm-tool-arrow">→</span>
+                        </a>
+                        <a href="settings.html" class="alm-tool">
+                            <span class="alm-tool-num">06</span>
+                            <span><span class="alm-tool-title">Settings</span><span class="alm-tool-desc">Theme, accent, font, density and accessibility.</span></span>
+                            <span class="alm-tool-arrow">→</span>
+                        </a>
+                    </nav>
                 </div>
 
                 <!-- Admin Dashboard View -->
@@ -687,7 +718,7 @@
     </div>
 
     <!-- 4. LOAD COMPONENTS SCRIPT -->
-    <script src="components.js?v=20260705c"></script>
+    <script src="components.js?v=20260705i"></script>
 
     <script>
         window.manualPageReveal = true;
