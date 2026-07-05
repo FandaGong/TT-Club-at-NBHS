@@ -1,89 +1,14 @@
 {
-  "type": "message",
+  "body": {
+    "contentType": "html",
+    "content": "<attachment id=\"commitcard\"></attachment>"
+  },
   "attachments": [
     {
+      "id": "commitcard",
       "contentType": "application/vnd.microsoft.card.adaptive",
       "contentUrl": null,
-      "content": {
-        "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-        "type": "AdaptiveCard",
-        "version": "1.4",
-        "body": [
-          {
-            "type": "Container",
-            "style": "emphasis",
-            "bleed": true,
-            "items": [
-              {
-                "type": "ColumnSet",
-                "columns": [
-                  {
-                    "type": "Column",
-                    "width": "stretch",
-                    "verticalContentAlignment": "Center",
-                    "items": [
-                      {
-                        "type": "TextBlock",
-                        "text": "New Commit to TT Club Website",
-                        "weight": "Bolder",
-                        "size": "Large",
-                        "color": "Accent",
-                        "wrap": true
-                      },
-                      {
-                        "type": "TextBlock",
-                        "text": "A change has been pushed to the repository.",
-                        "isSubtle": true,
-                        "spacing": "Small",
-                        "wrap": true
-                      }
-                    ]
-                  },
-                  {
-                    "type": "Column",
-                    "width": "auto",
-                    "verticalContentAlignment": "Center",
-                    "items": [
-                      {
-                        "type": "Image",
-                        "url": "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
-                        "width": "40px",
-                        "height": "40px",
-                        "altText": "GitHub"
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "type": "Container",
-            "spacing": "Medium",
-            "items": [
-              {
-                "type": "FactSet",
-                "facts": [
-                  { "title": "Author", "value": "${author}" },
-                  { "title": "Commit", "value": "${commit}" },
-                  { "title": "Date", "value": "${date}" },
-                  { "title": "Update", "value": "${message}" }
-                ]
-              }
-            ]
-          }
-        ],
-        "actions": [
-          {
-            "type": "Action.OpenUrl",
-            "title": "View on GitHub",
-            "url": "${url}"
-          }
-        ],
-        "msteams": {
-          "width": "Full"
-        }
-      }
+      "content": "{\"$schema\":\"http://adaptivecards.io/schemas/adaptive-card.json\",\"type\":\"AdaptiveCard\",\"version\":\"1.4\",\"body\":[{\"type\":\"Container\",\"style\":\"emphasis\",\"bleed\":true,\"items\":[{\"type\":\"ColumnSet\",\"columns\":[{\"type\":\"Column\",\"width\":\"stretch\",\"verticalContentAlignment\":\"Center\",\"items\":[{\"type\":\"TextBlock\",\"text\":\"New Commit to TT Club Website\",\"weight\":\"Bolder\",\"size\":\"Large\",\"color\":\"Accent\",\"wrap\":true},{\"type\":\"TextBlock\",\"text\":\"A change has been pushed to the repository.\",\"isSubtle\":true,\"spacing\":\"Small\",\"wrap\":true}]},{\"type\":\"Column\",\"width\":\"auto\",\"verticalContentAlignment\":\"Center\",\"items\":[{\"type\":\"Image\",\"url\":\"https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png\",\"width\":\"40px\",\"height\":\"40px\",\"altText\":\"GitHub\"}]}]}]},{\"type\":\"Container\",\"spacing\":\"Medium\",\"items\":[{\"type\":\"FactSet\",\"facts\":[{\"title\":\"Author\",\"value\":\"__AUTHOR__\"},{\"title\":\"Commit\",\"value\":\"__COMMIT__\"},{\"title\":\"Date\",\"value\":\"__DATE__\"},{\"title\":\"Update\",\"value\":\"__MESSAGE__\"}]}]}],\"actions\":[{\"type\":\"Action.OpenUrl\",\"title\":\"View on GitHub\",\"url\":\"__URL__\"}],\"msteams\":{\"width\":\"Full\"}}"
     }
   ]
 }
