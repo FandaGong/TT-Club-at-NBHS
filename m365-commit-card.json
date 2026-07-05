@@ -1,89 +1,14 @@
 {
-  "type": "message",
+  "body": {
+    "contentType": "html",
+    "content": "<attachment id=\"commitcard\"></attachment>"
+  },
   "attachments": [
     {
+      "id": "commitcard",
       "contentType": "application/vnd.microsoft.card.adaptive",
       "contentUrl": null,
-      "content": {
-        "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-        "type": "AdaptiveCard",
-        "version": "1.4",
-        "body": [
-          {
-            "type": "Container",
-            "style": "emphasis",
-            "bleed": true,
-            "items": [
-              {
-                "type": "ColumnSet",
-                "columns": [
-                  {
-                    "type": "Column",
-                    "width": "stretch",
-                    "verticalContentAlignment": "Center",
-                    "items": [
-                      {
-                        "type": "TextBlock",
-                        "text": "New Commit to TT Club Website",
-                        "weight": "Bolder",
-                        "size": "Large",
-                        "color": "Accent",
-                        "wrap": true
-                      },
-                      {
-                        "type": "TextBlock",
-                        "text": "A change has been pushed to the repository.",
-                        "isSubtle": true,
-                        "spacing": "Small",
-                        "wrap": true
-                      }
-                    ]
-                  },
-                  {
-                    "type": "Column",
-                    "width": "auto",
-                    "verticalContentAlignment": "Center",
-                    "items": [
-                      {
-                        "type": "Image",
-                        "url": "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
-                        "width": "40px",
-                        "height": "40px",
-                        "altText": "GitHub"
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "type": "Container",
-            "spacing": "Medium",
-            "items": [
-              {
-                "type": "FactSet",
-                "facts": [
-                  { "title": "Author", "value": "${author}" },
-                  { "title": "Commit", "value": "${commit}" },
-                  { "title": "Date", "value": "${date}" },
-                  { "title": "Update", "value": "${message}" }
-                ]
-              }
-            ]
-          }
-        ],
-        "actions": [
-          {
-            "type": "Action.OpenUrl",
-            "title": "View on GitHub",
-            "url": "${url}"
-          }
-        ],
-        "msteams": {
-          "width": "Full"
-        }
-      }
+      "content": "{\"$schema\":\"http://adaptivecards.io/schemas/adaptive-card.json\",\"type\":\"AdaptiveCard\",\"version\":\"1.5\",\"body\":[{\"type\":\"Container\",\"style\":\"accent\",\"bleed\":true,\"showBorder\":true,\"roundedCorners\":true,\"items\":[{\"type\":\"ColumnSet\",\"columns\":[{\"type\":\"Column\",\"width\":\"stretch\",\"verticalContentAlignment\":\"Center\",\"items\":[{\"type\":\"TextBlock\",\"text\":\"New Commit to TT Club Website\",\"weight\":\"Bolder\",\"size\":\"Large\",\"color\":\"Accent\",\"wrap\":true},{\"type\":\"TextBlock\",\"text\":\"A change has been pushed to the repository.\",\"isSubtle\":true,\"spacing\":\"Small\",\"wrap\":true}]},{\"type\":\"Column\",\"width\":\"auto\",\"verticalContentAlignment\":\"Center\",\"items\":[{\"type\":\"Image\",\"url\":\"https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png\",\"width\":\"40px\",\"height\":\"40px\",\"altText\":\"GitHub\"}]}]}]},{\"type\":\"Container\",\"style\":\"emphasis\",\"spacing\":\"Medium\",\"showBorder\":true,\"roundedCorners\":true,\"items\":[{\"type\":\"FactSet\",\"facts\":[{\"title\":\"Author\",\"value\":\"Jonathan Zhao\"},{\"title\":\"Commit\",\"value\":\"9e70d7b\"},{\"title\":\"Date\",\"value\":\"03 Jul 2026, 08:03 PM\"},{\"title\":\"Update\",\"value\":\"Improved navbar with sidebar option in settings and added option(s) to add a biography – viewable by all.\"}]}]}],\"actions\":[{\"type\":\"Action.OpenUrl\",\"title\":\"View on GitHub\",\"url\":\"https://github.com/\"}],\"msteams\":{\"width\":\"Full\"}}"
     }
   ]
 }
