@@ -123,7 +123,7 @@ const headerHTML = `
 
             <div class="relative group w-full md:w-auto">
                 <button id="navProfileLink" type="button" class="site-nav-item inline-flex items-center justify-between w-full md:inline-flex md:w-auto px-3 py-3 md:px-3 md:py-2" aria-expanded="false" aria-haspopup="menu">
-                    <span class="flex items-center gap-2"><i data-lucide="user-round" class="h-4 w-4 shrink-0"></i><span id="navProfileLinkText">Profile</span></span>
+                    <span class="flex items-center gap-2"><span id="navProfileLinkText">Profile</span></span>
                     <i data-lucide="chevron-down" class="site-nav-caret ml-2 h-4 w-4 shrink-0 md:h-3.5 md:w-3.5 md:ml-1"></i>
                 </button>
                 <div class="profile-dropdown-menu site-nav-menu max-h-0 md:max-h-none md:absolute md:left-0 md:mt-0 w-full md:w-56 opacity-0 md:opacity-0 invisible md:invisible transition-all duration-200 z-50 md:top-full overflow-hidden md:overflow-visible">
@@ -133,9 +133,9 @@ const headerHTML = `
                 </div>
             </div>
 
-            <a id="navAdminLink" href="admin.html" class="site-nav-cta hidden w-full px-3 py-3 md:inline-flex md:w-auto md:px-3 md:py-2 items-center gap-2">
-                <i data-lucide="shield-check" class="h-4 w-4 shrink-0"></i>
-                <span id="navAdminLinkText">Admin Portal</span>
+            <a id="navAdminLink" href="admin.html" class="site-nav-cta w-full px-3 py-3 md:inline-flex md:w-auto md:px-3 md:py-2 items-center gap-2">
+                <span id="navAdminLinkBadge" class="site-nav-badge hidden"><img id="navAdminLinkBadgeImg" alt="" /><span id="navAdminLinkBadgeText"></span></span>
+                <span id="navAdminLinkText">Login</span>
             </a>
         </div>
     </nav>
@@ -155,37 +155,74 @@ async function updateAuthUI(session) {
     const profileText = document.getElementById('navProfileLinkText');
     const adminLink = document.getElementById('navAdminLink');
     const adminText = document.getElementById('navAdminLinkText');
+    const badge = document.getElementById('navAdminLinkBadge');
+    const badgeImg = document.getElementById('navAdminLinkBadgeImg');
+    const badgeText = document.getElementById('navAdminLinkBadgeText');
+
+    const navInitials = (name) => {
+        const raw = (name || '').toString().trim();
+        if (!raw) return '?';
+        const words = raw.replace(/[._-]+/g, ' ').split(/\s+/).filter(Boolean);
+        const first = words[0]?.[0] || '';
+        const last = words.length > 1 ? words[words.length - 1][0] : '';
+        return (first + last).toUpperCase() || '?';
+    };
+
+    // One universal circle: show a picture if present, otherwise initials.
+    const showBadge = (name, avatarUrl) => {
+        if (!badge) return;
+        const url = (avatarUrl || '').toString().trim();
+        if (url && badgeImg) {
+            badgeImg.src = url;
+            badgeImg.style.display = 'block';
+            if (badgeText) badgeText.style.display = 'none';
+        } else {
+            if (badgeImg) { badgeImg.removeAttribute('src'); badgeImg.style.display = 'none'; }
+            if (badgeText) { badgeText.textContent = navInitials(name); badgeText.style.display = 'flex'; }
+        }
+        badge.classList.remove('hidden');
+    };
 
     if (profileText) {
         profileText.textContent = 'Profile';
         profileText.style.opacity = '1';
     }
 
-    if (adminLink) {
-        let role = 'guest';
-        if (session && session.user && session.user.email) {
-            const email = (session.user.email || '').toLowerCase();
-            try {
-                if (window._resolveAccountRole) {
-                    role = await window._resolveAccountRole(email);
-                } else {
-                    const adminEmails = (window._adminEmails || []).slice();
-                    role = adminEmails.includes(email) ? 'admin' : 'standard';
-                }
-            } catch (err) {
-                role = 'standard';
-            }
-        }
-        // Signed-out: hide the account link entirely.
-        // Admin: "Admin Portal". Standard user: "Standard User".
-        // Both roles link to admin.html, which shows role-appropriate tools.
-        const signedIn = role === 'admin' || role === 'standard';
-        adminLink.classList.toggle('hidden', !signedIn);
-        if (adminText && signedIn) {
-            adminText.textContent = role === 'admin' ? 'Admin Portal' : 'Standard User';
-            adminText.style.opacity = '1';
-        }
+    if (!adminLink) return;
+
+    const signedIn = !!(session && session.user && session.user.email);
+
+    // Signed out: a plain "Login" button (sign-up lives inside that page).
+    if (!signedIn) {
+        if (badge) badge.classList.add('hidden');
+        if (adminText) { adminText.textContent = 'Login'; adminText.style.opacity = '1'; }
+        return;
     }
+
+    // Signed in (standard OR admin): show the name + badge immediately, then enrich.
+    const email = (session.user.email || '').toLowerCase();
+    let displayName = session.user.user_metadata?.full_name
+        || session.user.user_metadata?.name
+        || email.split('@')[0];
+
+    if (adminText) { adminText.textContent = displayName; adminText.style.opacity = '1'; }
+    showBadge(displayName, '');
+
+    // Enrich with the stored display name / avatar (non-blocking; never call getSession here).
+    try {
+        const client = window._supabaseClient;
+        if (client) {
+            const { data } = await client.from('account')
+                .select('display_name, avatar_url')
+                .eq('account_id', session.user.id)
+                .maybeSingle();
+            if (data?.display_name) {
+                displayName = data.display_name;
+                if (adminText) adminText.textContent = displayName;
+            }
+            showBadge(displayName, data?.avatar_url);
+        }
+    } catch (err) { /* keep the initials + email-prefix fallback */ }
 }
 
 function initMenu() {

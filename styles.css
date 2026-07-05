@@ -2863,6 +2863,26 @@ body[data-theme="high-contrast"] .site-nav {
 }
 .site-nav .site-nav-cta:hover { transform: translateY(-1px); background: rgba(255,255,255,0.24); box-shadow: 0 8px 18px -8px rgba(0,0,0,0.55); }
 .site-nav .site-nav-cta:active { transform: translateY(0); }
+/* Account button: one universal circle holding either a photo or initials */
+.site-nav .site-nav-badge {
+  display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+  height: 1.4rem; width: 1.4rem;
+  border-radius: 9999px; overflow: hidden;
+  background: rgba(255,255,255,0.22);
+  border: 1px solid rgba(255,255,255,0.55);
+}
+.site-nav .site-nav-badge img {
+  height: 100%; width: 100%; object-fit: cover; display: none;
+}
+.site-nav .site-nav-badge > span {
+  display: flex; align-items: center; justify-content: center;
+  height: 100%; width: 100%;
+  font-size: 0.6rem; font-weight: 800; line-height: 1; letter-spacing: 0.02em;
+  color: var(--nav-fg);
+}
+@media (min-width: 768px) {
+  .site-nav #navAdminLinkText { max-width: 12rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+}
 /* Keep the icon the same white as the label */
 .site-nav .site-nav-cta svg {
   color: var(--nav-fg);

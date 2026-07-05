@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NBHS TT Hub - Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css?v=20260705b">
     <link rel="stylesheet" href="animations.css">
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
@@ -38,13 +38,13 @@
             </div>
 
             <div class="alm-tabstrip mt-4">
-                <button id="dialogTabAdminLogin" type="button" data-tab="admin-login" class="is-active">Admin Login</button>
-                <button id="dialogTabStandardLogin" type="button" data-tab="standard-login">Standard User</button>
+                <button id="dialogTabStandardLogin" type="button" data-tab="standard-login" class="is-active">Standard User</button>
+                <button id="dialogTabAdminLogin" type="button" data-tab="admin-login">Admin Login</button>
                 <button id="dialogTabCreateAccount" type="button" data-tab="create-account">Create Account</button>
             </div>
 
             <!-- Admin Form -->
-            <div id="dialogPanelAdminLogin" class="space-y-4 mt-5">
+            <div id="dialogPanelAdminLogin" class="hidden space-y-4 mt-5">
                 <form id="adminLoginForm" class="space-y-4" action="javascript:void(0);" onsubmit="handleDialogLogin(event, 'admin')">
                     <div>
                         <label class="alm-field-label">Admin Email</label>
@@ -60,7 +60,7 @@
             </div>
 
             <!-- Standard Form -->
-            <div id="dialogPanelStandardLogin" class="hidden space-y-4 mt-5">
+            <div id="dialogPanelStandardLogin" class="space-y-4 mt-5">
                 <form id="standardLoginForm" class="space-y-4" action="javascript:void(0);" onsubmit="handleDialogLogin(event, 'standard')">
                     <div>
                         <label class="alm-field-label">Email</label>
@@ -687,7 +687,7 @@
     </div>
 
     <!-- 4. LOAD COMPONENTS SCRIPT -->
-    <script src="components.js"></script>
+    <script src="components.js?v=20260705c"></script>
 
     <script>
         window.manualPageReveal = true;
@@ -1824,23 +1824,17 @@
                     const kicker = document.getElementById('pageKicker');
                     if (kicker) kicker.textContent = isAdmin ? 'Club administration' : 'Standard User Tools';
 
-                    // Ensure header account controls reflect current session state
+                    // Ensure header account controls reflect current session state.
+                    // The shared updateAuthUI() (components.js) owns the account
+                    // button's label/avatar. Pass the session we already have —
+                    // never call getSession() here (that deadlocks the callback).
                     try {
-                        const adminLink = document.getElementById('navAdminLink');
-                        const adminText = document.getElementById('navAdminLinkText');
                         const profileText = document.getElementById('navProfileLinkText');
-                        // The navbar "Admin Portal" link doubles as the account-area link:
-                        // admins see "Admin Portal", standard users see "Standard User".
-                        // Both point to admin.html and stay visible while signed in.
-                        if (adminLink) adminLink.classList.remove('hidden');
-                        if (adminText) {
-                            adminText.textContent = isAdmin ? 'Admin Portal' : 'Standard User';
-                            adminText.style.opacity = '1';
-                        }
                         if (profileText) {
                             profileText.textContent = 'Profile';
                             profileText.style.opacity = '1';
                         }
+                        if (window.updateAuthUI) window.updateAuthUI(session);
                     } catch (e) { /* ignore if header not yet initialized */ }
 
                     if (document.getElementById('profileEmail')) document.getElementById('profileEmail').textContent = email;
@@ -1856,13 +1850,13 @@
                     const kickerOut = document.getElementById('pageKicker');
                     if (kickerOut) kickerOut.textContent = 'Club administration';
                     try {
-                        const adminLink = document.getElementById('navAdminLink');
                         const profileText = document.getElementById('navProfileLinkText');
-                        if (adminLink) adminLink.classList.add('hidden');
                         if (profileText) {
                             profileText.textContent = 'Profile';
                             profileText.style.opacity = '1';
                         }
+                        // Signed out: show the plain "Login" button via shared UI.
+                        if (window.updateAuthUI) window.updateAuthUI(null);
                     } catch (e) { /* ignore if header not yet initialized */ }
                     document.getElementById('profileModal').classList.add('hidden');
                 }
@@ -2677,7 +2671,7 @@
                 updateUI(null);
             });
             _supabase.auth.onAuthStateChange((_event, session) => updateUI(session));
-            setDialogTab('admin-login');
+            setDialogTab('standard-login');
         } else {
             console.warn('Supabase client unavailable. Showing the login surface without auth state.');
             updateUI(null);
