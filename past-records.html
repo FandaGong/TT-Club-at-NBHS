@@ -8,7 +8,7 @@
     <script src="tailwind-theme.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="styles.css?v=20260705h">
+    <link rel="stylesheet" href="styles.css?v=20260713e">
     <link rel="stylesheet" href="animations.css">
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
@@ -16,57 +16,69 @@
 </head>
 
 <!-- CHANGE 1: flex flex-col for sticky footer -->
+
 <body class="site-surface text-slate-900 font-sans min-h-screen flex flex-col">
     <div id="header-placeholder"></div>
 
     <!-- CHANGE 2: Added id, flex-grow, and opacity-0 -->
     <main id="main-content" class="almanac flex-grow w-full transition-opacity duration-300">
-      <div class="alm-shell">
-        <header class="alm-masthead--compact alm-block" style="border-bottom:2px solid var(--ink);padding-bottom:1.25rem;">
-            <div>
-                <p class="alm-kicker">Club milestones</p>
-                <h1 class="alm-display alm-display--md mt-3">Hall of<br>Fame</h1>
-            </div>
-        </header>
-
-        <section class="alm-block">
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div class="alm-datacard">
-                    <p class="t">Highest Ever Elo</p>
-                    <p id="top-elo-val" class="v" style="color:var(--oxblood);">N/A</p>
-                    <p id="top-elo-player" class="d" style="font-family:var(--font-mono);text-transform:uppercase;font-size:0.7rem;letter-spacing:0.1em;">N/A</p>
+        <div class="alm-shell">
+            <header class="alm-masthead--compact alm-block"
+                style="border-bottom:2px solid var(--ink);padding-bottom:1.25rem;">
+                <div>
+                    <p class="alm-kicker">Club milestones</p>
+                    <h1 class="alm-display alm-display--md mt-3">Hall of<br>Fame</h1>
                 </div>
-                <div class="alm-datacard">
-                    <p class="t">Most Match Wins</p>
-                    <p id="top-wins-val" class="v" style="color:#2f6b3a;">N/A</p>
-                    <p id="top-wins-player" class="d" style="font-family:var(--font-mono);text-transform:uppercase;font-size:0.7rem;letter-spacing:0.1em;">N/A</p>
-                </div>
-                <div class="alm-datacard">
-                    <p class="t">Biggest Upset</p>
-                    <p id="top-upset-val" class="v" style="color:#c2410c;">N/A</p>
-                    <p id="top-upset-desc" class="d" style="font-family:var(--font-mono);text-transform:uppercase;font-size:0.7rem;letter-spacing:0.1em;">N/A</p>
-                </div>
-            </div>
-        </section>
+            </header>
 
-        <section class="alm-block">
-            <div class="alm-rule-head"><h2 class="alm-section-title">Season Archives</h2></div>
-            <div id="season-grid" class="grid gap-4 md:grid-cols-2">
-                <div style="grid-column:1/-1;padding:2.5rem;text-align:center;" class="alm-eyebrow">Fetching archive records…</div>
-            </div>
+            <section class="alm-block">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="alm-datacard">
+                        <p class="t">Highest Ever Elo</p>
+                        <p id="top-elo-val" class="v" style="color:var(--oxblood);">N/A</p>
+                        <p id="top-elo-player" class="d"
+                            style="font-family:var(--font-mono);text-transform:uppercase;font-size:0.7rem;letter-spacing:0.1em;">
+                            N/A</p>
+                    </div>
+                    <div class="alm-datacard">
+                        <p class="t">Most Match Wins</p>
+                        <p id="top-wins-val" class="v" style="color:#2f6b3a;">N/A</p>
+                        <p id="top-wins-player" class="d"
+                            style="font-family:var(--font-mono);text-transform:uppercase;font-size:0.7rem;letter-spacing:0.1em;">
+                            N/A</p>
+                    </div>
+                    <div class="alm-datacard">
+                        <p class="t">Biggest Upset</p>
+                        <p id="top-upset-val" class="v" style="color:#c2410c;">N/A</p>
+                        <p id="top-upset-desc" class="d"
+                            style="font-family:var(--font-mono);text-transform:uppercase;font-size:0.7rem;letter-spacing:0.1em;">
+                            N/A</p>
+                    </div>
+                </div>
+            </section>
 
-            <div class="alm-panel" style="margin-top:1rem;border-style:dashed;text-align:center;">
-                <p class="alm-eyebrow">Term 2 2026</p>
-                <p class="alm-mh-date" style="margin-top:0.4rem;">Season is currently live. Records will be finalized at the end of the term.</p>
-            </div>
-        </section>
-      </div>
+            <section class="alm-block">
+                <div class="alm-rule-head">
+                    <h2 class="alm-section-title">Season Archives</h2>
+                </div>
+                <div id="season-grid" class="grid gap-4 md:grid-cols-2">
+                    <div style="grid-column:1/-1;padding:2.5rem;text-align:center;" class="alm-eyebrow">Fetching archive
+                        records…</div>
+                </div>
+
+                <div class="alm-panel" style="margin-top:1rem;border-style:dashed;text-align:center;">
+                    <p class="alm-eyebrow">Term 2 2026</p>
+                    <p class="alm-mh-date" style="margin-top:0.4rem;">Season is currently live. Records will be
+                        finalized at the end of the term.</p>
+                </div>
+            </section>
+        </div>
     </main>
 
     <!-- CHANGE 3: Added id, mt-auto, and opacity-0 -->
     <div id="footer-placeholder"></div>
 
-    <script src="components.js?v=20260705g"></script>
+    <script src="components.js?v=20260713h"></script>
     <script>
         // Use Supabase `season_records`, `player_rankings`, and `match_history`
         async function getSupabaseClient() {
@@ -83,9 +95,9 @@
             const rows = []; let row = []; let field = ''; let inQuotes = false;
             for (let i = 0; i < text.length; i++) {
                 const char = text[i];
-                if (char === '"') { if (inQuotes && text[i + 1] === '"') { field += '"'; i++; } else { inQuotes = !inQuotes; } } 
+                if (char === '"') { if (inQuotes && text[i + 1] === '"') { field += '"'; i++; } else { inQuotes = !inQuotes; } }
                 else if (char === ',' && !inQuotes) { row.push(field); field = ''; }
-                else if (("\n" === char || "\r" === char) && !inQuotes) { if ("\r" === char && "\n" === text[i + 1]) i++; row.push(field); field = ''; rows.push(row); row = []; } 
+                else if (("\n" === char || "\r" === char) && !inQuotes) { if ("\r" === char && "\n" === text[i + 1]) i++; row.push(field); field = ''; rows.push(row); row = []; }
                 else { field += char; }
             }
             if (field !== '' || row.length > 0) { row.push(field); rows.push(row); } return rows;
@@ -150,7 +162,7 @@
                     });
 
                     const allTimeWins = Object.values(winCounts).length ? Math.max(...Object.values(winCounts)) : 0;
-                    const atWinsP = Object.entries(winCounts).sort((a,b)=>b[1]-a[1])[0]?.[0] || '';
+                    const atWinsP = Object.entries(winCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || '';
 
                     if (topEloVal) topEloVal.innerText = Number.isFinite(allTimeElo) && allTimeElo > 0 ? String(allTimeElo) : 'N/A';
                     if (topEloPlayer) topEloPlayer.innerText = atEloP || 'No data available';
@@ -199,8 +211,8 @@
 
         // Standardized Navbar logic
         (function () {
-            const t=document.getElementById("rankingNavToggle"),e=document.getElementById("rankingNavLinks"),n=document.getElementById("menu-icon"),o=document.getElementById("close-icon");
-            if(t&&e)t.addEventListener("click",()=>{const s=e.classList.contains("hidden");s?(e.classList.remove("hidden"),e.classList.add("flex","animate-[fadeIn_0.2s_ease-in-out]"),n.classList.add("hidden"),o.classList.remove("hidden"),t.setAttribute("aria-expanded","true")):(e.classList.add("hidden"),e.classList.remove("flex","animate-[fadeIn_0.2s_ease-in-out]"),n.classList.remove("hidden"),o.classList.add("hidden"),t.setAttribute("aria-expanded","false"))})
+            const t = document.getElementById("rankingNavToggle"), e = document.getElementById("rankingNavLinks"), n = document.getElementById("menu-icon"), o = document.getElementById("close-icon");
+            if (t && e) t.addEventListener("click", () => { const s = e.classList.contains("hidden"); s ? (e.classList.remove("hidden"), e.classList.add("flex", "animate-[fadeIn_0.2s_ease-in-out]"), n.classList.add("hidden"), o.classList.remove("hidden"), t.setAttribute("aria-expanded", "true")) : (e.classList.add("hidden"), e.classList.remove("flex", "animate-[fadeIn_0.2s_ease-in-out]"), n.classList.remove("hidden"), o.classList.add("hidden"), t.setAttribute("aria-expanded", "false")) })
         })();
 
         (function () {
@@ -208,64 +220,65 @@
             if (yearEl) yearEl.textContent = new Date().getFullYear();
         })();
     </script>
-<script>
-(function() {
-    if (window.__nbhsNavLoginTextInit__) return;
-    window.__nbhsNavLoginTextInit__ = true;
+    <script>
+        (function () {
+            if (window.__nbhsNavLoginTextInit__) return;
+            window.__nbhsNavLoginTextInit__ = true;
 
-    const adminUrl = 'admin.html';
-    const defaultLabel = 'Login';
-    const profileLabel = 'Profile';
-    const adminLabel = 'Admin Portal';
-    const adminAllowlist = ['nbhsttclub@gmail.com'];
-    const supabaseUrl = 'https://ngnkbfazhdedaqvxcphw.supabase.co';
-    const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbmtiZmF6aGRlZGFxdnhjcGh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTE5NDksImV4cCI6MjA5MzI4Nzk0OX0.F_S6ORkFe-SuJPybs7FEFH94E6U2hZ5ern4vrg4kMOk';
+            const adminUrl = 'admin.html';
+            const defaultLabel = 'Login';
+            const profileLabel = 'Profile';
+            const adminLabel = 'Admin Portal';
+            const adminAllowlist = ['nbhsttclub@gmail.com'];
+            const supabaseUrl = 'https://ngnkbfazhdedaqvxcphw.supabase.co';
+            const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbmtiZmF6aGRlZGFxdnhjcGh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTE5NDksImV4cCI6MjA5MzI4Nzk0OX0.F_S6ORkFe-SuJPybs7FEFH94E6U2hZ5ern4vrg4kMOk';
 
-    const loginLink = document.getElementById('navLoginLink');
-    if (!loginLink) return;
-    let loginText = document.getElementById('navLoginLinkText');
-    if (!loginText) {
-        loginText = document.createElement('span');
-        loginText.id = 'navLoginLinkText';
-        loginText.style.opacity = '0';
-        loginText.textContent = '';
-        loginLink.appendChild(loginText);
-    }
+            const loginLink = document.getElementById('navLoginLink');
+            if (!loginLink) return;
+            let loginText = document.getElementById('navLoginLinkText');
+            if (!loginText) {
+                loginText = document.createElement('span');
+                loginText.id = 'navLoginLinkText';
+                loginText.style.opacity = '0';
+                loginText.textContent = '';
+                loginLink.appendChild(loginText);
+            }
 
-    function setLabel(label) {
-        loginText.textContent = label;
-        loginText.style.opacity = '1';
-    }
+            function setLabel(label) {
+                loginText.textContent = label;
+                loginText.style.opacity = '1';
+            }
 
-    function updateLabel(session) {
-        const email = session?.user?.email?.toLowerCase();
-        if (!email) {
-            setLabel(defaultLabel);
-            return;
-        }
-        setLabel(adminAllowlist.includes(email) ? adminLabel : profileLabel);
-    }
+            function updateLabel(session) {
+                const email = session?.user?.email?.toLowerCase();
+                if (!email) {
+                    setLabel(defaultLabel);
+                    return;
+                }
+                setLabel(adminAllowlist.includes(email) ? adminLabel : profileLabel);
+            }
 
-    function initializeSupabase() {
-        if (!window.supabase) {
-            const script = document.createElement('script');
-            script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
-            script.onload = initializeSupabase;
-            document.head.appendChild(script);
-            return;
-        }
+            function initializeSupabase() {
+                if (!window.supabase) {
+                    const script = document.createElement('script');
+                    script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+                    script.onload = initializeSupabase;
+                    document.head.appendChild(script);
+                    return;
+                }
 
-        const client = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
-        client.auth.getSession().then(({ data }) => updateLabel(data?.session)).catch(() => setLabel(defaultLabel));
-        client.auth.onAuthStateChange((_event, session) => updateLabel(session));
-    }
+                const client = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+                client.auth.getSession().then(({ data }) => updateLabel(data?.session)).catch(() => setLabel(defaultLabel));
+                client.auth.onAuthStateChange((_event, session) => updateLabel(session));
+            }
 
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initializeSupabase);
-    } else {
-        initializeSupabase();
-    }
-})();
-</script>
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initializeSupabase);
+            } else {
+                initializeSupabase();
+            }
+        })();
+    </script>
 </body>
+
 </html>

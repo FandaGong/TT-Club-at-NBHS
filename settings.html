@@ -7,7 +7,7 @@
     <script src="tailwind-theme.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="styles.css?v=20260705h">
+    <link rel="stylesheet" href="styles.css?v=20260713m">
     <link rel="stylesheet" href="animations.css">
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
@@ -80,6 +80,14 @@
                         <input id="reducedMotionToggle" type="checkbox" class="h-5 w-5" style="accent-color:var(--oxblood);">
                     </div>
 
+                    <div class="flex items-center justify-between" style="border:1px solid var(--rule-strong);padding:0.75rem 0.9rem;">
+                        <div>
+                            <label class="alm-field-label" for="ipadCursorToggle" style="margin-bottom:0;">iPad-style cursor</label>
+                            <p class="alm-mh-date" style="margin-top:0.15rem;">A smooth cursor that morphs over buttons and links.</p>
+                        </div>
+                        <input id="ipadCursorToggle" type="checkbox" class="h-5 w-5 shrink-0" style="accent-color:var(--oxblood);">
+                    </div>
+
                     <div>
                         <label class="alm-field-label" for="contrastRange">Contrast</label>
                         <input id="contrastRange" type="range" min="0.8" max="1.4" step="0.05" value="1" class="w-full" style="accent-color:var(--oxblood);">
@@ -108,7 +116,7 @@
 
     <div id="footer-placeholder"></div>
 
-    <script src="components.js?v=20260705g"></script>
+    <script src="components.js?v=20260713m"></script>
     <script>
         window.manualPageReveal = true;
 
@@ -123,6 +131,7 @@
             const density = localStorage.getItem('nbhs-density') || 'comfortable';
             const reducedMotion = localStorage.getItem('nbhs-reduced-motion') === 'true';
             const navLayout = localStorage.getItem('nbhs-nav-layout') || 'top';
+            const ipadCursor = localStorage.getItem('nbhs-ipad-cursor') === 'true';
 
             const themeSelect = document.getElementById('themeSelect');
             const accentSelect = document.getElementById('accentSelect');
@@ -130,6 +139,7 @@
             const densitySelect = document.getElementById('densitySelect');
             const navLayoutSelect = document.getElementById('navLayoutSelect');
             const reducedMotionToggle = document.getElementById('reducedMotionToggle');
+            const ipadCursorToggle = document.getElementById('ipadCursorToggle');
             const contrastRange = document.getElementById('contrastRange');
             const scaleRange = document.getElementById('scaleRange');
             const contrastValue = document.getElementById('contrastValue');
@@ -141,6 +151,7 @@
             if (densitySelect) densitySelect.value = density;
             if (navLayoutSelect) navLayoutSelect.value = navLayout;
             if (reducedMotionToggle) reducedMotionToggle.checked = reducedMotion;
+            if (ipadCursorToggle) ipadCursorToggle.checked = ipadCursor;
             if (contrastRange) contrastRange.value = contrast.toFixed(2);
             if (scaleRange) scaleRange.value = scale.toFixed(2);
             if (contrastValue) contrastValue.textContent = `${contrast.toFixed(2)}×`;
@@ -170,6 +181,7 @@
             fontSelect?.addEventListener('change', (event) => saveSetting('nbhs-font', event.target.value));
             densitySelect?.addEventListener('change', (event) => saveSetting('nbhs-density', event.target.value));
             reducedMotionToggle?.addEventListener('change', (event) => saveSetting('nbhs-reduced-motion', event.target.checked));
+            document.getElementById('ipadCursorToggle')?.addEventListener('change', (event) => saveSetting('nbhs-ipad-cursor', event.target.checked));
             contrastRange?.addEventListener('input', (event) => {
                 const value = parseFloat(event.target.value);
                 saveSetting('nbhs-contrast', value.toFixed(2));
