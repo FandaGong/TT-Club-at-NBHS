@@ -3058,3 +3058,30 @@ body[data-theme="high-contrast"] .site-nav {
   }
   body[data-nav-layout="sidebar"][data-sidebar-collapsed="true"] .site-brand { margin-right: 0; }
 }
+
+/* ── Site-wide announcement banner ─────────────────────────────────── */
+.site-announcement {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  padding: 0.7rem 1.25rem;
+  background: color-mix(in srgb, var(--accent-color, #991b1b) 78%, #000 22%);
+  border-bottom: 1px solid rgba(0,0,0,0.25);
+  color: #fff;
+  font-family: var(--font-sans, sans-serif);
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  text-align: center;
+  position: relative;
+  z-index: 40;
+  animation: announceSlideDown 0.35s ease;
+}
+@keyframes announceSlideDown {
+  from { transform: translateY(-100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.site-announcement-icon { flex-shrink: 0; font-size: 1rem; line-height: 1; filter: saturate(1.1); }
+.site-announcement-text { flex: 0 1 auto; }
+

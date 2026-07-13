@@ -7,7 +7,7 @@
     <title>Player Analysis - NBHS TT</title>
     <script src="tailwind-theme.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="styles.css?v=20260705h">
+    <link rel="stylesheet" href="styles.css?v=20260713m">
     <link rel="stylesheet" href="animations.css">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="icon" type="image/png" href="favicon.png">
@@ -48,6 +48,25 @@
             </div>
         </section>
 
+        <section id="form-section" class="alm-block hidden">
+            <div class="alm-rule-head"><h2 class="alm-section-title">Recent Form</h2></div>
+            <div class="alm-panel">
+                <div id="form-pills" style="display:flex;gap:0.4rem;flex-wrap:wrap;"></div>
+                <p id="form-streak" style="margin-top:0.75rem;font-weight:700;"></p>
+            </div>
+        </section>
+
+        <section class="alm-block">
+            <div class="alm-rule-head"><h2 class="alm-section-title">Head-to-Head</h2></div>
+            <div class="alm-panel">
+                <div style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;">
+                    <label class="alm-field-label" for="h2h-select" style="margin:0;">Compare against</label>
+                    <select id="h2h-select" class="alm-select" style="max-width:20rem;"><option value="">Choose an opponent…</option></select>
+                </div>
+                <div id="h2h-result" style="margin-top:1rem;"></div>
+            </div>
+        </section>
+
         <section class="alm-block">
             <div class="alm-rule-head"><h2 class="alm-section-title">Elo Progress</h2></div>
             <div class="alm-panel">
@@ -79,7 +98,7 @@
     </main>
     <div id="footer-placeholder"></div>
 
-    <script src="components.js?v=20260705g"></script>
+    <script src="components.js?v=20260713m"></script>
 
     <script>
         const urlParams = new URLSearchParams(window.location.search);
@@ -222,8 +241,12 @@
                 if (playerMatches.length === 0) {
                     table.innerHTML = `<tr><td colspan="4" style="padding:2.5rem;text-align:center;color:var(--ink-faint);">No matches found in history.</td></tr>`;
                     renderChart(eloProgress, labels);
+                    setupHeadToHead(playerMatches);
                     return;
                 }
+
+                renderFormAndStreak(playerMatches);
+                setupHeadToHead(playerMatches);
 
                 table.innerHTML = playerMatches.slice().reverse().map(cols => {
                     const isP1 = (cols.player_1 || '').toLowerCase() === playerName.toLowerCase();
@@ -263,6 +286,109 @@
             } catch (err) {
                 console.error("History error:", err);
             }
+        }
+
+        // Last-5 form pills + current win/loss streak.
+        function renderFormAndStreak(playerMatches) {
+            const key = playerName.toLowerCase().trim();
+            const pillsEl = document.getElementById('form-pills');
+            const streakEl = document.getElementById('form-streak');
+            if (!pillsEl) return;
+
+            const results = playerMatches.map(m => (m.winner || '').toLowerCase().trim() === key ? 'W' : 'L');
+            const last5 = results.slice(-5);
+            pillsEl.innerHTML = last5.map(r => `
+                <span class="alm-match-tag ${r === 'W' ? 'win' : 'loss'}" style="min-width:2rem;text-align:center;">${r}</span>
+            `).join('') || '<span style="color:var(--ink-faint);">No matches yet.</span>';
+
+            if (streakEl && results.length) {
+                const latest = results[results.length - 1];
+                let n = 0;
+                for (let i = results.length - 1; i >= 0 && results[i] === latest; i--) n++;
+                streakEl.textContent = `${n} ${latest === 'W' ? 'win' : 'loss'}${n !== 1 ? 'es' : ''} in a row`;
+                streakEl.style.color = latest === 'W' ? '#2f6b3a' : 'var(--oxblood)';
+            }
+            document.getElementById('form-section')?.classList.remove('hidden');
+        }
+
+        // Populate the head-to-head opponent dropdown and render the record on select.
+        // Lists the full roster so every player is selectable, even opponents
+        // this player has never faced.
+        async function setupHeadToHead(playerMatches) {
+            const key = playerName.toLowerCase().trim();
+            const select = document.getElementById('h2h-select');
+            const result = document.getElementById('h2h-result');
+            if (!select) return;
+
+            let roster = [];
+            try {
+                const supabase = await getSupabaseClient();
+                if (supabase) {
+                    const { data } = await supabase.from('player_rankings').select('name');
+                    roster = (data || []).map(r => (r.name || '').trim()).filter(Boolean);
+                }
+            } catch (err) { /* fall back to opponents from matches */ }
+
+            const fromMatches = playerMatches.map(m => {
+                const isP1 = (m.player_1 || '').toLowerCase().trim() === key;
+                return (isP1 ? m.player_2 : m.player_1) || '';
+            });
+
+            const seen = new Set();
+            const opponents = [...roster, ...fromMatches]
+                .map(n => n.trim())
+                .filter(n => {
+                    const lk = n.toLowerCase();
+                    if (!n || lk === key || seen.has(lk)) return false;
+                    seen.add(lk);
+                    return true;
+                })
+                .sort((a, b) => a.localeCompare(b));
+
+            select.innerHTML = '<option value="">Choose an opponent…</option>' +
+                opponents.map(o => `<option value="${o.replace(/"/g, '&quot;')}">${o}</option>`).join('');
+
+            select.addEventListener('change', () => {
+                const opp = select.value;
+                if (!opp) { result.innerHTML = ''; return; }
+                const oppKey = opp.toLowerCase().trim();
+                const h2h = playerMatches.filter(m => {
+                    const p1 = (m.player_1 || '').toLowerCase().trim();
+                    const p2 = (m.player_2 || '').toLowerCase().trim();
+                    return (p1 === key && p2 === oppKey) || (p1 === oppKey && p2 === key);
+                });
+
+                if (h2h.length === 0) {
+                    result.innerHTML = `
+                        <div style="padding:1.5rem;text-align:center;color:var(--ink-faint);border:1px dashed var(--rule-strong);">
+                            <span style="font-weight:600;">${playerName}</span> and <span style="font-weight:600;">${opp}</span> have never played before.
+                        </div>`;
+                    return;
+                }
+
+                let myWins = 0, oppWins = 0;
+                const rows = h2h.slice().reverse().map(m => {
+                    const iWon = (m.winner || '').toLowerCase().trim() === key;
+                    if (iWon) myWins++; else oppWins++;
+                    const when = m.created_at ? new Date(m.created_at).toLocaleDateString() : '';
+                    return `<tr>
+                        <td class="ctr"><span class="alm-match-tag ${iWon ? 'win' : 'loss'}">${iWon ? 'Win' : 'Loss'}</span></td>
+                        <td class="ctr"><span class="alm-ldr-num">${(m.score || '').trim()}</span></td>
+                        <td class="num" style="color:var(--ink-faint);font-size:0.85rem;">${when}</td>
+                    </tr>`;
+                }).join('');
+
+                result.innerHTML = `
+                    <div style="display:flex;align-items:baseline;gap:0.6rem;margin-bottom:0.75rem;flex-wrap:wrap;">
+                        <span style="font-family:var(--font-heading);font-weight:800;font-size:1.8rem;color:${myWins >= oppWins ? '#2f6b3a' : 'var(--oxblood)'};">${myWins}</span>
+                        <span class="alm-eyebrow">${playerName}</span>
+                        <span style="color:var(--ink-faint);">vs</span>
+                        <span style="font-family:var(--font-heading);font-weight:800;font-size:1.8rem;color:${oppWins > myWins ? '#2f6b3a' : 'var(--ink)'};">${oppWins}</span>
+                        <span class="alm-eyebrow">${opp}</span>
+                    </div>
+                    <table class="alm-ladder"><thead><tr><th class="ctr">Result</th><th class="ctr">Score</th><th class="num">Date</th></tr></thead><tbody>${rows}</tbody></table>
+                `;
+            });
         }
 
         function renderChart(historyData, labels) {

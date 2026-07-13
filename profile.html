@@ -9,7 +9,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="styles.css?v=20260705h">
+    <link rel="stylesheet" href="styles.css?v=20260713m">
     <link rel="stylesheet" href="animations.css">
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
@@ -124,6 +124,18 @@
                     <p class="alm-eyebrow">Loading recent matches…</p>
                 </div>
             </section>
+
+            <!-- Head-to-head -->
+            <section class="alm-block">
+                <div class="alm-rule-head"><h2 class="alm-section-title">Head-to-Head</h2></div>
+                <div class="alm-panel">
+                    <div style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;">
+                        <label class="alm-field-label" for="h2h-select" style="margin:0;">Compare against</label>
+                        <select id="h2h-select" class="alm-select" style="max-width:20rem;"><option value="">Choose an opponent…</option></select>
+                    </div>
+                    <div id="h2h-result" style="margin-top:1rem;"></div>
+                </div>
+            </section>
         </div>
 
         <div id="profileError" class="hidden alm-panel alm-block" style="text-align:center;">
@@ -134,7 +146,7 @@
 
     <div id="footer-placeholder"></div>
 
-    <script src="components.js?v=20260705g"></script>
+    <script src="components.js?v=20260713m"></script>
     <script>
         const SUPABASE_URL = 'https://ngnkbfazhdedaqvxcphw.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbmtiZmF6aGRlZGFxdnhjcGh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTE5NDksImV4cCI6MjA5MzI4Nzk0OX0.F_S6ORkFe-SuJPybs7FEFH94E6U2hZ5ern4vrg4kMOk';
@@ -256,6 +268,7 @@
 
                 renderChart(eloSeries);
                 renderRecentMatches(myMatches, accountId, nameCandidates, myKey, resolvedName);
+                setupProfileHeadToHead(myMatches, resolvedName, rankings);
 
                 const viewAll = document.getElementById('viewAllLink');
                 if (viewAll && resolvedName) viewAll.href = `player-analysis.html?name=${encodeURIComponent(resolvedName)}`;
@@ -408,6 +421,78 @@
             });
             document.getElementById('bioSaveBtn')?.addEventListener('click', saveBio);
             document.getElementById('bioTextarea')?.addEventListener('input', updateBioCount);
+        }
+
+        // Populate the head-to-head opponent dropdown on the profile page.
+        // Lists every player from the roster; shows "never played" when there's
+        // no shared match history.
+        function setupProfileHeadToHead(myMatches, myName, rankings) {
+            const key = normalizeKey(myName);
+            const select = document.getElementById('h2h-select');
+            const result = document.getElementById('h2h-result');
+            if (!select) return;
+
+            const roster = (rankings || []).map(r => (r.name || '').trim()).filter(Boolean);
+            const fromMatches = myMatches.map(m => {
+                const isP1 = normalizeKey(m.player_1) === key;
+                return (isP1 ? m.player_2 : m.player_1) || '';
+            });
+
+            const seen = new Set();
+            const opponents = [...roster, ...fromMatches]
+                .map(n => n.trim())
+                .filter(n => {
+                    const lk = normalizeKey(n);
+                    if (!n || lk === key || seen.has(lk)) return false;
+                    seen.add(lk);
+                    return true;
+                })
+                .sort((a, b) => a.localeCompare(b));
+
+            select.innerHTML = '<option value="">Choose an opponent…</option>' +
+                opponents.map(o => `<option value="${o.replace(/"/g, '&quot;')}">${o}</option>`).join('');
+
+            select.addEventListener('change', () => {
+                const opp = select.value;
+                if (!opp) { result.innerHTML = ''; return; }
+                const oppKey = normalizeKey(opp);
+                const h2h = myMatches.filter(m => {
+                    const p1 = normalizeKey(m.player_1);
+                    const p2 = normalizeKey(m.player_2);
+                    return (p1 === key && p2 === oppKey) || (p1 === oppKey && p2 === key);
+                });
+
+                if (h2h.length === 0) {
+                    result.innerHTML = `
+                        <div style="padding:1.5rem;text-align:center;color:var(--ink-faint);border:1px dashed var(--rule-strong);">
+                            <span style="font-weight:600;">${myName}</span> and <span style="font-weight:600;">${opp}</span> have never played before.
+                        </div>`;
+                    return;
+                }
+
+                let myWins = 0, oppWins = 0;
+                const rows = h2h.slice().reverse().map(m => {
+                    const iWon = normalizeKey(m.winner) === key;
+                    if (iWon) myWins++; else oppWins++;
+                    const when = m.created_at ? new Date(m.created_at).toLocaleDateString() : '';
+                    return `<tr>
+                        <td class="ctr"><span class="alm-match-tag ${iWon ? 'win' : 'loss'}">${iWon ? 'Win' : 'Loss'}</span></td>
+                        <td class="ctr"><span class="alm-ldr-num">${(m.score || '').trim()}</span></td>
+                        <td class="num" style="color:var(--ink-faint);font-size:0.85rem;">${when}</td>
+                    </tr>`;
+                }).join('');
+
+                result.innerHTML = `
+                    <div style="display:flex;align-items:baseline;gap:0.6rem;margin-bottom:0.75rem;flex-wrap:wrap;">
+                        <span style="font-family:var(--font-heading);font-weight:800;font-size:1.8rem;color:${myWins >= oppWins ? '#2f6b3a' : 'var(--oxblood)'};">${myWins}</span>
+                        <span class="alm-eyebrow">${myName}</span>
+                        <span style="color:var(--ink-faint);">vs</span>
+                        <span style="font-family:var(--font-heading);font-weight:800;font-size:1.8rem;color:${oppWins > myWins ? '#2f6b3a' : 'var(--ink)'};">${oppWins}</span>
+                        <span class="alm-eyebrow">${opp}</span>
+                    </div>
+                    <table class="alm-ladder"><thead><tr><th class="ctr">Result</th><th class="ctr">Score</th><th class="num">Date</th></tr></thead><tbody>${rows}</tbody></table>
+                `;
+            });
         }
 
         function renderChart(eloSeries) {

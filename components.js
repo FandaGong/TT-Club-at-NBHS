@@ -37,6 +37,7 @@ window._adminEmails = (window._adminEmails || [
         const reducedMotion = readSetting('nbhs-reduced-motion', 'false') === 'true';
         const navLayout = readSetting('nbhs-nav-layout', 'top');
         const sidebarCollapsed = readSetting('nbhs-sidebar-collapsed', 'false') === 'true';
+        const ipadCursor = readSetting('nbhs-ipad-cursor', 'false') === 'true';
         const densityScale = density === 'compact' ? 0.75 : density === 'spacious' ? 1.35 : 1;
         const accentValues = accentMap[accent] || accentMap.red;
 
@@ -58,12 +59,98 @@ window._adminEmails = (window._adminEmails || [
         document.documentElement.style.setProperty('--font-heading', font === 'serif' ? 'Georgia, serif' : font === 'mono' ? '"JetBrains Mono", monospace' : '"Exo 2", Georgia, serif');
 
         document.documentElement.classList.toggle('reduced-motion', reducedMotion);
+
+        // iPad-style cursor: load/unload the effect based on the setting.
+        // Disabled automatically on touch devices (no hover) and when reduced motion is on.
+        document.body.dataset.ipadCursor = ipadCursor ? 'true' : 'false';
+        if (typeof window.applyIpadCursor === 'function') {
+            window.applyIpadCursor(ipadCursor && !reducedMotion);
+        }
     }
 
     window.applySiteSettings = applySiteSettings;
     window.saveSiteSetting = function (key, value) {
         localStorage.setItem(key, String(value));
         applySiteSettings();
+    };
+
+    // ── iPad-style cursor (CatsJuice/ipad-cursor via ESM CDN) ──────────────
+    // Loaded lazily only when the user enables it. Skipped on touch/coarse
+    // pointers where a custom cursor makes no sense.
+    let _ipadCursorMod = null;      // the imported module
+    let _ipadCursorActive = false;  // whether it is currently running
+    const _hasFinePointer = () => window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+    function tagCursorTargets() {
+        // Block cursor for buttons/links/controls; text cursor for headings & prose.
+        const blockSel = 'a, button, [role="button"], .site-nav-item, .site-nav-cta, .site-nav-subitem, .alm-tool, .alm-btn, .alm-standings-row, .alm-index-row, .alm-match-toggle, input[type="checkbox"], select';
+        document.querySelectorAll(blockSel).forEach(el => {
+            if (!el.hasAttribute('data-cursor')) el.setAttribute('data-cursor', 'block');
+        });
+    }
+
+    // Re-tag + re-scan when the DOM changes (e.g. leaderboard rows load in later).
+    let _cursorObserver = null;
+    let _cursorRescanTimer = null;
+    function startCursorObserver() {
+        if (_cursorObserver || !window.MutationObserver) return;
+        _cursorObserver = new MutationObserver(() => {
+            clearTimeout(_cursorRescanTimer);
+            _cursorRescanTimer = setTimeout(() => {
+                if (!_ipadCursorActive || !_ipadCursorMod) return;
+                tagCursorTargets();
+                try {
+                    const api = _ipadCursorMod.default || _ipadCursorMod;
+                    api.updateCursor();
+                } catch (err) { /* ignore */ }
+            }, 120);
+        });
+        _cursorObserver.observe(document.body, { childList: true, subtree: true });
+    }
+    function stopCursorObserver() {
+        if (_cursorObserver) { _cursorObserver.disconnect(); _cursorObserver = null; }
+        clearTimeout(_cursorRescanTimer);
+    }
+
+    window.applyIpadCursor = async function (enabled) {
+        const on = !!enabled && _hasFinePointer();
+        if (on && !_ipadCursorActive) {
+            try {
+                if (!_ipadCursorMod) {
+                    _ipadCursorMod = await import('https://unpkg.com/ipad-cursor@latest');
+                }
+                tagCursorTargets();
+                const api = _ipadCursorMod.default || _ipadCursorMod;
+                api.initCursor({
+                    enableAutoTextCursor: true,
+                    enableAutoUpdateCursor: true,
+                    adsorptionStrength: 3,
+                    blockPadding: 6,
+                    normalStyle: { background: 'rgba(30, 30, 35, 0.4)' },
+                    blockStyle: { background: 'rgba(30, 30, 35, 0.16)', radius: 'auto' },
+                    textStyle: { background: 'rgba(30, 30, 35, 0.4)' },
+                });
+                _ipadCursorActive = true;
+                startCursorObserver();
+            } catch (err) {
+                // CDN blocked or offline — silently keep the native cursor.
+                _ipadCursorActive = false;
+            }
+        } else if (!on && _ipadCursorActive && _ipadCursorMod) {
+            stopCursorObserver();
+            try {
+                const api = _ipadCursorMod.default || _ipadCursorMod;
+                api.disposeCursor();
+            } catch (err) { /* ignore */ }
+            _ipadCursorActive = false;
+        } else if (on && _ipadCursorActive && _ipadCursorMod) {
+            // Already running — re-scan for newly injected DOM (header/footer).
+            try {
+                tagCursorTargets();
+                const api = _ipadCursorMod.default || _ipadCursorMod;
+                api.updateCursor();
+            } catch (err) { /* ignore */ }
+        }
     };
 
     document.addEventListener('DOMContentLoaded', applySiteSettings);
@@ -152,6 +239,61 @@ const footerHTML = `
     </div>
 </footer>
 `;
+
+// ── Site-wide announcement banner (admin-editable) ─────────────────────
+// Stored in the `site_config` table under key 'announcement'. Anyone can
+// read it; only admins can write (enforced by RLS + the admin editor).
+async function loadAnnouncementBanner(client) {
+    try {
+        if (!client) return;
+        const { data, error } = await client.from('site_config')
+            .select('value').eq('key', 'announcement').maybeSingle();
+        if (error) return; // table may not exist yet — fail quietly
+        const msg = (data?.value || '').toString();
+        renderAnnouncementBanner(msg);
+    } catch (err) { /* fail quietly */ }
+}
+
+// The stored value may be prefixed with a chosen emoji, e.g. "🏓␟message".
+// The ␟ (unit separator) splits emoji from text; falls back to 📢.
+function parseAnnouncement(raw) {
+    const value = (raw || '').toString();
+    if (value.includes('␟')) {
+        const [emoji, ...rest] = value.split('␟');
+        return { emoji: emoji.trim() || '📢', text: rest.join('␟').trim() };
+    }
+    return { emoji: '📢', text: value.trim() };
+}
+window.parseAnnouncement = parseAnnouncement;
+
+function renderAnnouncementBanner(raw) {
+    let bar = document.getElementById('site-announcement');
+    const { emoji, text } = parseAnnouncement(raw);
+    if (!text) { if (bar) bar.remove(); return; }
+
+    if (!bar) {
+        bar = document.createElement('div');
+        bar.id = 'site-announcement';
+        bar.className = 'site-announcement';
+    }
+    bar.innerHTML = `
+        <span class="site-announcement-icon" aria-hidden="true"></span>
+        <span class="site-announcement-text"></span>
+    `;
+    bar.querySelector('.site-announcement-icon').textContent = emoji;
+    bar.querySelector('.site-announcement-text').textContent = text;
+
+    // Place the banner directly under the navbar (after the injected header).
+    const header = document.querySelector('header.site-nav');
+    if (header && header.parentNode) {
+        header.insertAdjacentElement('afterend', bar);
+    } else if (!bar.parentNode) {
+        // Header not injected yet — retry shortly.
+        setTimeout(() => renderAnnouncementBanner(raw), 150);
+    }
+}
+window.renderAnnouncementBanner = renderAnnouncementBanner;
+
 
 async function updateAuthUI(session) {
     const profileText = document.getElementById('navProfileLinkText');
@@ -423,6 +565,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     initMenu();
 
+    // Re-apply the iPad cursor now that the header/footer exist, so nav
+    // elements get tagged and the effect covers them.
+    if (typeof window.applyIpadCursor === 'function') {
+        const wantCursor = (function () {
+            try { return localStorage.getItem('nbhs-ipad-cursor') === 'true' && localStorage.getItem('nbhs-reduced-motion') !== 'true'; }
+            catch (e) { return false; }
+        })();
+        if (wantCursor) window.applyIpadCursor(true);
+    }
+
     // Render Lucide icons in the freshly injected header/footer.
     // The CDN script may still be loading, so retry briefly until ready.
     (function renderIcons(attempt) {
@@ -469,6 +621,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             console.error('Failed to load auth session:', error);
             updateAuthUI(null);
         }
+
+        // Load the site-wide announcement banner (any visitor can read it).
+        loadAnnouncementBanner(_supabase);
         _supabase.auth.onAuthStateChange((_event, session) => {
             updateAuthUI(session);
             if (_event === 'PASSWORD_RECOVERY') {

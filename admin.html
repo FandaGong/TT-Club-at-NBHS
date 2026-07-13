@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NBHS TT Hub - Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="styles.css?v=20260705i">
+    <link rel="stylesheet" href="styles.css?v=20260713m">
     <link rel="stylesheet" href="animations.css">
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
@@ -189,6 +189,43 @@
                             <span class="alm-tool-arrow">→</span>
                         </button>
                     </nav>
+
+                    <!-- Announcement banner editor -->
+                    <div class="alm-panel" style="margin-top:1.5rem;">
+                        <div class="alm-rule-head"><h3 class="alm-section-title" style="font-size:1.1rem;">Announcement Banner</h3></div>
+                        <p class="alm-mh-date" style="margin:0.25rem 0 0.75rem;">Shows a message across the top of every page. Leave blank and save to remove it.</p>
+                        <div style="display:flex;gap:0.6rem;align-items:flex-start;">
+                            <div style="flex-shrink:0;">
+                                <label class="alm-field-label" for="announcementEmoji" style="font-size:0.7rem;">Icon</label>
+                                <select id="announcementEmoji" class="alm-select" style="width:4.5rem;text-align:center;font-size:1.1rem;">
+                                    <option value="📢">📢</option>
+                                    <option value="🏓">🏓</option>
+                                    <option value="🏆">🏆</option>
+                                    <option value="🔥">🔥</option>
+                                    <option value="⭐">⭐</option>
+                                    <option value="🎉">🎉</option>
+                                    <option value="📅">📅</option>
+                                    <option value="⏰">⏰</option>
+                                    <option value="⚠️">⚠️</option>
+                                    <option value="ℹ️">ℹ️</option>
+                                    <option value="✅">✅</option>
+                                    <option value="🚫">🚫</option>
+                                    <option value="📝">📝</option>
+                                    <option value="💪">💪</option>
+                                    <option value="🥇">🥇</option>
+                                </select>
+                            </div>
+                            <div style="flex:1;">
+                                <label class="alm-field-label" for="announcementInput" style="font-size:0.7rem;">Message</label>
+                                <textarea id="announcementInput" class="alm-input" rows="2" maxlength="200" placeholder="e.g. No session this Friday — public holiday." style="width:100%;resize:vertical;"></textarea>
+                            </div>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:0.75rem;margin-top:0.6rem;flex-wrap:wrap;">
+                            <button id="saveAnnouncementBtn" type="button" class="alm-btn" style="background:var(--oxblood);">Save Banner</button>
+                            <button id="clearAnnouncementBtn" type="button" class="alm-btn" style="background:var(--ink);">Clear</button>
+                            <p id="announcementStatus" class="hidden text-sm font-medium"></p>
+                        </div>
+                    </div>
 
                     <div class="alm-danger">
                         <h3>Season Management</h3>
@@ -718,7 +755,7 @@
     </div>
 
     <!-- 4. LOAD COMPONENTS SCRIPT -->
-    <script src="components.js?v=20260705i"></script>
+    <script src="components.js?v=20260713m"></script>
 
     <script>
         window.manualPageReveal = true;
@@ -1871,6 +1908,7 @@
                     if (document.getElementById('profileEmail')) document.getElementById('profileEmail').textContent = email;
                     loadProfileSummary();
                     if (isAdmin) loadAccountRequests();
+                    if (isAdmin) loadAnnouncementEditor();
                 } else {
                     currentAccountRole = 'guest';
                     currentAccountEmail = '';
@@ -1917,6 +1955,29 @@
                 if (panel) panel.classList.toggle('hidden', !isActive);
                 if (btn) btn.classList.toggle('is-active', isActive);
             });
+        }
+
+        // Switch to the correct login tab, carry over the typed email/password,
+        // and show a hint on that tab so the user knows why they were moved.
+        function switchLoginTabWithHint(targetTab, message) {
+            const toAdmin = targetTab === 'admin-login';
+            const fromEmail = document.getElementById(toAdmin ? 'standardEmail' : 'adminEmail')?.value || '';
+            const fromPass = document.getElementById(toAdmin ? 'standardPassword' : 'adminPassword')?.value || '';
+
+            setDialogTab(targetTab);
+
+            const emailEl = document.getElementById(toAdmin ? 'adminEmail' : 'standardEmail');
+            const passEl = document.getElementById(toAdmin ? 'adminPassword' : 'standardPassword');
+            if (emailEl) emailEl.value = fromEmail;
+            if (passEl) passEl.value = fromPass;
+
+            const hint = document.getElementById(toAdmin ? 'adminLoginStatus' : 'standardLoginStatus');
+            if (hint) {
+                hint.textContent = message;
+                hint.className = 'mt-2 text-sm font-medium text-center block';
+                hint.style.color = 'var(--oxblood)';
+                hint.classList.remove('hidden');
+            }
         }
 
         async function handleDialogLogin(event, targetRole) {
@@ -1971,7 +2032,15 @@
                 const sessionRole = await resolveAccountRole(data.user.email, data.user.id);
                 if (isAdminLogin && sessionRole !== 'admin') {
                     await _supabase.auth.signOut();
-                    throw new Error('That account is not approved as an admin account.');
+                    switchLoginTabWithHint('standard-login', 'That looks like a standard account. Please use the Standard User login instead.');
+                    status.classList.add('hidden');
+                    return;
+                }
+                if (!isAdminLogin && sessionRole === 'admin') {
+                    await _supabase.auth.signOut();
+                    switchLoginTabWithHint('admin-login', 'That is an admin account. Please use the Admin Login instead.');
+                    status.classList.add('hidden');
+                    return;
                 }
 
                 status.classList.add('hidden');
@@ -2563,6 +2632,58 @@
                 alert('Error processing request: ' + err.message);
             }
         }
+
+        // ── Announcement banner (admin) ───────────────────────────────
+        async function loadAnnouncementEditor() {
+            const input = document.getElementById('announcementInput');
+            const emojiSelect = document.getElementById('announcementEmoji');
+            if (!input || !_supabase) return;
+            try {
+                const { data } = await _supabase.from('site_config').select('value').eq('key', 'announcement').maybeSingle();
+                const parsed = window.parseAnnouncement
+                    ? window.parseAnnouncement(data?.value || '')
+                    : { emoji: '📢', text: (data?.value || '').toString() };
+                input.value = parsed.text;
+                if (emojiSelect) {
+                    if (parsed.emoji && ![...emojiSelect.options].some(o => o.value === parsed.emoji)) {
+                        emojiSelect.add(new Option(parsed.emoji, parsed.emoji));
+                    }
+                    emojiSelect.value = parsed.emoji || '📢';
+                }
+            } catch (err) { /* table may not exist yet */ }
+        }
+
+        function buildAnnouncementValue() {
+            const text = (document.getElementById('announcementInput')?.value || '').trim();
+            if (!text) return '';
+            const emoji = document.getElementById('announcementEmoji')?.value || '📢';
+            return `${emoji}␟${text}`;
+        }
+
+        async function saveAnnouncement(value) {
+            const status = document.getElementById('announcementStatus');
+            const show = (msg, ok) => { if (status) { status.textContent = msg; status.classList.remove('hidden'); status.className = `text-sm font-medium ${ok ? 'text-green-600' : 'text-red-600'}`; } };
+            if (!_supabase) { show('Not connected.', false); return; }
+            show('Saving…', true);
+            try {
+                const { error } = await _supabase.from('site_config')
+                    .upsert({ key: 'announcement', value: value }, { onConflict: 'key' });
+                if (error) throw error;
+                show(value ? 'Banner published.' : 'Banner cleared.', true);
+                if (window.renderAnnouncementBanner) window.renderAnnouncementBanner(value);
+            } catch (err) {
+                show(`Could not save: ${err.message}`, false);
+            }
+        }
+
+        document.getElementById('saveAnnouncementBtn')?.addEventListener('click', () => {
+            saveAnnouncement(buildAnnouncementValue());
+        });
+        document.getElementById('clearAnnouncementBtn')?.addEventListener('click', () => {
+            const input = document.getElementById('announcementInput');
+            if (input) input.value = '';
+            saveAnnouncement('');
+        });
 
         // Event Listeners
         document.getElementById('adminLogoutBtn').addEventListener('click', () => forceLogout());
