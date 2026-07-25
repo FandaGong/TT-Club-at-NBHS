@@ -1,7 +1,7 @@
 # Normanhurst Table Tennis Club Website
 Normanhurst Table Tennis Club Website
 github pages: https://fandagong.github.io/TT-Club-at-NBHS/
-
+beta: https://nbhsttclub-beta.surge.sh
 ## Supabase setup for absence reports
 
 The absence report page now expects a Supabase project instead of storing reports in localStorage.
