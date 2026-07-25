@@ -9,7 +9,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Make sure Supabase is loaded for the component script -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="styles.css?v=20260713m">
+    <link rel="stylesheet" href="styles.css?v=20260725a">
     <link rel="stylesheet" href="animations.css">
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
@@ -24,6 +24,12 @@
     <!-- 2. MAIN WITH ID AND OPACITY (Keeps content identical) -->
     <main id="main-content" class="almanac flex-grow w-full opacity-0 transition-opacity duration-500">
       <div class="alm-shell">
+
+        <!-- Weekly location (admin-editable via site_config key 'location') -->
+        <div id="site-location-card" class="site-location-card" style="display:none;">
+            <span class="loc-pin" aria-hidden="true">📍</span>
+            <span class="loc-text"><strong>This week:</strong> <span id="site-location-text"></span></span>
+        </div>
 
         <!-- MASTHEAD: asymmetric 60/40, left-aligned, single focal point -->
         <header class="alm-masthead alm-block">
@@ -149,7 +155,7 @@
     <div id="footer-placeholder"></div>
 
     <!-- 4. COMPONENT SCRIPT -->
-    <script src="components.js?v=20260713m"></script>
+    <script src="components.js?v=20260725c"></script>
 
     <script>
         // Tell components.js we will handle the fade-in reveal manually once data is loaded
@@ -210,6 +216,25 @@
 
             renderStandings();
             renderMasthead();
+            loadLocation();
+        }
+
+        // Weekly club location — stored in site_config key 'location'.
+        async function loadLocation() {
+            try {
+                const supabase = await getSupabaseClient();
+                if (!supabase) return;
+                const { data } = await supabase.from('site_config').select('value').eq('key', 'location').maybeSingle();
+                const loc = (data?.value || '').toString().trim();
+                const card = document.getElementById('site-location-card');
+                const textEl = document.getElementById('site-location-text');
+                if (loc && card && textEl) {
+                    textEl.textContent = loc;
+                    card.style.display = 'flex';
+                } else if (card) {
+                    card.style.display = 'none';
+                }
+            } catch (err) { /* fail quietly */ }
         }
 
         function renderMasthead() {

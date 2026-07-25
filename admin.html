@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NBHS TT Hub - Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="styles.css?v=20260713m">
+    <link rel="stylesheet" href="styles.css?v=20260725a">
     <link rel="stylesheet" href="animations.css">
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
@@ -224,6 +224,18 @@
                             <button id="saveAnnouncementBtn" type="button" class="alm-btn" style="background:var(--oxblood);">Save Banner</button>
                             <button id="clearAnnouncementBtn" type="button" class="alm-btn" style="background:var(--ink);">Clear</button>
                             <p id="announcementStatus" class="hidden text-sm font-medium"></p>
+                        </div>
+                    </div>
+
+                    <!-- Weekly location editor -->
+                    <div class="alm-panel" style="margin-top:1.5rem;">
+                        <div class="alm-rule-head"><h3 class="alm-section-title" style="font-size:1.1rem;">Weekly Location</h3></div>
+                        <p class="alm-mh-date" style="margin:0.25rem 0 0.75rem;">Shows a "📍 This week" card on the homepage. Leave blank and save to hide it.</p>
+                        <input id="locationInput" class="alm-input" maxlength="120" placeholder="e.g. Gym Hall — Tables 1–4" style="width:100%;">
+                        <div style="display:flex;align-items:center;gap:0.75rem;margin-top:0.6rem;flex-wrap:wrap;">
+                            <button id="saveLocationBtn" type="button" class="alm-btn" style="background:var(--oxblood);">Save Location</button>
+                            <button id="clearLocationBtn" type="button" class="alm-btn" style="background:var(--ink);">Clear</button>
+                            <p id="locationStatus" class="hidden text-sm font-medium"></p>
                         </div>
                     </div>
 
@@ -755,7 +767,7 @@
     </div>
 
     <!-- 4. LOAD COMPONENTS SCRIPT -->
-    <script src="components.js?v=20260713m"></script>
+    <script src="components.js?v=20260725c"></script>
 
     <script>
         window.manualPageReveal = true;
@@ -1909,6 +1921,7 @@
                     loadProfileSummary();
                     if (isAdmin) loadAccountRequests();
                     if (isAdmin) loadAnnouncementEditor();
+                    if (isAdmin) loadLocationEditor();
                 } else {
                     currentAccountRole = 'guest';
                     currentAccountEmail = '';
@@ -2683,6 +2696,40 @@
             const input = document.getElementById('announcementInput');
             if (input) input.value = '';
             saveAnnouncement('');
+        });
+
+        // ── Weekly location (admin) ───────────────────────────────────
+        async function loadLocationEditor() {
+            const input = document.getElementById('locationInput');
+            if (!input || !_supabase) return;
+            try {
+                const { data } = await _supabase.from('site_config').select('value').eq('key', 'location').maybeSingle();
+                input.value = (data?.value || '').toString();
+            } catch (err) { /* table may not exist yet */ }
+        }
+
+        async function saveLocation(value) {
+            const status = document.getElementById('locationStatus');
+            const show = (msg, ok) => { if (status) { status.textContent = msg; status.classList.remove('hidden'); status.className = `text-sm font-medium ${ok ? 'text-green-600' : 'text-red-600'}`; } };
+            if (!_supabase) { show('Not connected.', false); return; }
+            show('Saving…', true);
+            try {
+                const { error } = await _supabase.from('site_config')
+                    .upsert({ key: 'location', value: value }, { onConflict: 'key' });
+                if (error) throw error;
+                show(value ? 'Location saved.' : 'Location cleared.', true);
+            } catch (err) {
+                show(`Could not save: ${err.message}`, false);
+            }
+        }
+
+        document.getElementById('saveLocationBtn')?.addEventListener('click', () => {
+            saveLocation((document.getElementById('locationInput')?.value || '').trim());
+        });
+        document.getElementById('clearLocationBtn')?.addEventListener('click', () => {
+            const input = document.getElementById('locationInput');
+            if (input) input.value = '';
+            saveLocation('');
         });
 
         // Event Listeners

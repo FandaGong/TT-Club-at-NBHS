@@ -295,6 +295,107 @@ function renderAnnouncementBanner(raw) {
 window.renderAnnouncementBanner = renderAnnouncementBanner;
 
 
+// ── Division-change detection & one-time notification ──────────────────
+// Divisions are derived live from Elo rank (same logic as the Matchup
+// Ladder): all players sorted by Elo desc; top 16 play Monday, 17–32 play
+// Tuesday; within each 16, ranks 1–4 = Div 1, 5–12 = Div 2, 13–16 = Div 3.
+// We compute each player's current label, compare it to the value stored in
+// account.last_seen_division, and if it changed we show a one-time modal and
+// persist the new label — so it fires once per change, on any device.
+function computeDivisionLabels(rows) {
+    const sorted = (rows || [])
+        .map(r => ({ name: r.name, elo: r.elo }))
+        .filter(p => p.name)
+        .sort((a, b) => {
+            const eloDiff = (b.elo || 0) - (a.elo || 0);
+            if (eloDiff !== 0) return eloDiff;
+            const aOscar = (a.name || '').toLowerCase().replace(/[^a-z0-9]+/g, '') === 'oscarpan';
+            const bOscar = (b.name || '').toLowerCase().replace(/[^a-z0-9]+/g, '') === 'oscarpan';
+            if (aOscar !== bOscar) return aOscar ? -1 : 1;
+            return (a.name || '').localeCompare(b.name || '');
+        });
+
+    const labelForIndex = (i) => {
+        if (i < 0 || i >= 32) return null; // outside the ranked field
+        const day = i < 16 ? 'Monday' : 'Tuesday';
+        const within = i % 16; // position inside this day's group of 16
+        let div;
+        if (within < 4) div = 'Division 1';
+        else if (within < 12) div = 'Division 2';
+        else div = 'Division 3';
+        return `${day} ${div}`;
+    };
+
+    const labels = {};
+    sorted.forEach((p, i) => { labels[(p.name || '').toLowerCase().trim()] = labelForIndex(i); });
+    return labels;
+}
+
+function renderDivisionModal(newLabel) {
+    if (document.getElementById('division-change-modal')) return;
+    const overlay = document.createElement('div');
+    overlay.id = 'division-change-modal';
+    overlay.className = 'division-modal-overlay';
+    overlay.innerHTML = `
+        <div class="division-modal" role="dialog" aria-modal="true" aria-labelledby="division-modal-title">
+            <div class="division-modal-icon" aria-hidden="true">🏓</div>
+            <h2 id="division-modal-title" class="division-modal-title">Your division changed</h2>
+            <p class="division-modal-body">You've moved to <strong class="division-modal-label"></strong>. Check the Matchup Ladder for your new table and opponents.</p>
+            <button type="button" class="division-modal-btn">Got it</button>
+        </div>
+    `;
+    overlay.querySelector('.division-modal-label').textContent = newLabel;
+    const close = () => overlay.remove();
+    overlay.querySelector('.division-modal-btn').addEventListener('click', close);
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
+    document.body.appendChild(overlay);
+}
+
+async function checkDivisionChange(client, session) {
+    try {
+        if (!client || !session?.user) { console.log('[div-check] no client/session'); return; }
+        const accountId = session.user.id;
+
+        const [rankRes, acctRes] = await Promise.all([
+            client.from('player_rankings').select('name,elo,account_id'),
+            client.from('account').select('display_name, last_seen_division').eq('account_id', accountId).maybeSingle(),
+        ]);
+        if (rankRes.error) { console.log('[div-check] rankings error:', rankRes.error.message); return; }
+        if (acctRes.error) { console.log('[div-check] account error:', acctRes.error.message); return; }
+        const rankRows = rankRes.data, acct = acctRes.data;
+        if (!rankRows || !acct) { console.log('[div-check] no data', { rankRows: !!rankRows, acct: !!acct }); return; }
+
+        // Resolve this user's player name so we can find their ranking row.
+        const myRow = rankRows.find(r => r.account_id === accountId);
+        const nameKey = (myRow?.name || acct?.display_name || '').toLowerCase().trim();
+        if (!nameKey) { console.log('[div-check] could not resolve player name'); return; }
+
+        const labels = computeDivisionLabels(rankRows);
+        const currentLabel = labels[nameKey] || null;
+        console.log('[div-check]', { nameKey, currentLabel, lastSeen: acct.last_seen_division });
+        if (!currentLabel) { console.log('[div-check] not in ranked field'); return; }
+
+        const lastSeen = (acct.last_seen_division || '').trim();
+
+        // First ever load: record silently, no notification.
+        if (!lastSeen) {
+            console.log('[div-check] first load — recording', currentLabel, 'silently');
+            await client.from('account').update({ last_seen_division: currentLabel }).eq('account_id', accountId);
+            return;
+        }
+
+        if (lastSeen !== currentLabel) {
+            console.log('[div-check] CHANGED', lastSeen, '->', currentLabel, '— showing modal');
+            renderDivisionModal(currentLabel);
+            // Persist immediately so it only ever fires once, on any device.
+            await client.from('account').update({ last_seen_division: currentLabel }).eq('account_id', accountId);
+        } else {
+            console.log('[div-check] no change');
+        }
+    } catch (err) { console.log('[div-check] exception:', err); }
+}
+
+
 async function updateAuthUI(session) {
     const profileText = document.getElementById('navProfileLinkText');
     const adminLink = document.getElementById('navAdminLink');
@@ -396,7 +497,7 @@ async function updateAuthUI(session) {
         // Role check via resolver (with a timeout so it can never hang the UI).
         if (window._resolveAccountRole) {
             const role = await Promise.race([
-                window._resolveAccountRole(email),
+                window._resolveAccountRole(email, session.user.id),
                 new Promise(resolve => setTimeout(() => resolve(null), 2500))
             ]);
             if (role === 'admin') setPanelLabel('Admin Panel');
@@ -590,12 +691,42 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Export the client globally so other pages can use it
         window._supabaseClient = _supabase;
 
-        // Expose a resolver that checks the `account_requests` tables for approved admin role
+        // Resolve a user's role. Source of truth is the `account` table's
+        // `role` column (set in Supabase); the hardcoded allowlist is only a
+        // fallback, and account_requests a last resort for legacy signups.
         window._ACCOUNT_REQUESTS_TABLES = ['account_requests_v2', 'account_requests'];
-        window._resolveAccountRole = async function(email) {
-            if (!email) return 'standard';
+        window._resolveAccountRole = async function(email, accountId) {
             const lower = (email || '').toLowerCase();
             if (window._adminEmails && window._adminEmails.includes(lower)) return 'admin';
+
+            // Primary: the account row for this signed-in user (by account_id).
+            if (accountId) {
+                try {
+                    const { data, error } = await _supabase.from('account')
+                        .select('role, status')
+                        .eq('account_id', accountId)
+                        .maybeSingle();
+                    if (!error && data && (data.status || 'active').toLowerCase() === 'active') {
+                        return (data.role || 'standard').toLowerCase();
+                    }
+                } catch (err) { /* fall through */ }
+            }
+
+            // Secondary: match the account row by email.
+            if (email) {
+                try {
+                    const { data, error } = await _supabase.from('account')
+                        .select('role, status')
+                        .ilike('email', email)
+                        .maybeSingle();
+                    if (!error && data && (data.status || 'active').toLowerCase() === 'active') {
+                        return (data.role || 'standard').toLowerCase();
+                    }
+                } catch (err) { /* fall through */ }
+            }
+
+            // Last resort: legacy approved account_requests.
+            if (!email) return 'standard';
             for (const tableName of window._ACCOUNT_REQUESTS_TABLES) {
                 try {
                     const { data, error } = await _supabase.from(tableName)
@@ -617,6 +748,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         try {
             const { data } = await _supabase.auth.getSession();
             await updateAuthUI(data?.session);
+            // One-time division-change notification (cross-device, DB-backed).
+            checkDivisionChange(_supabase, data?.session);
         } catch (error) {
             console.error('Failed to load auth session:', error);
             updateAuthUI(null);
@@ -626,6 +759,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         loadAnnouncementBanner(_supabase);
         _supabase.auth.onAuthStateChange((_event, session) => {
             updateAuthUI(session);
+            // Fire the division check when a user signs in (e.g. first time on a
+            // new computer), not on token refresh or sign-out.
+            if (_event === 'SIGNED_IN') {
+                checkDivisionChange(_supabase, session);
+            }
             if (_event === 'PASSWORD_RECOVERY') {
                 const newPassword = prompt('Enter your new password');
                 if (newPassword) {
