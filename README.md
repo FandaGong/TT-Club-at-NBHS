@@ -1,5 +1,6 @@
 # Normanhurst Table Tennis Club Website
-Normo Table Tennis Club Website
+Normanhurst Table Tennis Club Website
+github pages: https://fandagong.github.io/TT-Club-at-NBHS/
 
 ## Supabase setup for absence reports
 
