@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Competition Sign-up - NBHS Table Tennis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <link rel="stylesheet" href="styles.css?v=20260801d">
+    <link rel="stylesheet" href="animations.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="icon" type="image/png" href="favicon.png">
+</head>
+
+<body class="site-surface text-slate-900 font-sans min-h-screen flex flex-col">
+
+    <div id="header-placeholder"></div>
+
+    <main id="main-content" class="almanac flex-grow w-full opacity-0 transition-opacity duration-500">
+      <div class="alm-shell">
+        <header class="alm-masthead--compact alm-block" style="border-bottom:2px solid var(--ink);padding-bottom:1.25rem;">
+            <div>
+                <p class="alm-kicker">Open to everyone at NBHS</p>
+                <h1 class="alm-display alm-display--md mt-3">Competition<br>Sign-up</h1>
+                <p class="alm-lede mt-3">Want to play in a table tennis competition? Pick an event below and register. You don't need to be a club member. Anyone at the school is welcome.</p>
+            </div>
+        </header>
+
+        <!-- List of open competitions -->
+        <section id="competitionList" class="alm-block">
+            <p class="alm-eyebrow" id="competitionListStatus">Loading competitions…</p>
+        </section>
+      </div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="components.js?v=20260801d"></script>
+
+    <script>
+        window.manualPageReveal = true;
+
+        const SUPABASE_URL = "https://ngnkbfazhdedaqvxcphw.supabase.co";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbmtiZmF6aGRlZGFxdnhjcGh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTE5NDksImV4cCI6MjA5MzI4Nzk0OX0.F_S6ORkFe-SuJPybs7FEFH94E6U2hZ5ern4vrg4kMOk";
+        let supabaseClient = window._supabaseClient || window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        function esc(s) {
+            return (s || '').toString()
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+
+        // Load and render every competition. Open + scheduled forms can be
+        // signed up for (scheduled ones auto-open at opens_at); closed forms are
+        // shown greyed out so people can see what's coming/finished.
+        async function loadCompetitions() {
+            const listEl = document.getElementById('competitionList');
+            const statusEl = document.getElementById('competitionListStatus');
+            try {
+                const { data, error } = await supabaseClient.from('competitions')
+                    .select('*').order('created_at', { ascending: false });
+                if (error) throw error;
+
+                if (!data || !data.length) {
+                    listEl.innerHTML = '<div class="alm-panel" style="text-align:center;padding:2.5rem;"><p class="alm-section-title" style="font-size:1.1rem;">No competitions right now</p><p class="alm-mh-date" style="margin-top:0.5rem;">Check back soon. New events are posted here when registration opens.</p></div>';
+                    return;
+                }
+
+                const now = new Date();
+                listEl.innerHTML = data.map(c => {
+                    const opensAt = c.opens_at ? new Date(c.opens_at) : null;
+                    const closesAt = c.closes_at ? new Date(c.closes_at) : null;
+                    const scheduledFuture = opensAt && opensAt > now;
+                    const closedByTime = closesAt && closesAt <= now;
+                    // Effectively open if opened (manually or by schedule) AND not past its close time.
+                    const effectivelyOpen = !closedByTime && (c.is_open || (opensAt && opensAt <= now));
+
+                    let badge, subtitle = '', action, accent;
+                    if (effectivelyOpen) {
+                        accent = 'var(--oxblood)';
+                        badge = `<span style="display:inline-flex;align-items:center;gap:0.4rem;flex-shrink:0;font-family:var(--font-mono,monospace);font-size:0.62rem;letter-spacing:0.14em;text-transform:uppercase;font-weight:700;color:#2f6b3a;"><span style="width:0.5rem;height:0.5rem;border-radius:9999px;background:#2f6b3a;display:inline-block;"></span>Open</span>`;
+                        if (closesAt) subtitle = `<p class="alm-mh-date" style="margin:0 0 0.9rem;">Registration closes ${closesAt.toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}.</p>`;
+                        action = `<a href="competition-signup.html?id=${encodeURIComponent(c.id)}" class="alm-btn" style="display:inline-block;text-decoration:none;background:var(--oxblood);">Sign up →</a>`;
+                    } else if (scheduledFuture) {
+                        accent = 'var(--ink)';
+                        badge = `<span style="flex-shrink:0;font-family:var(--font-mono,monospace);font-size:0.62rem;letter-spacing:0.14em;text-transform:uppercase;font-weight:700;color:var(--ink-faint);">Opening soon</span>`;
+                        subtitle = `<p class="alm-mh-date" style="margin:0 0 0.9rem;">Registration opens ${opensAt.toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}.</p>`;
+                        action = `<button type="button" class="alm-btn" disabled style="opacity:0.5;cursor:not-allowed;background:var(--ink);">Opens soon</button>`;
+                    } else {
+                        accent = 'var(--rule-strong)';
+                        badge = `<span style="flex-shrink:0;font-family:var(--font-mono,monospace);font-size:0.62rem;letter-spacing:0.14em;text-transform:uppercase;font-weight:700;color:var(--ink-faint);">Closed</span>`;
+                        action = `<button type="button" class="alm-btn" disabled style="opacity:0.5;cursor:not-allowed;background:var(--ink);">Registration closed</button>`;
+                    }
+
+                    return `
+                    <div class="alm-panel comp-card" style="margin-bottom:1.1rem;border-left:4px solid ${accent};${effectivelyOpen ? '' : 'opacity:0.85;'}">
+                        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:0.75rem;flex-wrap:wrap;">
+                            <h2 class="alm-section-title" style="font-size:1.25rem;margin:0;">${esc(c.title)}</h2>
+                            ${badge}
+                        </div>
+                        <p class="alm-lede" style="font-size:0.95rem;margin:0.6rem 0 ${subtitle ? '0.4rem' : '1.1rem'};white-space:pre-wrap;">${esc(c.description || (effectivelyOpen ? 'Registration is open. Sign up below.' : ''))}</p>
+                        ${subtitle}
+                        ${action}
+                    </div>`;
+                }).join('');
+            } catch (err) {
+                statusEl.textContent = 'Could not load competitions right now. Please try again later.';
+                console.warn('competition load error:', err);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCompetitions();
+            document.getElementById('main-content').classList.remove('opacity-0');
+            if (document.getElementById('page-footer')) document.getElementById('page-footer').classList.remove('opacity-0');
+        });
+    </script>
+</body>
+</html>

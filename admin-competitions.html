@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Competitions - NBHS Table Tennis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <link rel="stylesheet" href="styles.css?v=20260801d">
+    <link rel="stylesheet" href="animations.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="icon" type="image/png" href="favicon.png">
+</head>
+
+<body class="site-surface text-slate-900 font-sans min-h-screen flex flex-col">
+
+    <div id="header-placeholder"></div>
+
+    <main id="main-content" class="almanac flex-grow w-full opacity-0 transition-opacity duration-500">
+      <div class="alm-shell">
+
+        <!-- Back link -->
+        <a href="admin.html" class="alm-link" style="display:inline-flex;align-items:center;gap:0.4rem;margin-bottom:1rem;text-decoration:none;">
+            <span style="font-size:1.1rem;line-height:1;">←</span> Back to admin panel
+        </a>
+
+        <header class="alm-masthead--compact alm-block" style="border-bottom:2px solid var(--ink);padding-bottom:1.25rem;">
+            <div>
+                <p class="alm-kicker">Admin</p>
+                <h1 class="alm-display alm-display--md mt-3">Manage<br>Competitions</h1>
+                <p class="alm-lede mt-3">Create competitions, add custom questions, open/close registration, and view or export entries.</p>
+            </div>
+        </header>
+
+        <!-- Access guard message -->
+        <div id="accessDenied" class="hidden alm-panel alm-block" style="text-align:center;padding:2.5rem;">
+            <p class="alm-section-title" style="font-size:1.1rem;">Admins only</p>
+            <p class="alm-mh-date" style="margin-top:0.5rem;">You need to be signed in as an admin to manage competitions.</p>
+            <a href="admin.html" class="alm-link" style="display:inline-block;margin-top:1rem;">← Go to the admin panel</a>
+        </div>
+
+        <!-- Manager UI -->
+        <div id="managerContent" class="hidden">
+            <!-- Existing competitions -->
+            <section class="alm-block alm-panel">
+                <div class="alm-rule-head"><h2 class="alm-section-title" style="font-size:1.15rem;">Your competitions</h2></div>
+                <div id="compList" class="grid grid-cols-1 gap-2">
+                    <p class="alm-mh-date">Loading…</p>
+                </div>
+            </section>
+
+            <!-- Create / edit form -->
+            <section class="alm-block alm-panel">
+                <div class="alm-rule-head"><h2 class="alm-section-title" style="font-size:1.15rem;" id="compFormHeading">Create a new competition</h2></div>
+                <input type="hidden" id="compEditId" value="">
+                <div class="grid grid-cols-1 gap-3 mt-2">
+                    <div>
+                        <label class="alm-field-label" for="compTitle">Title *</label>
+                        <input id="compTitle" class="alm-input" maxlength="120" placeholder="e.g. Term 3 Round Robin">
+                    </div>
+                    <div>
+                        <label class="alm-field-label" for="compDesc">Description</label>
+                        <textarea id="compDesc" class="alm-input" rows="2" placeholder="When, where, who can join…"></textarea>
+                    </div>
+                    <div>
+                        <label class="alm-field-label" for="compTerms">Terms &amp; Conditions (optional — overrides the default on the form)</label>
+                        <textarea id="compTerms" class="alm-input" rows="2" placeholder="Leave blank to use the placeholder terms on the page."></textarea>
+                    </div>
+
+                    <!-- Custom field builder -->
+                    <div style="border:1px solid var(--rule-strong);padding:0.75rem;">
+                        <div style="display:flex;align-items:center;justify-content:space-between;">
+                            <span class="alm-field-label" style="margin:0;">Custom questions</span>
+                            <button type="button" id="compAddFieldBtn" class="alm-btn" style="background:var(--ink);padding:0.35rem 0.75rem;font-size:0.75rem;">+ Add question</button>
+                        </div>
+                        <div id="compFieldsBuilder" class="grid grid-cols-1 gap-2" style="margin-top:0.6rem;"></div>
+                        <p class="alm-mh-date" style="margin-top:0.4rem;">First/last name, email, year level and T&amp;C agreement are always included.</p>
+                    </div>
+
+                    <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;">
+                        <input id="compIsOpen" type="checkbox" class="h-5 w-5" style="accent-color:var(--oxblood);" checked>
+                        <span class="alm-field-label" style="margin:0;">Open for registration</span>
+                    </label>
+
+                    <div>
+                        <label class="alm-field-label" for="compOpensAt">Auto-open date &amp; time (optional)</label>
+                        <input id="compOpensAt" type="datetime-local" class="alm-input" style="width:100%;">
+                        <p class="alm-mh-date" style="margin-top:0.35rem;">If set, the form opens by itself at this time. Until then it shows as "Opening soon" on the sign-up page.</p>
+                    </div>
+
+                    <div>
+                        <label class="alm-field-label" for="compClosesAt">Auto-close date &amp; time (optional)</label>
+                        <input id="compClosesAt" type="datetime-local" class="alm-input" style="width:100%;">
+                        <p class="alm-mh-date" style="margin-top:0.35rem;">If set, the form closes by itself at this time. While open, the sign-up page shows a "Closes …" note.</p>
+                    </div>
+
+                    <div style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;">
+                        <button id="compSaveBtn" type="button" class="alm-btn" style="background:var(--oxblood);">Save Competition</button>
+                        <button id="compResetBtn" type="button" class="alm-btn" style="background:var(--ink);">New / Clear</button>
+                        <p id="compStatus" class="hidden text-sm font-medium"></p>
+                    </div>
+                </div>
+            </section>
+        </div>
+      </div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <!-- Sign-ups modal -->
+    <div id="compSignupsModal" class="hidden fixed inset-0 z-[9999] bg-slate-900/55 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-4xl max-h-[88vh] flex flex-col overflow-hidden border border-slate-300 rounded-2xl">
+            <div class="flex items-center justify-between p-5 border-b border-slate-200">
+                <h2 id="compSignupsTitle" class="text-xl font-bold text-slate-800">Sign-ups</h2>
+                <div class="flex items-center gap-2">
+                    <button type="button" id="compExportCsvBtn" class="alm-btn" style="padding:0.4rem 0.9rem;font-size:0.8rem;">Export CSV</button>
+                    <button type="button" id="compSignupsClose" class="text-slate-400 hover:text-slate-700 p-1 bg-slate-100 hover:bg-slate-200 rounded-lg"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button>
+                </div>
+            </div>
+            <div id="compSignupsList" class="p-6 overflow-y-auto flex-1 text-sm text-slate-700">
+                <p>Loading…</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="components.js?v=20260801d"></script>
+
+    <script>
+        window.manualPageReveal = true;
+
+        const SUPABASE_URL = "https://ngnkbfazhdedaqvxcphw.supabase.co";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbmtiZmF6aGRlZGFxdnhjcGh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTE5NDksImV4cCI6MjA5MzI4Nzk0OX0.F_S6ORkFe-SuJPybs7FEFH94E6U2hZ5ern4vrg4kMOk";
+        let _supabase = window._supabaseClient || window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let _compCache = [];
+
+        function compEsc(s) {
+            return (s || '').toString()
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+
+        function compShowStatus(msg, ok) {
+            const status = document.getElementById('compStatus');
+            if (!status) return;
+            status.textContent = msg;
+            status.classList.remove('hidden');
+            status.className = `text-sm font-medium ${ok ? 'text-green-600' : 'text-red-600'}`;
+        }
+
+        async function loadCompetitions() {
+            const listEl = document.getElementById('compList');
+            if (!listEl || !_supabase) return;
+            try {
+                const { data, error } = await _supabase.from('competitions')
+                    .select('*').order('created_at', { ascending: false });
+                if (error) throw error;
+                _compCache = data || [];
+                if (!_compCache.length) {
+                    listEl.innerHTML = '<p class="alm-mh-date">No competitions yet. Create one below.</p>';
+                    return;
+                }
+                listEl.innerHTML = _compCache.map(c => {
+                    const now = new Date();
+                    const opensAt = c.opens_at ? new Date(c.opens_at) : null;
+                    const closesAt = c.closes_at ? new Date(c.closes_at) : null;
+                    const closedByTime = closesAt && closesAt <= now;
+                    const scheduledFuture = opensAt && opensAt > now;
+                    const effectivelyOpen = !closedByTime && (c.is_open || (opensAt && opensAt <= now));
+
+                    let statusTag;
+                    if (effectivelyOpen) {
+                        statusTag = closesAt
+                            ? `<span class="alm-match-tag win" style="margin-left:0.5rem;">Open · closes ${closesAt.toLocaleString()}</span>`
+                            : '<span class="alm-match-tag win" style="margin-left:0.5rem;">Open</span>';
+                    } else if (scheduledFuture) {
+                        statusTag = `<span class="alm-match-tag" style="margin-left:0.5rem;background:var(--ink);color:#fff;">Opens ${opensAt.toLocaleString()}</span>`;
+                    } else {
+                        statusTag = '<span class="alm-match-tag loss" style="margin-left:0.5rem;">Closed</span>';
+                    }
+                    return `
+                    <div style="display:flex;align-items:center;justify-content:space-between;gap:0.6rem;border:1px solid var(--rule-strong);padding:0.6rem 0.75rem;flex-wrap:wrap;">
+                        <div style="min-width:0;">
+                            <span style="font-weight:700;">${compEsc(c.title)}</span>
+                            ${statusTag}
+                        </div>
+                        <div style="display:flex;gap:0.4rem;flex-wrap:wrap;">
+                            <button type="button" class="alm-btn comp-toggle-btn" data-id="${compEsc(c.id)}" style="background:var(--ink);padding:0.3rem 0.7rem;font-size:0.72rem;">${c.is_open ? 'Close' : 'Open'}</button>
+                            <button type="button" class="alm-btn comp-edit-btn" data-id="${compEsc(c.id)}" style="background:var(--ink);padding:0.3rem 0.7rem;font-size:0.72rem;">Edit</button>
+                            <button type="button" class="alm-btn comp-view-btn" data-id="${compEsc(c.id)}" style="background:var(--oxblood);padding:0.3rem 0.7rem;font-size:0.72rem;">Sign-ups</button>
+                            <button type="button" class="alm-btn comp-delete-btn" data-id="${compEsc(c.id)}" style="background:#7c1d1d;padding:0.3rem 0.7rem;font-size:0.72rem;">Delete</button>
+                        </div>
+                    </div>`;
+                }).join('');
+
+                listEl.querySelectorAll('.comp-toggle-btn').forEach(b => b.addEventListener('click', () => toggleCompetition(b.getAttribute('data-id'))));
+                listEl.querySelectorAll('.comp-edit-btn').forEach(b => b.addEventListener('click', () => editCompetition(b.getAttribute('data-id'))));
+                listEl.querySelectorAll('.comp-view-btn').forEach(b => b.addEventListener('click', () => viewSignups(b.getAttribute('data-id'))));
+                listEl.querySelectorAll('.comp-delete-btn').forEach(b => b.addEventListener('click', () => deleteCompetition(b.getAttribute('data-id'))));
+            } catch (err) {
+                listEl.innerHTML = `<p class="text-red-600 text-sm">Could not load competitions: ${err.message}</p>`;
+            }
+        }
+
+        // Custom-field builder rows.
+        function addFieldRow(field) {
+            field = field || { label: '', type: 'text', required: false, options: [] };
+            const wrap = document.getElementById('compFieldsBuilder');
+            const row = document.createElement('div');
+            row.className = 'comp-field-row';
+            row.style.cssText = 'display:grid;grid-template-columns:1fr 8rem auto auto;gap:0.4rem;align-items:center;';
+            row.innerHTML = `
+                <input class="alm-input cf-label" placeholder="Question label" value="${compEsc(field.label)}">
+                <select class="alm-select cf-type">
+                    <option value="text">Short text</option>
+                    <option value="textarea">Long text</option>
+                    <option value="number">Number</option>
+                    <option value="select">Dropdown</option>
+                    <option value="checkbox">Checkbox</option>
+                </select>
+                <label style="display:flex;align-items:center;gap:0.3rem;font-size:0.72rem;white-space:nowrap;"><input type="checkbox" class="cf-required" ${field.required ? 'checked' : ''} style="accent-color:var(--oxblood);">Req</label>
+                <button type="button" class="cf-remove" style="background:none;border:none;cursor:pointer;color:var(--oxblood);font-weight:700;">✕</button>
+                <input class="alm-input cf-options" placeholder="Dropdown options, comma-separated" value="${compEsc((field.options || []).join(', '))}" style="grid-column:1 / -1;display:${field.type === 'select' ? 'block' : 'none'};">
+            `;
+            row.querySelector('.cf-type').value = field.type || 'text';
+            const optsInput = row.querySelector('.cf-options');
+            row.querySelector('.cf-type').addEventListener('change', (e) => {
+                optsInput.style.display = e.target.value === 'select' ? 'block' : 'none';
+            });
+            row.querySelector('.cf-remove').addEventListener('click', () => row.remove());
+            wrap.appendChild(row);
+        }
+
+        function collectFields() {
+            const rows = document.querySelectorAll('#compFieldsBuilder .comp-field-row');
+            const fields = [];
+            rows.forEach(r => {
+                const label = r.querySelector('.cf-label').value.trim();
+                if (!label) return;
+                const type = r.querySelector('.cf-type').value;
+                const required = r.querySelector('.cf-required').checked;
+                const options = type === 'select'
+                    ? r.querySelector('.cf-options').value.split(',').map(s => s.trim()).filter(Boolean)
+                    : [];
+                fields.push({ key: label, label, type, required, options });
+            });
+            return fields;
+        }
+
+        function resetCompForm() {
+            document.getElementById('compEditId').value = '';
+            document.getElementById('compTitle').value = '';
+            document.getElementById('compDesc').value = '';
+            document.getElementById('compTerms').value = '';
+            document.getElementById('compIsOpen').checked = true;
+            document.getElementById('compOpensAt').value = '';
+            document.getElementById('compClosesAt').value = '';
+            document.getElementById('compFieldsBuilder').innerHTML = '';
+            document.getElementById('compFormHeading').textContent = 'Create a new competition';
+            document.getElementById('compStatus')?.classList.add('hidden');
+        }
+
+        // Convert a stored ISO timestamp to the value a datetime-local input wants.
+        function isoToLocalInput(iso) {
+            if (!iso) return '';
+            const d = new Date(iso);
+            if (isNaN(d)) return '';
+            const pad = (n) => String(n).padStart(2, '0');
+            return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+        }
+
+        function editCompetition(id) {
+            const c = _compCache.find(x => String(x.id) === String(id));
+            if (!c) return;
+            document.getElementById('compEditId').value = c.id;
+            document.getElementById('compTitle').value = c.title || '';
+            document.getElementById('compDesc').value = c.description || '';
+            document.getElementById('compTerms').value = c.terms || '';
+            document.getElementById('compIsOpen').checked = !!c.is_open;
+            document.getElementById('compOpensAt').value = isoToLocalInput(c.opens_at);
+            document.getElementById('compClosesAt').value = isoToLocalInput(c.closes_at);
+            document.getElementById('compFieldsBuilder').innerHTML = '';
+            (c.custom_fields || []).forEach(f => addFieldRow(f));
+            document.getElementById('compFormHeading').textContent = `Editing: ${c.title}`;
+            document.getElementById('compTitle').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        async function saveCompetition() {
+            const title = document.getElementById('compTitle').value.trim();
+            if (!title) { compShowStatus('Please enter a title.', false); return; }
+            const opensAtRaw = document.getElementById('compOpensAt').value;
+            const closesAtRaw = document.getElementById('compClosesAt').value;
+            const payload = {
+                title,
+                description: document.getElementById('compDesc').value.trim(),
+                terms: document.getElementById('compTerms').value.trim() || null,
+                is_open: document.getElementById('compIsOpen').checked,
+                opens_at: opensAtRaw ? new Date(opensAtRaw).toISOString() : null,
+                closes_at: closesAtRaw ? new Date(closesAtRaw).toISOString() : null,
+                custom_fields: collectFields()
+            };
+            const editId = document.getElementById('compEditId').value;
+            compShowStatus('Saving…', true);
+            try {
+                let error;
+                if (editId) {
+                    ({ error } = await _supabase.from('competitions').update(payload).eq('id', editId));
+                } else {
+                    ({ error } = await _supabase.from('competitions').insert([payload]));
+                }
+                if (error) throw error;
+                compShowStatus('Saved.', true);
+                resetCompForm();
+                loadCompetitions();
+            } catch (err) {
+                compShowStatus(`Could not save: ${err.message}`, false);
+            }
+        }
+
+        async function toggleCompetition(id) {
+            const c = _compCache.find(x => String(x.id) === String(id));
+            if (!c) return;
+            try {
+                const { error } = await _supabase.from('competitions').update({ is_open: !c.is_open }).eq('id', id);
+                if (error) throw error;
+                loadCompetitions();
+            } catch (err) { alert('Could not update: ' + err.message); }
+        }
+
+        async function deleteCompetition(id) {
+            const c = _compCache.find(x => String(x.id) === String(id));
+            if (!c) return;
+            if (!confirm(`Delete "${c.title}" and ALL its sign-ups? This cannot be undone.`)) return;
+            try {
+                await _supabase.from('competition_signups').delete().eq('competition_id', id);
+                const { error } = await _supabase.from('competitions').delete().eq('id', id);
+                if (error) throw error;
+                loadCompetitions();
+            } catch (err) { alert('Could not delete: ' + err.message); }
+        }
+
+        let _viewingSignups = [];
+        let _viewingComp = null;
+
+        async function viewSignups(id) {
+            const c = _compCache.find(x => String(x.id) === String(id));
+            _viewingComp = c;
+            document.getElementById('compSignupsTitle').textContent = `Sign-ups — ${c ? c.title : ''}`;
+            document.getElementById('compSignupsModal').classList.remove('hidden');
+            const listEl = document.getElementById('compSignupsList');
+            listEl.innerHTML = '<p>Loading…</p>';
+            try {
+                const { data, error } = await _supabase.from('competition_signups')
+                    .select('*').eq('competition_id', id).order('created_at', { ascending: false });
+                if (error) throw error;
+                _viewingSignups = data || [];
+                if (!_viewingSignups.length) { listEl.innerHTML = '<p>No sign-ups yet.</p>'; return; }
+                listEl.innerHTML = _viewingSignups.map(s => {
+                    const extra = s.extra && typeof s.extra === 'object'
+                        ? Object.entries(s.extra).map(([k, v]) => `<span style="display:inline-block;margin-right:1rem;"><strong>${compEsc(k)}:</strong> ${compEsc(String(v))}</span>`).join('')
+                        : '';
+                    return `
+                        <div class="border rounded-lg p-3 bg-white shadow-sm mb-2">
+                            <div class="flex justify-between items-start">
+                                <p class="font-bold text-slate-800">${compEsc(s.first_name)} ${compEsc(s.last_name)} <span class="text-xs font-normal text-slate-500">· Year ${compEsc(s.year_level)}</span></p>
+                                <span class="text-xs text-slate-400">${new Date(s.created_at).toLocaleString()}</span>
+                            </div>
+                            <p class="text-sm text-slate-600">${compEsc(s.email)}</p>
+                            ${extra ? `<p class="text-xs text-slate-500 mt-1">${extra}</p>` : ''}
+                        </div>`;
+                }).join('');
+            } catch (err) {
+                listEl.innerHTML = `<p class="text-red-600">Could not load sign-ups: ${err.message}</p>`;
+            }
+        }
+
+        function exportSignupsCsv() {
+            if (!_viewingSignups.length) { alert('No sign-ups to export.'); return; }
+            const extraKeys = [];
+            _viewingSignups.forEach(s => {
+                if (s.extra && typeof s.extra === 'object') Object.keys(s.extra).forEach(k => { if (!extraKeys.includes(k)) extraKeys.push(k); });
+            });
+            const headers = ['First name', 'Last name', 'Email', 'Year level', 'Agreed terms', 'Submitted', ...extraKeys];
+            const cell = (v) => {
+                const s = (v === null || v === undefined) ? '' : String(v);
+                return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+            };
+            const rows = _viewingSignups.map(s => [
+                s.first_name, s.last_name, s.email, s.year_level, s.agreed_terms ? 'Yes' : 'No',
+                new Date(s.created_at).toLocaleString(),
+                ...extraKeys.map(k => (s.extra && s.extra[k] !== undefined) ? s.extra[k] : '')
+            ].map(cell).join(','));
+            const csv = [headers.map(cell).join(','), ...rows].join('\n');
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `signups-${(_viewingComp?.title || 'competition').replace(/[^a-z0-9]+/gi, '-')}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Wire up form controls.
+        document.getElementById('compAddFieldBtn')?.addEventListener('click', () => addFieldRow());
+        document.getElementById('compSaveBtn')?.addEventListener('click', saveCompetition);
+        document.getElementById('compResetBtn')?.addEventListener('click', resetCompForm);
+        document.getElementById('compSignupsClose')?.addEventListener('click', () => document.getElementById('compSignupsModal').classList.add('hidden'));
+        document.getElementById('compSignupsModal')?.addEventListener('click', (e) => { if (e.target.id === 'compSignupsModal') document.getElementById('compSignupsModal').classList.add('hidden'); });
+        document.getElementById('compExportCsvBtn')?.addEventListener('click', exportSignupsCsv);
+
+        // Auth guard: only admins can manage competitions.
+        function reveal() {
+            document.getElementById('main-content').classList.remove('opacity-0');
+            if (document.getElementById('page-footer')) document.getElementById('page-footer').classList.remove('opacity-0');
+        }
+
+        async function guardAndInit() {
+            try {
+                const { data } = await _supabase.auth.getSession();
+                const session = data?.session;
+                if (!session?.user) { document.getElementById('accessDenied').classList.remove('hidden'); reveal(); return; }
+
+                let role = 'standard';
+                if (window._resolveAccountRole) {
+                    role = await Promise.race([
+                        window._resolveAccountRole(session.user.email, session.user.id),
+                        new Promise(resolve => setTimeout(() => resolve('standard'), 3000))
+                    ]);
+                }
+                if (role !== 'admin') {
+                    document.getElementById('accessDenied').classList.remove('hidden');
+                    reveal();
+                    return;
+                }
+                document.getElementById('managerContent').classList.remove('hidden');
+                loadCompetitions();
+                reveal();
+            } catch (err) {
+                document.getElementById('accessDenied').classList.remove('hidden');
+                reveal();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Give components.js a moment to create the shared client + resolver.
+            setTimeout(guardAndInit, 300);
+        });
+    </script>
+</body>
+</html>

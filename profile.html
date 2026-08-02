@@ -9,7 +9,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="styles.css?v=20260725a">
+    <link rel="stylesheet" href="styles.css?v=20260801d">
     <link rel="stylesheet" href="animations.css">
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
@@ -146,7 +146,7 @@
 
     <div id="footer-placeholder"></div>
 
-    <script src="components.js?v=20260725c"></script>
+    <script src="components.js?v=20260801d"></script>
     <script>
         const SUPABASE_URL = 'https://ngnkbfazhdedaqvxcphw.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbmtiZmF6aGRlZGFxdnhjcGh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTE5NDksImV4cCI6MjA5MzI4Nzk0OX0.F_S6ORkFe-SuJPybs7FEFH94E6U2hZ5ern4vrg4kMOk';
@@ -174,6 +174,34 @@
         function show(id) { document.getElementById(id)?.classList.remove('hidden'); }
         function hide(id) { document.getElementById(id)?.classList.add('hidden'); }
         function setText(id, val) { const el = document.getElementById(id); if (el) el.textContent = val; }
+
+        // Compute a player's LIVE division + day from Elo rank, matching the
+        // Matchup Ladder exactly: all players sorted by Elo desc (Oscar Pan
+        // tiebreak, then name); top 16 play Monday, 17–32 play Tuesday; within
+        // each group of 16, ranks 1–4 = Div 1, 5–12 = Div 2, 13–16 = Div 3.
+        function computeLiveDivision(rankings, playerName) {
+            const key = normalizeKey(playerName);
+            const sorted = (rankings || [])
+                .map(r => ({ name: r.name, elo: r.elo }))
+                .filter(p => p.name)
+                .sort((a, b) => {
+                    const eloDiff = (b.elo || 0) - (a.elo || 0);
+                    if (eloDiff !== 0) return eloDiff;
+                    const aOscar = normalizeKey(a.name).replace(/[^a-z0-9]+/g, '') === 'oscarpan';
+                    const bOscar = normalizeKey(b.name).replace(/[^a-z0-9]+/g, '') === 'oscarpan';
+                    if (aOscar !== bOscar) return aOscar ? -1 : 1;
+                    return (a.name || '').localeCompare(b.name || '');
+                });
+            const i = sorted.findIndex(p => normalizeKey(p.name) === key);
+            if (i < 0 || i >= 32) return null; // outside the ranked field
+            const day = i < 16 ? 'Monday' : 'Tuesday';
+            const within = i % 16;
+            let division;
+            if (within < 4) division = 'Division 1';
+            else if (within < 12) division = 'Division 2';
+            else division = 'Division 3';
+            return { division, day };
+        }
 
         // Holds the signed-in user's account id so the bio editor can save.
         let _myAccountId = null;
@@ -232,8 +260,12 @@
                 setText('statElo', ranking?.elo ?? '—');
                 setText('statWins', ranking?.wins ?? 0);
                 setText('statLosses', ranking?.losses ?? 0);
-                setText('statDivision', ranking?.division || '—');
-                setText('statHalf', halfToDay(ranking?.half));
+
+                // Division & day are derived LIVE from Elo rank (same logic as the
+                // Matchup Ladder), not the stored player_rankings.division field.
+                const liveDivision = computeLiveDivision(rankings, resolvedName);
+                setText('statDivision', liveDivision?.division || '—');
+                setText('statHalf', liveDivision?.day || '—');
 
                 // My matches in chronological order
                 const myKey = normalizeKey(resolvedName);

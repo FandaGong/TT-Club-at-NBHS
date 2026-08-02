@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - NBHS Table Tennis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <link rel="stylesheet" href="styles.css?v=20260801d">
+    <link rel="stylesheet" href="animations.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <style>
+        /* Widen the form column and tighten the space under the masthead rule */
+        .almanac .alm-shell { max-width: 52rem; }
+        .almanac #notAvailable,
+        .almanac #formSection,
+        .almanac #successState { margin-top: 1.25rem; }
+    </style>
+</head>
+
+<body class="site-surface text-slate-900 font-sans min-h-screen flex flex-col">
+
+    <div id="header-placeholder"></div>
+
+    <main id="main-content" class="almanac flex-grow w-full opacity-0 transition-opacity duration-500">
+      <div class="alm-shell">
+
+        <!-- Back link -->
+        <a href="competition.html" class="alm-link" style="display:inline-flex;align-items:center;gap:0.4rem;margin-bottom:1rem;text-decoration:none;">
+            <span style="font-size:1.1rem;line-height:1;">←</span> Back to competitions
+        </a>
+
+        <header class="alm-masthead--compact alm-block" style="border-bottom:2px solid var(--ink);padding-bottom:1.25rem;">
+            <div>
+                <p class="alm-kicker">Registration</p>
+                <h1 id="compTitle" class="alm-display alm-display--md mt-3">Loading…</h1>
+                <p id="compDesc" class="alm-lede mt-3" style="white-space:pre-wrap;"></p>
+            </div>
+        </header>
+
+        <!-- Not found / closed state -->
+        <div id="notAvailable" class="hidden alm-panel alm-block" style="text-align:center;padding:2.5rem;">
+            <p class="alm-section-title" style="font-size:1.1rem;">This competition isn't available</p>
+            <p class="alm-mh-date" style="margin-top:0.5rem;">It may have closed or the link is out of date.</p>
+            <a href="competition.html" class="alm-link" style="display:inline-block;margin-top:1rem;">← Back to competitions</a>
+        </div>
+
+        <!-- Sign-up form -->
+        <section id="formSection" class="hidden alm-block alm-panel">
+            <form id="signupForm" class="grid grid-cols-1" style="gap:1rem;">
+                <div class="grid grid-cols-1 sm:grid-cols-2" style="gap:1rem;">
+                    <div>
+                        <label class="alm-field-label" for="suFirstName">First name *</label>
+                        <input id="suFirstName" type="text" required class="alm-input" placeholder="First name">
+                    </div>
+                    <div>
+                        <label class="alm-field-label" for="suLastName">Last name *</label>
+                        <input id="suLastName" type="text" required class="alm-input" placeholder="Last name">
+                    </div>
+                </div>
+                <div>
+                    <label class="alm-field-label" for="suEmail">Email *</label>
+                    <input id="suEmail" type="email" required class="alm-input" placeholder="you@example.com">
+                </div>
+                <div>
+                    <label class="alm-field-label" for="suYearLevel">Year level *</label>
+                    <select id="suYearLevel" required class="alm-select" data-enhance="true">
+                        <option value="">Select your year…</option>
+                        <option value="7">Year 7</option>
+                        <option value="8">Year 8</option>
+                        <option value="9">Year 9</option>
+                        <option value="10">Year 10</option>
+                        <option value="11">Year 11</option>
+                        <option value="12">Year 12</option>
+                        <option value="Staff">Staff</option>
+                    </select>
+                </div>
+
+                <!-- Admin-defined custom fields render here -->
+                <div id="suCustomFields" class="grid grid-cols-1" style="gap:1rem;"></div>
+
+                <!-- Terms & Conditions -->
+                <div style="border:1px solid var(--rule-strong);background:var(--paper-2);padding:1rem 1.1rem;">
+                    <p style="font-family:var(--font-mono,monospace);letter-spacing:0.12em;text-transform:uppercase;font-size:0.62rem;color:var(--ink-faint);margin:0 0 0.5rem;">Terms &amp; Conditions</p>
+                    <div id="suTermsText" style="font-size:0.85rem;line-height:1.55;color:var(--ink);max-height:11rem;overflow-y:auto;padding-right:0.5rem;">
+                        <!-- TODO: replace this placeholder with your actual terms & conditions. -->
+                        <p style="margin:0;">By registering you agree to participate fairly, follow club and school rules, and allow the organisers to contact you about this competition using the details provided. [Placeholder terms — replace with your own.]</p>
+                    </div>
+                    <label style="display:flex;align-items:flex-start;gap:0.6rem;margin-top:0.9rem;cursor:pointer;padding-top:0.75rem;border-top:1px solid var(--rule);">
+                        <input id="suAgreeTerms" type="checkbox" class="h-5 w-5 shrink-0" style="accent-color:var(--oxblood);margin-top:0.05rem;">
+                        <span style="font-size:0.85rem;font-weight:600;color:var(--ink);">I have read and agree to the Terms &amp; Conditions.</span>
+                    </label>
+                </div>
+
+                <button id="suSubmitBtn" type="submit" class="alm-btn" disabled style="width:100%;opacity:0.45;cursor:not-allowed;padding:0.85rem;background:var(--oxblood);">Submit Registration</button>
+                <p id="suSubmitStatus" class="hidden text-sm font-medium" style="text-align:center;"></p>
+            </form>
+        </section>
+
+        <!-- Success state -->
+        <div id="successState" class="hidden alm-block alm-panel" style="text-align:center;padding:2.5rem;">
+            <p class="alm-section-title" style="font-size:1.25rem;">Registration confirmed</p>
+            <p class="alm-lede" style="margin:0.5rem auto 1.25rem;">Thanks for signing up. We'll be in touch by email with the details.</p>
+            <a href="competition.html" class="alm-btn" style="display:inline-block;text-decoration:none;background:var(--oxblood);">← Back to competitions</a>
+        </div>
+      </div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="components.js?v=20260801d"></script>
+
+    <script>
+        window.manualPageReveal = true;
+
+        const SUPABASE_URL = "https://ngnkbfazhdedaqvxcphw.supabase.co";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbmtiZmF6aGRlZGFxdnhjcGh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTE5NDksImV4cCI6MjA5MzI4Nzk0OX0.F_S6ORkFe-SuJPybs7FEFH94E6U2hZ5ern4vrg4kMOk";
+        let supabaseClient = window._supabaseClient || window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        const compId = new URLSearchParams(window.location.search).get('id');
+        let _competition = null;
+
+        function esc(s) {
+            return (s || '').toString()
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+
+        function show(id) { document.getElementById(id)?.classList.remove('hidden'); }
+        function hide(id) { document.getElementById(id)?.classList.add('hidden'); }
+
+        function renderCustomFields(fields) {
+            const wrap = document.getElementById('suCustomFields');
+            wrap.innerHTML = '';
+            (fields || []).forEach((f, i) => {
+                const id = `suCustom_${i}`;
+                const req = f.required ? 'required' : '';
+                const reqMark = f.required ? ' *' : '';
+                let control = '';
+                if (f.type === 'textarea') {
+                    control = `<textarea id="${id}" data-key="${esc(f.key || f.label)}" rows="3" ${req} class="alm-input" placeholder="${esc(f.placeholder || '')}"></textarea>`;
+                } else if (f.type === 'select') {
+                    const opts = (f.options || []).map(o => `<option value="${esc(o)}">${esc(o)}</option>`).join('');
+                    control = `<select id="${id}" data-key="${esc(f.key || f.label)}" ${req} class="alm-select" data-enhance="true"><option value="">Select…</option>${opts}</select>`;
+                } else if (f.type === 'checkbox') {
+                    wrap.insertAdjacentHTML('beforeend', `<div><label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;"><input id="${id}" data-key="${esc(f.key || f.label)}" type="checkbox" class="h-5 w-5" style="accent-color:var(--oxblood);"><span class="alm-field-label" style="margin:0;">${esc(f.label)}${reqMark}</span></label></div>`);
+                    return;
+                } else {
+                    control = `<input id="${id}" data-key="${esc(f.key || f.label)}" type="${f.type === 'number' ? 'number' : 'text'}" ${req} class="alm-input" placeholder="${esc(f.placeholder || '')}">`;
+                }
+                wrap.insertAdjacentHTML('beforeend', `<div><label class="alm-field-label" for="${id}">${esc(f.label)}${reqMark}</label>${control}</div>`);
+            });
+        }
+
+        async function loadCompetition() {
+            if (!compId) { document.getElementById('compTitle').textContent = 'Competition'; show('notAvailable'); return; }
+            try {
+                const { data, error } = await supabaseClient.from('competitions')
+                    .select('*').eq('id', compId).maybeSingle();
+                if (error) throw error;
+                // A form counts as open if the admin opened it (or its opens_at has
+                // passed) AND it hasn't hit its closes_at time.
+                const now = new Date();
+                const opensAt = data && data.opens_at ? new Date(data.opens_at) : null;
+                const closesAt = data && data.closes_at ? new Date(data.closes_at) : null;
+                const closedByTime = closesAt && closesAt <= now;
+                const effectivelyOpen = data && !closedByTime && (data.is_open || (opensAt && opensAt <= now));
+                if (!data || !effectivelyOpen) {
+                    document.getElementById('compTitle').textContent = data ? data.title : 'Competition';
+                    const na = document.getElementById('notAvailable');
+                    if (data && opensAt && opensAt > now) {
+                        // Scheduled to open later.
+                        na.querySelector('.alm-section-title').textContent = 'Registration not open yet';
+                        if (na.querySelectorAll('p')[1]) na.querySelectorAll('p')[1].textContent = `This form opens ${opensAt.toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}.`;
+                    } else if (data && closedByTime) {
+                        // Auto-closed.
+                        na.querySelector('.alm-section-title').textContent = 'Registration has closed';
+                        if (na.querySelectorAll('p')[1]) na.querySelectorAll('p')[1].textContent = `This form closed ${closesAt.toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}.`;
+                    }
+                    show('notAvailable');
+                    return;
+                }
+                _competition = data;
+                document.getElementById('compTitle').textContent = data.title;
+                // Show the closing time under the description when the form is open.
+                if (closesAt) {
+                    document.getElementById('compDesc').textContent =
+                        (data.description ? data.description + '\n\n' : '') +
+                        `Registration closes ${closesAt.toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}.`;
+                } else {
+                    document.getElementById('compDesc').textContent = data.description || '';
+                }
+                if (data.terms) {
+                    document.getElementById('suTermsText').innerHTML = `<p style="margin:0;white-space:pre-wrap;">${esc(data.terms)}</p>`;
+                }
+                renderCustomFields(data.custom_fields);
+                show('formSection');
+                // Upgrade the year-level + any custom <select>s to the site's custom dropdown.
+                if (typeof window.enhanceDropdowns === 'function') window.enhanceDropdowns(document.getElementById('formSection'));
+            } catch (err) {
+                document.getElementById('compTitle').textContent = 'Competition';
+                show('notAvailable');
+                console.warn('load error:', err);
+            }
+        }
+
+        function syncSubmitState() {
+            const agreed = document.getElementById('suAgreeTerms').checked;
+            const btn = document.getElementById('suSubmitBtn');
+            btn.disabled = !agreed;
+            btn.style.opacity = agreed ? '1' : '0.45';
+            btn.style.cursor = agreed ? 'pointer' : 'not-allowed';
+        }
+
+        function collectCustomAnswers() {
+            const answers = {};
+            document.getElementById('suCustomFields').querySelectorAll('[data-key]').forEach(el => {
+                const key = el.getAttribute('data-key');
+                answers[key] = el.type === 'checkbox' ? el.checked : el.value;
+            });
+            return answers;
+        }
+
+        async function submitSignup() {
+            if (!_competition) throw new Error('No competition loaded.');
+            const firstName = document.getElementById('suFirstName').value.trim();
+            const lastName = document.getElementById('suLastName').value.trim();
+            const email = document.getElementById('suEmail').value.trim();
+            const yearLevel = document.getElementById('suYearLevel').value;
+            const agreed = document.getElementById('suAgreeTerms').checked;
+
+            if (!firstName || !lastName || !email || !yearLevel) throw new Error('Please fill in all required fields.');
+            if (!agreed) throw new Error('You must agree to the Terms & Conditions.');
+
+            const { error } = await supabaseClient.from('competition_signups').insert([{
+                competition_id: _competition.id,
+                first_name: firstName,
+                last_name: lastName,
+                email: email,
+                year_level: yearLevel,
+                agreed_terms: true,
+                extra: collectCustomAnswers()
+            }]);
+            if (error) throw error;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('suAgreeTerms').addEventListener('change', syncSubmitState);
+
+            document.getElementById('signupForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const status = document.getElementById('suSubmitStatus');
+                const btn = document.getElementById('suSubmitBtn');
+                status.classList.remove('hidden');
+                status.textContent = 'Submitting…';
+                status.className = 'mt-2 text-sm font-medium text-blue-600';
+                btn.disabled = true;
+                try {
+                    await submitSignup();
+                    hide('formSection');
+                    show('successState');
+                    document.getElementById('successState').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                } catch (err) {
+                    status.textContent = 'Error: ' + err.message;
+                    status.className = 'mt-2 text-sm font-medium text-red-600';
+                    syncSubmitState();
+                }
+            });
+
+            loadCompetition();
+
+            document.getElementById('main-content').classList.remove('opacity-0');
+            if (document.getElementById('page-footer')) document.getElementById('page-footer').classList.remove('opacity-0');
+        });
+    </script>
+</body>
+</html>

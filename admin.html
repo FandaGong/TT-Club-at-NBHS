@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NBHS TT Hub - Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="styles.css?v=20260725a">
+    <link rel="stylesheet" href="styles.css?v=20260801d">
     <link rel="stylesheet" href="animations.css">
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
@@ -189,6 +189,13 @@
                             <span class="alm-tool-arrow">→</span>
                         </button>
                     </nav>
+
+                    <!-- Competition manager (now its own page) -->
+                    <div class="alm-panel" style="margin-top:1.5rem;">
+                        <div class="alm-rule-head"><h3 class="alm-section-title" style="font-size:1.1rem;">Competition Sign-ups</h3></div>
+                        <p class="alm-mh-date" style="margin:0.25rem 0 0.9rem;">Create competitions, add custom questions, open/close registration, and view or export entries.</p>
+                        <a href="admin-competitions.html" class="alm-btn" style="display:inline-block;text-decoration:none;background:var(--oxblood);">Open Competition Manager →</a>
+                    </div>
 
                     <!-- Announcement banner editor -->
                     <div class="alm-panel" style="margin-top:1.5rem;">
@@ -767,7 +774,7 @@
     </div>
 
     <!-- 4. LOAD COMPONENTS SCRIPT -->
-    <script src="components.js?v=20260725c"></script>
+    <script src="components.js?v=20260801d"></script>
 
     <script>
         window.manualPageReveal = true;
@@ -2731,6 +2738,7 @@
             if (input) input.value = '';
             saveLocation('');
         });
+
 
         // Event Listeners
         document.getElementById('adminLogoutBtn').addEventListener('click', () => forceLogout());

@@ -83,7 +83,7 @@ window._adminEmails = (window._adminEmails || [
 
     function tagCursorTargets() {
         // Block cursor for buttons/links/controls; text cursor for headings & prose.
-        const blockSel = 'a, button, [role="button"], .site-nav-item, .site-nav-cta, .site-nav-subitem, .alm-tool, .alm-btn, .alm-standings-row, .alm-index-row, .alm-match-toggle, input[type="checkbox"], select';
+        const blockSel = 'a, button, [role="button"], .site-nav-item, .site-nav-cta, .site-nav-subitem, .alm-tool, .alm-btn, .alm-standings-row, .alm-index-row, .alm-match-toggle, .alm-dropdown-trigger, .alm-dropdown-option, input[type="checkbox"], select';
         document.querySelectorAll(blockSel).forEach(el => {
             if (!el.hasAttribute('data-cursor')) el.setAttribute('data-cursor', 'block');
         });
@@ -192,6 +192,8 @@ const headerHTML = `
                     <a href="player-ranking.html" class="site-nav-subitem"><i data-lucide="list-ordered" class="h-4 w-4 shrink-0"></i>Rankings</a>
                     <a href="player-matchup-ladder.html" class="site-nav-subitem"><i data-lucide="swords" class="h-4 w-4 shrink-0"></i>Matchups</a>
                     <a href="matches.html" class="site-nav-subitem"><i data-lucide="history" class="h-4 w-4 shrink-0"></i>Match History</a>
+                    <!-- Competition sign-up (comment this line out again to hide it from the nav) -->
+                    <a href="competition.html" class="site-nav-subitem"><i data-lucide="clipboard-list" class="h-4 w-4 shrink-0"></i>Competition Sign-up</a>
                 </div>
             </div>
 
@@ -293,6 +295,112 @@ function renderAnnouncementBanner(raw) {
     }
 }
 window.renderAnnouncementBanner = renderAnnouncementBanner;
+
+
+// ── Custom dropdowns ───────────────────────────────────────────────────
+// Replaces the native <select> popup with a site-styled menu. The real
+// <select> stays in the DOM (visually hidden) so form values, `required`
+// validation and existing change-listeners keep working. Call
+// window.enhanceDropdowns() after adding selects dynamically.
+function enhanceOneSelect(select) {
+    if (!select || select.dataset.enhanced === 'true') return;
+    if (select.multiple || select.size > 1) return; // only single selects
+    select.dataset.enhanced = 'true';
+    select.classList.add('alm-select--enhanced');
+
+    const wrap = document.createElement('div');
+    wrap.className = 'alm-dropdown';
+    select.parentNode.insertBefore(wrap, select);
+    wrap.appendChild(select);
+
+    const trigger = document.createElement('button');
+    trigger.type = 'button';
+    trigger.className = 'alm-dropdown-trigger';
+    trigger.setAttribute('data-cursor', 'block');
+    trigger.innerHTML = '<span class="alm-dropdown-value"></span><span class="alm-dropdown-arrow" aria-hidden="true"></span>';
+    wrap.appendChild(trigger);
+
+    const menu = document.createElement('div');
+    menu.className = 'alm-dropdown-menu';
+    menu.setAttribute('role', 'listbox');
+    wrap.appendChild(menu);
+
+    const valueEl = trigger.querySelector('.alm-dropdown-value');
+
+    function buildOptions() {
+        menu.innerHTML = '';
+        Array.from(select.options).forEach((opt) => {
+            const item = document.createElement('div');
+            item.className = 'alm-dropdown-option';
+            item.setAttribute('role', 'option');
+            item.textContent = opt.textContent;
+            item.dataset.value = opt.value;
+            if (opt.value === '') item.dataset.placeholder = 'true';
+            if (opt.value === select.value) item.classList.add('is-selected');
+            item.addEventListener('click', () => {
+                select.value = opt.value;
+                select.dispatchEvent(new Event('change', { bubbles: true }));
+                syncFromSelect();
+                close();
+            });
+            item.setAttribute('data-cursor', 'block');
+            menu.appendChild(item);
+        });
+    }
+
+    function syncFromSelect() {
+        const opt = select.options[select.selectedIndex];
+        const text = opt ? opt.textContent : '';
+        valueEl.textContent = text;
+        trigger.classList.toggle('is-placeholder', !select.value);
+        menu.querySelectorAll('.alm-dropdown-option').forEach(el => {
+            el.classList.toggle('is-selected', el.dataset.value === select.value);
+        });
+    }
+
+    function open() {
+        // Close any other open dropdowns first.
+        document.querySelectorAll('.alm-dropdown.is-open').forEach(d => { if (d !== wrap) d.classList.remove('is-open'); });
+        wrap.classList.add('is-open');
+        const sel = menu.querySelector('.is-selected');
+        if (sel) sel.scrollIntoView({ block: 'nearest' });
+    }
+    function close() { wrap.classList.remove('is-open'); }
+
+    trigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        wrap.classList.contains('is-open') ? close() : open();
+    });
+
+    // Keyboard support on the trigger.
+    trigger.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            if (!wrap.classList.contains('is-open')) { open(); return; }
+        }
+        if (e.key === 'Escape') close();
+    });
+
+    // Keep the shell in sync if the select is changed programmatically.
+    select.addEventListener('change', syncFromSelect);
+
+    buildOptions();
+    syncFromSelect();
+}
+
+function enhanceDropdowns(root) {
+    // Opt-in: only upgrade selects marked data-enhance="true" so existing
+    // layouts (admin builder, settings) keep their native selects untouched.
+    (root || document).querySelectorAll('select.alm-select[data-enhance="true"]').forEach(enhanceOneSelect);
+}
+window.enhanceDropdowns = enhanceDropdowns;
+
+// Close open dropdowns when clicking elsewhere.
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.alm-dropdown')) {
+        document.querySelectorAll('.alm-dropdown.is-open').forEach(d => d.classList.remove('is-open'));
+    }
+});
 
 
 // ── Division-change detection & one-time notification ──────────────────
@@ -665,6 +773,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (yearEl) yearEl.textContent = new Date().getFullYear();
     
     initMenu();
+
+    // Upgrade any native <select class="alm-select"> to the custom dropdown.
+    if (typeof window.enhanceDropdowns === 'function') window.enhanceDropdowns();
 
     // Re-apply the iPad cursor now that the header/footer exist, so nav
     // elements get tagged and the effect covers them.
