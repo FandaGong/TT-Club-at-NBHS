@@ -187,34 +187,54 @@
             } catch (err) { /* fail quietly */ }
         }
 
+        // Compute a player's LIVE division + day from Elo rank, matching the
+        // Matchup Ladder exactly: all players sorted by Elo desc (Oscar Pan
+        // tiebreak, then name); top 16 play Monday, 17–32 Tuesday; within each
+        // group of 16, ranks 1–4 = Div 1, 5–12 = Div 2, 13–16 = Div 3.
+        function computeLiveDivision(allPlayers, name) {
+            const key = (name || '').toString().trim().toLowerCase();
+            const sorted = (allPlayers || [])
+                .map(r => ({ name: r.name, elo: r.elo }))
+                .filter(p => p.name)
+                .sort((a, b) => {
+                    const eloDiff = (b.elo || 0) - (a.elo || 0);
+                    if (eloDiff !== 0) return eloDiff;
+                    const aOscar = (a.name || '').toLowerCase().replace(/[^a-z0-9]+/g, '') === 'oscarpan';
+                    const bOscar = (b.name || '').toLowerCase().replace(/[^a-z0-9]+/g, '') === 'oscarpan';
+                    if (aOscar !== bOscar) return aOscar ? -1 : 1;
+                    return (a.name || '').localeCompare(b.name || '');
+                });
+            const i = sorted.findIndex(p => (p.name || '').toLowerCase().trim() === key);
+            if (i < 0 || i >= 32) return { division: 'Unranked', day: '—' };
+            const day = i < 16 ? 'Monday' : 'Tuesday';
+            const within = i % 16;
+            let division;
+            if (within < 4) division = 'Division 1';
+            else if (within < 12) division = 'Division 2';
+            else division = 'Division 3';
+            return { division, day };
+        }
+
         async function loadPlayerStats() {
             try {
                 const supabase = await getSupabaseClient();
                 if (!supabase) throw new Error('Supabase client not available');
-                const { data, error } = await supabase.from('player_rankings').select('name,elo,wins,losses,division,half').ilike('name', playerName);
+                // Fetch the whole roster so we can rank this player live.
+                const { data: allPlayers, error } = await supabase.from('player_rankings').select('name,elo,wins,losses');
                 if (error) throw error;
-                const found = (data || [])[0];
+                const found = (allPlayers || []).find(p => (p.name || '').toLowerCase().trim() === (playerName || '').toLowerCase().trim());
                 if (found) {
                     const elo = found.elo || 0;
                     const wins = found.wins || 0;
                     const losses = found.losses || 0;
-                    const division = found.division || 'N/A';
-                    const half = found.half || 'N/A';
-                    const dayLabel = (() => {
-                        const k = (found.half || '').toString().trim().toLowerCase();
-                        if (!k) return 'N/A';
-                        if (k.includes('mon')) return 'Monday';
-                        if (k.includes('tue')) return 'Tuesday';
-                        if (k.includes('second') || k === '2' || k.includes('2nd')) return 'Monday';
-                        if (k.includes('first') || k === '1' || k.includes('1st')) return 'Tuesday';
-                        return found.half;
-                    })();
+                    // Live division/day from Elo rank (matches the Matchup Ladder).
+                    const live = computeLiveDivision(allPlayers, found.name);
                     document.getElementById('quick-stats').innerHTML = `
                         <div class="alm-stat"><span class="alm-stat-num" style="color:var(--oxblood);">${elo}</span><span class="alm-stat-label">Elo</span></div>
                         <div class="alm-stat"><span class="alm-stat-num" style="color:#2f6b3a;">${wins}</span><span class="alm-stat-label">Wins</span></div>
                         <div class="alm-stat"><span class="alm-stat-num">${losses}</span><span class="alm-stat-label">Losses</span></div>
-                        <div class="alm-stat"><span class="alm-stat-num" style="font-size:1.1rem;">${division}</span><span class="alm-stat-label">Division</span></div>
-                        <div class="alm-stat"><span class="alm-stat-num" style="font-size:1.1rem;">${dayLabel}</span><span class="alm-stat-label">Day</span></div>
+                        <div class="alm-stat"><span class="alm-stat-num" style="font-size:1.1rem;">${live.division}</span><span class="alm-stat-label">Division</span></div>
+                        <div class="alm-stat"><span class="alm-stat-num" style="font-size:1.1rem;">${live.day}</span><span class="alm-stat-label">Day</span></div>
                     `;
                 }
             } catch (err) { console.error("Stats load error:", err); }
