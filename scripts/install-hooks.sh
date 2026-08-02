@@ -6,6 +6,9 @@
 #
 # The hook itself just calls the committed script, so updates to the card only
 # need a change to scripts/teams-commit-card.sh — no re-install required.
+#
+# To manually send a test card without committing, run:
+#   bash scripts/teams-commit-card.sh
 
 set -e
 REPO_ROOT="$(git rev-parse --show-toplevel)"
