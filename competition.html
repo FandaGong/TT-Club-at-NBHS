@@ -20,18 +20,35 @@
 
     <main id="main-content" class="almanac flex-grow w-full opacity-0 transition-opacity duration-500">
       <div class="alm-shell">
-        <header class="alm-masthead--compact alm-block" style="border-bottom:2px solid var(--ink);padding-bottom:1.25rem;">
-            <div>
-                <p class="alm-kicker">Open to everyone at NBHS</p>
-                <h1 class="alm-display alm-display--md mt-3">Competition<br>Sign-up</h1>
-                <p class="alm-lede mt-3">Want to play in a table tennis competition? Pick an event below and register. You don't need to be a club member. Anyone at the school is welcome.</p>
-            </div>
-        </header>
 
-        <!-- List of open competitions -->
-        <section id="competitionList" class="alm-block">
-            <p class="alm-eyebrow" id="competitionListStatus">Loading competitions…</p>
-        </section>
+        <!-- In-development state (shown to non-admins / logged-out visitors) -->
+        <div id="devNotice" class="hidden alm-panel alm-block" style="text-align:center;padding:3rem 2rem;margin-top:2rem;">
+            <p class="alm-kicker" style="justify-content:center;">Coming soon</p>
+            <h1 class="alm-display alm-display--md mt-3">This page is currently in development</h1>
+            <p class="alm-lede mt-3" style="margin-left:auto;margin-right:auto;">Competition sign-ups aren't available just yet. Please check back soon.</p>
+            <a href="index.html" class="alm-link" style="display:inline-block;margin-top:1.25rem;">← Back to home</a>
+        </div>
+
+        <!-- Admin-only real content -->
+        <div id="pageContent" class="hidden">
+            <!-- Testing banner for admins -->
+            <div style="background:var(--ink);color:#fff;text-align:center;padding:0.6rem 1rem;font-family:var(--font-mono,monospace);font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;font-weight:700;margin-bottom:1.25rem;">
+                [Unpublished site! Testing Purposes Only]
+            </div>
+
+            <header class="alm-masthead--compact alm-block" style="border-bottom:2px solid var(--ink);padding-bottom:1.25rem;">
+                <div>
+                    <p class="alm-kicker">Open to everyone at NBHS</p>
+                    <h1 class="alm-display alm-display--md mt-3">Competition<br>Sign-up</h1>
+                    <p class="alm-lede mt-3">Want to play in a table tennis competition? Pick an event below and register. You don't need to be a club member. Anyone at the school is welcome.</p>
+                </div>
+            </header>
+
+            <!-- List of open competitions -->
+            <section id="competitionList" class="alm-block">
+                <p class="alm-eyebrow" id="competitionListStatus">Loading competitions…</p>
+            </section>
+        </div>
       </div>
     </main>
 
@@ -111,10 +128,38 @@
             }
         }
 
+        // Only admins can see this page while it's in development. Everyone
+        // else gets the "in development" notice.
+        async function guardAndInit() {
+            const reveal = () => {
+                document.getElementById('main-content').classList.remove('opacity-0');
+                if (document.getElementById('page-footer')) document.getElementById('page-footer').classList.remove('opacity-0');
+            };
+            try {
+                const { data } = await supabaseClient.auth.getSession();
+                const session = data?.session;
+                let role = 'guest';
+                if (session?.user && window._resolveAccountRole) {
+                    role = await Promise.race([
+                        window._resolveAccountRole(session.user.email, session.user.id),
+                        new Promise(resolve => setTimeout(() => resolve('standard'), 3000))
+                    ]);
+                }
+                if (role === 'admin') {
+                    document.getElementById('pageContent').classList.remove('hidden');
+                    loadCompetitions();
+                } else {
+                    document.getElementById('devNotice').classList.remove('hidden');
+                }
+            } catch (err) {
+                document.getElementById('devNotice').classList.remove('hidden');
+            }
+            reveal();
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
-            loadCompetitions();
-            document.getElementById('main-content').classList.remove('opacity-0');
-            if (document.getElementById('page-footer')) document.getElementById('page-footer').classList.remove('opacity-0');
+            // Give components.js a moment to create the shared client + resolver.
+            setTimeout(guardAndInit, 300);
         });
     </script>
 </body>
