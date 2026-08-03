@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Announcements - NBHS Table Tennis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <link rel="stylesheet" href="styles.css?v=20260803c">
+    <link rel="stylesheet" href="animations.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="icon" type="image/png" href="favicon.png">
+</head>
+
+<body class="site-surface text-slate-900 font-sans min-h-screen flex flex-col">
+
+    <div id="header-placeholder"></div>
+
+    <main id="main-content" class="almanac flex-grow w-full opacity-0 transition-opacity duration-500">
+      <div class="alm-shell">
+
+        <!-- Back link -->
+        <a href="admin.html" class="alm-link" style="display:inline-flex;align-items:center;gap:0.4rem;margin-bottom:1rem;text-decoration:none;">
+            <span style="font-size:1.1rem;line-height:1;">←</span> Back to admin panel
+        </a>
+
+        <header class="alm-masthead--compact alm-block" style="border-bottom:2px solid var(--ink);padding-bottom:1.25rem;">
+            <div>
+                <p class="alm-kicker">Admin</p>
+                <h1 class="alm-display alm-display--md mt-3">Manage<br>Announcements</h1>
+                <p class="alm-lede mt-3">Post news and updates to the Announcements page and the homepage widget. Publish now, schedule for later, or pin an important post to the top.</p>
+            </div>
+        </header>
+
+        <!-- Access guard message -->
+        <div id="accessDenied" class="hidden alm-panel alm-block" style="text-align:center;padding:2.5rem;">
+            <p class="alm-section-title" style="font-size:1.1rem;">Admins only</p>
+            <p class="alm-mh-date" style="margin-top:0.5rem;">You need to be signed in as an admin to manage announcements.</p>
+            <a href="admin.html" class="alm-link" style="display:inline-block;margin-top:1rem;">← Go to the admin panel</a>
+        </div>
+
+        <!-- Manager UI -->
+        <div id="managerContent" class="hidden">
+            <!-- Existing announcements -->
+            <section class="alm-block alm-panel">
+                <div class="alm-rule-head"><h2 class="alm-section-title" style="font-size:1.15rem;">Your announcements</h2></div>
+                <div id="annAdminList" class="grid grid-cols-1 gap-2">
+                    <p class="alm-mh-date">Loading…</p>
+                </div>
+            </section>
+
+            <!-- Create / edit form -->
+            <section class="alm-block alm-panel">
+                <div class="alm-rule-head"><h2 class="alm-section-title" style="font-size:1.15rem;" id="annFormHeading">Create a new announcement</h2></div>
+                <input type="hidden" id="annEditId" value="">
+                <div class="grid grid-cols-1 gap-3 mt-2">
+                    <div style="display:flex;gap:0.6rem;align-items:flex-start;">
+                        <div style="flex-shrink:0;">
+                            <label class="alm-field-label" for="annEmoji" style="font-size:0.7rem;">Icon</label>
+                            <select id="annEmoji" class="alm-select" style="width:4.5rem;text-align:center;font-size:1.1rem;">
+                                <option value="📢">📢</option>
+                                <option value="🏓">🏓</option>
+                                <option value="🏆">🏆</option>
+                                <option value="🔥">🔥</option>
+                                <option value="⭐">⭐</option>
+                                <option value="🎉">🎉</option>
+                                <option value="📅">📅</option>
+                                <option value="⏰">⏰</option>
+                                <option value="⚠️">⚠️</option>
+                                <option value="ℹ️">ℹ️</option>
+                                <option value="✅">✅</option>
+                                <option value="🚫">🚫</option>
+                                <option value="📝">📝</option>
+                                <option value="💪">💪</option>
+                                <option value="🥇">🥇</option>
+                            </select>
+                        </div>
+                        <div style="flex:1;">
+                            <label class="alm-field-label" for="annTitle">Title *</label>
+                            <input id="annTitle" class="alm-input" maxlength="140" placeholder="e.g. No session this Friday" style="width:100%;">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="alm-field-label" for="annBody">Message *</label>
+                        <div id="annToolbar" style="display:flex;gap:0.35rem;flex-wrap:wrap;margin-bottom:0.4rem;">
+                            <button type="button" class="alm-btn ann-fmt" data-fmt="bold" style="background:var(--ink);padding:0.3rem 0.6rem;font-size:0.75rem;font-weight:800;">B</button>
+                            <button type="button" class="alm-btn ann-fmt" data-fmt="italic" style="background:var(--ink);padding:0.3rem 0.6rem;font-size:0.75rem;font-style:italic;">i</button>
+                            <button type="button" class="alm-btn ann-fmt" data-fmt="link" style="background:var(--ink);padding:0.3rem 0.6rem;font-size:0.75rem;">🔗 Link</button>
+                            <button type="button" class="alm-btn ann-fmt" data-fmt="bullet" style="background:var(--ink);padding:0.3rem 0.6rem;font-size:0.75rem;">• List</button>
+                            <button type="button" class="alm-btn ann-fmt" data-fmt="number" style="background:var(--ink);padding:0.3rem 0.6rem;font-size:0.75rem;">1. List</button>
+                        </div>
+                        <textarea id="annBody" class="alm-input" rows="6" maxlength="4000" placeholder="Write the full announcement here. Use the buttons above for formatting. Line breaks are kept." style="width:100%;resize:vertical;font-family:var(--font-mono,monospace);font-size:0.9rem;"></textarea>
+                        <p class="alm-mh-date" style="margin-top:0.35rem;">Formatting: <code>**bold**</code>, <code>*italic*</code>, <code>[text](https://link)</code>, <code>- bullets</code>, <code>1. numbers</code>. A blank line starts a new paragraph.</p>
+                        <div style="margin-top:0.75rem;">
+                            <p class="alm-field-label" style="margin:0 0 0.3rem;">Live preview</p>
+                            <div id="annPreview" class="alm-panel alm-lede" style="font-size:0.95rem;min-height:2.5rem;">Nothing to preview yet.</div>
+                        </div>
+                    </div>
+
+                    <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;">
+                        <input id="annIsPublished" type="checkbox" class="h-5 w-5" style="accent-color:var(--oxblood);" checked>
+                        <span class="alm-field-label" style="margin:0;">Published (visible on the site)</span>
+                    </label>
+
+                    <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;">
+                        <input id="annIsPinned" type="checkbox" class="h-5 w-5" style="accent-color:var(--oxblood);">
+                        <span class="alm-field-label" style="margin:0;">Pin to the top</span>
+                    </label>
+
+                    <div>
+                        <label class="alm-field-label" for="annPublishAt">Schedule publish date &amp; time (optional)</label>
+                        <input id="annPublishAt" type="datetime-local" class="alm-input" style="width:100%;">
+                        <p class="alm-mh-date" style="margin-top:0.35rem;">If set, the post stays hidden until this time, then appears automatically. Leave blank to show it as soon as it is published.</p>
+                    </div>
+
+                    <div style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;">
+                        <button id="annSaveBtn" type="button" class="alm-btn" style="background:var(--oxblood);">Save Announcement</button>
+                        <button id="annResetBtn" type="button" class="alm-btn" style="background:var(--ink);">New / Clear</button>
+                        <p id="annStatus" class="hidden text-sm font-medium"></p>
+                    </div>
+                </div>
+            </section>
+        </div>
+      </div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="components.js?v=20260803c"></script>
+
+    <script>
+        window.manualPageReveal = true;
+
+        const SUPABASE_URL = "https://ngnkbfazhdedaqvxcphw.supabase.co";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbmtiZmF6aGRlZGFxdnhjcGh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTE5NDksImV4cCI6MjA5MzI4Nzk0OX0.F_S6ORkFe-SuJPybs7FEFH94E6U2hZ5ern4vrg4kMOk";
+        let _supabase = window._supabaseClient || window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let _annCache = [];
+
+        function annEsc(s) {
+            return (s || '').toString()
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+
+        function annShowStatus(msg, ok) {
+            const status = document.getElementById('annStatus');
+            if (!status) return;
+            status.textContent = msg;
+            status.classList.remove('hidden');
+            status.className = `text-sm font-medium ${ok ? 'text-green-600' : 'text-red-600'}`;
+        }
+
+        // Convert a stored ISO timestamp to the value a datetime-local input wants.
+        function isoToLocalInput(iso) {
+            if (!iso) return '';
+            const d = new Date(iso);
+            if (isNaN(d)) return '';
+            const pad = (n) => String(n).padStart(2, '0');
+            return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+        }
+
+        async function loadAnnouncements() {
+            const listEl = document.getElementById('annAdminList');
+            if (!listEl || !_supabase) return;
+            try {
+                const { data, error } = await _supabase.from('announcements')
+                    .select('*').order('created_at', { ascending: false });
+                if (error) throw error;
+                _annCache = data || [];
+                if (!_annCache.length) {
+                    listEl.innerHTML = '<p class="alm-mh-date">No announcements yet. Create one below.</p>';
+                    return;
+                }
+                const now = new Date();
+                listEl.innerHTML = _annCache.map(a => {
+                    const scheduledFuture = a.publish_at && new Date(a.publish_at) > now;
+                    let statusTag;
+                    if (!a.is_published) {
+                        statusTag = '<span class="alm-match-tag loss" style="margin-left:0.5rem;">Draft</span>';
+                    } else if (scheduledFuture) {
+                        statusTag = `<span class="alm-match-tag" style="margin-left:0.5rem;background:var(--ink);color:#fff;">Scheduled ${new Date(a.publish_at).toLocaleString()}</span>`;
+                    } else {
+                        statusTag = '<span class="alm-match-tag win" style="margin-left:0.5rem;">Live</span>';
+                    }
+                    const pinTag = a.is_pinned ? '<span class="alm-match-tag" style="margin-left:0.5rem;background:var(--oxblood);color:#fff;">📌 Pinned</span>' : '';
+                    return `
+                    <div style="display:flex;align-items:center;justify-content:space-between;gap:0.6rem;border:1px solid var(--rule-strong);padding:0.6rem 0.75rem;flex-wrap:wrap;">
+                        <div style="min-width:0;">
+                            <span style="font-weight:700;">${annEsc(a.emoji || '📢')} ${annEsc(a.title)}</span>
+                            ${statusTag}${pinTag}
+                        </div>
+                        <div style="display:flex;gap:0.4rem;flex-wrap:wrap;">
+                            <button type="button" class="alm-btn ann-toggle-btn" data-id="${annEsc(a.id)}" style="background:var(--ink);padding:0.3rem 0.7rem;font-size:0.72rem;">${a.is_published ? 'Unpublish' : 'Publish'}</button>
+                            <button type="button" class="alm-btn ann-pin-btn" data-id="${annEsc(a.id)}" style="background:var(--ink);padding:0.3rem 0.7rem;font-size:0.72rem;">${a.is_pinned ? 'Unpin' : 'Pin'}</button>
+                            <button type="button" class="alm-btn ann-edit-btn" data-id="${annEsc(a.id)}" style="background:var(--oxblood);padding:0.3rem 0.7rem;font-size:0.72rem;">Edit</button>
+                            <button type="button" class="alm-btn ann-delete-btn" data-id="${annEsc(a.id)}" style="background:#7c1d1d;padding:0.3rem 0.7rem;font-size:0.72rem;">Delete</button>
+                        </div>
+                    </div>`;
+                }).join('');
+
+                listEl.querySelectorAll('.ann-toggle-btn').forEach(b => b.addEventListener('click', () => togglePublished(b.getAttribute('data-id'))));
+                listEl.querySelectorAll('.ann-pin-btn').forEach(b => b.addEventListener('click', () => togglePinned(b.getAttribute('data-id'))));
+                listEl.querySelectorAll('.ann-edit-btn').forEach(b => b.addEventListener('click', () => editAnnouncement(b.getAttribute('data-id'))));
+                listEl.querySelectorAll('.ann-delete-btn').forEach(b => b.addEventListener('click', () => deleteAnnouncement(b.getAttribute('data-id'))));
+            } catch (err) {
+                listEl.innerHTML = `<p class="text-red-600 text-sm">Could not load announcements: ${err.message}</p>`;
+            }
+        }
+
+        function resetAnnForm() {
+            document.getElementById('annEditId').value = '';
+            document.getElementById('annEmoji').value = '📢';
+            document.getElementById('annTitle').value = '';
+            document.getElementById('annBody').value = '';
+            document.getElementById('annIsPublished').checked = true;
+            document.getElementById('annIsPinned').checked = false;
+            document.getElementById('annPublishAt').value = '';
+            document.getElementById('annFormHeading').textContent = 'Create a new announcement';
+            document.getElementById('annStatus')?.classList.add('hidden');
+            const prev = document.getElementById('annPreview');
+            if (prev) prev.innerHTML = 'Nothing to preview yet.';
+        }
+
+        function editAnnouncement(id) {
+            const a = _annCache.find(x => String(x.id) === String(id));
+            if (!a) return;
+            document.getElementById('annEditId').value = a.id;
+            document.getElementById('annEmoji').value = a.emoji || '📢';
+            document.getElementById('annTitle').value = a.title || '';
+            document.getElementById('annBody').value = a.body || '';
+            document.getElementById('annIsPublished').checked = !!a.is_published;
+            document.getElementById('annIsPinned').checked = !!a.is_pinned;
+            document.getElementById('annPublishAt').value = isoToLocalInput(a.publish_at);
+            document.getElementById('annFormHeading').textContent = `Editing: ${a.title}`;
+            document.getElementById('annTitle').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            if (typeof updatePreview === 'function') updatePreview();
+        }
+
+        async function saveAnnouncement() {
+            const title = document.getElementById('annTitle').value.trim();
+            const body = document.getElementById('annBody').value.trim();
+            if (!title) { annShowStatus('Please enter a title.', false); return; }
+            if (!body) { annShowStatus('Please enter a message.', false); return; }
+            const publishAtRaw = document.getElementById('annPublishAt').value;
+            const payload = {
+                emoji: document.getElementById('annEmoji').value || '📢',
+                title,
+                body,
+                is_published: document.getElementById('annIsPublished').checked,
+                is_pinned: document.getElementById('annIsPinned').checked,
+                publish_at: publishAtRaw ? new Date(publishAtRaw).toISOString() : null
+            };
+            const editId = document.getElementById('annEditId').value;
+            annShowStatus('Saving…', true);
+            try {
+                let error;
+                if (editId) {
+                    ({ error } = await _supabase.from('announcements').update(payload).eq('id', editId));
+                } else {
+                    ({ error } = await _supabase.from('announcements').insert([payload]));
+                }
+                if (error) throw error;
+                annShowStatus('Saved.', true);
+                resetAnnForm();
+                loadAnnouncements();
+            } catch (err) {
+                annShowStatus(`Could not save: ${err.message}`, false);
+            }
+        }
+
+        async function togglePublished(id) {
+            const a = _annCache.find(x => String(x.id) === String(id));
+            if (!a) return;
+            try {
+                const { error } = await _supabase.from('announcements').update({ is_published: !a.is_published }).eq('id', id);
+                if (error) throw error;
+                loadAnnouncements();
+            } catch (err) { alert('Could not update: ' + err.message); }
+        }
+
+        async function togglePinned(id) {
+            const a = _annCache.find(x => String(x.id) === String(id));
+            if (!a) return;
+            try {
+                const { error } = await _supabase.from('announcements').update({ is_pinned: !a.is_pinned }).eq('id', id);
+                if (error) throw error;
+                loadAnnouncements();
+            } catch (err) { alert('Could not update: ' + err.message); }
+        }
+
+        async function deleteAnnouncement(id) {
+            const a = _annCache.find(x => String(x.id) === String(id));
+            if (!a) return;
+            if (!confirm(`Delete "${a.title}"? This cannot be undone.`)) return;
+            try {
+                const { error } = await _supabase.from('announcements').delete().eq('id', id);
+                if (error) throw error;
+                loadAnnouncements();
+            } catch (err) { alert('Could not delete: ' + err.message); }
+        }
+
+        // Wire up form controls.
+        document.getElementById('annSaveBtn')?.addEventListener('click', saveAnnouncement);
+        document.getElementById('annResetBtn')?.addEventListener('click', resetAnnForm);
+
+        // Formatting toolbar: wrap/insert Markdown around the selection.
+        function applyFormat(fmt) {
+            const ta = document.getElementById('annBody');
+            if (!ta) return;
+            const start = ta.selectionStart, end = ta.selectionEnd;
+            const val = ta.value;
+            const sel = val.slice(start, end);
+            let insert, cursorStart, cursorEnd;
+            if (fmt === 'bold')      { insert = `**${sel || 'bold text'}**`; }
+            else if (fmt === 'italic') { insert = `*${sel || 'italic text'}*`; }
+            else if (fmt === 'link') { insert = `[${sel || 'link text'}](https://)`; }
+            else if (fmt === 'bullet') { insert = (sel || 'List item').split('\n').map(l => `- ${l}`).join('\n'); }
+            else if (fmt === 'number') { insert = (sel || 'List item').split('\n').map((l, i) => `${i + 1}. ${l}`).join('\n'); }
+            else return;
+            ta.value = val.slice(0, start) + insert + val.slice(end);
+            // Put the cursor sensibly after inserting.
+            cursorStart = start + insert.length;
+            ta.focus();
+            ta.setSelectionRange(cursorStart, cursorStart);
+            updatePreview();
+        }
+        document.querySelectorAll('.ann-fmt').forEach(b => {
+            b.addEventListener('click', () => applyFormat(b.getAttribute('data-fmt')));
+        });
+
+        // Live preview of the rendered Markdown.
+        function updatePreview() {
+            const ta = document.getElementById('annBody');
+            const prev = document.getElementById('annPreview');
+            if (!ta || !prev) return;
+            const val = ta.value.trim();
+            prev.innerHTML = val
+                ? (window.renderMarkdown ? window.renderMarkdown(ta.value) : val)
+                : 'Nothing to preview yet.';
+        }
+        document.getElementById('annBody')?.addEventListener('input', updatePreview);
+
+        // Auth guard: only admins can manage announcements.
+        function reveal() {
+            document.getElementById('main-content').classList.remove('opacity-0');
+            if (document.getElementById('page-footer')) document.getElementById('page-footer').classList.remove('opacity-0');
+        }
+
+        async function guardAndInit() {
+            try {
+                const { data } = await _supabase.auth.getSession();
+                const session = data?.session;
+                if (!session?.user) { document.getElementById('accessDenied').classList.remove('hidden'); reveal(); return; }
+
+                let role = 'standard';
+                if (window._resolveAccountRole) {
+                    role = await Promise.race([
+                        window._resolveAccountRole(session.user.email, session.user.id),
+                        new Promise(resolve => setTimeout(() => resolve('standard'), 3000))
+                    ]);
+                }
+                if (role !== 'admin') {
+                    document.getElementById('accessDenied').classList.remove('hidden');
+                    reveal();
+                    return;
+                }
+                document.getElementById('managerContent').classList.remove('hidden');
+                loadAnnouncements();
+                reveal();
+            } catch (err) {
+                document.getElementById('accessDenied').classList.remove('hidden');
+                reveal();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Give components.js a moment to create the shared client + resolver.
+            setTimeout(guardAndInit, 300);
+        });
+    </script>
+</body>
+</html>

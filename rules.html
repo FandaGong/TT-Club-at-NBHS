@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NBHS Table Tennis Club - Rules</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="styles.css?v=20260801d">
+    <link rel="stylesheet" href="styles.css?v=20260803c">
     <link rel="stylesheet" href="animations.css">
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
@@ -78,7 +78,7 @@
 
     <div id="footer-placeholder"></div>
 
-    <script src="components.js?v=20260801d"></script>
+    <script src="components.js?v=20260803c"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         const SUPABASE_URL = "https://ngnkbfazhdedaqvxcphw.supabase.co";
@@ -352,7 +352,7 @@
             location.reload();
         };
 
-        // Shared Logic — now uses resolveAccountRole instead of isAdminEmail
+        // Shared Logic - now uses resolveAccountRole instead of isAdminEmail
         async function updateAdminState(session) {
             if (session?.user?.email) {
                 const role = await resolveAccountRole(session.user.email, session.user.id);

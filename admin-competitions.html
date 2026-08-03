@@ -7,7 +7,7 @@
     <title>Manage Competitions - NBHS Table Tennis</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-    <link rel="stylesheet" href="styles.css?v=20260801d">
+    <link rel="stylesheet" href="styles.css?v=20260803c">
     <link rel="stylesheet" href="animations.css">
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
@@ -65,7 +65,7 @@
                         <textarea id="compDesc" class="alm-input" rows="2" placeholder="When, where, who can join…"></textarea>
                     </div>
                     <div>
-                        <label class="alm-field-label" for="compTerms">Terms &amp; Conditions (optional — overrides the default on the form)</label>
+                        <label class="alm-field-label" for="compTerms">Terms &amp; Conditions (optional, overrides the default on the form)</label>
                         <textarea id="compTerms" class="alm-input" rows="2" placeholder="Leave blank to use the placeholder terms on the page."></textarea>
                     </div>
 
@@ -125,7 +125,7 @@
         </div>
     </div>
 
-    <script src="components.js?v=20260801d"></script>
+    <script src="components.js?v=20260803c"></script>
 
     <script>
         window.manualPageReveal = true;
@@ -347,7 +347,7 @@
         async function viewSignups(id) {
             const c = _compCache.find(x => String(x.id) === String(id));
             _viewingComp = c;
-            document.getElementById('compSignupsTitle').textContent = `Sign-ups — ${c ? c.title : ''}`;
+            document.getElementById('compSignupsTitle').textContent = `Sign-ups: ${c ? c.title : ''}`;
             document.getElementById('compSignupsModal').classList.remove('hidden');
             const listEl = document.getElementById('compSignupsList');
             listEl.innerHTML = '<p>Loading…</p>';

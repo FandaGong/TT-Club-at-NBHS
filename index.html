@@ -9,7 +9,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Make sure Supabase is loaded for the component script -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="styles.css?v=20260801d">
+    <link rel="stylesheet" href="styles.css?v=20260803c">
     <link rel="stylesheet" href="animations.css">
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
@@ -61,7 +61,7 @@
             <div class="alm-panel">
                 <div class="alm-rule-head"><span class="alm-eyebrow">Find a player</span></div>
                 <form id="searchForm" class="alm-search">
-                    <input type="text" id="searchInput" placeholder="Search by name — e.g. Fanda">
+                    <input type="text" id="searchInput" placeholder="Search by name, e.g. Fanda">
                     <button type="submit">Search</button>
                 </form>
                 <div id="searchResult" class="hidden"></div>
@@ -78,52 +78,71 @@
             </div>
         </section>
 
+        <!-- ANNOUNCEMENTS WIDGET: latest posts, hidden until at least one loads -->
+        <section class="alm-block" id="announcements-widget" style="display:none;">
+            <div class="alm-rule-head" style="display:flex;align-items:center;justify-content:space-between;">
+                <h2 class="alm-section-title">Announcements</h2>
+                <a href="announcements.html" class="alm-standings-link">All ↗</a>
+            </div>
+            <div id="announcements-widget-body"></div>
+        </section>
+
         <!-- THE INDEX: almanac table-of-contents (replaces the card grid) -->
         <section class="alm-block">
             <div class="alm-rule-head"><h2 class="alm-section-title">Navigation</h2></div>
             <nav class="alm-index">
-                <a href="player-ranking.html" class="alm-index-row">
+                <a href="announcements.html" class="alm-index-row">
                     <span class="alm-index-num">01</span>
+                    <span><span class="alm-index-title">Announcements</span><span class="alm-index-desc">Club news, session changes and event updates.</span></span>
+                    <span class="alm-index-arrow">→</span>
+                </a>
+                <a href="player-ranking.html" class="alm-index-row">
+                    <span class="alm-index-num">02</span>
                     <span><span class="alm-index-title">Ranking Ladder</span><span class="alm-index-desc">Current Elo ratings and full club standings.</span></span>
                     <span class="alm-index-arrow">→</span>
                 </a>
                 <a href="player-matchup-ladder.html" class="alm-index-row">
-                    <span class="alm-index-num">02</span>
+                    <span class="alm-index-num">03</span>
                     <span><span class="alm-index-title">Weekly Matchups</span><span class="alm-index-desc">Bracket placements and table assignments for the next session.</span></span>
                     <span class="alm-index-arrow">→</span>
                 </a>
                 <a href="club-analytics.html" class="alm-index-row">
-                    <span class="alm-index-num">03</span>
-                    <span><span class="alm-index-title">Club Analytics</span><span class="alm-index-desc">Live metrics — wins, biggest upsets and Elo highs.</span></span>
+                    <span class="alm-index-num">04</span>
+                    <span><span class="alm-index-title">Club Analytics</span><span class="alm-index-desc">Live metrics: wins, biggest upsets and Elo highs.</span></span>
                     <span class="alm-index-arrow">→</span>
                 </a>
                 <a href="past-records.html" class="alm-index-row">
-                    <span class="alm-index-num">04</span>
+                    <span class="alm-index-num">05</span>
                     <span><span class="alm-index-title">Past Records</span><span class="alm-index-desc">The season archive and hall of fame.</span></span>
                     <span class="alm-index-arrow">→</span>
                 </a>
                 <a href="absence-report.html" class="alm-index-row">
-                    <span class="alm-index-num">05</span>
+                    <span class="alm-index-num">06</span>
                     <span><span class="alm-index-title">Absence Report</span><span class="alm-index-desc">Submit a missed-session note for admin review.</span></span>
                     <span class="alm-index-arrow">→</span>
                 </a>
                 <a href="rules.html" class="alm-index-row">
-                    <span class="alm-index-num">06</span>
+                    <span class="alm-index-num">07</span>
                     <span><span class="alm-index-title">Club Rules</span><span class="alm-index-desc">Guidelines, policies and match rules.</span></span>
                     <span class="alm-index-arrow">→</span>
                 </a>
                 <a href="matches.html" class="alm-index-row">
-                    <span class="alm-index-num">07</span>
+                    <span class="alm-index-num">08</span>
                     <span><span class="alm-index-title">Match History</span><span class="alm-index-desc">Browse and search every recorded club match.</span></span>
                     <span class="alm-index-arrow">→</span>
                 </a>
+                <a href="competition.html" class="alm-index-row">
+                    <span class="alm-index-num">09</span>
+                    <span><span class="alm-index-title">Competition Sign-up</span><span class="alm-index-desc">Register for club competitions. Open to everyone at NBHS.</span></span>
+                    <span class="alm-index-arrow">→</span>
+                </a>
                 <a href="profile.html" class="alm-index-row">
-                    <span class="alm-index-num">08</span>
+                    <span class="alm-index-num">10</span>
                     <span><span class="alm-index-title">Your Profile</span><span class="alm-index-desc">Your rank, Elo history and recent matches.</span></span>
                     <span class="alm-index-arrow">→</span>
                 </a>
                 <a href="settings.html" class="alm-index-row">
-                    <span class="alm-index-num">09</span>
+                    <span class="alm-index-num">11</span>
                     <span><span class="alm-index-title">Settings</span><span class="alm-index-desc">Theme, accent, font, density and accessibility.</span></span>
                     <span class="alm-index-arrow">→</span>
                 </a>
@@ -155,7 +174,7 @@
     <div id="footer-placeholder"></div>
 
     <!-- 4. COMPONENT SCRIPT -->
-    <script src="components.js?v=20260801d"></script>
+    <script src="components.js?v=20260803c"></script>
 
     <script>
         // Tell components.js we will handle the fade-in reveal manually once data is loaded
@@ -217,9 +236,57 @@
             renderStandings();
             renderMasthead();
             loadLocation();
+            loadAnnouncements();
         }
 
-        // Weekly club location — stored in site_config key 'location'.
+        // Latest published announcements for the homepage widget. Mirrors the
+        // visibility rules on announcements.html: published, not future-scheduled,
+        // pinned first. Shows up to 3; the widget stays hidden if there are none.
+        async function loadAnnouncements() {
+            try {
+                const supabase = await getSupabaseClient();
+                if (!supabase) return;
+                const { data, error } = await supabase.from('announcements')
+                    .select('*').order('created_at', { ascending: false });
+                if (error) return; // table may not exist yet - fail quietly
+                const now = new Date();
+                const visible = (data || []).filter(a => {
+                    if (!a.is_published) return false;
+                    if (a.publish_at && new Date(a.publish_at) > now) return false;
+                    return true;
+                }).sort((a, b) => {
+                    if (!!b.is_pinned !== !!a.is_pinned) return b.is_pinned ? 1 : -1;
+                    return new Date(b.created_at) - new Date(a.created_at);
+                }).slice(0, 3);
+
+                const widget = document.getElementById('announcements-widget');
+                const body = document.getElementById('announcements-widget-body');
+                if (!widget || !body || !visible.length) return;
+
+                const esc = (s) => (s || '').toString()
+                    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+                const fmt = (iso) => { const d = new Date(iso); return isNaN(d) ? '' : d.toLocaleDateString([], { dateStyle: 'medium' }); };
+
+                body.innerHTML = visible.map(a => {
+                    const plain = (window.markdownToPlain ? window.markdownToPlain(a.body) : (a.body || ''));
+                    const preview = plain.slice(0, 140) + (plain.length > 140 ? '…' : '');
+                    return `
+                    <a href="announcements.html" class="alm-index-row" style="align-items:flex-start;">
+                        <span class="alm-index-num" style="font-size:1.1rem;">${esc(a.emoji || '📢')}</span>
+                        <span>
+                            <span class="alm-index-title">${esc(a.title)}${a.is_pinned ? ' <span style="font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--oxblood);font-weight:700;">📌 Pinned</span>' : ''}</span>
+                            <span class="alm-index-desc">${esc(preview)}</span>
+                            <span class="alm-index-desc" style="opacity:0.7;font-size:0.72rem;margin-top:0.2rem;">${esc(fmt(a.publish_at || a.created_at))}</span>
+                        </span>
+                        <span class="alm-index-arrow">→</span>
+                    </a>`;
+                }).join('');
+                widget.style.display = 'block';
+            } catch (err) { /* fail quietly */ }
+        }
+
+        // Weekly club location, stored in site_config key 'location'.
         async function loadLocation() {
             try {
                 const supabase = await getSupabaseClient();

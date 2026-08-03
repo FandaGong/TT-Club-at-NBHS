@@ -34,7 +34,7 @@
   --accent-text: #991b1b;
   --density-scale: 1;
 
-  /* Radii — all zero for strict rectangular aesthetic */
+  /* Radii - all zero for strict rectangular aesthetic */
   --radius-sm: 0px;
   --radius-md: 0px;
   --radius-lg: 0px;
@@ -45,7 +45,7 @@
   --font-heading: var(--font-heading);
   --font-mono: 'JetBrains Mono', monospace;
 
-  /* Spacing (8px grid) — multiplied by --density-scale so the
+  /* Spacing (8px grid) - multiplied by --density-scale so the
      Layout density setting (compact / comfortable / spacious)
      adjusts padding, margins, and gaps across the whole site. */
   --space-1: calc(0.25rem * var(--density-scale));  /*  4px */
@@ -1807,7 +1807,7 @@ body[data-theme="high-contrast"] #custom-rules-container :is(.rule-section::afte
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   ALMANAC — editorial redesign system (scoped to .almanac)
+   ALMANAC - editorial redesign system (scoped to .almanac)
    Sport-almanac / print direction: warm paper, ink charcoal,
    oxblood accent, ruled lines, numbered standings. Scoped so it
    only affects pages that opt in via class="almanac" on <main>.
@@ -2055,6 +2055,20 @@ body:not([data-theme]) .almanac {
 
 /* ── Index list: almanac table-of-contents (replaces card grid) ── */
 .almanac .alm-index { border-top: 2px solid var(--ink); }
+/* Two columns on wider screens; single column on mobile. The column-gap
+   carries a hairline divider so the two lists read as one index. */
+@media (min-width: 768px) {
+  .almanac .alm-index {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 2.5rem;
+  }
+  .almanac .alm-index > .alm-index-row:nth-child(odd) {
+    border-right: 1px solid var(--rule);
+    padding-right: 2rem;
+    margin-right: -0.5rem;
+  }
+}
 .almanac .alm-index-row {
   display: grid;
   grid-template-columns: 3.5rem 1fr auto;
@@ -2112,7 +2126,7 @@ body:not([data-theme]) .almanac {
 }
 .almanac .alm-index-row:hover .alm-index-arrow { transform: translateX(4px); color: var(--oxblood); }
 
-/* ── Roster (runners) — ruled rows, typographic tags ── */
+/* ── Roster (runners) - ruled rows, typographic tags ── */
 .almanac .alm-roster-row {
   display: flex;
   align-items: baseline;
@@ -2223,7 +2237,7 @@ body:not([data-theme]) .almanac {
 
 /* Vertical rhythm: deliberate, not uniform */
 .almanac .alm-block + .alm-block { margin-top: clamp(2.5rem, 6vw, 4.5rem); }
-/* A section right after a compact masthead is its own content — tighten it */
+/* A section right after a compact masthead is its own content - tighten it */
 .almanac .alm-masthead--compact + .alm-block { margin-top: clamp(1.25rem, 3vw, 2rem); }
 
 /* ── Compact masthead variant (interior pages) ── */
@@ -2766,7 +2780,7 @@ body:not([data-theme]) .almanac {
 .almanac .alm-danger .row { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 0.9rem; }
 
 /* ═══════════════════════════════════════════════════════════════
-   NAVBAR — refined editorial brand bar (Lucide icons)
+   NAVBAR - refined editorial brand bar (Lucide icons)
    Uses the accent colour as the bar background so it ties into the
    theme/accent system. Works on every page.
    ═══════════════════════════════════════════════════════════════ */
@@ -2825,7 +2839,7 @@ body[data-theme="high-contrast"] .site-nav {
   color: var(--nav-fg-dim); margin-top: 0.28rem;
 }
 
-/* Top-level items — square hover + animated underline */
+/* Top-level items - square hover + animated underline */
 .site-nav .site-nav-item {
   position: relative;
   background: transparent; border: none; border-radius: 0; cursor: pointer;
@@ -2866,7 +2880,7 @@ body[data-theme="high-contrast"] .site-nav {
 .site-nav .site-nav-burger:hover { background: rgba(255,255,255,0.18); transform: none; filter: none; }
 .site-nav .site-nav-burger:active { transform: scale(0.94); }
 
-/* Dropdown menus — elevated, square, blurred */
+/* Dropdown menus - elevated, square, blurred */
 .site-nav .site-nav-menu {
   background: color-mix(in srgb, var(--nav-bg) 80%, #000 20%);
   border: 1px solid var(--nav-line);
@@ -2901,7 +2915,7 @@ body[data-theme="high-contrast"] .site-nav {
 }
 .site-nav .site-nav-subitem:hover::before { opacity: 1; }
 
-/* Admin / account CTA — glass pill that pops without a stark white block */
+/* Admin / account CTA - glass pill that pops without a stark white block */
 .site-nav .site-nav-cta {
   color: var(--nav-fg); text-decoration: none;
   font-family: var(--font-mono);

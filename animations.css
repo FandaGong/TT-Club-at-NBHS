@@ -8,7 +8,7 @@
     to { opacity: 1; }
 }
 
-/* Animation classes — only used where explicitly applied */
+/* Animation classes - only used where explicitly applied */
 .fade-up {
     animation: fadeUp 0.5s ease both;
 }
@@ -25,7 +25,7 @@ header {
     animation: fadeIn 0.3s ease both;
 }
 
-/* Card hover — border only, no shadow */
+/* Card hover - border only, no shadow */
 .card-hover {
     transition: border-color 0.15s ease;
 }

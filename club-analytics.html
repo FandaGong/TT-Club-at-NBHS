@@ -7,7 +7,7 @@
     <title>Club Analytics - NBHS Table Tennis</title>
     <script src="tailwind-theme.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="styles.css?v=20260801d">
+    <link rel="stylesheet" href="styles.css?v=20260803c">
     <link rel="stylesheet" href="animations.css">
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
@@ -44,7 +44,7 @@
 
     <div id="footer-placeholder"></div>
 
-    <script src="components.js?v=20260801d"></script>
+    <script src="components.js?v=20260803c"></script>
     <script>
         // Use Supabase `player_rankings` and `match_history` tables
         async function getSupabaseClient() {
@@ -133,7 +133,7 @@
                 }
                 activeList.innerHTML = activePlayers.length
                     ? activePlayers.slice(0, 5).map((p, i) => `<li><span class="seed">${String(i + 1).padStart(2, '0')}</span><a href="player-analysis.html?name=${encodeURIComponent(p.name)}" class="nm alm-ldr-name">${p.name}</a><span class="ct">${p.count} matches</span></li>`).join('')
-                    : '<li style="grid-template-columns:1fr;padding:1.5rem 0.5rem;"><span class="alm-eyebrow">Not enough match data yet — play some games to see active players.</span></li>';
+                    : '<li style="grid-template-columns:1fr;padding:1.5rem 0.5rem;"><span class="alm-eyebrow">Not enough match data yet, play some games to see active players.</span></li>';
 
             } catch (error) {
                 console.error('Analytics error:', error);

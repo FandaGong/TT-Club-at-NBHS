@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NBHS TT Hub - Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="styles.css?v=20260801d">
+    <link rel="stylesheet" href="styles.css?v=20260803c">
     <link rel="stylesheet" href="animations.css">
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
@@ -104,11 +104,11 @@
                 <!-- Standard User Dashboard View -->
                 <div id="standardUserNotice" class="hidden alm-panel" style="margin-top:1.25rem;">
                     <h3 class="alm-section-title" style="font-size:1.2rem;">Standard User Dashboard</h3>
-                    <p class="alm-mh-date" style="margin-top:0.5rem;">You're signed in. Use the tools below — your submissions are linked to your account automatically.</p>
+                    <p class="alm-mh-date" style="margin-top:0.5rem;">You're signed in. Use the tools below, your submissions are linked to your account automatically.</p>
                     <nav class="alm-tools" style="margin-top:1.25rem;">
                         <a href="absence-report.html" class="alm-tool">
                             <span class="alm-tool-num">01</span>
-                            <span><span class="alm-tool-title">Submit an Absence</span><span class="alm-tool-desc">Report a missed session — no need to type your email.</span></span>
+                            <span><span class="alm-tool-title">Submit an Absence</span><span class="alm-tool-desc">Report a missed session, no need to type your email.</span></span>
                             <span class="alm-tool-arrow">→</span>
                         </a>
                         <a href="profile.html" class="alm-tool">
@@ -197,6 +197,13 @@
                         <a href="admin-competitions.html" class="alm-btn" style="display:inline-block;text-decoration:none;background:var(--oxblood);">Open Competition Manager →</a>
                     </div>
 
+                    <!-- Announcements manager (its own page) -->
+                    <div class="alm-panel" style="margin-top:1.5rem;">
+                        <div class="alm-rule-head"><h3 class="alm-section-title" style="font-size:1.1rem;">Announcements</h3></div>
+                        <p class="alm-mh-date" style="margin:0.25rem 0 0.9rem;">Post news and updates to the Announcements page and the homepage widget. Publish now, schedule for later, or pin a post.</p>
+                        <a href="admin-announcements.html" class="alm-btn" style="display:inline-block;text-decoration:none;background:var(--oxblood);">Open Announcements Manager →</a>
+                    </div>
+
                     <!-- Announcement banner editor -->
                     <div class="alm-panel" style="margin-top:1.5rem;">
                         <div class="alm-rule-head"><h3 class="alm-section-title" style="font-size:1.1rem;">Announcement Banner</h3></div>
@@ -224,7 +231,7 @@
                             </div>
                             <div style="flex:1;">
                                 <label class="alm-field-label" for="announcementInput" style="font-size:0.7rem;">Message</label>
-                                <textarea id="announcementInput" class="alm-input" rows="2" maxlength="200" placeholder="e.g. No session this Friday — public holiday." style="width:100%;resize:vertical;"></textarea>
+                                <textarea id="announcementInput" class="alm-input" rows="2" maxlength="200" placeholder="e.g. No session this Friday, public holiday." style="width:100%;resize:vertical;"></textarea>
                             </div>
                         </div>
                         <div style="display:flex;align-items:center;gap:0.75rem;margin-top:0.6rem;flex-wrap:wrap;">
@@ -238,7 +245,7 @@
                     <div class="alm-panel" style="margin-top:1.5rem;">
                         <div class="alm-rule-head"><h3 class="alm-section-title" style="font-size:1.1rem;">Weekly Location</h3></div>
                         <p class="alm-mh-date" style="margin:0.25rem 0 0.75rem;">Shows a "📍 This week" card on the homepage. Leave blank and save to hide it.</p>
-                        <input id="locationInput" class="alm-input" maxlength="120" placeholder="e.g. Gym Hall — Tables 1–4" style="width:100%;">
+                        <input id="locationInput" class="alm-input" maxlength="120" placeholder="e.g. Gym Hall, Tables 1-4" style="width:100%;">
                         <div style="display:flex;align-items:center;gap:0.75rem;margin-top:0.6rem;flex-wrap:wrap;">
                             <button id="saveLocationBtn" type="button" class="alm-btn" style="background:var(--oxblood);">Save Location</button>
                             <button id="clearLocationBtn" type="button" class="alm-btn" style="background:var(--ink);">Clear</button>
@@ -774,7 +781,7 @@
     </div>
 
     <!-- 4. LOAD COMPONENTS SCRIPT -->
-    <script src="components.js?v=20260801d"></script>
+    <script src="components.js?v=20260803c"></script>
 
     <script>
         window.manualPageReveal = true;
@@ -940,7 +947,7 @@
         // Accurate Elo update.
         // - Uses the logistic expectation so the ratings gap already governs how
         //   much a result moves each player (favourite gains little for an
-        //   expected win, a lot for an upset — and vice versa).
+        //   expected win, a lot for an upset - and vice versa).
         // - Adds a margin-of-victory multiplier from the score so a 3-0 shifts
         //   more than a 3-2, with a dampener that prevents lopsided favourites
         //   from over-inflating on blowouts (the FiveThirtyEight MOV trick).
@@ -1291,7 +1298,7 @@
             const p2Name = get(map.p2);
             if (!p1Name || !p2Name) return { error: 'Missing player name' };
 
-            // "Played" gate: N / No / 0 / false means they never played — skip quietly.
+            // "Played" gate: N / No / 0 / false means they never played - skip quietly.
             const playedRaw = normalizeKey(get(map.played));
             const hasAnySetScore = [map.s1p1, map.s1p2, map.s2p1, map.s2p2, map.s3p1, map.s3p2]
                 .some(idx => intOrNull(get(idx)) !== null);
@@ -1633,7 +1640,7 @@
 
         function downloadFixtures() {
             if (!manualMatchPlayers.length) {
-                setBulkStatus('Players are still loading — try again in a moment.', 'error');
+                setBulkStatus('Players are still loading - try again in a moment.', 'error');
                 return;
             }
 
@@ -1896,7 +1903,7 @@
                     dashboardContainer.classList.remove('hidden');
                     document.getElementById('adminUserEmail').textContent = `Logged in as: ${email}`;
 
-                    // Resolve account role but avoid hanging indefinitely — fall back to 'standard' after 3s
+                    // Resolve account role but avoid hanging indefinitely - fall back to 'standard' after 3s
                     const role = await Promise.race([
                         resolveAccountRole(email, session.user.id),
                         new Promise(resolve => setTimeout(() => resolve('standard'), 3000))
@@ -1913,7 +1920,7 @@
 
                     // Ensure header account controls reflect current session state.
                     // The shared updateAuthUI() (components.js) owns the account
-                    // button's label/avatar. Pass the session we already have —
+                    // button's label/avatar. Pass the session we already have,
                     // never call getSession() here (that deadlocks the callback).
                     try {
                         const profileText = document.getElementById('navProfileLinkText');

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Announcements - NBHS Table Tennis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <link rel="stylesheet" href="styles.css?v=20260803c">
+    <link rel="stylesheet" href="animations.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="icon" type="image/png" href="favicon.png">
+</head>
+
+<body class="site-surface text-slate-900 font-sans min-h-screen flex flex-col">
+
+    <div id="header-placeholder"></div>
+
+    <main id="main-content" class="almanac flex-grow w-full opacity-0 transition-opacity duration-500">
+      <div class="alm-shell">
+
+        <header class="alm-masthead--compact alm-block" style="border-bottom:2px solid var(--ink);padding-bottom:1.25rem;">
+            <div>
+                <p class="alm-kicker">Club Info</p>
+                <h1 class="alm-display alm-display--md mt-3">Announcements</h1>
+                <p class="alm-lede mt-3">News and updates from the NBHS Table Tennis Club. Check back here for session changes, results and events.</p>
+            </div>
+        </header>
+
+        <section id="annList" class="alm-block">
+            <p class="alm-eyebrow" id="annListStatus">Loading announcements…</p>
+        </section>
+
+      </div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="components.js?v=20260803c"></script>
+
+    <script>
+        window.manualPageReveal = true;
+
+        const SUPABASE_URL = "https://ngnkbfazhdedaqvxcphw.supabase.co";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbmtiZmF6aGRlZGFxdnhjcGh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTE5NDksImV4cCI6MjA5MzI4Nzk0OX0.F_S6ORkFe-SuJPybs7FEFH94E6U2hZ5ern4vrg4kMOk";
+        let supabaseClient = window._supabaseClient || window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        function esc(s) {
+            return (s || '').toString()
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+
+        function fmtDate(iso) {
+            const d = new Date(iso);
+            if (isNaN(d)) return '';
+            return d.toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' });
+        }
+
+        // Only announcements marked published, and not scheduled for the future,
+        // are shown to the public. Pinned posts float to the top.
+        async function loadAnnouncements() {
+            const listEl = document.getElementById('annList');
+            const statusEl = document.getElementById('annListStatus');
+            try {
+                const { data, error } = await supabaseClient.from('announcements')
+                    .select('*').order('created_at', { ascending: false });
+                if (error) throw error;
+
+                const now = new Date();
+                const visible = (data || []).filter(a => {
+                    if (!a.is_published) return false;
+                    if (a.publish_at && new Date(a.publish_at) > now) return false;
+                    return true;
+                }).sort((a, b) => {
+                    if (!!b.is_pinned !== !!a.is_pinned) return b.is_pinned ? 1 : -1;
+                    return new Date(b.created_at) - new Date(a.created_at);
+                });
+
+                if (!visible.length) {
+                    listEl.innerHTML = '<div class="alm-panel" style="text-align:center;padding:2.5rem;"><p class="alm-section-title" style="font-size:1.1rem;">No announcements yet</p><p class="alm-mh-date" style="margin-top:0.5rem;">Nothing new right now. Check back soon.</p></div>';
+                    return;
+                }
+
+                listEl.innerHTML = visible.map((a, i) => {
+                    const emoji = a.emoji || '📢';
+                    const dateStr = fmtDate(a.publish_at || a.created_at);
+                    const pin = a.is_pinned
+                        ? '<span style="flex-shrink:0;font-family:var(--font-mono,monospace);font-size:0.6rem;letter-spacing:0.14em;text-transform:uppercase;font-weight:700;color:var(--oxblood);display:inline-flex;align-items:center;gap:0.3rem;">📌 Pinned</span>'
+                        : '';
+
+                    const plain = (window.markdownToPlain ? window.markdownToPlain(a.body) : (a.body || ''));
+                    const isLong = plain.length > 160;
+                    const preview = isLong ? esc(plain.slice(0, 160).trim()) + '…' : esc(plain);
+                    const fullHtml = (window.renderMarkdown ? window.renderMarkdown(a.body) : esc(a.body).replace(/\n/g, '<br>'));
+
+                    // Collapsed shows a plain-text preview; expanded shows the
+                    // formatted body. Only long posts get a toggle.
+                    const bodyBlock = isLong
+                        ? `
+                        <div class="ann-collapsed alm-lede" style="font-size:0.98rem;margin:0;">${preview}</div>
+                        <div class="ann-full alm-lede" style="font-size:0.98rem;margin:0;display:none;">${fullHtml}</div>
+                        <button type="button" class="ann-toggle alm-link" data-i="${i}" style="background:none;border:none;cursor:pointer;font:inherit;margin-top:0.6rem;padding:0;">Read more →</button>`
+                        : `<div class="alm-lede" style="font-size:0.98rem;margin:0;">${fullHtml}</div>`;
+
+                    return `
+                    <article class="alm-panel ann-card" style="margin-bottom:1.1rem;border-left:4px solid var(--oxblood);">
+                        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:0.75rem;flex-wrap:wrap;">
+                            <h2 class="alm-section-title" style="font-size:1.25rem;margin:0;display:flex;align-items:center;gap:0.55rem;"><span aria-hidden="true" style="font-size:1.3rem;line-height:1;">${esc(emoji)}</span>${esc(a.title)}</h2>
+                            ${pin}
+                        </div>
+                        <p class="alm-mh-date" style="margin:0.5rem 0 0.9rem;">${esc(dateStr)}</p>
+                        ${bodyBlock}
+                    </article>`;
+                }).join('');
+
+                // Expand / collapse toggles.
+                listEl.querySelectorAll('.ann-toggle').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const card = btn.closest('.ann-card');
+                        const collapsed = card.querySelector('.ann-collapsed');
+                        const full = card.querySelector('.ann-full');
+                        const isOpen = full.style.display !== 'none';
+                        if (isOpen) {
+                            full.style.display = 'none';
+                            collapsed.style.display = 'block';
+                            btn.textContent = 'Read more →';
+                        } else {
+                            full.style.display = 'block';
+                            collapsed.style.display = 'none';
+                            btn.textContent = 'Show less ↑';
+                        }
+                    });
+                });
+            } catch (err) {
+                statusEl.textContent = 'Could not load announcements right now. Please try again later.';
+                console.warn('announcements load error:', err);
+            }
+        }
+
+        function reveal() {
+            document.getElementById('main-content').classList.remove('opacity-0');
+            if (document.getElementById('page-footer')) document.getElementById('page-footer').classList.remove('opacity-0');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAnnouncements();
+            reveal();
+        });
+    </script>
+</body>
+</html>

@@ -8,7 +8,7 @@
     <script src="tailwind-theme.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-    <link rel="stylesheet" href="styles.css?v=20260801d">
+    <link rel="stylesheet" href="styles.css?v=20260803c">
     <link rel="stylesheet" href="animations.css">
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
@@ -55,7 +55,7 @@
     <!-- CHANGE 3: Added id, mt-auto, and opacity-0 -->
     <div id="footer-placeholder"></div>
 
-    <script src="components.js?v=20260801d"></script>
+    <script src="components.js?v=20260803c"></script>
     <script>
         // Use Supabase `player_rankings` instead of the Google Sheets CSV
         async function getSupabaseClient() {
@@ -81,7 +81,7 @@
 
         function buildHalfData(players, isUpperHalf) {
             return {
-                title: isUpperHalf ? 'Monday — Top 16' : 'Tuesday — Next 16',
+                title: isUpperHalf ? 'Monday, Top 16' : 'Tuesday, Next 16',
                 subtitle: isUpperHalf ? 'Top 16 players in descending Elo order.' : 'Players 17–32 in descending Elo order.',
                 divisions: [
                     { name: 'Division 1', tableLabel: 'Table 1', description: '4 players', players: players.slice(0, 4) },

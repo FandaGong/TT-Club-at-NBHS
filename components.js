@@ -133,7 +133,7 @@ window._adminEmails = (window._adminEmails || [
                 _ipadCursorActive = true;
                 startCursorObserver();
             } catch (err) {
-                // CDN blocked or offline — silently keep the native cursor.
+                // CDN blocked or offline - silently keep the native cursor.
                 _ipadCursorActive = false;
             }
         } else if (!on && _ipadCursorActive && _ipadCursorMod) {
@@ -144,7 +144,7 @@ window._adminEmails = (window._adminEmails || [
             } catch (err) { /* ignore */ }
             _ipadCursorActive = false;
         } else if (on && _ipadCursorActive && _ipadCursorMod) {
-            // Already running — re-scan for newly injected DOM (header/footer).
+            // Already running - re-scan for newly injected DOM (header/footer).
             try {
                 tagCursorTargets();
                 const api = _ipadCursorMod.default || _ipadCursorMod;
@@ -204,6 +204,7 @@ const headerHTML = `
                     <i data-lucide="chevron-down" class="site-nav-caret ml-2 h-4 w-4 shrink-0 md:h-3.5 md:w-3.5 md:ml-1"></i>
                 </button>
                 <div class="site-nav-menu max-h-0 md:max-h-none md:absolute md:left-0 md:mt-0 w-full md:w-52 opacity-0 md:opacity-0 invisible md:invisible md:group-hover:opacity-100 md:group-hover:visible transition-all duration-200 z-50 md:top-full overflow-hidden md:overflow-visible">
+                    <a href="announcements.html" class="site-nav-subitem"><i data-lucide="megaphone" class="h-4 w-4 shrink-0"></i>Announcements</a>
                     <a href="club-analytics.html" class="site-nav-subitem"><i data-lucide="bar-chart-3" class="h-4 w-4 shrink-0"></i>Analytics</a>
                     <a href="past-records.html" class="site-nav-subitem"><i data-lucide="trophy" class="h-4 w-4 shrink-0"></i>Past Records</a>
                     <a href="rules.html" class="site-nav-subitem"><i data-lucide="book-open" class="h-4 w-4 shrink-0"></i>Rules</a>
@@ -250,7 +251,7 @@ async function loadAnnouncementBanner(client) {
         if (!client) return;
         const { data, error } = await client.from('site_config')
             .select('value').eq('key', 'announcement').maybeSingle();
-        if (error) return; // table may not exist yet — fail quietly
+        if (error) return; // table may not exist yet - fail quietly
         const msg = (data?.value || '').toString();
         renderAnnouncementBanner(msg);
     } catch (err) { /* fail quietly */ }
@@ -290,11 +291,85 @@ function renderAnnouncementBanner(raw) {
     if (header && header.parentNode) {
         header.insertAdjacentElement('afterend', bar);
     } else if (!bar.parentNode) {
-        // Header not injected yet — retry shortly.
+        // Header not injected yet - retry shortly.
         setTimeout(() => renderAnnouncementBanner(raw), 150);
     }
 }
 window.renderAnnouncementBanner = renderAnnouncementBanner;
+
+
+// ── Lightweight, XSS-safe Markdown ─────────────────────────────────────
+// Supports a small, safe subset for announcement bodies:
+//   **bold**  *italic*  `code`  [text](https://url)
+//   - bullet lists   1. numbered lists   line breaks   blank-line paragraphs
+// Everything is HTML-escaped FIRST, so no raw HTML from the input can run.
+// Only http(s) and mailto links are allowed.
+function renderMarkdown(raw) {
+    const escapeHtml = (s) => (s || '').toString()
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+
+    // Inline formatting applied to already-escaped text.
+    const inline = (text) => {
+        let t = text;
+        // Links: [label](url) — only safe schemes.
+        t = t.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (m, label, url) => {
+            const safe = /^(https?:\/\/|mailto:)/i.test(url);
+            if (!safe) return escapeHtml(m); // leave untouched (already escaped upstream)
+            return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="alm-link" style="display:inline;">${label}</a>`;
+        });
+        // Bold, then italic, then inline code.
+        t = t.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+        t = t.replace(/(^|[^*])\*([^*]+)\*/g, '$1<em>$2</em>');
+        t = t.replace(/`([^`]+)`/g, '<code style="font-family:var(--font-mono,monospace);background:var(--paper-2);padding:0.05em 0.35em;border-radius:3px;font-size:0.9em;">$1</code>');
+        return t;
+    };
+
+    const escaped = escapeHtml(raw);
+    const lines = escaped.split(/\r?\n/);
+    const html = [];
+    let listType = null; // 'ul' | 'ol' | null
+    let para = [];
+
+    const flushPara = () => {
+        if (para.length) { html.push(`<p style="margin:0 0 0.75rem;">${inline(para.join(' '))}</p>`); para = []; }
+    };
+    const closeList = () => { if (listType) { html.push(`</${listType}>`); listType = null; } };
+
+    lines.forEach((line) => {
+        const bullet = line.match(/^\s*[-*]\s+(.*)$/);
+        const numbered = line.match(/^\s*\d+\.\s+(.*)$/);
+        if (bullet) {
+            flushPara();
+            if (listType !== 'ul') { closeList(); html.push('<ul style="margin:0 0 0.75rem 1.1rem;list-style:disc;">'); listType = 'ul'; }
+            html.push(`<li style="margin:0.15rem 0;">${inline(bullet[1])}</li>`);
+        } else if (numbered) {
+            flushPara();
+            if (listType !== 'ol') { closeList(); html.push('<ol style="margin:0 0 0.75rem 1.3rem;list-style:decimal;">'); listType = 'ol'; }
+            html.push(`<li style="margin:0.15rem 0;">${inline(numbered[1])}</li>`);
+        } else if (line.trim() === '') {
+            flushPara(); closeList();
+        } else {
+            closeList(); para.push(line.trim());
+        }
+    });
+    flushPara(); closeList();
+    return html.join('');
+}
+window.renderMarkdown = renderMarkdown;
+
+// Strip Markdown down to plain text for previews/truncation.
+function markdownToPlain(raw) {
+    return (raw || '').toString()
+        .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1') // links -> label
+        .replace(/[*`_#>]/g, '')                 // formatting marks
+        .replace(/^\s*[-*]\s+/gm, '')            // bullets
+        .replace(/^\s*\d+\.\s+/gm, '')           // numbers
+        .replace(/\s+/g, ' ')
+        .trim();
+}
+window.markdownToPlain = markdownToPlain;
+
 
 
 // ── Custom dropdowns ───────────────────────────────────────────────────
@@ -409,7 +484,7 @@ document.addEventListener('click', (e) => {
 // Tuesday; within each 16, ranks 1–4 = Div 1, 5–12 = Div 2, 13–16 = Div 3.
 // We compute each player's current label, compare it to the value stored in
 // account.last_seen_division, and if it changed we show a one-time modal and
-// persist the new label — so it fires once per change, on any device.
+// persist the new label - so it fires once per change, on any device.
 function computeDivisionLabels(rows) {
     const sorted = (rows || [])
         .map(r => ({ name: r.name, elo: r.elo }))
@@ -487,13 +562,13 @@ async function checkDivisionChange(client, session) {
 
         // First ever load: record silently, no notification.
         if (!lastSeen) {
-            console.log('[div-check] first load — recording', currentLabel, 'silently');
+            console.log('[div-check] first load - recording', currentLabel, 'silently');
             await client.from('account').update({ last_seen_division: currentLabel }).eq('account_id', accountId);
             return;
         }
 
         if (lastSeen !== currentLabel) {
-            console.log('[div-check] CHANGED', lastSeen, '->', currentLabel, '— showing modal');
+            console.log('[div-check] CHANGED', lastSeen, '->', currentLabel, '(showing modal)');
             renderDivisionModal(currentLabel);
             // Persist immediately so it only ever fires once, on any device.
             await client.from('account').update({ last_seen_division: currentLabel }).eq('account_id', accountId);
@@ -559,7 +634,7 @@ async function updateAuthUI(session) {
         return;
     }
 
-    // Signed in: the name is a dropdown toggle only — never a link to the panel.
+    // Signed in: the name is a dropdown toggle only - never a link to the panel.
     adminLink.removeAttribute('href');
     adminLink.style.cursor = 'pointer';
     if (accountCaret) accountCaret.classList.remove('hidden');
