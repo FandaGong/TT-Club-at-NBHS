@@ -7,11 +7,26 @@
     <title>Announcements - NBHS Table Tennis</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-    <link rel="stylesheet" href="styles.css?v=20260803c">
+    <link rel="stylesheet" href="styles.css?v=20260803f">
     <link rel="stylesheet" href="animations.css">
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="icon" type="image/png" href="favicon.png">
+    <style>
+        /* Announcement popup polish */
+        #annModalClose:hover { background: var(--oxblood); color: #fff; border-color: var(--oxblood); }
+        #annModal[data-open="true"] > div { animation: annPopIn 0.18s ease-out; }
+        @keyframes annPopIn {
+            from { opacity: 0; transform: translateY(8px) scale(0.98); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        /* Rendered markdown spacing inside the popup body */
+        #annModalBody > *:first-child { margin-top: 0; }
+        #annModalBody > *:last-child { margin-bottom: 0; }
+        #annModalBody a { color: var(--oxblood); text-decoration: underline; }
+        #annModalBody strong { font-weight: 700; }
+        .ann-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px -12px rgba(0,0,0,0.25); }
+    </style>
 </head>
 
 <body class="site-surface text-slate-900 font-sans min-h-screen flex flex-col">
@@ -38,7 +53,24 @@
 
     <div id="footer-placeholder"></div>
 
-    <script src="components.js?v=20260803c"></script>
+    <!-- Announcement popup -->
+    <div id="annModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(20,16,14,0.6);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:1rem;">
+        <div class="almanac" role="dialog" aria-modal="true" aria-labelledby="annModalTitle" style="background:var(--paper);color:var(--ink);width:100%;max-width:44rem;max-height:86vh;display:flex;flex-direction:column;overflow:hidden;border:1px solid var(--rule-strong);border-top:5px solid var(--oxblood);box-shadow:0 24px 60px -12px rgba(0,0,0,0.45);position:relative;">
+            <!-- Header band -->
+            <div style="padding:1.6rem 1.75rem 1.25rem;border-bottom:1px solid var(--rule);background:var(--paper-2);">
+                <button type="button" id="annModalClose" aria-label="Close" style="position:absolute;top:1rem;right:1rem;height:2.1rem;width:2.1rem;display:flex;align-items:center;justify-content:center;background:var(--paper);border:1px solid var(--rule-strong);cursor:pointer;font-size:1rem;line-height:1;color:var(--ink);transition:background 0.15s ease;">✕</button>
+                <div style="display:flex;align-items:center;gap:0.7rem;flex-wrap:wrap;padding-right:2.75rem;">
+                    <span id="annModalEmoji" aria-hidden="true" style="font-size:1.8rem;line-height:1;"></span>
+                    <h2 id="annModalTitle" style="font-family:var(--font-heading);font-weight:800;text-transform:uppercase;letter-spacing:-0.01em;font-size:1.5rem;line-height:1.1;margin:0;color:var(--ink);"></h2>
+                </div>
+                <p id="annModalDate" style="font-family:var(--font-mono,monospace);font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-faint);margin:0.7rem 0 0;"></p>
+            </div>
+            <!-- Body -->
+            <div id="annModalBody" style="font-family:var(--font-sans);font-size:1rem;line-height:1.65;color:var(--ink);padding:1.5rem 1.75rem 1.9rem;overflow-y:auto;"></div>
+        </div>
+    </div>
+
+    <script src="components.js?v=20260803f"></script>
 
     <script>
         window.manualPageReveal = true;
@@ -46,6 +78,8 @@
         const SUPABASE_URL = "https://ngnkbfazhdedaqvxcphw.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbmtiZmF6aGRlZGFxdnhjcGh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTE5NDksImV4cCI6MjA5MzI4Nzk0OX0.F_S6ORkFe-SuJPybs7FEFH94E6U2hZ5ern4vrg4kMOk";
         let supabaseClient = window._supabaseClient || window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let _visible = []; // currently shown announcements, indexed by data-i
 
         function esc(s) {
             return (s || '').toString()
@@ -84,6 +118,9 @@
                     return;
                 }
 
+                // Keep the visible list in scope so the modal can read full posts.
+                _visible = visible;
+
                 listEl.innerHTML = visible.map((a, i) => {
                     const emoji = a.emoji || '📢';
                     const dateStr = fmtDate(a.publish_at || a.created_at);
@@ -92,46 +129,27 @@
                         : '';
 
                     const plain = (window.markdownToPlain ? window.markdownToPlain(a.body) : (a.body || ''));
-                    const isLong = plain.length > 160;
-                    const preview = isLong ? esc(plain.slice(0, 160).trim()) + '…' : esc(plain);
-                    const fullHtml = (window.renderMarkdown ? window.renderMarkdown(a.body) : esc(a.body).replace(/\n/g, '<br>'));
+                    const preview = plain.length > 180 ? esc(plain.slice(0, 180).trim()) + '…' : esc(plain);
 
-                    // Collapsed shows a plain-text preview; expanded shows the
-                    // formatted body. Only long posts get a toggle.
-                    const bodyBlock = isLong
-                        ? `
-                        <div class="ann-collapsed alm-lede" style="font-size:0.98rem;margin:0;">${preview}</div>
-                        <div class="ann-full alm-lede" style="font-size:0.98rem;margin:0;display:none;">${fullHtml}</div>
-                        <button type="button" class="ann-toggle alm-link" data-i="${i}" style="background:none;border:none;cursor:pointer;font:inherit;margin-top:0.6rem;padding:0;">Read more →</button>`
-                        : `<div class="alm-lede" style="font-size:0.98rem;margin:0;">${fullHtml}</div>`;
-
+                    // Whole card is a button that opens the popup with the full post.
                     return `
-                    <article class="alm-panel ann-card" style="margin-bottom:1.1rem;border-left:4px solid var(--oxblood);">
+                    <article class="alm-panel ann-card" data-i="${i}" role="button" tabindex="0" style="margin-bottom:1.1rem;border-left:4px solid var(--oxblood);cursor:pointer;transition:transform 0.15s ease, box-shadow 0.15s ease;">
                         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:0.75rem;flex-wrap:wrap;">
                             <h2 class="alm-section-title" style="font-size:1.25rem;margin:0;display:flex;align-items:center;gap:0.55rem;"><span aria-hidden="true" style="font-size:1.3rem;line-height:1;">${esc(emoji)}</span>${esc(a.title)}</h2>
                             ${pin}
                         </div>
                         <p class="alm-mh-date" style="margin:0.5rem 0 0.9rem;">${esc(dateStr)}</p>
-                        ${bodyBlock}
+                        <div class="alm-lede" style="font-size:0.98rem;margin:0;">${preview}</div>
+                        <span class="alm-link" style="display:inline-block;margin-top:0.7rem;">Read more →</span>
                     </article>`;
                 }).join('');
 
-                // Expand / collapse toggles.
-                listEl.querySelectorAll('.ann-toggle').forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        const card = btn.closest('.ann-card');
-                        const collapsed = card.querySelector('.ann-collapsed');
-                        const full = card.querySelector('.ann-full');
-                        const isOpen = full.style.display !== 'none';
-                        if (isOpen) {
-                            full.style.display = 'none';
-                            collapsed.style.display = 'block';
-                            btn.textContent = 'Read more →';
-                        } else {
-                            full.style.display = 'block';
-                            collapsed.style.display = 'none';
-                            btn.textContent = 'Show less ↑';
-                        }
+                // Open the popup on click or keyboard activation.
+                listEl.querySelectorAll('.ann-card').forEach(card => {
+                    const open = () => openAnnModal(parseInt(card.getAttribute('data-i'), 10));
+                    card.addEventListener('click', open);
+                    card.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); }
                     });
                 });
             } catch (err) {
@@ -144,6 +162,34 @@
             document.getElementById('main-content').classList.remove('opacity-0');
             if (document.getElementById('page-footer')) document.getElementById('page-footer').classList.remove('opacity-0');
         }
+
+        // ── Popup ──────────────────────────────────────────────────────
+        function openAnnModal(i) {
+            const a = _visible[i];
+            if (!a) return;
+            document.getElementById('annModalEmoji').textContent = a.emoji || '📢';
+            document.getElementById('annModalTitle').textContent = a.title || '';
+            document.getElementById('annModalDate').textContent = fmtDate(a.publish_at || a.created_at);
+            document.getElementById('annModalBody').innerHTML =
+                (window.renderMarkdown ? window.renderMarkdown(a.body) : esc(a.body).replace(/\n/g, '<br>'));
+            const modal = document.getElementById('annModal');
+            modal.style.display = 'flex';
+            modal.setAttribute('data-open', 'true');
+            document.body.style.overflow = 'hidden'; // lock background scroll
+        }
+        function closeAnnModal() {
+            const modal = document.getElementById('annModal');
+            modal.style.display = 'none';
+            modal.removeAttribute('data-open');
+            document.body.style.overflow = '';
+        }
+        document.getElementById('annModalClose').addEventListener('click', closeAnnModal);
+        document.getElementById('annModal').addEventListener('click', (e) => {
+            if (e.target.id === 'annModal') closeAnnModal(); // click backdrop
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && document.getElementById('annModal').style.display !== 'none') closeAnnModal();
+        });
 
         document.addEventListener('DOMContentLoaded', () => {
             loadAnnouncements();
