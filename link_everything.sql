@@ -19,31 +19,37 @@ begin
     raise exception 'Not authorized to sync player divisions.';
   end if;
 
+  -- Everyone ranked together by Elo (same as the Matchup Ladder): top 16 play
+  -- Monday, 17–32 Tuesday; within each day 1–5 = Div 1, 6–11 = Div 2, 12–16 = Div 3.
   with ranked_players as (
     select
       id,
       row_number() over (
-        partition by case
-          when lower(coalesce(half, '')) like '%second%' then 'Second'
-          else 'First'
-        end
-        order by elo desc, lower(coalesce(name, '')) asc, id asc
+        order by elo desc,
+          (regexp_replace(lower(coalesce(name, '')), '[^a-z0-9]+', '', 'g') = 'oscarpan') desc,
+          lower(coalesce(name, '')) asc, id asc
       ) as rank_position
     from public.player_rankings
+  ),
+  labelled as (
+    select
+      id,
+      case when rank_position <= 16 then 'Monday' else 'Tuesday' end as new_half,
+      case
+        when rank_position > 32 then 'Division 3'
+        when (rank_position - 1) % 16 < 5 then 'Division 1'
+        when (rank_position - 1) % 16 < 11 then 'Division 2'
+        else 'Division 3'
+      end as new_division
+    from ranked_players
   )
   update public.player_rankings pr
-  set division = case
-    when ranked_players.rank_position <= 4 then 'Division 1'
-    when ranked_players.rank_position <= 7 then 'Division 2'
-    else 'Division 3'
-  end
-  from ranked_players
-  where pr.id = ranked_players.id
-    and pr.division is distinct from case
-      when ranked_players.rank_position <= 4 then 'Division 1'
-      when ranked_players.rank_position <= 7 then 'Division 2'
-      else 'Division 3'
-    end;
+  set division = labelled.new_division,
+      half = labelled.new_half
+  from labelled
+  where pr.id = labelled.id
+    and (pr.division is distinct from labelled.new_division
+      or pr.half is distinct from labelled.new_half);
 end;
 $$;
 -- Link all account-owned data to Supabase Auth users

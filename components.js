@@ -481,7 +481,7 @@ document.addEventListener('click', (e) => {
 // ── Division-change detection & one-time notification ──────────────────
 // Divisions are derived live from Elo rank (same logic as the Matchup
 // Ladder): all players sorted by Elo desc; top 16 play Monday, 17–32 play
-// Tuesday; within each 16, ranks 1–4 = Div 1, 5–12 = Div 2, 13–16 = Div 3.
+// Tuesday; within each 16, ranks 1–5 = Div 1, 6–11 = Div 2, 12–16 = Div 3.
 // We compute each player's current label, compare it to the value stored in
 // account.last_seen_division, and if it changed we show a one-time modal and
 // persist the new label - so it fires once per change, on any device.
@@ -503,8 +503,8 @@ function computeDivisionLabels(rows) {
         const day = i < 16 ? 'Monday' : 'Tuesday';
         const within = i % 16; // position inside this day's group of 16
         let div;
-        if (within < 4) div = 'Division 1';
-        else if (within < 12) div = 'Division 2';
+        if (within < 5) div = 'Division 1';
+        else if (within < 11) div = 'Division 2';
         else div = 'Division 3';
         return `${day} ${div}`;
     };

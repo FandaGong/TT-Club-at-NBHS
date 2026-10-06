@@ -190,7 +190,7 @@
         // Compute a player's LIVE division + day from Elo rank, matching the
         // Matchup Ladder exactly: all players sorted by Elo desc (Oscar Pan
         // tiebreak, then name); top 16 play Monday, 17–32 Tuesday; within each
-        // group of 16, ranks 1–4 = Div 1, 5–12 = Div 2, 13–16 = Div 3.
+        // group of 16, ranks 1–5 = Div 1, 6–11 = Div 2, 12–16 = Div 3.
         function computeLiveDivision(allPlayers, name) {
             const key = (name || '').toString().trim().toLowerCase();
             const sorted = (allPlayers || [])
@@ -209,8 +209,8 @@
             const day = i < 16 ? 'Monday' : 'Tuesday';
             const within = i % 16;
             let division;
-            if (within < 4) division = 'Division 1';
-            else if (within < 12) division = 'Division 2';
+            if (within < 5) division = 'Division 1';
+            else if (within < 11) division = 'Division 2';
             else division = 'Division 3';
             return { division, day };
         }
