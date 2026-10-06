@@ -1648,7 +1648,7 @@
 
             // Match the Matchup Ladder exactly: rank everyone by Elo, then
             // Monday = top 16, Tuesday = ranks 17–32. Within each day:
-            // Division 1 = ranks 1–4, Division 2 = ranks 5–12, Division 3 = 13–16.
+            // Division 1 = ranks 1–5, Division 2 = ranks 6–11, Division 3 = 12–16.
             const ranked = manualMatchPlayers.slice()
                 .filter(p => p.name)
                 .sort((a, b) => {
@@ -1662,7 +1662,7 @@
                 { day: 'Tuesday', players: ranked.slice(16, 32) },
             ];
             const divisionOf = (idxWithinDay) =>
-                idxWithinDay < 4 ? 'Division 1' : idxWithinDay < 12 ? 'Division 2' : 'Division 3';
+                idxWithinDay < 5 ? 'Division 1' : idxWithinDay < 11 ? 'Division 2' : 'Division 3';
 
             const lines = [headers.map(csvCell).join(',')];
             let pairCount = 0;
@@ -3592,10 +3592,10 @@
                     // Within each half group, determine rank
                     const rankInGroup = isMonday ? idx + 1 : (idx - mondayCount + 1);
 
-                    // Assign division: top 4 = Div 1, next 3 = Div 2, rest = Div 3
-                    if (rankInGroup <= 4) {
+                    // Assign division: top 5 = Div 1, next 6 = Div 2, rest = Div 3
+                    if (rankInGroup <= 5) {
                         player.division = 'Division 1';
-                    } else if (rankInGroup <= 7) {
+                    } else if (rankInGroup <= 11) {
                         player.division = 'Division 2';
                     } else {
                         player.division = 'Division 3';
