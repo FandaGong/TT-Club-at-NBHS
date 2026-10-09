@@ -2994,8 +2994,10 @@
                     else if (rawDiv.includes("3")) divNum = "3";
 
                     // 3. Ensure 'Half' matches exactly "First" or "Second"
+                    // (Monday = "Second", Tuesday = "First")
                     let halfKey = "First";
-                    if (rawHalf.toLowerCase().includes("second")) halfKey = "Second";
+                    const halfLower = rawHalf.toLowerCase();
+                    if (halfLower.includes("second") || halfLower.includes("mon")) halfKey = "Second";
 
                     // 4. Calculate the new ELO based on your chart!
                     const newElo = eloMap[halfKey][divNum] || 600;
