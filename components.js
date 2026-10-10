@@ -4,6 +4,21 @@ const CONFIG = {
     SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5nbmtiZmF6aGRlZGFxdnhjcGh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc3MTE5NDksImV4cCI6MjA5MzI4Nzk0OX0.F_S6ORkFe-SuJPybs7FEFH94E6U2hZ5ern4vrg4kMOk"
 };
 
+// Capture "opened from a password-reset email" right away. Pages like
+// admin.html create their Supabase client before DOMContentLoaded, and the
+// client consumes + strips the recovery token from the URL immediately, so by
+// the time our auth listener is attached the evidence would be gone.
+// `reset=1` is added to the email's redirect URL by sendPasswordReset().
+const PASSWORD_RESET_LINK = (function () {
+    const search = window.location.search || '';
+    const hash = window.location.hash || '';
+    const hashParams = new URLSearchParams(hash.replace(/^#/, ''));
+    return {
+        active: /[?&]reset=1\b/.test(search) || hashParams.get('type') === 'recovery',
+        error: hashParams.get('error_description') || new URLSearchParams(search).get('error_description') || ''
+    };
+})();
+
 // Hardcoded admin allowlist (lowercase)
 window._adminEmails = (window._adminEmails || [
     'nbhsttclub@gmail.com',
@@ -534,6 +549,67 @@ function renderDivisionModal(newLabel) {
     document.body.appendChild(overlay);
 }
 
+// ── Password reset (from the "Forgot password?" email link) ────────────────
+// Supabase signs the user in with a recovery session when they open the link;
+// we then ask for a new password and save it with updateUser. If the link was
+// expired or already used, show why instead of silently landing on login.
+function clearPasswordResetUrl() {
+    const params = new URLSearchParams(window.location.search);
+    params.delete('reset');
+    const qs = params.toString();
+    history.replaceState(null, '', window.location.pathname + (qs ? '?' + qs : ''));
+}
+
+function renderPasswordResetModal(client, errorMessage) {
+    if (document.getElementById('password-reset-modal')) return;
+    const overlay = document.createElement('div');
+    overlay.id = 'password-reset-modal';
+    overlay.className = 'division-modal-overlay';
+    if (errorMessage) {
+        overlay.innerHTML = `
+            <div class="division-modal" role="dialog" aria-modal="true" aria-labelledby="password-reset-title">
+                <div class="division-modal-icon" aria-hidden="true">⚠️</div>
+                <h2 id="password-reset-title" class="division-modal-title">Reset link didn't work</h2>
+                <p class="division-modal-body"></p>
+                <button type="button" class="division-modal-btn">OK</button>
+            </div>
+        `;
+        overlay.querySelector('.division-modal-body').textContent =
+            `${errorMessage} Links only work once and expire after an hour. Click "Forgot password?" to get a new one.`;
+        const close = () => { overlay.remove(); clearPasswordResetUrl(); };
+        overlay.querySelector('.division-modal-btn').addEventListener('click', close);
+        document.body.appendChild(overlay);
+        return;
+    }
+    overlay.innerHTML = `
+        <form class="division-modal" role="dialog" aria-modal="true" aria-labelledby="password-reset-title">
+            <div class="division-modal-icon" aria-hidden="true">🔑</div>
+            <h2 id="password-reset-title" class="division-modal-title">Set a new password</h2>
+            <input type="password" class="pr-new" placeholder="New password" autocomplete="new-password" minlength="6" required
+                style="width:100%;padding:0.65rem 0.8rem;border:1px solid #cbd5e1;border-radius:0.5rem;margin-top:0.75rem;">
+            <input type="password" class="pr-confirm" placeholder="Confirm new password" autocomplete="new-password" minlength="6" required
+                style="width:100%;padding:0.65rem 0.8rem;border:1px solid #cbd5e1;border-radius:0.5rem;margin-top:0.5rem;">
+            <p class="pr-status division-modal-body" style="min-height:1.25rem;margin-top:0.5rem;"></p>
+            <button type="submit" class="division-modal-btn">Save password</button>
+        </form>
+    `;
+    const form = overlay.querySelector('form');
+    const status = overlay.querySelector('.pr-status');
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const n = overlay.querySelector('.pr-new').value;
+        const c = overlay.querySelector('.pr-confirm').value;
+        if (n !== c) { status.textContent = 'Passwords do not match.'; status.style.color = '#dc2626'; return; }
+        status.textContent = 'Saving…'; status.style.color = '';
+        const { error } = await client.auth.updateUser({ password: n });
+        if (error) { status.textContent = error.message; status.style.color = '#dc2626'; return; }
+        status.textContent = 'Password updated! You are now signed in.'; status.style.color = '#16a34a';
+        clearPasswordResetUrl();
+        setTimeout(() => overlay.remove(), 1500);
+    });
+    document.body.appendChild(overlay);
+    overlay.querySelector('.pr-new').focus();
+}
 async function checkDivisionChange(client, session) {
     try {
         if (!client || !session?.user) { console.log('[div-check] no client/session'); return; }
@@ -951,31 +1027,18 @@ document.addEventListener('DOMContentLoaded', async () => {
                 checkDivisionChange(_supabase, session);
             }
             if (_event === 'PASSWORD_RECOVERY') {
-                const newPassword = prompt('Enter your new password');
-                if (newPassword) {
-                    _supabase.auth.updateUser({ password: newPassword })
-                        .then(() => alert('Password updated successfully!'))
-                        .catch((err) => alert('Error updating password: ' + err.message));
-                }
+                renderPasswordResetModal(_supabase);
             }
         });
 
-        // Check URL hash for recovery token on page load
-        const hash = window.location.hash;
-        if (hash && hash.includes('type=recovery')) {
+        // The recovery event usually fires before this listener is attached
+        // (see PASSWORD_RESET_LINK), so also check what we captured on load.
+        // getSession() waits for Supabase to finish reading the link.
+        if (PASSWORD_RESET_LINK.active || PASSWORD_RESET_LINK.error) {
             _supabase.auth.getSession().then(({ data }) => {
-                const session = data?.session;
-                if (session) {
-                    const newPassword = prompt('Enter your new password');
-                    if (newPassword) {
-                        _supabase.auth.updateUser({ password: newPassword })
-                            .then(() => {
-                                alert('Password updated successfully!');
-                                window.location.hash = '';
-                            })
-                            .catch((err) => alert('Error updating password: ' + err.message));
-                    }
-                }
+                if (PASSWORD_RESET_LINK.error) renderPasswordResetModal(_supabase, PASSWORD_RESET_LINK.error.replace(/\+/g, ' ') + '.');
+                else if (data?.session) renderPasswordResetModal(_supabase);
+                else renderPasswordResetModal(_supabase, 'This reset link has expired or was already used.');
             });
         }
         

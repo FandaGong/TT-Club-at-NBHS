@@ -56,6 +56,7 @@
                     </div>
                     <button type="submit" class="alm-btn w-full">Admin Login</button>
                     <p id="adminLoginStatus" class="hidden text-sm font-medium text-center"></p>
+                    <p class="text-center"><button type="button" class="alm-link" style="background:none;border:none;cursor:pointer;font:inherit;" onclick="sendPasswordReset('admin')">Forgot password?</button></p>
                 </form>
             </div>
 
@@ -72,6 +73,7 @@
                     </div>
                     <button type="submit" class="alm-btn w-full" style="background:var(--ink);">Standard User Login</button>
                     <p id="standardLoginStatus" class="hidden text-sm font-medium text-center"></p>
+                    <p class="text-center"><button type="button" class="alm-link" style="background:none;border:none;cursor:pointer;font:inherit;" onclick="sendPasswordReset('standard')">Forgot password?</button></p>
                 </form>
             </div>
 
@@ -781,7 +783,7 @@
     </div>
 
     <!-- 4. LOAD COMPONENTS SCRIPT -->
-    <script src="components.js?v=20260803f"></script>
+    <script src="components.js?v=20261010b"></script>
 
     <script>
         window.manualPageReveal = true;
@@ -2004,6 +2006,35 @@
                 hint.className = 'mt-2 text-sm font-medium text-center block';
                 hint.style.color = 'var(--oxblood)';
                 hint.classList.remove('hidden');
+            }
+        }
+
+        // Email a password-reset link. Opening it brings the user back to this
+        // page, where components.js shows the "Set a new password" form.
+        async function sendPasswordReset(targetRole) {
+            const isAdminLogin = targetRole === 'admin';
+            const email = document.getElementById(isAdminLogin ? 'adminEmail' : 'standardEmail').value.trim();
+            const status = document.getElementById(isAdminLogin ? 'adminLoginStatus' : 'standardLoginStatus');
+            status.classList.remove('hidden');
+            if (!email) {
+                status.textContent = 'Enter your email above first.';
+                status.className = 'mt-2 text-sm font-medium text-red-600 text-center block';
+                return;
+            }
+            status.textContent = 'Sending reset email...';
+            status.className = 'mt-2 text-sm font-medium text-blue-600 text-center block';
+            // Always send the live site's link to https so the reset token never
+            // travels over plain http; keep local testing (localhost) as-is.
+            const isLocal = /^(localhost|127\.0\.0\.1)$/.test(window.location.hostname);
+            const protocol = isLocal ? window.location.protocol + '//' : 'https://';
+            const redirectTo = protocol + window.location.host + window.location.pathname + '?reset=1';
+            const { error } = await _supabase.auth.resetPasswordForEmail(email, { redirectTo });
+            if (error) {
+                status.textContent = error.message;
+                status.className = 'mt-2 text-sm font-medium text-red-600 text-center block';
+            } else {
+                status.textContent = 'If that email has an account, a reset link is on its way. Check your inbox (and spam).';
+                status.className = 'mt-2 text-sm font-medium text-green-600 text-center block';
             }
         }
 
