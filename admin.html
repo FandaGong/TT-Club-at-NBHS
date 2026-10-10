@@ -783,7 +783,7 @@
     </div>
 
     <!-- 4. LOAD COMPONENTS SCRIPT -->
-    <script src="components.js?v=20261010b"></script>
+    <script src="components.js?v=20261010c"></script>
 
     <script>
         window.manualPageReveal = true;
@@ -3027,8 +3027,7 @@
                     // 3. Ensure 'Half' matches exactly "First" or "Second"
                     // (Monday = "Second", Tuesday = "First")
                     let halfKey = "First";
-                    const halfLower = rawHalf.toLowerCase();
-                    if (halfLower.includes("second") || halfLower.includes("mon")) halfKey = "Second";
+                    if (rawHalf.toLowerCase().includes("second") || rawHalf.toLowerCase().includes("mon")) halfKey = "Second"; // Monday = "Second"
 
                     // 4. Calculate the new ELO based on your chart!
                     const newElo = eloMap[halfKey][divNum] || 600;

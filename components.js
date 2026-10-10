@@ -552,7 +552,7 @@ function renderDivisionModal(newLabel) {
 // ── Password reset (from the "Forgot password?" email link) ────────────────
 // Supabase signs the user in with a recovery session when they open the link;
 // we then ask for a new password and save it with updateUser. If the link was
-// expired or already used, show why instead of silently landing on login.
+// expired or already used, show why instead of silently landing on the page.
 function clearPasswordResetUrl() {
     const params = new URLSearchParams(window.location.search);
     params.delete('reset');
@@ -575,7 +575,7 @@ function renderPasswordResetModal(client, errorMessage) {
             </div>
         `;
         overlay.querySelector('.division-modal-body').textContent =
-            `${errorMessage} Links only work once and expire after an hour. Click "Forgot password?" to get a new one.`;
+            `${errorMessage} Links only work once and expire after an hour. Click "Forgot password?" on the login page to get a new one.`;
         const close = () => { overlay.remove(); clearPasswordResetUrl(); };
         overlay.querySelector('.division-modal-btn').addEventListener('click', close);
         document.body.appendChild(overlay);
