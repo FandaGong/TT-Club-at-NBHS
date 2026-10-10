@@ -41,7 +41,7 @@
                 </div>
                 <div class="alm-panel">
                     <p class="alm-eyebrow" style="margin-bottom:0.5rem;">Table assignments</p>
-                    <p class="alm-assign">Div 1 → <b>Table 1</b> · Div 2 → <b>Tables 2 &amp; 3</b> · Div 3 → <b>Table 4</b></p>
+                    <p class="alm-assign">Div 1 → <b>Table 1</b> · Div 2 → <b>Table 2</b> · Div 3 → <b>Table 3</b></p>
                 </div>
             </div>
 
@@ -55,7 +55,7 @@
     <!-- CHANGE 3: Added id, mt-auto, and opacity-0 -->
     <div id="footer-placeholder"></div>
 
-    <script src="components.js?v=20260803f"></script>
+    <script src="components.js?v=20261010c"></script>
     <script>
         // Use Supabase `player_rankings` instead of the Google Sheets CSV
         async function getSupabaseClient() {
@@ -85,8 +85,8 @@
                 subtitle: isUpperHalf ? 'Top 16 players in descending Elo order.' : 'Players 17–32 in descending Elo order.',
                 divisions: [
                     { name: 'Division 1', tableLabel: 'Table 1', description: '5 players', players: players.slice(0, 5) },
-                    { name: 'Division 2', tableLabel: 'Tables 2 & 3', description: '6 players', players: players.slice(5, 11) },
-                    { name: 'Division 3', tableLabel: 'Table 4', description: '5 players', players: players.slice(11, 16) }
+                    { name: 'Division 2', tableLabel: 'Table 2', description: '6 players', players: players.slice(5, 11) },
+                    { name: 'Division 3', tableLabel: 'Table 3', description: '5 players', players: players.slice(11, 16) }
                 ]
             };
         }
