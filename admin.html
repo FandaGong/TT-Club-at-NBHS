@@ -3025,6 +3025,7 @@
                     else if (rawDiv.includes("3")) divNum = "3";
 
                     // 3. Ensure 'Half' matches exactly "First" or "Second"
+                    // (Monday = "Second", Tuesday = "First")
                     let halfKey = "First";
                     if (rawHalf.toLowerCase().includes("second") || rawHalf.toLowerCase().includes("mon")) halfKey = "Second"; // Monday = "Second"
 
