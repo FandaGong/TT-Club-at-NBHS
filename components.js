@@ -610,6 +610,7 @@ function renderPasswordResetModal(client, errorMessage) {
     document.body.appendChild(overlay);
     overlay.querySelector('.pr-new').focus();
 }
+
 async function checkDivisionChange(client, session) {
     try {
         if (!client || !session?.user) { console.log('[div-check] no client/session'); return; }

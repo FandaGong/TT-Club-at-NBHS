@@ -111,6 +111,30 @@
                 </div>
             </aside>
         </section>
+
+        <section class="alm-block">
+            <div class="alm-panel" style="max-width:32rem;">
+                <div class="alm-rule-head"><h2 class="alm-section-title" style="font-size:1.3rem;">Change password</h2></div>
+                <p id="pwSignedOut" class="alm-lede hidden" style="margin:0.5rem 0 0;">Sign in from the <a href="admin.html" class="alm-link">login page</a> to change your password.</p>
+                <form id="changePasswordForm" class="space-y-4 mt-2 hidden">
+                    <div>
+                        <label class="alm-field-label" for="pwCurrent">Current password</label>
+                        <input id="pwCurrent" type="password" class="alm-input" autocomplete="current-password" required>
+                    </div>
+                    <div>
+                        <label class="alm-field-label" for="pwNew">New password</label>
+                        <input id="pwNew" type="password" class="alm-input" autocomplete="new-password" minlength="6" required>
+                    </div>
+                    <div>
+                        <label class="alm-field-label" for="pwConfirm">Confirm new password</label>
+                        <input id="pwConfirm" type="password" class="alm-input" autocomplete="new-password" minlength="6" required>
+                    </div>
+                    <button type="submit" class="alm-btn">Update password</button>
+                    <p id="pwStatus" class="alm-mh-date" style="min-height:1.1rem;"></p>
+                    <p class="alm-mh-date">Forgot your current password? Use "Forgot password?" on the <a href="admin.html" class="alm-link">login page</a> to reset it by email.</p>
+                </form>
+            </div>
+        </section>
       </div>
     </main>
 
@@ -193,7 +217,45 @@
 
             document.getElementById('main-content')?.classList.remove('opacity-0');
             document.getElementById('page-footer')?.classList.remove('opacity-0');
+
+            setupChangePassword();
         });
+
+        // Change password for the signed-in user. We re-check the current
+        // password first so someone using an unattended signed-in device
+        // can't change it.
+        async function setupChangePassword() {
+            const form = document.getElementById('changePasswordForm');
+            const signedOut = document.getElementById('pwSignedOut');
+            const status = document.getElementById('pwStatus');
+            const client = window._supabaseClient;
+            const { data } = client ? await client.auth.getSession() : { data: null };
+            const email = data?.session?.user?.email;
+            if (!email) { signedOut.classList.remove('hidden'); return; }
+            form.classList.remove('hidden');
+
+            const setStatus = (text, color) => { status.textContent = text; status.style.color = color || ''; };
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const current = document.getElementById('pwCurrent').value;
+                const next = document.getElementById('pwNew').value;
+                const confirm = document.getElementById('pwConfirm').value;
+                if (next !== confirm) return setStatus('New passwords do not match.', '#dc2626');
+                if (next === current) return setStatus('New password must be different from your current one.', '#dc2626');
+
+                setStatus('Checking…');
+                const { error: signInError } = await client.auth.signInWithPassword({ email, password: current });
+                if (signInError) return setStatus('Current password is incorrect.', '#dc2626');
+
+                setStatus('Saving…');
+                const { error } = await client.auth.updateUser({ password: next });
+                if (error) return setStatus(error.message, '#dc2626');
+
+                form.reset();
+                setStatus('Password updated!', '#16a34a');
+            });
+        }
     </script>
 </body>
 </html>
